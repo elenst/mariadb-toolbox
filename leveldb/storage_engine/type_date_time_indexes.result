@@ -1,0 +1,273 @@
+CREATE TABLE `t1` (
+  `d` date NOT NULL,
+  `dt` datetime DEFAULT NULL,
+  `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `t` time DEFAULT NULL,
+  `y` year(4) DEFAULT NULL,
+  UNIQUE KEY `d` (`d`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+SHOW INDEX IN t1;
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+t1	0	#	1	d	#	#	NULL	NULL	#	#		
+SET @tm = '2012-04-09 05:27:00';
+INSERT INTO t1 (d,dt,ts,t,y) VALUES
+('2012-01-12', '2010-11-22 12:33:54', '2011-11-14 21:45:55', '00:12:33', '2000'),
+('2012-01-22', '2010-11-22 11:43:14', '2011-11-14 21:45:55', '00:12:32', '2001'),
+('2012-03-31', '2011-08-28 21:33:56', '1999-04-30 19:11:08', '12:00:00', '1999'),
+('2012-03-13', '2011-08-27 21:33:56', '1999-03-30 19:11:08', '12:10:00', '1998'),
+('2011-03-31', '2011-08-28 20:33:56', '1997-01-31 11:54:01', '22:04:10', '1994'),
+(DATE(@tm),@tm,TIMESTAMP(@tm),TIME(@tm),YEAR(@tm));
+SELECT d FROM t1 ORDER BY d LIMIT 3;
+d
+2011-03-31
+2012-01-12
+2012-01-22
+CREATE TABLE `t1` (
+  `d` date DEFAULT NULL,
+  `dt` datetime NOT NULL,
+  `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `t` time DEFAULT NULL,
+  `y` year(4) DEFAULT NULL,
+  UNIQUE KEY `dt` (`dt`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+SHOW INDEX IN t1;
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+t1	0	#	1	dt	#	#	NULL	NULL	#	#		
+SET @tm = '2012-04-09 05:27:00';
+INSERT INTO t1 (d,dt,ts,t,y) VALUES
+('2012-01-12', '2010-11-22 12:33:54', '2011-11-14 21:45:55', '00:12:33', '2000'),
+('2012-01-12', '2010-11-22 11:43:14', '2011-11-14 21:45:55', '00:12:32', '2001'),
+('2012-03-31', '2011-08-28 21:33:56', '1999-04-30 19:11:08', '12:00:00', '1999'),
+('2012-03-13', '2011-08-27 21:33:56', '1999-03-30 19:11:08', '12:10:00', '1998'),
+('2011-03-31', '2011-08-28 20:33:56', '1997-01-31 11:54:01', '22:04:10', '1994'),
+(DATE(@tm),@tm,TIMESTAMP(@tm),TIME(@tm),YEAR(@tm));
+SELECT dt FROM t1 ORDER BY dt LIMIT 3;
+dt
+2010-11-22 11:43:14
+2010-11-22 12:33:54
+2011-08-27 21:33:56
+CREATE TABLE `t1` (
+  `d` date DEFAULT NULL,
+  `dt` datetime DEFAULT NULL,
+  `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `t` time DEFAULT NULL,
+  `y` year(4) DEFAULT NULL,
+  UNIQUE KEY `ts` (`ts`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+SHOW INDEX IN t1;
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+t1	0	#	1	ts	#	#	NULL	NULL	#	#		
+SET @tm = '2012-04-09 05:27:00';
+INSERT INTO t1 (d,dt,ts,t,y) VALUES
+('2012-01-12', '2010-11-22 12:33:54', '2011-11-14 21:45:25', '00:12:33', '2000'),
+('2012-01-12', '2010-11-22 11:43:14', '2011-11-14 21:45:55', '00:12:32', '2001'),
+('2012-03-31', '2011-08-28 21:33:56', '1999-04-30 19:11:08', '12:00:00', '1999'),
+('2012-03-13', '2011-08-27 21:33:56', '1999-03-30 19:11:08', '12:10:00', '1998'),
+('2011-03-31', '2011-08-28 20:33:56', '1997-01-31 11:54:01', '22:04:10', '1994'),
+(DATE(@tm),@tm,TIMESTAMP(@tm),TIME(@tm),YEAR(@tm));
+SELECT ts FROM t1 ORDER BY ts LIMIT 3;
+ts
+1997-01-31 11:54:01
+1999-03-30 19:11:08
+1999-04-30 19:11:08
+CREATE TABLE `t1` (
+  `d` date DEFAULT NULL,
+  `dt` datetime DEFAULT NULL,
+  `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `t` time NOT NULL,
+  `y` year(4) DEFAULT NULL,
+  UNIQUE KEY `t` (`t`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+SHOW INDEX IN t1;
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+t1	0	#	1	t	#	#	NULL	NULL	#	#		
+SET @tm = '2012-04-09 05:27:00';
+INSERT INTO t1 (d,dt,ts,t,y) VALUES
+('2012-01-12', '2010-11-22 12:33:54', '2011-11-14 21:45:25', '00:12:33', '2000'),
+('2012-01-12', '2010-11-22 11:43:14', '2011-11-14 21:45:55', '00:12:32', '2001'),
+('2012-03-31', '2011-08-28 21:33:56', '1999-04-30 19:11:08', '12:00:00', '1999'),
+('2012-03-13', '2011-08-27 21:33:56', '1999-03-30 19:11:08', '12:10:00', '1998'),
+('2011-03-31', '2011-08-28 20:33:56', '1997-01-31 11:54:01', '22:04:10', '1994'),
+(DATE(@tm),@tm,TIMESTAMP(@tm),TIME(@tm),YEAR(@tm));
+SELECT t FROM t1 ORDER BY t LIMIT 3;
+t
+00:12:32
+00:12:33
+05:27:00
+CREATE TABLE `t1` (
+  `d` date DEFAULT NULL,
+  `dt` datetime DEFAULT NULL,
+  `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `t` time DEFAULT NULL,
+  `y` year(4) NOT NULL,
+  UNIQUE KEY `y` (`y`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+SHOW INDEX IN t1;
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+t1	0	#	1	y	#	#	NULL	NULL	#	#		
+SET @tm = '2012-04-09 05:27:00';
+INSERT INTO t1 (d,dt,ts,t,y) VALUES
+('2012-01-12', '2010-11-22 12:33:54', '2011-11-14 21:45:25', '00:12:33', '2000'),
+('2012-01-12', '2010-11-22 11:43:14', '2011-11-14 21:45:55', '00:12:32', '2001'),
+('2012-03-31', '2011-08-28 21:33:56', '1999-04-30 19:11:08', '12:00:00', '1999'),
+('2012-03-13', '2011-08-27 21:33:56', '1999-03-30 19:11:08', '12:10:00', '1998'),
+('2011-03-31', '2011-08-28 20:33:56', '1997-01-31 11:54:01', '22:04:10', '1994'),
+(DATE(@tm),@tm,TIMESTAMP(@tm),TIME(@tm),YEAR(@tm));
+SELECT y FROM t1 ORDER BY y LIMIT 3;
+y
+1994
+1998
+1999
+CREATE TABLE `t1` (
+  `d` date DEFAULT NULL,
+  `dt` datetime NOT NULL,
+  `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `t` time DEFAULT NULL,
+  `y` year(4) DEFAULT NULL,
+  PRIMARY KEY (`dt`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+SHOW INDEX IN t1;
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+t1	0	PRIMARY	1	dt	#	#	NULL	NULL	#	#		
+SET @tm = '2012-04-09 05:27:00';
+INSERT INTO t1 (d,dt,ts,t,y) VALUES
+('2012-01-12', '2010-11-22 12:33:54', '2011-11-14 21:45:55', '00:12:33', '2000'),
+('2012-01-12', '2010-11-22 11:43:14', '2011-11-14 21:45:55', '00:12:32', '2001'),
+('2012-03-31', '2011-08-28 21:33:56', '1999-04-30 19:11:08', '12:00:00', '1999'),
+('2012-03-13', '2011-08-27 21:33:56', '1999-03-30 19:11:08', '12:10:00', '1998'),
+('2011-03-31', '2011-08-28 20:33:56', '1997-01-31 11:54:01', '22:04:10', '1994'),
+(DATE(@tm),@tm,TIMESTAMP(@tm),TIME(@tm),YEAR(@tm));
+EXPLAIN SELECT dt FROM t1 ORDER BY dt LIMIT 3;
+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
+#	#	#	#	#	NULL	#	#	#	#
+SELECT dt FROM t1 ORDER BY dt LIMIT 3;
+dt
+2010-11-22 11:43:14
+2010-11-22 12:33:54
+2011-08-27 21:33:56
+EXPLAIN SELECT dt FROM t1 FORCE INDEX FOR ORDER BY (PRIMARY) ORDER BY dt LIMIT 3;
+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
+#	#	#	#	#	NULL	#	#	#	#
+SELECT dt FROM t1 FORCE INDEX FOR ORDER BY (PRIMARY) ORDER BY dt LIMIT 3;
+dt
+2010-11-22 11:43:14
+2010-11-22 12:33:54
+2011-08-27 21:33:56
+INSERT INTO t1 (d,dt,ts,t,y) VALUES
+('2012-01-11', '2010-11-22 12:33:54', '2011-11-14 21:45:55', '00:12:33', '2000');
+# ERROR: Statement succeeded (expected results: ER_DUP_ENTRY,ER_DUP_KEY)
+CREATE TABLE `t1` (
+  `d` date DEFAULT NULL,
+  `dt` datetime DEFAULT NULL,
+  `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `t` time DEFAULT NULL,
+  `y` year(4) NOT NULL DEFAULT '0000',
+  PRIMARY KEY (`y`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+SHOW INDEX IN t1;
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+t1	0	PRIMARY	1	y	#	#	NULL	NULL	#	#		
+SET @tm = '2012-04-09 05:27:00';
+INSERT INTO t1 (d,dt,ts,t,y) VALUES
+('2012-01-12', '2010-11-22 12:33:54', '2011-11-14 21:45:55', '00:12:33', '2000'),
+('2012-01-12', '2010-11-22 11:43:14', '2011-11-14 21:45:55', '00:12:32', '2001'),
+('2012-03-31', '2011-08-28 21:33:56', '1999-04-30 19:11:08', '12:00:00', '1999'),
+('2012-03-13', '2011-08-27 21:33:56', '1999-03-30 19:11:08', '12:10:00', '1998'),
+('2011-03-31', '2011-08-28 20:33:56', '1997-01-31 11:54:01', '22:04:10', '1994'),
+(DATE(@tm),@tm,TIMESTAMP(@tm),TIME(@tm),YEAR(@tm));
+EXPLAIN SELECT ts FROM t1 WHERE ts > NOW();
+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
+#	#	#	#	#	NULL	#	#	#	#
+SELECT ts FROM t1 WHERE ts > NOW();
+ts
+EXPLAIN SELECT ts FROM t1 USE INDEX () WHERE ts > NOW();
+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
+#	#	#	#	#	NULL	#	#	#	#
+SELECT ts FROM t1 USE INDEX () WHERE ts > NOW();
+ts
+CREATE TABLE `t1` (
+  `d` date NOT NULL,
+  `dt` datetime DEFAULT NULL,
+  `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `t` time NOT NULL,
+  `y` year(4) DEFAULT NULL,
+  UNIQUE KEY `d_t` (`d`,`t`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+SHOW INDEX IN t1;
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+t1	0	d_t	1	d	#	#	NULL	NULL	#	#		
+t1	0	d_t	2	t	#	#	NULL	NULL	#	#		
+SET @tm = '2012-04-09 05:27:00';
+INSERT INTO t1 (d,dt,ts,t,y) VALUES
+('2012-01-12', '2010-11-22 12:33:54', '2011-11-14 21:45:55', '00:12:33', '2000'),
+('2012-01-12', '2010-11-22 11:43:14', '2011-11-14 21:45:55', '00:12:32', '2001'),
+('2012-03-31', '2011-08-28 21:33:56', '1999-04-30 19:11:08', '12:00:00', '1999'),
+('2012-03-13', '2011-08-27 21:33:56', '1999-03-30 19:11:08', '12:10:00', '1998'),
+('2011-03-31', '2011-08-28 20:33:56', '1997-01-31 11:54:01', '22:04:10', '1994'),
+(DATE(@tm),@tm,TIMESTAMP(@tm),TIME(@tm),YEAR(@tm));
+EXPLAIN SELECT d, t FROM t1 WHERE CONCAT(d,' ',t) != CURRENT_DATE();
+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
+#	#	#	#	#	NULL	#	#	#	#
+SELECT d, t FROM t1 WHERE CONCAT(d,' ',t) != CURRENT_DATE();
+d	t
+2011-03-31	22:04:10
+2012-01-12	00:12:32
+2012-01-12	00:12:33
+2012-03-13	12:10:00
+2012-03-31	12:00:00
+2012-04-09	05:27:00
+EXPLAIN SELECT d, t FROM t1 IGNORE INDEX (d_t) WHERE CONCAT(d,' ',t) != CURRENT_DATE();
+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
+#	#	#	#	#	NULL	#	#	#	#
+SELECT d, t FROM t1 IGNORE INDEX (d_t) WHERE CONCAT(d,' ',t) != CURRENT_DATE();
+d	t
+2011-03-31	22:04:10
+2012-01-12	00:12:32
+2012-01-12	00:12:33
+2012-03-13	12:10:00
+2012-03-31	12:00:00
+2012-04-09	05:27:00
+INSERT INTO t1 (d,dt,ts,t,y) VALUES
+('2012-01-12', '2010-11-22 12:33:53', '2011-11-14 21:45:55', '00:12:33', '2000');
+# ERROR: Statement succeeded (expected results: ER_DUP_ENTRY,ER_DUP_KEY)
+CREATE TABLE `t1` (
+  `d` date DEFAULT NULL,
+  `dt` datetime DEFAULT NULL,
+  `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `t` time NOT NULL,
+  `y` year(4) NOT NULL,
+  PRIMARY KEY (`y`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+SHOW INDEX IN t1;
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+t1	0	PRIMARY	1	y	#	#	NULL	NULL	#	#		
+SET @tm = '2012-04-09 05:27:00';
+INSERT INTO t1 (d,dt,ts,t,y) VALUES
+('2012-01-12', '2010-11-22 12:33:54', '2011-11-14 21:45:55', '00:12:33', '2000'),
+('2012-01-12', '2010-11-22 11:43:14', '2011-11-14 21:45:55', '00:12:32', '2001'),
+('2012-03-31', '2011-08-28 21:33:56', '1999-04-30 19:11:08', '12:00:00', '1999'),
+('2012-03-13', '2011-08-27 21:33:56', '1999-03-30 19:11:08', '12:10:00', '1998'),
+('2011-03-31', '2011-08-28 20:33:56', '1997-01-31 11:54:01', '22:04:10', '1994'),
+(DATE(@tm),@tm,TIMESTAMP(@tm),TIME(@tm),YEAR(@tm));
+EXPLAIN SELECT y, COUNT(*) FROM t1 GROUP BY y;
+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
+#	#	#	#	#	NULL	#	#	#	#
+SELECT y, COUNT(*) FROM t1 GROUP BY y;
+y	COUNT(*)
+1994	1
+1998	1
+1999	1
+2000	1
+2001	1
+2012	1
+EXPLAIN SELECT y, COUNT(*) FROM t1 USE INDEX FOR GROUP BY () GROUP BY y;
+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
+#	#	#	#	#	NULL	#	#	#	#
+SELECT y, COUNT(*) FROM t1 USE INDEX FOR GROUP BY () GROUP BY y;
+y	COUNT(*)
+1994	1
+1998	1
+1999	1
+2000	1
+2001	1
+2012	1

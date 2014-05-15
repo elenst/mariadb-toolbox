@@ -1,0 +1,80 @@
+CREATE TABLE `t1` (
+  `a` int(11) NOT NULL DEFAULT '0',
+  `b` char(8) DEFAULT NULL,
+  PRIMARY KEY (`a`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e'),(6,'x'),(7,'y'),(8,'z');
+UPDATE t1 SET a=100, b='f' WHERE b IN ('b','c');
+UPDATE t1 SET b='m' WHERE b = 'f';
+UPDATE t1 SET b='z' WHERE a < 2;
+UPDATE t1 SET b='';
+SELECT * FROM t1;
+a	b
+1	
+100	
+4	
+5	
+6	
+7	
+8	
+CREATE TABLE `t1` (
+  `a` int(11) NOT NULL DEFAULT '0',
+  `b` char(8) DEFAULT NULL,
+  PRIMARY KEY (`a`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e'),(0,'f'),(100,'a');
+UPDATE t1 SET a=a+200;
+UPDATE t1 SET a=0 WHERE a > 250;
+UPDATE t1 SET a=205 WHERE a=200;
+# ERROR: Statement succeeded (expected results: ER_DUP_ENTRY,ER_DUP_KEY)
+UPDATE t1 SET a=12345 ORDER BY a, b LIMIT 1;
+SELECT * FROM t1;
+a	b
+12345	a
+201	a
+202	b
+203	c
+204	d
+205	f
+UPDATE t1 SET a=80 WHERE a IN (202,203);
+# ERROR: Statement succeeded (expected results: ER_DUP_ENTRY,ER_DUP_KEY)
+CREATE TABLE `t1` (
+  `a` int(11) NOT NULL DEFAULT '0',
+  `b` char(8) DEFAULT NULL,
+  PRIMARY KEY (`a`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e'),(100,'a'),(6,'f');
+UPDATE t1 SET a=6 WHERE a=3;
+UPDATE t1 SET a=100 WHERE a=1;
+# ERROR: Statement succeeded (expected results: ER_DUP_ENTRY,ER_DUP_KEY)
+UPDATE t1 SET a=4, b='d' WHERE b='f';
+# ERROR: Statement succeeded (expected results: ER_DUP_ENTRY,ER_DUP_KEY)
+UPDATE t1 SET a=a+1;
+SELECT * FROM t1;
+a	b
+101	a
+3	b
+7	c
+UPDATE t1 SET b='z';
+# ERROR: Statement succeeded (expected results: ER_DUP_ENTRY,ER_DUP_KEY)
+CREATE TABLE `t1` (
+  `a` int(11) NOT NULL,
+  `b` char(8) DEFAULT NULL,
+  PRIMARY KEY (`a`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e'),(0,'f'),(100,'a');
+UPDATE t1 SET a=a+200;
+UPDATE t1 SET a=0 WHERE a > 250;
+UPDATE t1 SET a=205 WHERE a=200;
+# ERROR: Statement succeeded (expected results: ER_DUP_ENTRY,ER_DUP_KEY)
+UPDATE t1 SET a=12345 ORDER BY a DESC, b LIMIT 1;
+SELECT * FROM t1;
+a	b
+0	a
+12345	f
+201	a
+202	b
+203	c
+204	d
+UPDATE t1 SET a=80 WHERE a IN (202,203);
+# ERROR: Statement succeeded (expected results: ER_DUP_ENTRY,ER_DUP_KEY)

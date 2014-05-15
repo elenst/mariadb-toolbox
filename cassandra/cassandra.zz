@@ -1,0 +1,17 @@
+#
+# Basic data template for Cassandra tests
+#
+
+$tables = {
+	names => [ 'T0', 'T1', 'T10', 'T100' ],
+        rows => [0, 1, 10, 100],
+	engines => [ "cassandra keyspace='rqg' column_family='cf1'" ],
+	pk => [ 'int' ],
+	charsets => [ 'latin1' ]
+};
+
+$fields = {
+        types => [ 'varbinary(1024)', 'varchar(256)', 'varbinary(32)', 'int', 'bigint', 'tinyint', 'smallint', 'timestamp', 'timestamp(6)', 'bool', 'float', 'double' ],
+        indexes => [ undef ]
+};
+

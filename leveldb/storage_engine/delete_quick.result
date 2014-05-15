@@ -1,0 +1,30 @@
+CREATE TABLE `t1` (
+  `a` int(11) NOT NULL,
+  `b` char(8) DEFAULT NULL,
+  UNIQUE KEY `a` (`a`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e');
+DELETE QUICK FROM t1 WHERE a = 1 OR b > 'foo';
+SELECT * FROM t1;
+a	b
+2	b
+3	c
+4	d
+5	e
+CREATE TABLE `t2` (
+  `c` char(8) DEFAULT NULL,
+  `d` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`d`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+INSERT INTO t2 SELECT b, a FROM t1;
+SELECT * FROM t2;
+c	d
+b	2
+c	3
+d	4
+e	5
+DELETE QUICK FROM t2, t1.* USING t2, t1 WHERE c IS NULL OR a = d;
+SELECT * FROM t1;
+a	b
+SELECT * FROM t2;
+c	d

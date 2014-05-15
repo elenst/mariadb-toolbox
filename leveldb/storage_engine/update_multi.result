@@ -1,0 +1,39 @@
+CREATE TABLE `t1` (
+  `a` int(11) NOT NULL DEFAULT '0',
+  `b` char(8) DEFAULT NULL,
+  PRIMARY KEY (`a`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e'),(10000,'foobar');
+INSERT INTO t1 (a,b) SELECT a, b FROM t1;
+CREATE TABLE `t2` (
+  `c` char(8) DEFAULT NULL,
+  `d` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`d`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+INSERT INTO t2 (c,d) SELECT b, a FROM t1;
+UPDATE t1, t2 SET t1.a = t2.d+100, t2.c = 'multi' WHERE c < b AND a + d != 1;
+SELECT * FROM t1;
+a	b
+1	a
+101	foobar
+SELECT * FROM t2;
+c	d
+foobar	10000
+multi	1
+multi	2
+multi	3
+multi	4
+multi	5
+UPDATE t2, t1 SET t2.d = DEFAULT WHERE c = 'foobar' and b = c;
+SELECT * FROM t1;
+a	b
+1	a
+101	foobar
+SELECT * FROM t2;
+c	d
+foobar	0
+multi	1
+multi	2
+multi	3
+multi	4
+multi	5

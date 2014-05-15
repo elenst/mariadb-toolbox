@@ -1,0 +1,77 @@
+DROP TABLE IF EXISTS t1;
+CREATE DATABASE ldb_se_0;
+USE ldb_se_0;
+CREATE TABLE t1 (a <INT_COLUMN> PRIMARY KEY,
+b <CHAR_COLUMN>
+) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+SHOW KEYS IN t1;
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+t1	0	PRIMARY	1	a	#	#	NULL	NULL	#	#		
+INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b');
+INSERT INTO t1 (a,b) VALUES (1,'c');
+ERROR 23000: Duplicate entry '1' for key 'PRIMARY'
+# Statement ended with one of expected results (ER_DUP_ENTRY,ER_DUP_KEY). 
+# If you got a difference in error message, just add it to rdiff file
+DROP TABLE t1;
+CREATE DATABASE ldb_se_1;
+USE ldb_se_1;
+CREATE TABLE t1 (a <INT_COLUMN> PRIMARY KEY,
+b <CHAR_COLUMN> PRIMARY KEY
+) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+ERROR 42000: Multiple primary key defined
+CREATE DATABASE ldb_se_2;
+USE ldb_se_2;
+CREATE TABLE t1 (a <INT_COLUMN>,
+b <CHAR_COLUMN>,
+PRIMARY KEY (a,b)
+) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+SHOW INDEX IN t1;
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+t1	0	PRIMARY	1	a	#	#	NULL	NULL	#	#		
+t1	0	PRIMARY	2	b	#	#	NULL	NULL	#	#		
+INSERT INTO t1 (a,b) VALUES (1,'a'),(1,'b'),(2,'a'),(2,'b');
+INSERT INTO t1 (a,b) VALUES (1,'b');
+ERROR 23000: Duplicate entry '1-b' for key 'PRIMARY'
+# Statement ended with one of expected results (ER_DUP_ENTRY,ER_DUP_KEY). 
+# If you got a difference in error message, just add it to rdiff file
+DROP TABLE t1;
+CREATE DATABASE ldb_se_3;
+USE ldb_se_3;
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a <INT_COLUMN> KEY,
+b <CHAR_COLUMN>,
+<CUSTOM_INDEX> (b)
+) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+ERROR 42000: Multiple primary key defined
+# ERROR: Statement ended with errno 1068, errname ER_MULTIPLE_PRI_KEY (expected to succeed)
+ERROR 42S02: Table 'ldb_se_3.t1' doesn't exist
+# ------------ UNEXPECTED RESULT ------------
+# [ CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a INT(11) /*!NOT NULL*/ /*Custom indexed column options*/ KEY,
+b CHAR(8) /*!NOT NULL*/ /*Custom indexed column options*/,
+/*!UNIQUE INDEX*/ /*Custom index*/ (b)
+) ENGINE=LevelDB /*!*/ /*Custom table options*/ ]
+# The statement|command finished with ER_MULTIPLE_PRI_KEY.
+# Multiple keys or PK or keys on CHAR columns or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+CREATE DATABASE ldb_se_4;
+USE ldb_se_4;
+CREATE TABLE t1 (a <INT_COLUMN>,
+b <CHAR_COLUMN> PRIMARY KEY
+) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+SHOW INDEX IN t1;
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+t1	0	PRIMARY	1	b	#	#	NULL	NULL	#	#		
+ALTER TABLE t1 DROP INDEX `PRIMARY`;
+ERROR HY000: Table storage engine for 't1' doesn't have this option
+# ERROR: Statement ended with errno 1031, errname ER_ILLEGAL_HA (expected to succeed)
+# ------------ UNEXPECTED RESULT ------------
+# [ ALTER TABLE t1 DROP INDEX `PRIMARY` ]
+# The statement|command finished with ER_ILLEGAL_HA.
+# ALTER TABLE or the syntax or the mix could be unsupported. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+DROP TABLE t1;

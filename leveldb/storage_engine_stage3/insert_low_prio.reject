@@ -1,0 +1,49 @@
+DROP TABLE IF EXISTS t1;
+SET @low_prio_updates = @@global.low_priority_updates;
+SET @concur_insert = @@global.concurrent_insert;
+SET GLOBAL concurrent_insert = NEVER;
+CREATE DATABASE ldb_se_0;
+USE ldb_se_0;
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a <INT_COLUMN>, b <CHAR_COLUMN>) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+INSERT INTO t1 (a,b) VALUES (1,'f'),(2,'b');
+connect  con0,localhost,root,,;
+SET lock_wait_timeout = 4;
+connect  con1,localhost,root,,;
+SET lock_wait_timeout = 4;
+connect  con2,localhost,root,,;
+SET lock_wait_timeout = 4;
+connection con1;
+SELECT SLEEP(1) FROM t1;
+connection con0;
+# Timeout in include/wait_show_condition.inc for = 'User sleep'
+#         show_statement : SHOW PROCESSLIST
+#         field          : State
+#         condition      : = 'User sleep'
+#         max_run_time   : 3
+INSERT LOW_PRIORITY INTO t1 (a,b) VALUES (3,'z');
+connection con2;
+# Timeout in include/wait_show_condition.inc for = 'Waiting for table level lock'
+#         show_statement : SHOW PROCESSLIST
+#         field          : State
+#         condition      : = 'Waiting for table level lock'
+#         max_run_time   : 3
+# ------------ UNEXPECTED RESULT ------------
+# The statement|command finished with timeout in wait_show_condition.
+# INSERT LOW_PRIORITY or table locking or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+connection con1;
+ERROR 42S02: Table 'test.t1' doesn't exist
+connection con0;
+ERROR 42S02: Table 'test.t1' doesn't exist
+SELECT * FROM t1;
+ERROR 42S02: Table 'test.t1' doesn't exist
+disconnect con0;
+disconnect con1;
+disconnect con2;
+connection default;
+SET GLOBAL low_priority_updates = @low_prio_updates;
+SET GLOBAL concurrent_insert = @concur_insert;
+DROP TABLE t1;

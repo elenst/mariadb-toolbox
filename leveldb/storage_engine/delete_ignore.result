@@ -1,0 +1,45 @@
+CREATE TABLE `t1` (
+  `a` int(11) NOT NULL DEFAULT '0',
+  `b` char(8) DEFAULT NULL,
+  PRIMARY KEY (`a`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+INSERT INTO t1 (a,b) VALUES (10000,'foobar'),(1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e');
+INSERT INTO t1 (a,b) SELECT a, b FROM t1;
+CREATE TABLE `t2` (
+  `c` char(8) DEFAULT NULL,
+  `d` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`d`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+INSERT INTO t2 (c,d) SELECT b, a FROM t1;
+SELECT * FROM t1;
+a	b
+1	a
+10000	foobar
+2	b
+3	c
+4	d
+5	e
+SELECT * FROM t2;
+c	d
+a	1
+b	2
+c	3
+d	4
+e	5
+foobar	10000
+DELETE IGNORE FROM t1 WHERE b IS NOT NULL ORDER BY a LIMIT 1;
+SELECT * FROM t1;
+a	b
+10000	foobar
+2	b
+3	c
+4	d
+5	e
+DELETE IGNORE t1.*, t2.* FROM t1, t2 WHERE c < b OR a != ( SELECT 1 UNION SELECT 2 );
+Warnings:
+Error	1242	Subquery returns more than 1 row
+SELECT * FROM t1;
+a	b
+SELECT * FROM t2;
+c	d
+foobar	10000

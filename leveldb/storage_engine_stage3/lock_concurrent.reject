@@ -1,0 +1,25 @@
+SET lock_wait_timeout = 1;
+CREATE DATABASE ldb_se_0;
+USE ldb_se_0;
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a <INT_COLUMN>) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+LOCK TABLES t1 WRITE CONCURRENT, t1 AS t2 READ;
+ERROR 42000: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'CONCURRENT, t1 AS t2 READ' at line 1
+SET lock_wait_timeout = 1;
+LOCK TABLES t1 READ LOCAL;
+ERROR 42S02: Table 'test.t1' doesn't exist
+# ------------ UNEXPECTED RESULT ------------
+# The statement|command finished with ER_NO_SUCH_TABLE.
+# LOCK .. WRITE CONCURRENT or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+UNLOCK TABLES;
+UNLOCK TABLES;
+LOCK TABLES t1 READ LOCAL;
+ERROR 42S02: Table 'test.t1' doesn't exist
+LOCK TABLES t1 WRITE CONCURRENT, t1 AS t2 READ;
+ERROR 42000: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'CONCURRENT, t1 AS t2 READ' at line 1
+UNLOCK TABLES;
+UNLOCK TABLES;
+DROP TABLE t1;

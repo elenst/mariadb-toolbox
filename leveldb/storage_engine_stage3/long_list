@@ -1,0 +1,450 @@
+1st.test:# - INSERT INTO TABLE .. VALUES (val1,val2);
+1st.test:  INSERT INTO t1 VALUES (1,'a');
+1st.test:    --let $functionality = INSERT INTO .. VALUES
+1st.test:  INSERT INTO t1 (a,b) VALUES (2,'b');
+1st.test:    --let $functionality = INSERT INTO .. (column_list) VALUES
+alter_table_online.test:INSERT INTO t1 (a,b,c) VALUES (1,100,'a'),(2,200,'b'),(3,300,'c');
+alter_table_online.test:INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b'),(3,'c');
+alter_table_online.test:INSERT INTO t1 (a,b,c) VALUES (1,100,'a'),(2,200,'b'),(3,300,'c');
+alter_tablespace.test:  INSERT INTO t1 (a) VALUES (1),(2);
+alter_table.test:INSERT INTO t1 (a,c) VALUES (1,'a'),(5,'z');
+alter_table.test:INSERT INTO t1 (a,b) VALUES (1,5),(2,2),(4,3);
+alter_table.test:INSERT INTO t1 (a,b,c) VALUES (5,'z','t');
+autoincrement.test:  INSERT INTO t1 (b) VALUES ('a'),('b');
+autoincrement.test:  SELECT LAST_INSERT_ID();
+autoincrement.test:  INSERT INTO t1 (a,b) VALUES (NULL,'c'),(0,'d');
+autoincrement.test:  SELECT LAST_INSERT_ID();
+autoincrement.test:  INSERT INTO t1 (a,b) VALUES (NULL,'e');
+autoincrement.test:  SELECT LAST_INSERT_ID();
+autoincrement.test:  INSERT INTO t1 (a,b) VALUES (0,'f');
+autoincrement.test:  SELECT LAST_INSERT_ID();
+autoincrement.test:  INSERT INTO t1 (a,b) VALUES (6,'g'),(7,'h');
+autoincrement.test:  SELECT LAST_INSERT_ID();
+autoincrement.test:  INSERT INTO t1 (a,b) VALUES (NULL,'i'),(9,'j');
+autoincrement.test:  SELECT LAST_INSERT_ID();
+autoincrement.test:  INSERT INTO t1 (a,b) VALUES (20,'k');
+autoincrement.test:  INSERT INTO t1 (a,b) VALUES (NULL,'l');
+autoincrement.test:  SELECT LAST_INSERT_ID();
+autoincrement.test:  INSERT INTO t1 (a,b) VALUES (-5,'m');
+autoincrement.test:  INSERT INTO t1 (a,b) VALUES (NULL,'a'),(NULL,'b');
+autoincrement.test:  SELECT LAST_INSERT_ID();
+autoinc_secondary.test:  INSERT INTO t1 (b) VALUES ('a'),('b'),('b'),('c'),('a');
+autoinc_secondary.test:  SELECT LAST_INSERT_ID();
+autoinc_secondary.test:  INSERT INTO t1 (a) VALUES ('a'),('b'),('b'),('c'),('a');
+autoinc_secondary.test:  SELECT LAST_INSERT_ID();
+autoinc_secondary.test:  INSERT INTO t1 (a) VALUES ('a'),('b'),('b'),('c'),('a');
+autoinc_secondary.test:  SELECT LAST_INSERT_ID();
+autoinc_vars.test:  INSERT INTO t1 (a,b) VALUES (NULL,'a'),(NULL,'b'),(NULL,'c');
+autoinc_vars.test:  SELECT LAST_INSERT_ID();
+autoinc_vars.test:  INSERT INTO t1 (a,b) VALUES (NULL,'d'),(NULL,'e'),(NULL,'f');
+autoinc_vars.test:  SELECT LAST_INSERT_ID();
+autoinc_vars.test:  INSERT INTO t1 (a,b) VALUES (NULL,'g'),(NULL,'h'),(NULL,'i');
+autoinc_vars.test:  SELECT LAST_INSERT_ID();
+autoinc_vars.test:  INSERT INTO t1 (a) VALUES (NULL);
+autoinc_vars.test:  SELECT LAST_INSERT_ID();
+cache_index.test:    INSERT INTO t1 (a,b) VALUES (3,'c'),(4,'d');
+cache_index.test:    INSERT INTO t1 (a,b) VALUES (5,'e'),(6,'f');
+cache_index.test:    INSERT INTO t1 (a,b) VALUES (7,'g'),(8,'h');
+cache_index.test:    INSERT INTO t1 (a,b) VALUES (9,'i');
+cache_index.test:  INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b');
+cache_index.test:  INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b');
+col_opt_default.test:  INSERT INTO t1 (a) VALUES (1);
+col_opt_default.test:    INSERT INTO t1 (b) VALUES ('a');
+col_opt_not_null.test:  INSERT INTO t1 (c) VALUES (NULL);
+col_opt_not_null.test:  INSERT INTO t1 (c2) VALUES (NULL);
+col_opt_not_null.test:  INSERT INTO t1 (c) VALUES (NULL);
+col_opt_unsigned.test:  INSERT INTO t1 (a,b) VALUES (1.0,-1.0);
+col_opt_unsigned.test:  INSERT INTO t1 (a,b) VALUES (-100,100);
+col_opt_unsigned.test:  INSERT INTO t1 (a,b) VALUES (1.0,-1.0);
+col_opt_unsigned.test:  INSERT INTO t1 (a,b) VALUES (-100,100);
+col_opt_unsigned.test:  INSERT INTO t1 (t,s,m,i,b) VALUES (255,65535,16777215,4294967295,18446744073709551615);
+col_opt_unsigned.test:  INSERT INTO t1 (t,s,m,i,b) VALUES (-1,-1,-1,-1,-1);
+col_opt_zerofill.test:  INSERT INTO t1 (a,b) VALUES (1.1,1234);
+col_opt_zerofill.test:  INSERT INTO t1 (a,b) VALUES (1,1234.5);
+col_opt_zerofill.test:  INSERT INTO t1 (t,s,m,i,b) VALUES (1,10,100,1000,0);
+delete_ignore.test:INSERT INTO t1 (a,b) VALUES (10000,'foobar'),(1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e');
+delete_ignore.test:INSERT INTO t1 (a,b) SELECT a, b FROM t1;
+delete_ignore.test:INSERT INTO t2 (c,d) SELECT b, a FROM t1;
+delete_low_prio.test:INSERT INTO t1 (a,b) VALUES (1,'f'),(2,'b');
+delete_low_prio.test:INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b');
+delete_low_prio.test:INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b');
+delete_quick.test:  INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e');
+delete_quick.test:    INSERT INTO t2 (c,d) SELECT b, a FROM t1;
+delete.test:INSERT INTO t1 (a,b) VALUES (10000,'foobar'),(1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e');
+delete.test:INSERT INTO t1 (a,b) SELECT a, b FROM t1;
+delete.test:INSERT INTO t2 (c,d) SELECT b, a FROM t1;
+delete_with_keys.test:  INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e'),(6,'x'),(7,'y'),(8,'z');
+delete_with_keys.test:  INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e'),(6,'x'),(7,'y'),(8,'z');
+delete_with_keys.test:  INSERT INTO t1 (a,b,c) VALUES (1,2,3),(4,5,6),(7,8,9);
+describe.test:  INSERT INTO t1 (a,b) VALUES (100,'foo'),(2, 'b');
+describe.test:  INSERT INTO t2 (a,b) VALUES (1, 'bar');
+foreign_keys.test:    INSERT INTO t2 (a,b) VALUES (1,'a'),(2,'b');
+foreign_keys.test:    INSERT INTO t1 (a,b) VALUES (1,'c'),(2,'d');
+foreign_keys.test:    INSERT INTO t2 (a,b) VALUES (1,'a'),(2,'b');
+foreign_keys.test:    INSERT INTO t2 (a,b) VALUES (1,'a'),(2,'b'),(3,'c'),(4,'d');
+foreign_keys.test:    INSERT INTO t1 (a,b) VALUES (3,'a'),(4,'a');
+foreign_keys.test:    INSERT INTO t2 (a,b) VALUES (1,'a'),(2,'b'),(3,'c'),(4,'d'),(4,'e'),(3,'a');
+fulltext_search.test:  INSERT INTO t1 (v0,v1,v2) VALUES ('text1','Here is a list of recommended books on MariaDB and MySQL. We\'ve provided links to Amazon.com here for convenience, but they can be found at many other bookstores, both online and off.
+fulltext_search.test:  INSERT INTO t1 (v0,v1,v2) VALUES ('text3','test','test');
+fulltext_search.test:  INSERT INTO t1 (v0,v1,v2) VALUES ('text4','Contributing more...','...is a good idea'),('text5','test','test');
+fulltext_search.test:	INSERT INTO t1 (v0,v1,v2) VALUES ('text1','Here is a list of recommended books on MariaDB and MySQL. We\'ve provided links to Amazon.com here for convenience, but they can be found at many other bookstores, both online and off.
+fulltext_search.test:	INSERT INTO t1 (v0,v1,v2) VALUES ('text3','test','test');
+fulltext_search.test:	INSERT INTO t1 (v0,v1,v2) VALUES ('text4','Contributing more...','...is a good idea'),('text5','test','test');
+handler.test:INSERT INTO t1 (a,b) VALUES ('foobar',1000),('a',1),('bar',200),('foo',100);
+handler.test:  INSERT INTO t1 (b,a) VALUES ('a',1),('b',200),('f',100),('b',101),('c',2);
+index_enable_disable.test:INSERT INTO t1 (a) VALUES (10);
+index_enable_disable.test:INSERT INTO t1 (a) VALUES 
+index_enable_disable.test:INSERT INTO t1 (a) VALUES
+index_enable_disable.test:  INSERT INTO t1 (a) VALUES 
+index_enable_disable.test:  INSERT INTO t1 (a) VALUES (29);
+index_key_block_size.test:  INSERT INTO t1 (a,b) VALUES (100,'z');
+index_primary.test:  INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b');
+index_primary.test:  INSERT INTO t1 (a,b) VALUES (1,'c');
+index_primary.test:  INSERT INTO t1 (a,b) VALUES (1,'a'),(1,'b'),(2,'a'),(2,'b');
+index_primary.test:  INSERT INTO t1 (a,b) VALUES (1,'b');
+insert_delayed.test:# INSERT DELAYED
+insert_delayed.test:  --skip # INSERT DELAYED does not work with binlog format STATEMENT or MIXED
+insert_delayed.test:INSERT INTO t1 (a,b) VALUES (1,'f'),(2,'b');
+insert_delayed.test:  INSERT DELAYED INTO t1 (a,b) VALUES (3,'c');
+insert_delayed.test:    --let $functionality = INSERT DELAYED
+insert_delayed.test:  INSERT DELAYED INTO t1 SET a=4, b='d';
+insert_delayed.test:  # DELAYED is ignored with INSERT .. SELECT
+insert_delayed.test:  INSERT DELAYED INTO t1 (a,b) SELECT 5, 'e';
+insert_high_prio.test:# INSERT HIGH_PRIOIRITY
+insert_high_prio.test:# (Session-level low_priority_updates does not work for INSERT)
+insert_high_prio.test:#   con0 will run INSERT 
+insert_high_prio.test:# With standard INSERT and low_priority_updates=1 
+insert_high_prio.test:#   while with INSERT HIGH_PRIORITY we should see new rows in con2 resultset.
+insert_high_prio.test:INSERT INTO t1 (a,b) VALUES (1,'f'),(2,'b');
+insert_high_prio.test:# Normal INSERT with low_priority_updates=1
+insert_high_prio.test:# should work like INSERT LOW_PRIORITY
+insert_high_prio.test:INSERT INTO t1 (a,b) VALUES (3,'z');
+insert_high_prio.test:  --let $functionality = @@low_priority_updates or INSERT or table locking
+insert_high_prio.test:INSERT INTO t1 (a,b) VALUES (1,'f'),(2,'b');
+insert_high_prio.test:# INSERT HIGH_PRIORITY should override low_priority_updates=1
+insert_high_prio.test:INSERT HIGH_PRIORITY INTO t1 (a,b) VALUES (3,'z');
+insert_high_prio.test:  --let $functionality = @@low_priority_updates or INSERT HIGH_PRIORITY or table locking
+insert_low_prio.test:# INSERT LOW_PRIORITY
+insert_low_prio.test:# (Session-level low_priority_updates does not work for INSERT)
+insert_low_prio.test:INSERT INTO t1 (a,b) VALUES (1,'f'),(2,'b');
+insert_low_prio.test:#   con0 will run INSERT 
+insert_low_prio.test:# With INSERT LOW_PRIORITY we should see only old rows in both resultsets.
+insert_low_prio.test:INSERT LOW_PRIORITY INTO t1 (a,b) VALUES (3,'z');
+insert_low_prio.test:  --let $functionality = INSERT LOW_PRIORITY or table locking
+insert.test:# Basic INSERT statements
+insert.test:# INSERT [INTO] .. VALUES|VALUE ..
+insert.test:INSERT INTO t1 VALUES (100,'foobar'),(1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e');
+insert.test:  --let $functionality = INSERT
+insert.test:INSERT t1 VALUE (10,'foo'),(11,'abc');
+insert.test:INSERT INTO t1 (b,a) VALUES ('test',0);
+insert.test:INSERT INTO t1 VALUES (DEFAULT,DEFAULT);
+insert.test:INSERT t1 (a) VALUE (10),(20);
+insert.test:# INSERT [INTO] .. SET 
+insert.test:INSERT INTO t1 SET a = 11, b = 'f';
+insert.test:INSERT t1 SET b = DEFAULT;
+insert.test:# INSERT .. SELECT
+insert.test:INSERT INTO t2 SELECT * FROM t1;
+insert.test:  --let $functionality = INSERT .. SELECT
+insert.test:INSERT INTO t1 (a) SELECT a FROM t2 WHERE b = 'foo';
+insert.test:INSERT t1 SELECT * FROM t1;
+insert_with_keys.test:# INSERT statements for tables with keys
+insert_with_keys.test:  INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e');
+insert_with_keys.test:  INSERT INTO t1 (a,b) VALUES (100,'a'), (6,'f');
+insert_with_keys.test:  INSERT INTO t1 (a,b) VALUES (30,'m'),(29,'n');
+insert_with_keys.test:  INSERT INTO t1 (a,b) VALUES (1,'a'),(12345,'z');
+insert_with_keys.test:  INSERT INTO t1 (a,b) VALUES (3,'a'),(0,'');
+insert_with_keys.test:  INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e');
+insert_with_keys.test:  INSERT INTO t1 (a,b) VALUES (100,'a'), (6,'f');
+insert_with_keys.test:  INSERT INTO t1 (a,b) VALUES (30,'m'),(29,'n');
+insert_with_keys.test:  INSERT INTO t1 (a,b) VALUES (1,'a'),(12345,'z');
+insert_with_keys.test:  INSERT INTO t1 (a,b) VALUES (3,'a'),(0,'');
+insert_with_keys.test:  INSERT INTO t1 (a,b) VALUES (0,'');
+insert_with_keys.test:  INSERT IGNORE INTO t1 (a,b) VALUES (1,'a'),(12345,'z');
+insert_with_keys.test:  INSERT INTO t1 (a,b) VALUES (3,'a'),(4,'d') ON DUPLICATE KEY UPDATE a = a+10;
+insert_with_keys.test:  INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e');
+insert_with_keys.test:  INSERT INTO t1 (a,b) VALUES (100,'a'), (6,'f');
+insert_with_keys.test:  INSERT INTO t1 (a,b) VALUES (30,'m'),(29,'n');
+insert_with_keys.test:  INSERT INTO t1 (a,b) VALUES (100,'b'), (2,'c');
+insert_with_keys.test:  INSERT INTO t1 (a,b) VALUES (1,'a'),(12345,'z');
+insert_with_keys.test:  INSERT IGNORE INTO t1 (a,b) VALUES (1,'a'),(12345,'z');
+insert_with_keys.test:  INSERT INTO t1 (a,b) VALUES (1,'a'),(12345,'z') ON DUPLICATE KEY UPDATE a = a+VALUES(a);
+insert_with_keys.test:  INSERT INTO t1 (a,b) VALUES (101,'x'),(101,'x');
+insert_with_keys.test:  INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e');
+insert_with_keys.test:  INSERT INTO t1 (a,b) VALUES (100,'a'), (6,'f');
+insert_with_keys.test:  INSERT INTO t1 (a,b) VALUES (30,'m'),(29,'n');
+insert_with_keys.test:  INSERT INTO t1 (a,b) VALUES (1,'a'),(12345,'z');
+insert_with_keys.test:  INSERT INTO t1 (a,b) VALUES (3,'a'),(0,'');
+insert_with_keys.test:  INSERT INTO t1 (a,b) VALUES (0,'');
+insert_with_keys.test:  INSERT IGNORE INTO t1 (a,b) VALUES (1,'a'),(12345,'z');
+insert_with_keys.test:  INSERT INTO t1 (a,b) VALUES (1,'a'),(12345,'z') ON DUPLICATE KEY UPDATE b = CONCAT(b,b);
+lock.test:INSERT INTO t1 (id,id2) VALUES (1,1),(1,2),(1,3);
+lock.test:INSERT INTO t2 (id,id2) SELECT * FROM t1;
+lock.test:# INSERT ... SELECT with lock tables
+lock.test:INSERT INTO t2 (nr,nm) VALUES (1,3);
+lock.test:INSERT INTO t2 (nr,nm) VALUES (2,4);
+lock.test:INSERT INTO t1 (i1,nr) SELECT 1, nr FROM t2 WHERE nm=3;
+lock.test:INSERT INTO t1 (i1,nr) SELECT 2, nr FROM t2 WHERE nm=4;
+lock.test:INSERT INTO t1 (i1,nr) SELECT i1, nr FROM t1;
+lock.test:INSERT INTO t1 (i1,nr) SELECT i1, nr FROM t1 AS t1_alias;
+lock.test:INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b');
+lock.test:INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b');
+lock.test:INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b');
+misc.test:INSERT INTO mysql.event (
+replace.test:# When there is no duplicate key, REPLACE should work as INSERT
+replace.test:  INSERT INTO t1 (a,b) VALUES (2,'d');
+replace.test:  INSERT INTO t1 (a,b) VALUES (4,'b');
+select_high_prio.test:INSERT INTO t1 (a,b) VALUES (1,'f'),(2,'b');
+select_high_prio.test:INSERT INTO t1 (a,b) VALUES (1,'f'),(2,'b');
+select.test:INSERT INTO t1 (a,b) VALUES (100,'foobar'),(1,'z'),(200,'bar');
+select.test:INSERT INTO t2 (a,b) SELECT a, b FROM t1;
+select.test:INSERT INTO t1 (a,b) SELECT a, b FROM t2;
+show_table_status.test:INSERT INTO t1 (a,b) VALUES (100,'a'),(2,'foo');
+show_table_status.test:INSERT INTO t2 (a,b) VALUES (1,'bar');
+tbl_opt_insert_method.test:# Check whether INSERT_METHOD option 
+tbl_opt_insert_method.test:--let $table_options = INSERT_METHOD=FIRST
+tbl_opt_insert_method.test:--let $alter_definition = INSERT_METHOD=NO
+truncate_table.test:  INSERT INTO t1 (a,b) VALUES (1,'a'), (2,'b'), (3,'c');
+truncate_table.test:  INSERT INTO t1 (c) VALUES ('a'),('b'),('c');
+truncate_table.test:  INSERT INTO t1 (c) VALUES ('d');
+truncate_table.test:INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b'),(3,'c');
+type_binary_indexes.test:  INSERT INTO t1 (b,b20,v16,v128) VALUES ('a','char1','varchar1a','varchar1b'),('a','char2','varchar2a','varchar2b'),('b','char3','varchar1a','varchar1b'),('c','char4','varchar3a','varchar3b');
+type_binary_indexes.test:  INSERT INTO t1 (b,b20,v16,v128) VALUES ('a','char1','varchar1a','varchar1b'),('a','char2','varchar2a','varchar2b'),('b','char3','varchar1a','varchar1b'),('c','char4','varchar3a','varchar3b');
+type_binary_indexes.test:  INSERT INTO t1 (b,b20,v16,v128) VALUES ('a','char1','varchar1a','varchar1b'),('a','char2','varchar2a','varchar2b'),('b','char3','varchar1a','varchar1b'),('c','char4','varchar3a','varchar3b');
+type_binary_indexes.test:  INSERT INTO t1 (b,b20,v16,v128) VALUES ('a','char1','varchar1a','varchar1b'),('a','char2','varchar2a','varchar2b'),('b','char3','varchar1a','varchar1b'),('c','char4','varchar3a','varchar3b'),('d','char5','varchar4a','varchar3b'),('e','char6','varchar2a','varchar3b');
+type_binary_indexes.test:  INSERT INTO t1 (b,b20,v16,v128) SELECT * FROM t1;
+type_bit_indexes.test:  INSERT INTO t1 (a,b,c,d) VALUES 
+type_bit_indexes.test:  INSERT INTO t1 (a,b,c,d) VALUES 
+type_bit_indexes.test:  INSERT INTO t1 (a,b,c,d) VALUES
+type_bit_indexes.test:  INSERT INTO t1 (a,b,c,d) VALUES
+type_bit_indexes.test:  INSERT INTO t1 (a,b,c,d) VALUES
+type_blob_indexes.test:  INSERT INTO t1 (b,t,m,l) VALUES
+type_blob_indexes.test:  INSERT INTO t1 (b,t,m,l) VALUES
+type_blob_indexes.test:  INSERT INTO t1 (b,t,m,l) VALUES
+type_blob_indexes.test:  INSERT INTO t1 (b,t,m,l) VALUES
+type_char_indexes.test:  INSERT INTO t1 (c,c20,v16,v128) VALUES ('a','char1','varchar1a','varchar1b'),('a','char2','varchar2a','varchar2b'),('b','char3','varchar1a','varchar1b'),('c','char4','varchar3a','varchar3b');
+type_char_indexes.test:  INSERT INTO t1 (c,c20,v16,v128) VALUES ('a','char1','varchar1a','varchar1b'),('a','char2','varchar2a','varchar2b'),('b','char1','varchar3a','varchar1b'),('c','char4','varchar4a','varchar4b');
+type_char_indexes.test:  INSERT INTO t1 (c,c20,v16,v128) VALUES ('a','char1','varchar1a','varchar1b'),('a','char2','varchar2a','varchar2b'),('b','char3','varchar1a','varchar1b'),('c','char4','varchar3a','varchar3b');
+type_char_indexes.test:  INSERT INTO t1 (c,c20,v16,v128) VALUES ('a','char1','varchar1a','varchar1b'),('a','char2','varchar2a','varchar2b'),('b','char3','varchar1a','varchar1b'),('c','char4','varchar3a','varchar3b');
+type_char_indexes.test:  INSERT INTO t1 (c,c20,v16,v128) VALUES ('a','char1','varchar1a','varchar1b'),('a','char2','varchar2a','varchar2b'),('b','char3','varchar1a','varchar1b'),('c','char4','varchar3a','varchar3b');
+type_date_time_indexes.test:  INSERT INTO t1 (d,dt,ts,t,y) VALUES
+type_date_time_indexes.test:  INSERT INTO t1 (d,dt,ts,t,y) VALUES
+type_date_time_indexes.test:  INSERT INTO t1 (d,dt,ts,t,y) VALUES
+type_date_time_indexes.test:  INSERT INTO t1 (d,dt,ts,t,y) VALUES
+type_date_time_indexes.test:  INSERT INTO t1 (d,dt,ts,t,y) VALUES
+type_date_time_indexes.test:  INSERT INTO t1 (d,dt,ts,t,y) VALUES
+type_date_time_indexes.test:  INSERT INTO t1 (d,dt,ts,t,y) VALUES
+type_date_time_indexes.test:  INSERT INTO t1 (d,dt,ts,t,y) VALUES
+type_date_time_indexes.test:  INSERT INTO t1 (d,dt,ts,t,y) VALUES
+type_date_time_indexes.test:  INSERT INTO t1 (d,dt,ts,t,y) VALUES
+type_date_time_indexes.test:  INSERT INTO t1 (d,dt,ts,t,y) VALUES
+type_enum_indexes.test:  INSERT INTO t1 (a,b,c) VALUES
+type_enum_indexes.test:  INSERT INTO t1 (a,b,c) VALUES
+type_enum_indexes.test:  INSERT INTO t1 (a,b,c) VALUES
+type_enum_indexes.test:  INSERT INTO t1 (a,b,c) VALUES
+type_fixed_indexes.test:  INSERT INTO t1 (d1,d2,n1,n2) VALUES 
+type_fixed_indexes.test:  INSERT INTO t1 (d1,d2,n1,n2) VALUES 
+type_fixed_indexes.test:  INSERT INTO t1 (d1,d2,n1,n2) VALUES
+type_fixed_indexes.test:  INSERT INTO t1 (d1,d2,n1,n2) VALUES
+type_float_indexes.test:  INSERT INTO t1 (f,r,d,dp) VALUES
+type_float_indexes.test:  INSERT INTO t1 (f,r,d,dp) VALUES
+type_float_indexes.test:  INSERT INTO t1 (f,r,d,dp) VALUES
+type_float_indexes.test:  INSERT INTO t1 (f,r,d,dp) VALUES
+type_float_indexes.test:  INSERT INTO t1 (f,r,d,dp) VALUES
+type_int_indexes.test:  INSERT INTO t1 (i,t,s,m,b) VALUES (1,2,3,4,5),(1000,100,10000,1000000,1000000000000000000),(5,100,10000,1000000,100000000000000000),(2,3,4,5,6),(3,4,5,6,7),(101,102,103,104,105),(10001,103,10002,10003,10004),(10,11,12,13,14),(11,12,13,14,15),(12,13,14,15,16);
+type_int_indexes.test:  INSERT INTO t1 (i,t,s,m,b) VALUES (1,2,3,4,5),(1000,100,10000,1000000,1000000000000000000),(5,100,10000,1000000,100000000000000000),(2,3,4,5,6),(3,4,5,6,7),(101,102,103,104,105),(10001,103,10002,10003,10004),(10,11,12,13,14),(11,12,13,14,15),(12,13,14,15,16);
+type_int_indexes.test:    INSERT INTO t1 (i,t,s,m,b) VALUES (1,3,2,4,5);
+type_int_indexes.test:  INSERT INTO t1 (i,t,s,m,b) VALUES (1,2,3,4,5),(1000,100,10000,1000000,1000000000000000000),(5,100,10000,1000000,100000000000000000),(2,3,4,5,6),(3,4,5,6,7),(101,102,103,104,105),(10001,103,10002,10003,10004),(10,11,12,13,14),(11,12,13,14,15),(12,13,14,15,16);
+type_int_indexes.test:  INSERT INTO t1 (i,t,s,m,b) VALUES (1,2,3,4,5),(1000,100,10000,1000000,1000000000000000000),(5,100,10000,1000000,100000000000000000),(2,3,4,5,6),(3,4,5,6,7),(101,102,103,104,105),(10001,103,10002,10003,10004),(10,11,12,13,14),(11,12,13,14,15),(12,13,14,15,16);
+type_set_indexes.test:  INSERT INTO t1 (a,b,c) VALUES 
+type_set_indexes.test:  INSERT INTO t1 (a,b,c) VALUES 
+type_set_indexes.test:  INSERT INTO t1 (a,b,c) VALUES ('Antarctica','test3','02');
+type_set_indexes.test:  INSERT INTO t1 (a,b,c) VALUES ('','test1','34,44');
+type_set_indexes.test:  INSERT INTO t1 (a,b,c) VALUES
+type_set_indexes.test:  INSERT INTO t1 (a,b,c) VALUES
+type_text_indexes.test:  INSERT INTO t1 (t,tt,m,l) VALUES
+type_text_indexes.test:  INSERT INTO t1 (t,tt,m,l) VALUES
+type_text_indexes.test:  INSERT INTO t1 (t,tt,m,l) VALUES
+type_text_indexes.test:  INSERT INTO t1 (t,tt,m,l) VALUES
+update_ignore.test:INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e'),(10000,'foobar');
+update_ignore.test:INSERT INTO t1 (a,b) SELECT a, b FROM t1;
+update_ignore.test:INSERT INTO t2 (c,d) SELECT b, a FROM t1;
+update_low_prio.test:INSERT INTO t1 (a,b) VALUES (11,'foobar'),(12,'b');
+update_multi.test:INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e'),(10000,'foobar');
+update_multi.test:INSERT INTO t1 (a,b) SELECT a, b FROM t1;
+update_multi.test:INSERT INTO t2 (c,d) SELECT b, a FROM t1;
+update.test:INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e'),(10000,'foobar');
+update.test:INSERT INTO t1 (a,b) SELECT a, b FROM t1;
+update_with_keys.test:  INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e'),(6,'x'),(7,'y'),(8,'z');
+update_with_keys.test:  INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e'),(0,'f'),(100,'a');
+update_with_keys.test:  INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e'),(100,'a'),(6,'f');
+update_with_keys.test:  INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e'),(0,'f'),(100,'a');
+vcol.test:  INSERT INTO t1 (a) VALUES (1),(2);
+vcol.test:  INSERT INTO t1 (a,b) VALUES (3,3),(4,4);
+vcol.test:  INSERT INTO t1 (a) VALUES (1),(2);
+vcol.test:  INSERT INTO t1 (a,b) VALUES (3,3),(4,4);
+vcol.test:  INSERT INTO t1 (a) VALUES (1),(2);
+vcol.test:  INSERT INTO t1 (a,b) VALUES (3,3),(4,4);
+vcol.test:  INSERT INTO t1 (a) VALUES (1),(2);
+vcol.test:  INSERT INTO t1 (a,b) VALUES (3,3),(4,4);
+analyze_table.inc:INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b');
+analyze_table.inc:INSERT INTO t1 (a,b) VALUES (3,'c');
+analyze_table.inc:INSERT INTO t2 (a,b) VALUES (4,'d');
+analyze_table.inc:INSERT INTO t1 (a,b) VALUES (5,'e');
+analyze_table.inc:INSERT INTO t2 (a,b) VALUES (6,'f');
+analyze_table.inc:  INSERT INTO t1 (a) VALUES (1),(2),(4),(7);
+analyze_table.inc:  INSERT INTO t1 (a) VALUES (8),(10),(11),(12);
+checksum_table.inc:INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b');
+checksum_table_live.inc:INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b');
+check_table.inc:INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b');
+check_table.inc:INSERT INTO t1 (a,b) VALUES (3,'c');
+check_table.inc:INSERT INTO t2 (a,b) VALUES (4,'d');
+check_table.inc:INSERT INTO t2 (a,b) VALUES (5,'e');
+check_table.inc:INSERT INTO t1 (a,b) VALUES (6,'f');
+check_table.inc:INSERT INTO t1 (a,b) VALUES (7,'g');
+check_table.inc:INSERT INTO t2 (a,b) VALUES (8,'h');
+check_table.inc:INSERT INTO t1 (a,b) VALUES (9,'i');
+check_table.inc:INSERT INTO t2 (a,b) VALUES (10,'j');
+check_table.inc:INSERT INTO t1 (a,b) VALUES (11,'k');
+check_table.inc:  INSERT INTO t1 (a) VALUES (1),(2),(5);
+check_table.inc:  INSERT INTO t1 (a) VALUES (6),(8),(12);
+check_table.inc:  INSERT INTO t1 (a) VALUES (13),(15),(16);
+check_table.inc:  INSERT INTO t1 (a) VALUES (17),(120),(132);
+check_table.inc:  INSERT INTO t1 (a) VALUES (801),(900),(7714);
+check_table.inc:  INSERT INTO t1 (a) VALUES (8760),(10023),(12000);
+check_table.inc:  INSERT INTO t1 (a) VALUES (13345),(24456),(78302),(143028);
+col_not_null.inc:  INSERT INTO t1 (c) VALUES (NULL);
+col_not_null.inc:    INSERT INTO t1 (c) VALUES (NULL);
+col_not_null.inc:    INSERT INTO t1 (c2) VALUES (NULL);
+col_not_null.inc:    --eval INSERT INTO t1 (c) VALUES ($col_default)
+col_null.inc:  INSERT INTO t1 (c) VALUES (NULL);
+col_null.inc:    INSERT INTO t1 (c) VALUES (NULL);
+define_engine.inc:# Do the same for table options if needed, e.g. /*!INSERT_METHOD=LAST*/
+have_engine.inc:#   Do the same for table options if needed, e.g. /*!INSERT_METHOD=LAST*/
+index.inc:    INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b');
+index.inc:    INSERT INTO t1 (a,b) VALUES (1,'c');
+index.inc:    INSERT INTO t1 (a,b) VALUES (100,'z');
+index.inc:    INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b');
+index.inc:    INSERT INTO t1 (a,b) VALUES (1,'c');
+index.inc:      INSERT INTO t1 (a,b) VALUES (1,'c');
+insert_into_table.inc:# This include file will be used for all INSERT INTO TABLE statements in the suite. 
+insert_into_table.inc:# --source insert_table.inc # INSERT INTO t1 VALUES ()
+insert_into_table.inc:# --source insert_into_table.inc # INSERT INTO t1 (a,b) VALUES ('x',1)
+insert_into_table.inc:--let $insert_statement = INSERT
+insert_into_table.inc:# Make sure you don't add any statements between the main INSERT (above)
+insert_into_table.inc:# They are saved in case you want to add more logic after the main INSERT,
+insert_into_table.inc:# Here you can add logic needed AFTER the main INSERT.
+optimize_table.inc:INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b');
+optimize_table.inc:INSERT INTO t1 (a,b) VALUES (3,'c'),(4,'d');
+optimize_table.inc:INSERT INTO t2 (a,b) VALUES (4,'d');
+optimize_table.inc:INSERT INTO t2 (a,b) VALUES (5,'e');
+optimize_table.inc:INSERT INTO t1 (a,b) VALUES (6,'f');
+optimize_table.inc:  INSERT INTO t1 (a,b) VALUES (1,'a'),(100,'b'),(2,'c'),(3,'d');
+repair_table.inc:INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b');
+repair_table.inc:INSERT INTO t1 (a,b) VALUES (3,'c');
+repair_table.inc:INSERT INTO t2 (a,b) VALUES (4,'d');
+repair_table.inc:INSERT INTO t2 (a,b) VALUES (5,'e'),(6,'f');
+repair_table.inc:INSERT INTO t1 (a,b) VALUES (7,'g'),(8,'h');
+repair_table.inc:INSERT INTO t2 (a,b) VALUES (9,'i');
+repair_table.inc:INSERT INTO t1 (a,b) VALUES (10,'j');
+repair_table.inc:INSERT INTO t2 (a,b) VALUES (11,'k');
+repair_table.inc:INSERT INTO t1 (a,b) VALUES (12,'l');
+repair_table.inc:INSERT INTO t2 (a,b) VALUES (13,'m');
+repair_table.inc:# than others, so the result of the following INSERT and REPAIR
+repair_table.inc:# We don't worry so much about the INSERT or SELECT result,
+repair_table.inc:# The preceding INSERT, however, helps to trigger 
+repair_table.inc:INSERT INTO t1 (a,b) VALUES (14,'n');
+repair_table.inc:  INSERT INTO t1 (a,b) VALUES (7,'g'),(8,'h');
+repair_table.inc:  INSERT INTO t1 (a,b) VALUES (10,'j');
+repair_table.inc:      INSERT INTO t1 (a,b) VALUES (14,'n'),(15,'o');
+type_binary.inc:  INSERT INTO t1 (b,b0,b1,b20,b255) VALUES ('','','','','');
+type_binary.inc:  INSERT INTO t1 (b,b0,b1,b20,b255) VALUES ('a','','b','abcdefghi klmnopqrst', 'Creating an article for the Knowledgebase is similar to asking questions. First, navigate to the category where you feel the article should be. Once there, double check that an article doesn\'t already exist which would work.');
+type_binary.inc:  INSERT INTO t1 (b,b0,b1,b20,b255) VALUES ('abc', 'a', 'abc', REPEAT('a',21), REPEAT('x',256));
+type_binary.inc:  INSERT INTO t1 (b,b0,b1,b20,b255) SELECT b255, b255, b255, b255, CONCAT(b255,b255) FROM t1;
+type_bit.inc:  INSERT INTO t1 (a,b,c,d) VALUES (0,POW(2,20)-1,b'1111111111111111111111111111111111111111111111111111111111111111',1);
+type_bit.inc:  INSERT INTO t1 (a,b,c,d) VALUES (1,0,-1,0);
+type_bit.inc:  INSERT INTO t1 (a,b,c,d) VALUES (b'1', 'f', 0xFF, 0x0);
+type_bit.inc:  INSERT INTO t1 (a,b,c,d) VALUES (0x10,0,0,1);
+type_bit.inc:  INSERT INTO t1 (a,b,c,d) VALUES (0x01,0,0x10000000000000000,0);
+type_blob.inc:  INSERT INTO t1 (b,b0,b1,b300,bm,b79k,b17m,t,m,l) VALUES
+type_blob.inc:  INSERT INTO t1 (b,b0,b1,b300,bm,b79k,b17m,t,m,l) VALUES
+type_bool.inc:  INSERT INTO t1 (b1,b2) VALUES (1,TRUE);
+type_bool.inc:  INSERT (b1,b2) INTO t1 VALUES (FALSE,0);
+type_bool.inc:  INSERT (b1,b2) INTO t1 VALUES (2,3);
+type_bool.inc:  INSERT (b1,b2) INTO t1 VALUES (-1,-2);
+type_bool.inc:  INSERT (b1,b2) INTO t1 VALUES ('a','b');
+type_bool.inc:  INSERT (b1,b2) INTO t1 VALUES (128,-129);
+type_char.inc:  INSERT INTO t1 (c,c0,c1,c20,c255) VALUES ('','','','','');
+type_char.inc:  INSERT INTO t1 (c,c0,c1,c20,c255) VALUES ('a','','b','abcdefghi klmnopqrst', 'Creating an article for the Knowledgebase is similar to asking questions. First, navigate to the category where you feel the article should be. Once there, double check that an article doesn\'t already exist which would work.');
+type_char.inc:  INSERT INTO t1 (c,c0,c1,c20,c255) VALUES ('abc', 'a', 'abc', REPEAT('a',21), REPEAT('x',256));
+type_char.inc:  INSERT INTO t1 (c,c0,c1,c20,c255) SELECT c255, c255, c255, c255, CONCAT(c255,c1) FROM t1;
+type_date_time.inc:  INSERT INTO t1 (d,dt,ts,t,y,y4,y2) VALUES
+type_date_time.inc:  INSERT INTO t1 (d,dt,ts,t,y,y4,y2) VALUES
+type_enum.inc:  INSERT INTO t1 (a,b,c) VALUES ('','test2','4'),('',5,2);
+type_enum.inc:  INSERT INTO t1 (a,b,c) VALUES (0,'test6',-1);
+type_enum.inc:  INSERT INTO t1 (a,b,c) VALUES ('','test3','75','A');
+type_fixed.inc:  INSERT INTO t1 (d,d0,d1_1,d10_2,d60_10,n,n0_0,n1,n20_4,n65_4) VALUES (100,123456,0.3,40000.25,123456789123456789.10001,1024,7000.0,8.0,999999.9,9223372036854775807);
+type_fixed.inc:  INSERT INTO t1 (d,d0,d1_1,d10_2,d60_10,n,n0_0,n1,n20_4,n65_4) VALUES (0,0,0,0,0,0,0,0,0,0);
+type_fixed.inc:  INSERT INTO t1 (d,d0,d1_1,d10_2,d60_10,n,n0_0,n1,n20_4,n65_4) VALUES (9999999999.0,9999999999.0,0.9,99999999.99,99999999999999999999999999999999999999999999999999.9999999999,9999999999.0,9999999999.0,9.0,9999999999999999.9999,9999999999999999999999999999999999999999999999999999999999999.9999);
+type_fixed.inc:  INSERT INTO t1 (d,d0,d1_1,d10_2,d60_10,n,n0_0,n1,n20_4,n65_4) VALUES (-100,-123456,-0.3,-40000.25,-123456789123456789.10001,-1024,-7000.0,-8.0,-999999.9,-9223372036854775807);
+type_fixed.inc:  INSERT INTO t1 (d,d0,d1_1,d10_2,d60_10,n,n0_0,n1,n20_4,n65_4) VALUES (-9999999999.0,-9999999999.0,-0.9,-99999999.99,-99999999999999999999999999999999999999999999999999.9999999999,-9999999999.0,-9999999999.0,-9.0,-9999999999999999.9999,-9999999999999999999999999999999999999999999999999999999999999.9999);
+type_fixed.inc:  INSERT INTO t1 (d,d0,d1_1,d10_2,d60_10,n,n0_0,n1,n20_4,n65_4) SELECT n65_4, n65_4, n65_4, n65_4, n65_4, n65_4, n65_4, n65_4, n65_4, n65_4 FROM t1 WHERE n65_4 = ( SELECT MAX(n65_4) FROM t1 );
+type_fixed.inc:  INSERT INTO t1 (d,d0,d1_1,d10_2,d60_10,n,n0_0,n1,n20_4,n65_4) VALUES (10000000000.0,10000000000.0,1.1,100000000.99,100000000000000000000000000000000000000000000000000.0,10000000000.0,10000000000.0,10.0,10000000000000000.9999,10000000000000000000000000000000000000000000000000000000000000.9999);
+type_fixed.inc:  INSERT INTO t1 (d,d0,d1_1,d10_2,d60_10,n,n0_0,n1,n20_4,n65_4) VALUES (9999999999.1,9999999999.1,1.9,99999999.001,99999999999999999999999999999999999999999999999999.99999999991,9999999999.1,9999999999.1,9.1,9999999999999999.00001,9999999999999999999999999999999999999999999999999999999999999.11111);
+type_float.inc:  INSERT INTO t1 (f,f10,r1_1,f23_0,f20_3,d,d1_0,d10_10,d53,d53_10) VALUES (12345.12345,12345.12345,0.9,123456789.123,56789.987,11111111.111,8.0,0.0123456789,1234566789123456789,99999999999999999.99999999);
+type_float.inc:  INSERT INTO t1 (f,f10,r1_1,f23_0,f20_3,d,d1_0,d10_10,d53,d53_10) VALUES (0,0,0,0,0,0,0,0,0,0);
+type_float.inc:  INSERT INTO t1 (f,f10,r1_1,f23_0,f20_3,d,d1_0,d10_10,d53,d53_10) VALUES (
+type_float.inc:  INSERT INTO t1 (f,f10,r1_1,f23_0,f20_3,d,d1_0,d10_10,d53,d53_10) VALUES (-999999999999999999999999,-99999999999.999999999999,-0.9,-999.99999999999999999999,-99999999999999999.999,-999999999999999999999999999999999999999999999999999999999999-0.999,-9,-.9999999999,-999999999999999999999999999999.99999999999999999999999,-9999999999999999999999999999999999999999999.9999999999);
+type_float.inc:  INSERT INTO t1 (f,f10,r1_1,f23_0,f20_3,d,d1_0,d10_10,d53,d53_10) SELECT d53_10, d53_10, d53_10, d53_10, d53_10, d53_10, d53_10, d53_10, d53_10, d53_10 FROM t1 ORDER BY d53_10 DESC LIMIT 1;
+type_float.inc:  INSERT INTO t1 (f,f10,r1_1,f23_0,f20_3,d,d1_0,d10_10,d53,d53_10) VALUES (
+type_int.inc:  INSERT INTO t1 (i,i0,i1,i20,t,t0,t1,t20,s,s0,s1,s20,m,m0,m1,m20,b,b0,b1,b20) VALUES (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20);
+type_int.inc:  INSERT INTO t1 (i,i0,i1,i20,t,t0,t1,t20,s,s0,s1,s20,m,m0,m1,m20,b,b0,b1,b20) VALUES (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+type_int.inc:  INSERT INTO t1 (i,i0,i1,i20,t,t0,t1,t20,s,s0,s1,s20,m,m0,m1,m20,b,b0,b1,b20) VALUES (2147483647,2147483647,2147483647,2147483647,127,127,127,127,32767,32767,32767,32767,8388607,8388607,8388607,8388607,9223372036854775807,9223372036854775807,9223372036854775807,9223372036854775807);
+type_int.inc:  INSERT INTO t1 (i,i0,i1,i20,t,t0,t1,t20,s,s0,s1,s20,m,m0,m1,m20,b,b0,b1,b20) VALUES (-2147483648,-2147483648,-2147483648,-2147483648,-128,-128,-128,-128,-32768,-32768,-32768,-32768,-8388608,-8388608,-8388608,-8388608,-9223372036854775808,-9223372036854775808,-9223372036854775808,-9223372036854775808);
+type_int.inc:  INSERT INTO t1 (i,i0,i1,i20,t,t0,t1,t20,s,s0,s1,s20,m,m0,m1,m20,b,b0,b1,b20) VALUES (4294967295,4294967295,4294967295,4294967295,255,255,255,255,65535,65535,65535,65535,16777215,16777215,16777215,16777215,18446744073709551615,18446744073709551615,18446744073709551615,18446744073709551615);
+type_int.inc:  INSERT INTO t1 (i,i0,i1,i20,t,t0,t1,t20,s,s0,s1,s20,m,m0,m1,m20,b,b0,b1,b20) VALUES (-2147483649,-2147483649,-2147483649,-2147483649,-129,-129,-129,-129,-32769,-32769,-32769,-32769,-8388609,-8388609,-8388609,-8388609,-9223372036854775809,-9223372036854775809,-9223372036854775809,-9223372036854775809);
+type_int.inc:  INSERT INTO t1 (i,i0,i1,i20,t,t0,t1,t20,s,s0,s1,s20,m,m0,m1,m20,b,b0,b1,b20) VALUES (4294967296,4294967296,4294967296,4294967296,256,256,256,256,65536,65536,65536,65536,16777216,16777216,16777216,16777216,18446744073709551616,18446744073709551616,18446744073709551616,18446744073709551616);
+type_int.inc:  INSERT INTO t1 (i,i0,i1,i20,t,t0,t1,t20,s,s0,s1,s20,m,m0,m1,m20,b,b0,b1,b20) SELECT b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b FROM t1 WHERE b IN (-9223372036854775808,9223372036854775807,18446744073709551615);
+type_set.inc:  INSERT INTO t1 (a,b,c) VALUES 
+type_set.inc:  INSERT INTO t1 (a,b,c) VALUES (0,'test6',-1);
+type_spatial.inc:  INSERT INTO gis_point (fid,g) VALUES 
+type_spatial.inc:  INSERT INTO gis_line (fid,g) VALUES
+type_spatial.inc:  INSERT INTO gis_polygon (fid,g) VALUES
+type_spatial.inc:  INSERT INTO gis_multi_point (fid,g) VALUES
+type_spatial.inc:  INSERT INTO gis_multi_line (fid,g) VALUES
+type_spatial.inc:  INSERT INTO gis_multi_polygon (fid,g) VALUES
+type_spatial.inc:  INSERT INTO gis_geometrycollection (fid,g) VALUES
+type_spatial.inc:  INSERT into gis_geometry (fid,g) SELECT * FROM gis_point;
+type_spatial.inc:  INSERT into gis_geometry (fid,g) SELECT * FROM gis_line;
+type_spatial.inc:  INSERT into gis_geometry (fid,g) SELECT * FROM gis_polygon;
+type_spatial.inc:  INSERT into gis_geometry (fid,g) SELECT * FROM gis_multi_point;
+type_spatial.inc:  INSERT into gis_geometry (fid,g) SELECT * FROM gis_multi_line;
+type_spatial.inc:  INSERT into gis_geometry (fid,g) SELECT * FROM gis_multi_polygon;
+type_spatial.inc:  INSERT into gis_geometry (fid,g) SELECT * FROM gis_geometrycollection;
+type_spatial.inc:  INSERT INTO lakes (fid,name,shore) VALUES ( 
+type_spatial.inc:  INSERT INTO road_segments VALUES(102, 'Route 5', NULL, 2, 
+type_spatial.inc:  INSERT INTO road_segments (fid,name,aliases,num_lanes,centerlines) VALUES(103, 'Route 5', 'Main Street', 4, 
+type_spatial.inc:  INSERT INTO road_segments (fid,name,aliases,num_lanes,centerlines) VALUES(104, 'Route 5', NULL, 2, 
+type_spatial.inc:  INSERT INTO road_segments (fid,name,aliases,num_lanes,centerlines) VALUES(105, 'Main Street', NULL, 4, 
+type_spatial.inc:  INSERT INTO road_segments (fid,name,aliases,num_lanes,centerlines) VALUES(106, 'Dirt Road by Green Forest', NULL, 
+type_spatial.inc:  INSERT INTO divided_routes (fid,name,num_lanes,centerlines) VALUES(119, 'Route 75', 4, 
+type_spatial.inc:  INSERT INTO forests (fid,name,boundary) VALUES(109, 'Green Forest', 
+type_spatial.inc:  INSERT INTO bridges (fid,name,position) VALUES(110, 'Cam Bridge', PointFromText( 
+type_spatial.inc:  INSERT INTO streams (fid,name,centerline) VALUES(111, 'Cam Stream', 
+type_spatial.inc:  INSERT INTO streams (fid,name,centerline) VALUES(112, NULL, 
+type_spatial.inc:  INSERT INTO buildings VALUES(113, '123 Main Street', 
+type_spatial.inc:  INSERT INTO buildings (fid,name,position,footprint) VALUES(114, '215 Main Street', 
+type_spatial.inc:  INSERT INTO ponds (fid,name,type,shores) VALUES(120, NULL, 'Stock Pond', 
+type_spatial.inc:  INSERT INTO named_places (fid,name,boundary) VALUES(117, 'Ashton', 
+type_spatial.inc:  INSERT INTO named_places (fid,name,boundary) VALUES(118, 'Goose Island', 
+type_spatial.inc:  INSERT INTO map_neatlines (fid,neatline) VALUES(115, 
+type_text.inc:  INSERT INTO t1 (t,t0,t1,t300,tm,t70k,t17m,tt,m,l) VALUES
+type_text.inc:  INSERT INTO t1 (t,t0,t1,t300,tm,t70k,t17m,tt,m,l) VALUES
+type_varbinary.inc:  INSERT INTO t1 (v0,v1,v64,v65000) VALUES ('','','','');
+type_varbinary.inc:  INSERT INTO t1 (v0,v1,v64,v65000) VALUES ('','y','Once there, double check that an article doesn\'t already exist','Here is a list of recommended books on MariaDB and MySQL. We\'ve provided links to Amazon.com here for convenience, but they can be found at many other bookstores, both online and off.
+type_varbinary.inc:  INSERT INTO t1 (v0,v1,v64,v65000) VALUES ('y', 'yy', REPEAT('c',65), REPEAT('abcdefghi ',6501));
+type_varbinary.inc:  INSERT INTO t1 (v0,v1,v64,v65000) SELECT v65000, v65000, v65000, CONCAT(v65000,v1) FROM t1;
+type_varchar.inc:  INSERT INTO t1 (v0,v1,v64,v65000) VALUES ('','','','');
+type_varchar.inc:  INSERT INTO t1 (v0,v1,v64,v65000) VALUES ('','y','Once there, double check that an article doesn\'t already exist','Here is a list of recommended books on MariaDB and MySQL. We\'ve provided links to Amazon.com here for convenience, but they can be found at many other bookstores, both online and off.
+type_varchar.inc:  INSERT INTO t1 (v0,v1,v64,v65000) VALUES ('y', 'yy', REPEAT('c',65), REPEAT('abcdefghi ',6501));
+type_varchar.inc:  INSERT INTO t1 (v0,v1,v64,v65000) SELECT v65000, v65000, v65000, CONCAT(v65000,v1) FROM t1;
+unexpected_result.inc:# --let $my_last_stmt = INSERT INTO t VALUES (1)   # optional

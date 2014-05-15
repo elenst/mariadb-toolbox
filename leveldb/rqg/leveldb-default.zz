@@ -1,0 +1,17 @@
+#
+# Default data template for LevelDB testing (can be also used for other tests,
+# since it doesn't contain anything strictly LevelDB-specific)
+#
+
+$tables = {
+	names => ['A','B','C','D'],
+        rows => [0,1,10,100],
+	pk => [ 'int' ],
+};
+
+$fields = {
+        types => [ 'int', 'smallint not null', 'tinyint unsigned', 'mediumint unsigned not null', 'bigint zerofill', 'decimal(6,2)', 'numeric(6,2) unsigned', 'float(6,2) not null', 'double(6,2) signed not null', 'bit(2)',  'date', 'datetime not null', 'datetime(3)', 'timestamp', 'timestamp(4)', 'time', 'time(5)', 'year', 'year(2)', 'char(8)', 'varchar(1)', 'binary(32)', 'varbinary(256)', 'blob(1024)', 'tinyblob', 'mediumblob', 'longblob', 'text(2048)', 'tinytext', 'mediumtext', 'longtext' ],
+        indexes => [ undef ]
+};
+
+

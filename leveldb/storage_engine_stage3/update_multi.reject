@@ -1,0 +1,23 @@
+DROP TABLE IF EXISTS t1,t2;
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a <INT_COLUMN>, b <CHAR_COLUMN>) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e'),(10000,'foobar');
+INSERT INTO t1 (a,b) SELECT a, b FROM t1;
+CREATE TABLE t2 (ldb_pk INT DEFAULT 0 PRIMARY KEY, c <CHAR_COLUMN>, d <INT_COLUMN>) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+INSERT INTO t2 (c,d) SELECT b, a FROM t1;
+UPDATE t1, t2 SET t1.a = t2.d+100, t2.c = 'multi' WHERE c < b AND a + d != 1;
+SELECT * FROM t1;
+ldb_pk	a	b
+1	10000	foobar
+2	10000	foobar
+SELECT * FROM t2;
+ldb_pk	c	d
+1	foobar	10000
+UPDATE t2, t1 SET t2.d = DEFAULT WHERE c = 'foobar' and b = c;
+SELECT * FROM t1;
+ldb_pk	a	b
+1	10000	foobar
+2	10000	foobar
+SELECT * FROM t2;
+ldb_pk	c	d
+1	foobar	NULL
+DROP TABLE t1, t2;

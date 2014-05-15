@@ -1,0 +1,87 @@
+=== modified file 'conf/optimizer/optimizer_access_exp.yy'
+--- conf/optimizer/optimizer_access_exp.yy	2010-03-03 18:08:00 +0000
++++ conf/optimizer/optimizer_access_exp.yy	2013-05-20 11:12:04 +0000
+@@ -228,7 +228,7 @@
+   { $char_idx_field } greater_than char_value AND { $char_idx_field } less_than 'zzzz' |
+   { $char_idx_field } IS not NULL |
+   { $char_idx_field } not IN (char_list) |
+-  { $char_idx_field } not LIKE ( char_pattern ) |
++  { $char_idx_field } not LIKE ( CONCAT( '%' , char_pattern ) ) |
+   { $char_idx_field } not BETWEEN _char AND 'z' ;
+ 
+ union_where_list:
+@@ -267,7 +267,7 @@
+   { $char_idx_field } >= char_value AND { $char_idx_field } <= high_char |
+   { $char_idx_field } IS not NULL |
+   { $char_idx_field } not IN (char_list) |
+-  { $char_idx_field } not LIKE ( char_pattern ) |
++  { $char_idx_field } not LIKE ( CONCAT( '%', char_pattern ) ) |
+   { $char_idx_field } not BETWEEN _char AND 'z' ;
+ 
+ 
+
+=== modified file 'conf/optimizer/optimizer_no_subquery.yy'
+--- conf/optimizer/optimizer_no_subquery.yy	2011-11-16 14:42:02 +0000
++++ conf/optimizer/optimizer_no_subquery.yy	2013-05-20 11:11:22 +0000
+@@ -246,7 +246,7 @@
+ range_predicate2_item:
+         alias1 . `pk` = _tinyint_unsigned |
+         alias1 . `col_int_key` = _tinyint_unsigned |
+-        alias1 . `col_varchar_key` LIKE CONCAT( _char , '%' ) |
++        alias1 . `col_varchar_key` LIKE CONCAT( '%', _char , '%' ) |
+         alias1 . int_indexed = _tinyint_unsigned |
+         alias1 . `col_varchar_key` = _char |
+         alias1 . int_indexed = existing_table_item . int_indexed |
+
+=== modified file 'conf/optimizer/optimizer_subquery.yy'
+--- conf/optimizer/optimizer_subquery.yy	2011-11-16 14:42:02 +0000
++++ conf/optimizer/optimizer_subquery.yy	2013-05-20 11:08:29 +0000
+@@ -556,7 +556,7 @@
+         alias1 . `col_int_key` = _tinyint_unsigned |
+         alias1 . `col_varchar_key` = _char |
+         alias1 . int_indexed = _tinyint_unsigned |
+-        alias1 . `col_varchar_key` LIKE CONCAT( _char , '%') |
++        alias1 . `col_varchar_key` LIKE CONCAT( '%', _char , '%') |
+         alias1 . int_indexed = existing_table_item . int_indexed |
+         alias1 . `col_varchar_key` = existing_table_item . `col_varchar_key` ;
+ 
+
+=== modified file 'conf/optimizer/optimizer_subquery_semijoin.yy'
+--- conf/optimizer/optimizer_subquery_semijoin.yy	2011-12-01 19:14:51 +0000
++++ conf/optimizer/optimizer_subquery_semijoin.yy	2013-05-20 11:08:55 +0000
+@@ -592,7 +592,7 @@
+         alias1 . `col_int_key` = _tinyint_unsigned |
+         alias1 . `col_varchar_key` = _char |
+         alias1 . int_indexed = _tinyint_unsigned |
+-        alias1 . `col_varchar_key` LIKE CONCAT( _char , '%') |
++        alias1 . `col_varchar_key` LIKE CONCAT( '%', _char , '%') |
+         alias1 . int_indexed = existing_table_item . int_indexed |
+         alias1 . `col_varchar_key` = existing_table_item . `col_varchar_key` ;
+ 
+
+=== modified file 'conf/optimizer/range_access.yy'
+--- conf/optimizer/range_access.yy	2010-12-27 09:52:20 +0000
++++ conf/optimizer/range_access.yy	2013-05-20 11:10:10 +0000
+@@ -154,7 +154,7 @@
+   { $char_idx_field } greater_than char_value AND { $char_idx_field } less_than 'zzzz' |
+   { $char_idx_field } IS not NULL |
+   { $char_idx_field } not IN (char_list) |
+-  { $char_idx_field } not LIKE ( char_pattern ) |
++  { $char_idx_field } not LIKE ( CONCAT( '%', char_pattern ) ) |
+   { $char_idx_field } not BETWEEN _char AND 'z' ;
+ 
+ ################################################################################
+
+=== modified file 'conf/optimizer/range_access2.yy'
+--- conf/optimizer/range_access2.yy	2011-10-13 07:06:14 +0000
++++ conf/optimizer/range_access2.yy	2013-05-20 11:09:27 +0000
+@@ -89,7 +89,7 @@
+ string_item:
+ 	not ( string_key comparison_operator string_value ) |
+ 	string_key not BETWEEN string_value AND string_value |
+-	string_key not LIKE CONCAT (string_value , '%' ) |
++	string_key not LIKE CONCAT ('%', string_value , '%' ) |
+ 	string_key not IN ( string_list ) |
+ 	string_key IS not NULL ;
+ 
+

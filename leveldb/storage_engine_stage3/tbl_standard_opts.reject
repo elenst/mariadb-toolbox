@@ -1,0 +1,66 @@
+DROP TABLE IF EXISTS t1;
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a <INT_COLUMN>, b <CHAR_COLUMN>) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS> DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci
+COMMENT = 'standard table options'
+;
+SHOW CREATE TABLE t1;
+Table	Create Table
+t1	CREATE TABLE `t1` (
+  `ldb_pk` int(11) NOT NULL DEFAULT '0',
+  `a` int(11) DEFAULT NULL,
+  `b` char(8) DEFAULT NULL,
+  PRIMARY KEY (`ldb_pk`)
+) ENGINE=<STORAGE_ENGINE> DEFAULT CHARSET=utf8 COMMENT='standard table options'
+ALTER TABLE t1 COMMENT = 'table altered';
+ERROR HY000: Table storage engine for 't1' doesn't have this option
+# ERROR: Statement ended with errno 1031, errname ER_ILLEGAL_HA (expected to succeed)
+# ------------ UNEXPECTED RESULT ------------
+# [ ALTER TABLE t1 COMMENT = 'table altered' ]
+# The statement|command finished with ER_ILLEGAL_HA.
+# ALTER TABLE or the syntax or the mix could be unsupported. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+SHOW CREATE TABLE t1;
+Table	Create Table
+t1	CREATE TABLE `t1` (
+  `ldb_pk` int(11) NOT NULL DEFAULT '0',
+  `a` int(11) DEFAULT NULL,
+  `b` char(8) DEFAULT NULL,
+  PRIMARY KEY (`ldb_pk`)
+) ENGINE=<STORAGE_ENGINE> DEFAULT CHARSET=utf8 COMMENT='standard table options'
+ALTER TABLE t1 ENGINE=MEMORY;
+ERROR HY000: Table storage engine for 't1' doesn't have this option
+# ERROR: Statement ended with errno 1031, errname ER_ILLEGAL_HA (expected to succeed)
+SHOW CREATE TABLE t1;
+Table	Create Table
+t1	CREATE TABLE `t1` (
+  `ldb_pk` int(11) NOT NULL DEFAULT '0',
+  `a` int(11) DEFAULT NULL,
+  `b` char(8) DEFAULT NULL,
+  PRIMARY KEY (`ldb_pk`)
+) ENGINE=LEVELDB DEFAULT CHARSET=utf8 COMMENT='standard table options'
+ALTER TABLE t1 ENGINE=<STORAGE_ENGINE>;
+ERROR HY000: Table storage engine for 't1' doesn't have this option
+# ERROR: Statement ended with errno 1031, errname ER_ILLEGAL_HA (expected to succeed)
+SHOW CREATE TABLE t1;
+Table	Create Table
+t1	CREATE TABLE `t1` (
+  `ldb_pk` int(11) NOT NULL DEFAULT '0',
+  `a` int(11) DEFAULT NULL,
+  `b` char(8) DEFAULT NULL,
+  PRIMARY KEY (`ldb_pk`)
+) ENGINE=<STORAGE_ENGINE> DEFAULT CHARSET=utf8 COMMENT='standard table options'
+ALTER TABLE t1 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci;
+ERROR HY000: Table storage engine for 't1' doesn't have this option
+# ERROR: Statement ended with errno 1031, errname ER_ILLEGAL_HA (expected to succeed)
+SHOW CREATE TABLE t1;
+Table	Create Table
+t1	CREATE TABLE `t1` (
+  `ldb_pk` int(11) NOT NULL DEFAULT '0',
+  `a` int(11) DEFAULT NULL,
+  `b` char(8) DEFAULT NULL,
+  PRIMARY KEY (`ldb_pk`)
+) ENGINE=<STORAGE_ENGINE> DEFAULT CHARSET=utf8 COMMENT='standard table options'
+DROP TABLE t1;

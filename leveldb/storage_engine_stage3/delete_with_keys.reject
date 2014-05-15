@@ -1,0 +1,43 @@
+DROP TABLE IF EXISTS t1;
+CREATE DATABASE ldb_se_0;
+USE ldb_se_0;
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a <INT_COLUMN>, b <CHAR_COLUMN>, <CUSTOM_INDEX> (b)) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+ERROR HY000: Got error 122 from storage engine
+# ERROR: Statement ended with errno 1030, errname ER_GET_ERRNO (expected to succeed)
+ERROR 42S02: Table 'ldb_se_0.t1' doesn't exist
+# ------------ UNEXPECTED RESULT ------------
+# The statement|command finished with ER_GET_ERRNO.
+# Index on a CHAR column or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+CREATE DATABASE ldb_se_1;
+USE ldb_se_1;
+CREATE TABLE t1 (a <INT_COLUMN> PRIMARY KEY, b <CHAR_COLUMN>) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e'),(6,'x'),(7,'y'),(8,'z');
+DELETE FROM t1 WHERE b > 'y';
+DELETE FROM t1 WHERE a=2;
+SELECT * FROM t1;
+a	b
+1	a
+3	c
+4	d
+5	e
+6	x
+7	y
+DELETE FROM t1;
+DROP TABLE t1;
+CREATE DATABASE ldb_se_2;
+USE ldb_se_2;
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a <INT_COLUMN>, b <INT_COLUMN>, c <INT_COLUMN>, <CUSTOM_INDEX>(a), <CUSTOM_INDEX>(b)) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+ERROR 42000: Table handler doesn't support NULL in given index. Please change column 'b' to be NOT NULL or use another handler
+# ERROR: Statement ended with errno 1121, errname ER_NULL_COLUMN_IN_INDEX (expected to succeed)
+ERROR 42S02: Table 'ldb_se_2.t1' doesn't exist
+# ------------ UNEXPECTED RESULT ------------
+# The statement|command finished with ER_NULL_COLUMN_IN_INDEX.
+# Multiple indexes or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------

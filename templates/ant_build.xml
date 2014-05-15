@@ -1,0 +1,13 @@
+<project name="Name goes here" default="dflt" basedir=".">
+  <description>
+    Description goes here
+  </description>
+
+  <target name="sql-maria-broken">
+    <sql userid="root" password="" url="jdbc:mysql://localhost/" driver="org.mariadb.jdbc.Driver" classpath="mariadb-client-1.0.0.jar" print="true">
+use test;
+    </sql>
+  </target>
+
+</project>
+

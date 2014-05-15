@@ -1,0 +1,95 @@
+DROP TABLE IF EXISTS t1;
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a <INT_COLUMN>, b <CHAR_COLUMN>) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+INSERT INTO t1 (a,b) VALUES (11,'foobar'),(12,'b');
+SET LOW_PRIORITY_UPDATES = 0;
+SET lock_wait_timeout = 4;
+connect  con1,localhost,root,,;
+SET lock_wait_timeout = 2;
+SELECT a+SLEEP(1) FROM t1;
+connection default;
+# Timeout in include/wait_show_condition.inc for = 'User sleep'
+#         show_statement : SHOW PROCESSLIST
+#         field          : State
+#         condition      : = 'User sleep'
+#         max_run_time   : 3
+UPDATE t1 SET a=a+10;
+connect  con2,localhost,root,,;
+SET lock_wait_timeout = 3;
+# Timeout in include/wait_show_condition.inc for = 'UPDATE t1 SET a=a+10'
+#         show_statement : SHOW PROCESSLIST
+#         field          : Info
+#         condition      : = 'UPDATE t1 SET a=a+10'
+#         max_run_time   : 3
+# ------------ UNEXPECTED RESULT ------------
+# The statement|command finished with timeout in wait_show_condition.inc.
+# Table locking or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+SELECT a+SLEEP(1) FROM t1;
+ERROR 42S02: Table 'test.t1' doesn't exist
+connection con1;
+ERROR 42S02: Table 'test.t1' doesn't exist
+connection default;
+SELECT * FROM t1;
+ldb_pk	a	b
+1	22	b
+connection con1;
+SELECT a+SLEEP(1) FROM t1;
+connection default;
+# Timeout in include/wait_show_condition.inc for = 'User sleep'
+#         show_statement : SHOW PROCESSLIST
+#         field          : State
+#         condition      : = 'User sleep'
+#         max_run_time   : 3
+UPDATE LOW_PRIORITY t1 SET a=a+20;
+connection con2;
+# Timeout in include/wait_show_condition.inc for = 'UPDATE LOW_PRIORITY t1 SET a=a+20'
+#         show_statement : SHOW PROCESSLIST
+#         field          : Info
+#         condition      : = 'UPDATE LOW_PRIORITY t1 SET a=a+20'
+#         max_run_time   : 3
+SELECT a+SLEEP(1) FROM t1;
+ERROR 42S02: Table 'test.t1' doesn't exist
+connection con1;
+ERROR 42S02: Table 'test.t1' doesn't exist
+connection default;
+SELECT * FROM t1;
+ldb_pk	a	b
+1	42	b
+SET LOW_PRIORITY_UPDATES = 1;
+connection con1;
+SELECT a+SLEEP(1) FROM t1;
+connection default;
+# Timeout in include/wait_show_condition.inc for = 'User sleep'
+#         show_statement : SHOW PROCESSLIST
+#         field          : State
+#         condition      : = 'User sleep'
+#         max_run_time   : 3
+UPDATE t1 SET a=a+30;
+connection con2;
+# Timeout in include/wait_show_condition.inc for = 'UPDATE t1 SET a=a+30'
+#         show_statement : SHOW PROCESSLIST
+#         field          : Info
+#         condition      : = 'UPDATE t1 SET a=a+30'
+#         max_run_time   : 3
+# ------------ UNEXPECTED RESULT ------------
+# The statement|command finished with timeout in wait_show_condition.inc.
+# Table locking or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+SELECT a+SLEEP(1) FROM t1;
+ERROR 42S02: Table 'test.t1' doesn't exist
+connection con1;
+ERROR 42S02: Table 'test.t1' doesn't exist
+connection default;
+SELECT * FROM t1;
+ldb_pk	a	b
+1	72	b
+disconnect con1;
+disconnect con2;
+connection default;
+DROP TABLE t1;

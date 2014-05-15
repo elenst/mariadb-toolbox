@@ -1,0 +1,70 @@
+DROP TABLE IF EXISTS t1, t2;
+CREATE DATABASE ldb_se_0;
+USE ldb_se_0;
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a <INT_COLUMN>, b <CHAR_COLUMN>) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+INSERT INTO t1 VALUES (100,'foobar'),(1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e');
+ERROR 21S01: Column count doesn't match value count at row 1
+# ------------ UNEXPECTED RESULT ------------
+# The statement|command finished with ER_WRONG_VALUE_COUNT_ON_ROW.
+# INSERT or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+SELECT * FROM t1;
+ldb_pk	a	b
+INSERT t1 VALUE (10,'foo'),(11,'abc');
+ERROR 21S01: Column count doesn't match value count at row 1
+SELECT * FROM t1;
+ldb_pk	a	b
+INSERT INTO t1 (b,a) VALUES ('test',0);
+SELECT * FROM t1;
+ldb_pk	a	b
+1	0	test
+INSERT INTO t1 VALUES (DEFAULT,DEFAULT);
+ERROR 21S01: Column count doesn't match value count at row 1
+SELECT * FROM t1;
+ldb_pk	a	b
+1	0	test
+INSERT t1 (a) VALUE (10),(20);
+SELECT * FROM t1;
+ldb_pk	a	b
+1	0	test
+2	20	NULL
+INSERT INTO t1 SET a = 11, b = 'f';
+SELECT * FROM t1;
+ldb_pk	a	b
+1	0	test
+2	20	NULL
+3	11	f
+INSERT t1 SET b = DEFAULT;
+SELECT * FROM t1;
+ldb_pk	a	b
+1	0	test
+2	20	NULL
+3	11	f
+4	NULL	NULL
+CREATE DATABASE ldb_se_1;
+USE ldb_se_1;
+CREATE TABLE t1 LIKE ldb_se_0.t1;
+INSERT INTO t1 SELECT * FROM ldb_se_0.t1;
+CREATE TRIGGER tr_pk_t1 BEFORE INSERT ON t1 FOR EACH ROW 
+SET NEW.ldb_pk = ( SELECT COALESCE(MAX(ldb_pk),0)+1 FROM t1 );
+CREATE TABLE t2 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a <INT_COLUMN>, b <CHAR_COLUMN>) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+INSERT INTO t2 SELECT * FROM t1;
+INSERT INTO t1 (a) SELECT a FROM t2 WHERE b = 'foo';
+SELECT * FROM t1;
+ldb_pk	a	b
+1	0	test
+2	20	NULL
+3	11	f
+4	NULL	NULL
+INSERT t1 SELECT * FROM t1;
+SELECT * FROM t1;
+ldb_pk	a	b
+1	0	test
+2	20	NULL
+3	11	f
+4	NULL	NULL
+5	NULL	NULL
+DROP TABLE t1, t2;

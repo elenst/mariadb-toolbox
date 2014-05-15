@@ -1,0 +1,57 @@
+CREATE TABLE `t1` (
+  `a` int(11) NOT NULL DEFAULT '0',
+  `b` char(8) DEFAULT NULL,
+  PRIMARY KEY (`a`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+LOAD DATA INFILE '<DATADIR>/se_loaddata.dat' INTO TABLE t1 
+FIELDS TERMINATED BY ',';
+SELECT * FROM t1;
+a	b
+1	foo
+2	bar
+3	
+4	abc
+LOAD DATA LOCAL INFILE '<DATADIR>/se_loaddata.dat' INTO TABLE t1
+CHARACTER SET utf8 COLUMNS TERMINATED BY ','
+    ESCAPED BY '/';
+SELECT * FROM t1;
+a	b
+1	foo
+2	bar
+3	
+4	abc
+LOAD DATA INFILE '<DATADIR>/se_loaddata.dat' INTO TABLE t1
+FIELDS TERMINATED BY ';'
+    OPTIONALLY ENCLOSED BY ''''
+    LINES STARTING BY 'prefix:' 
+IGNORE 2 LINES
+(a,b);
+Warnings:
+Warning	1262	Row 2 was truncated; it contained more data than there were input columns
+SELECT * FROM t1;
+a	b
+0	
+1	foo
+100	foo
+2	bar
+3	
+4	abc
+7	test
+LOAD DATA LOCAL INFILE '<DATADIR>/se_loaddata.dat' INTO TABLE t1
+FIELDS TERMINATED BY ';'
+    (a) SET b='loaded';
+Warnings:
+Warning	1262	Row 1 was truncated; it contained more data than there were input columns
+Warning	1262	Row 2 was truncated; it contained more data than there were input columns
+Warning	1262	Row 3 was truncated; it contained more data than there were input columns
+SELECT * FROM t1;
+a	b
+0	loaded
+1	foo
+100	foo
+102	loaded
+2	bar
+3	
+4	abc
+5	loaded
+7	test

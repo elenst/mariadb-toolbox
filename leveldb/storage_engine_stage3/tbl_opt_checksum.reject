@@ -1,0 +1,29 @@
+DROP TABLE IF EXISTS t1;
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a <INT_COLUMN>, b <CHAR_COLUMN>) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS> CHECKSUM=1;
+SHOW CREATE TABLE t1;
+Table	Create Table
+t1	CREATE TABLE `t1` (
+  `ldb_pk` int(11) NOT NULL DEFAULT '0',
+  `a` int(11) DEFAULT NULL,
+  `b` char(8) DEFAULT NULL,
+  PRIMARY KEY (`ldb_pk`)
+) ENGINE=<STORAGE_ENGINE> DEFAULT CHARSET=latin1 CHECKSUM=1
+ALTER TABLE t1 CHECKSUM=0;
+ERROR HY000: Table storage engine for 't1' doesn't have this option
+# ERROR: Statement ended with errno 1031, errname ER_ILLEGAL_HA (expected to succeed)
+# ------------ UNEXPECTED RESULT ------------
+# The statement|command finished with ER_ILLEGAL_HA.
+# ALTER TABLE or the syntax or the mix could be unsupported. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+SHOW CREATE TABLE t1;
+Table	Create Table
+t1	CREATE TABLE `t1` (
+  `ldb_pk` int(11) NOT NULL DEFAULT '0',
+  `a` int(11) DEFAULT NULL,
+  `b` char(8) DEFAULT NULL,
+  PRIMARY KEY (`ldb_pk`)
+) ENGINE=<STORAGE_ENGINE> DEFAULT CHARSET=latin1 CHECKSUM=1
+DROP TABLE t1;

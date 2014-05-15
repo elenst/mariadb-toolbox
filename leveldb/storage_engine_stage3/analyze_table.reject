@@ -1,0 +1,47 @@
+DROP TABLE IF EXISTS t1,t2;
+CREATE DATABASE ldb_se_0;
+USE ldb_se_0;
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a <INT_COLUMN>, b <CHAR_COLUMN>) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b');
+CREATE DATABASE ldb_se_1;
+USE ldb_se_1;
+CREATE TABLE t1 LIKE ldb_se_0.t1;
+INSERT INTO t1 SELECT * FROM ldb_se_0.t1;
+CREATE TRIGGER tr_pk_t1 BEFORE INSERT ON t1 FOR EACH ROW 
+SET NEW.ldb_pk = ( SELECT COALESCE(MAX(ldb_pk),0)+1 FROM t1 );
+CREATE TABLE t2 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a <INT_COLUMN>, b <CHAR_COLUMN>) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+INSERT INTO t1 (a,b) VALUES (3,'c');
+ANALYZE TABLE t1;
+Table	Op	Msg_type	Msg_text
+ldb_se_1.t1	analyze	note	The storage engine for the table doesn't support analyze
+INSERT INTO t2 (a,b) VALUES (4,'d');
+ANALYZE NO_WRITE_TO_BINLOG TABLE t2;
+Table	Op	Msg_type	Msg_text
+ldb_se_1.t2	analyze	note	The storage engine for the table doesn't support analyze
+INSERT INTO t1 (a,b) VALUES (5,'e');
+INSERT INTO t2 (a,b) VALUES (6,'f');
+ANALYZE LOCAL TABLE t1, t2;
+Table	Op	Msg_type	Msg_text
+ldb_se_1.t1	analyze	note	The storage engine for the table doesn't support analyze
+ldb_se_1.t2	analyze	note	The storage engine for the table doesn't support analyze
+DROP TABLE t1, t2;
+CREATE DATABASE ldb_se_2;
+USE ldb_se_2;
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a <INT_COLUMN>, <CUSTOM_INDEX>(a)) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+ERROR HY000: Got error 122 from storage engine
+# ERROR: Statement ended with errno 1030, errname ER_GET_ERRNO (expected to succeed)
+ERROR 42S02: Table 'ldb_se_2.t1' doesn't exist
+INSERT INTO t1 (a) VALUES (1),(2),(4),(7);
+ERROR 42S02: Table 'ldb_se_2.t1' doesn't exist
+ANALYZE TABLE t1;
+Table	Op	Msg_type	Msg_text
+ldb_se_2.t1	analyze	Error	Table 'ldb_se_2.t1' doesn't exist
+ldb_se_2.t1	analyze	status	Operation failed
+INSERT INTO t1 (a) VALUES (8),(10),(11),(12);
+ERROR 42S02: Table 'ldb_se_2.t1' doesn't exist
+ANALYZE TABLE t1;
+Table	Op	Msg_type	Msg_text
+ldb_se_2.t1	analyze	Error	Table 'ldb_se_2.t1' doesn't exist
+ldb_se_2.t1	analyze	status	Operation failed
+DROP TABLE t1;
+ERROR 42S02: Unknown table 'ldb_se_2.t1'

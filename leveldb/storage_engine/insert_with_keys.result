@@ -1,0 +1,147 @@
+CREATE TABLE `t1` (
+  `a` int(11) DEFAULT NULL,
+  `b` char(8) NOT NULL,
+  UNIQUE KEY `b` (`b`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e');
+INSERT INTO t1 (a,b) VALUES (100,'a'), (6,'f');
+INSERT INTO t1 (a,b) VALUES (30,'m'),(29,'n');
+INSERT INTO t1 (a,b) VALUES (1,'a'),(12345,'z');
+INSERT INTO t1 (a,b) VALUES (3,'a'),(0,'');
+SELECT * FROM t1;
+a	b
+0	
+12345	z
+2	b
+29	n
+3	a
+3	c
+30	m
+4	d
+5	e
+6	f
+CREATE TABLE `t1` (
+  `a` int(11) NOT NULL,
+  `b` char(8) DEFAULT NULL,
+  UNIQUE KEY `a` (`a`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e');
+INSERT INTO t1 (a,b) VALUES (100,'a'), (6,'f');
+INSERT INTO t1 (a,b) VALUES (30,'m'),(29,'n');
+INSERT INTO t1 (a,b) VALUES (1,'a'),(12345,'z');
+# ERROR: Statement succeeded (expected results: ER_DUP_ENTRY,ER_DUP_KEY)
+INSERT INTO t1 (a,b) VALUES (3,'a'),(0,'');
+# ERROR: Statement succeeded (expected results: ER_DUP_ENTRY,ER_DUP_KEY)
+INSERT INTO t1 (a,b) VALUES (0,'');
+SELECT * FROM t1;
+a	b
+0	
+1	a
+100	a
+12345	z
+2	b
+29	n
+3	a
+30	m
+4	d
+5	e
+6	f
+INSERT IGNORE INTO t1 (a,b) VALUES (1,'a'),(12345,'z');
+INSERT INTO t1 (a,b) VALUES (3,'a'),(4,'d') ON DUPLICATE KEY UPDATE a = a+10;
+SELECT * FROM t1;
+a	b
+0	
+1	a
+100	a
+12345	z
+2	b
+29	n
+3	a
+30	m
+4	d
+5	e
+6	f
+CREATE TABLE `t1` (
+  `a` int(11) NOT NULL,
+  `b` char(8) NOT NULL,
+  UNIQUE KEY `a` (`a`,`b`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e');
+INSERT INTO t1 (a,b) VALUES (100,'a'), (6,'f');
+INSERT INTO t1 (a,b) VALUES (30,'m'),(29,'n');
+INSERT INTO t1 (a,b) VALUES (100,'b'), (2,'c');
+INSERT INTO t1 (a,b) VALUES (1,'a'),(12345,'z');
+# ERROR: Statement succeeded (expected results: ER_DUP_ENTRY,ER_DUP_KEY)
+SELECT * FROM t1;
+a	b
+1	a
+100	a
+100	b
+12345	z
+2	b
+2	c
+29	n
+3	c
+30	m
+4	d
+5	e
+6	f
+INSERT IGNORE INTO t1 (a,b) VALUES (1,'a'),(12345,'z');
+INSERT INTO t1 (a,b) VALUES (1,'a'),(12345,'z') ON DUPLICATE KEY UPDATE a = a+VALUES(a);
+SELECT * FROM t1;
+a	b
+1	a
+100	a
+100	b
+12345	z
+2	b
+2	c
+29	n
+3	c
+30	m
+4	d
+5	e
+6	f
+INSERT INTO t1 (a,b) VALUES (101,'x'),(101,'x');
+# ERROR: Statement succeeded (expected results: ER_DUP_ENTRY,ER_DUP_KEY)
+CREATE TABLE `t1` (
+  `a` int(11) NOT NULL,
+  `b` char(8) DEFAULT NULL,
+  PRIMARY KEY (`a`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e');
+INSERT INTO t1 (a,b) VALUES (100,'a'), (6,'f');
+INSERT INTO t1 (a,b) VALUES (30,'m'),(29,'n');
+INSERT INTO t1 (a,b) VALUES (1,'a'),(12345,'z');
+# ERROR: Statement succeeded (expected results: ER_DUP_ENTRY,ER_DUP_KEY)
+INSERT INTO t1 (a,b) VALUES (3,'a'),(0,'');
+# ERROR: Statement succeeded (expected results: ER_DUP_ENTRY,ER_DUP_KEY)
+INSERT INTO t1 (a,b) VALUES (0,'');
+SELECT * FROM t1;
+a	b
+0	
+1	a
+100	a
+12345	z
+2	b
+29	n
+3	a
+30	m
+4	d
+5	e
+6	f
+INSERT IGNORE INTO t1 (a,b) VALUES (1,'a'),(12345,'z');
+INSERT INTO t1 (a,b) VALUES (1,'a'),(12345,'z') ON DUPLICATE KEY UPDATE b = CONCAT(b,b);
+SELECT * FROM t1;
+a	b
+0	
+1	a
+100	a
+12345	z
+2	b
+29	n
+3	a
+30	m
+4	d
+5	e
+6	f

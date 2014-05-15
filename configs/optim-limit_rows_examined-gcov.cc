@@ -1,0 +1,37 @@
+
+$combinations = [
+	[
+	'
+		--no-mask
+		--seed=time
+		--threads=4
+		--duration=600
+		--queries=100M
+		--reporters=Backtrace,ErrorLog,QueryTimeout
+                --validator=LimitRowsExamined,Transformer
+		--mysqld=--innodb_stats_sample_pages=256
+		--mysqld=--max_join_size=1000000000
+		--mysqld=--log-output=FILE
+		--querytimeout=60
+		--views
+	'], 
+	[
+		'--transformers=ExecuteAsPreparedOnce',
+		'--transformers=RemoveLimitRowsExamined',
+		'--transformers=ExecuteAsView'
+	],
+	[
+		'--engine=InnoDB',
+		'--engine=Aria',
+		'--engine=MyISAM'
+	],
+	[
+		'--rows=0,1,10,50,100,200,300,500,1000',
+		'--rows=10,100,300,500,700,1000,2000,3000,5000',
+	],
+	[
+		'--grammar=/home/elenst/mariadb-toolbox/grammars/optimizer_subquery_create_ins_LRE.yy',
+		'--grammar=/home/elenst/mariadb-toolbox/grammars/optimizer_no_subquery_LRE.yy',
+		'--grammar=/home/elenst/mariadb-toolbox/grammars/optimizer_subquery_LRE.yy'
+	], 
+];

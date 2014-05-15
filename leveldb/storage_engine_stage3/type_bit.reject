@@ -1,0 +1,58 @@
+DROP TABLE IF EXISTS t1;
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a BIT <CUSTOM_COL_OPTIONS>,
+b BIT(20) <CUSTOM_COL_OPTIONS>,
+c BIT(64) <CUSTOM_COL_OPTIONS>,
+d BIT(1) <CUSTOM_COL_OPTIONS>
+) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+SHOW COLUMNS IN t1;
+Field	Type	Null	Key	Default	Extra
+ldb_pk	int(11)	#	#	#	
+a	bit(1)	#	#	#	
+b	bit(20)	#	#	#	
+c	bit(64)	#	#	#	
+d	bit(1)	#	#	#	
+ALTER TABLE t1 DROP COLUMN d;
+ERROR HY000: Table storage engine for 't1' doesn't have this option
+# ERROR: Statement ended with errno 1031, errname ER_ILLEGAL_HA (expected to succeed)
+# ------------ UNEXPECTED RESULT ------------
+# [ ALTER TABLE t1 DROP COLUMN d ]
+# The statement|command finished with ER_ILLEGAL_HA.
+# ALTER TABLE or the syntax or the mix could be unsupported. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+INSERT INTO t1 (a,b,c,d) VALUES (0,POW(2,20)-1,b'1111111111111111111111111111111111111111111111111111111111111111',1);
+SELECT BIN(a), HEX(b), c+0 FROM t1 WHERE d>0;
+BIN(a)	HEX(b)	c+0
+0	FFFFF	18446744073709551615
+INSERT INTO t1 (a,b,c,d) VALUES (1,0,-1,0);
+SELECT a+0, b+0, c+0 FROM t1 WHERE d<100;
+a+0	b+0	c+0
+0	1048575	18446744073709551615
+1	0	18446744073709551615
+INSERT INTO t1 (a,b,c,d) VALUES (b'1', 'f', 0xFF, 0x0);
+SELECT a+0, b+0, c+0 FROM t1 WHERE d IN (0, 2);
+a+0	b+0	c+0
+1	0	18446744073709551615
+1	102	255
+INSERT INTO t1 (a,b,c,d) VALUES (0x10,0,0,1);
+Warnings:
+Warning	1264	Out of range value for column 'a' at row 1
+SELECT * FROM t1;
+ldb_pk	a	b	c	d
+	ÿÿ	ÿÿÿÿÿÿÿÿ	
+1	
+2		
+INSERT INTO t1 (a,b,c,d) VALUES (0x01,0,0x10000000000000000,0);
+Warnings:
+Warning	1264	Out of range value for column 'c' at row 1
+SELECT * FROM t1;
+ldb_pk	a	b	c	d
+	ÿÿ	ÿÿÿÿÿÿÿÿ	
+1	
+2		
+DROP TABLE t1;
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a BIT(65) <CUSTOM_COL_OPTIONS>) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+ERROR 42000: Display width out of range for column 'a' (max = 64)
+ERROR 42S02: Table 'ldb_se_1.t1' doesn't exist

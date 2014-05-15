@@ -1,0 +1,58 @@
+DROP TABLE IF EXISTS t1;
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a <INT_COLUMN>, b <CHAR_COLUMN>, INDEX(b)) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+ERROR 42000: Table handler doesn't support NULL in given index. Please change column 'b' to be NOT NULL or use another handler
+# ERROR: Statement ended with errno 1121, errname ER_NULL_COLUMN_IN_INDEX (expected to succeed)
+ERROR 42S02: Table 'ldb_se_0.t1' doesn't exist
+# ------------ UNEXPECTED RESULT ------------
+# [ CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a INT(11) /*!*/ /*Custom column options*/, b CHAR(8) /*!*/ /*Custom column options*/, INDEX(b)) ENGINE=LevelDB /*!*/ /*Custom table options*/ ]
+# The statement|command finished with ER_NULL_COLUMN_IN_INDEX.
+# Non-unique keys or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a <INT_COLUMN>, b <CHAR_COLUMN>, UNIQUE INDEX(a)) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+ERROR 42000: Table handler doesn't support NULL in given index. Please change column 'a' to be NOT NULL or use another handler
+# ERROR: Statement ended with errno 1121, errname ER_NULL_COLUMN_IN_INDEX (expected to succeed)
+ERROR 42S02: Table 'ldb_se_1.t1' doesn't exist
+# ------------ UNEXPECTED RESULT ------------
+# [ CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a INT(11) /*!*/ /*Custom column options*/, b CHAR(8) /*!*/ /*Custom column options*/, UNIQUE INDEX(a)) ENGINE=LevelDB /*!*/ /*Custom table options*/ ]
+# The statement|command finished with ER_NULL_COLUMN_IN_INDEX.
+# Unique keys or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a <INT_COLUMN>, b <CHAR_COLUMN>, UNIQUE INDEX(a,b)) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+ERROR 42000: Table handler doesn't support NULL in given index. Please change column 'a' to be NOT NULL or use another handler
+# ERROR: Statement ended with errno 1121, errname ER_NULL_COLUMN_IN_INDEX (expected to succeed)
+ERROR 42S02: Table 'ldb_se_2.t1' doesn't exist
+# ------------ UNEXPECTED RESULT ------------
+# [ CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a INT(11) /*!*/ /*Custom column options*/, b CHAR(8) /*!*/ /*Custom column options*/, UNIQUE INDEX(a,b)) ENGINE=LevelDB /*!*/ /*Custom table options*/ ]
+# The statement|command finished with ER_NULL_COLUMN_IN_INDEX.
+# Unique keys or multi-part keys or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+CREATE TABLE t1 (a <INT_COLUMN> PRIMARY KEY, b <CHAR_COLUMN>) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e'),(0,'f'),(100,'a');
+UPDATE t1 SET a=a+200;
+UPDATE t1 SET a=0 WHERE a > 250;
+UPDATE t1 SET a=205 WHERE a=200;
+ERROR 23000: Duplicate entry '205' for key 'PRIMARY'
+# Statement ended with one of expected results (ER_DUP_ENTRY,ER_DUP_KEY). 
+# If you got a difference in error message, just add it to rdiff file
+UPDATE t1 SET a=12345 ORDER BY a DESC, b LIMIT 1;
+SELECT * FROM t1;
+a	b
+0	a
+12345	e
+200	f
+201	a
+202	b
+203	c
+204	d
+UPDATE t1 SET a=80 WHERE a IN (202,203);
+# ERROR: Statement succeeded (expected results: ER_DUP_ENTRY,ER_DUP_KEY)
+DROP TABLE t1;

@@ -1,0 +1,34 @@
+DROP TABLE IF EXISTS t1, gis_point, gis_line, gis_polygon, gis_multi_point, gis_multi_line, gis_multi_polygon, gis_geometrycollection, gis_geometry;
+DROP DATABASE IF EXISTS gis_ogs;
+CREATE DATABASE gis_ogs;
+CREATE TABLE gis_point (ldb_pk INT DEFAULT 0 PRIMARY KEY, fid <INT_COLUMN>, g POINT, <CUSTOM_INDEX> g(g(128))) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+ERROR 42000: The storage engine for the table doesn't support GEOMETRY
+# ERROR: Statement ended with errno 1178, errname ER_CHECK_NOT_IMPLEMENTED (expected to succeed)
+ERROR 42S02: Table 'ldb_se_0.gis_point' doesn't exist
+# ------------ UNEXPECTED RESULT ------------
+# [ CREATE TABLE gis_point (ldb_pk INT DEFAULT 0 PRIMARY KEY, fid INT(11) /*!*/ /*Custom column options*/, g POINT, /*!UNIQUE INDEX*/ /*Custom index*/ g(g(128))) ENGINE=LevelDB /*!*/ /*Custom table options*/ ]
+# The statement|command finished with ER_CHECK_NOT_IMPLEMENTED.
+# Geometry types or indexes on them or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+DROP DATABASE gis_ogs;
+USE test;
+DROP TABLE IF EXISTS t1, gis_point, gis_line, gis_polygon, gis_multi_point, gis_multi_line, gis_multi_polygon, gis_geometrycollection, gis_geometry;
+DROP DATABASE IF EXISTS gis_ogs;
+CREATE DATABASE gis_ogs;
+CREATE TABLE gis_point (ldb_pk INT DEFAULT 0 PRIMARY KEY, fid <INT_COLUMN>, g POINT NOT NULL, SPATIAL INDEX(g)) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+ERROR 42000: The storage engine for the table doesn't support GEOMETRY
+# ERROR: Statement ended with errno 1178, errname ER_CHECK_NOT_IMPLEMENTED (expected to succeed)
+ERROR 42S02: Table 'ldb_se_1.gis_point' doesn't exist
+# ------------ UNEXPECTED RESULT ------------
+# [ CREATE TABLE gis_point (ldb_pk INT DEFAULT 0 PRIMARY KEY, fid INT(11) /*!*/ /*Custom column options*/, g POINT NOT NULL, SPATIAL INDEX(g)) ENGINE=LevelDB /*!*/ /*Custom table options*/ ]
+# The statement|command finished with ER_CHECK_NOT_IMPLEMENTED.
+# Geometry types or spatial indexes or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+DROP DATABASE gis_ogs;
+USE test;

@@ -1,0 +1,21 @@
+CREATE TABLE `t1` (
+  `a` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`a`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+SHOW COLUMNS IN t1;
+Field	Type	Null	Key	Default	Extra
+a	int(11)	#	PRI	0	
+INSERT INTO t1 (a) VALUES (1);
+SELECT * FROM t1;
+a
+1
+ALTER TABLE t1 ADD COLUMN b <CHAR_COLUMN> DEFAULT '';
+ERROR HY000: Table storage engine for 't1' doesn't have this option
+# ERROR: Statement ended with errno 1031, errname ER_ILLEGAL_HA (expected to succeed)
+# ------------ UNEXPECTED RESULT ------------
+# The statement|command finished with ER_ILLEGAL_HA.
+# ALTER or DEFAULT or the syntax or the mix could be unsupported. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------

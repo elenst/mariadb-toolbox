@@ -1,0 +1,68 @@
+DROP TABLE IF EXISTS t1,t2;
+CREATE DATABASE ldb_se_0;
+USE ldb_se_0;
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a <INT_COLUMN>) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+SHOW CREATE TABLE t1;
+Table	Create Table
+t1	CREATE TABLE `t1` (
+  `ldb_pk` int(11) NOT NULL DEFAULT '0',
+  `a` int(11) DEFAULT NULL,
+  PRIMARY KEY (`ldb_pk`)
+) ENGINE=<STORAGE_ENGINE> DEFAULT CHARSET=latin1
+CREATE DATABASE ldb_se_1;
+USE ldb_se_1;
+CREATE TABLE t1 LIKE ldb_se_0.t1;
+INSERT INTO t1 SELECT * FROM ldb_se_0.t1;
+CREATE TRIGGER tr_pk_t1 BEFORE INSERT ON t1 FOR EACH ROW 
+SET NEW.ldb_pk = ( SELECT COALESCE(MAX(ldb_pk),0)+1 FROM t1 );
+CREATE TABLE IF NOT EXISTS t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a <INT_COLUMN>) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+Warnings:
+Note	1050	Table 't1' already exists
+ERROR 42000: This version of MySQL doesn't yet support 'multiple triggers with the same action time and event for one table'
+CREATE TABLE t2 LIKE t1;
+SHOW CREATE TABLE t2;
+Table	Create Table
+t2	CREATE TABLE `t2` (
+  `ldb_pk` int(11) NOT NULL DEFAULT '0',
+  `a` int(11) DEFAULT NULL,
+  PRIMARY KEY (`ldb_pk`)
+) ENGINE=<STORAGE_ENGINE> DEFAULT CHARSET=latin1
+CREATE TEMPORARY TABLE t2 LIKE t1;
+SHOW CREATE TABLE t2;
+Table	Create Table
+t2	CREATE TEMPORARY TABLE `t2` (
+  `ldb_pk` int(11) NOT NULL DEFAULT '0',
+  `a` int(11) DEFAULT NULL,
+  PRIMARY KEY (`ldb_pk`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1
+DROP TEMPORARY TABLE t2;
+DROP TABLE t2;
+DROP TABLE IF EXISTS t1;
+CREATE DATABASE ldb_se_2;
+USE ldb_se_2;
+CREATE TABLE t1 ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS> AS SELECT 1 UNION SELECT 2;
+ERROR 42000: This table type requires a primary key
+# ERROR: Statement ended with errno 1173, errname ER_REQUIRES_PRIMARY_KEY (expected to succeed)
+ERROR 42S02: Table 'ldb_se_2.t1' doesn't exist
+# ------------ UNEXPECTED RESULT ------------
+# The statement|command finished with ER_REQUIRES_PRIMARY_KEY.
+# CREATE TABLE .. AS SELECT or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+SET storage_engine = <STORAGE_ENGINE>;
+Warnings:
+Warning	1287	'@@storage_engine' is deprecated and will be removed in a future release. Please use '@@default_storage_engine' instead
+CREATE DATABASE ldb_se_3;
+USE ldb_se_3;
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a <INT_COLUMN>) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+SHOW CREATE TABLE t1;
+Table	Create Table
+t1	CREATE TABLE `t1` (
+  `ldb_pk` int(11) NOT NULL DEFAULT '0',
+  `a` int(11) DEFAULT NULL,
+  PRIMARY KEY (`ldb_pk`)
+) ENGINE=<STORAGE_ENGINE> DEFAULT CHARSET=latin1
+FLUSH LOGS;
+DROP TABLE IF EXISTS t1;

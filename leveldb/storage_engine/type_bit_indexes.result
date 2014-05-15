@@ -1,0 +1,132 @@
+CREATE TABLE `t1` (
+  `a` bit(1) DEFAULT NULL,
+  `b` bit(20) NOT NULL,
+  `c` bit(32) DEFAULT NULL,
+  `d` bit(64) DEFAULT NULL,
+  UNIQUE KEY `b` (`b`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+SHOW INDEX IN t1;
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+t1	0	#	1	b	#	#	NULL	NULL	#	#		
+INSERT INTO t1 (a,b,c,d) VALUES 
+(0,0xFFFFF,0,1),(0,256,0xAAA,0x12345),(1,16,0,0xFFFFFFF),(0,11,12,13),
+(1,100,101,102),(0,12,13,14),(1,13,14,15),(0,101,201,202),(1,1000,1001,1002),
+(1,0xFFFF,0xFFFFFFFF,0xFFFFFFFFFFFFFFFF);
+SELECT b+0 FROM t1 ORDER BY b;
+b+0
+11
+12
+13
+16
+100
+101
+256
+1000
+65535
+1048575
+CREATE TABLE `t1` (
+  `a` bit(1) DEFAULT NULL,
+  `b` bit(20) NOT NULL,
+  `c` bit(32) DEFAULT NULL,
+  `d` bit(64) DEFAULT NULL,
+  PRIMARY KEY (`b`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+SHOW INDEX IN t1;
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+t1	0	PRIMARY	1	b	#	#	NULL	NULL	#	#		
+INSERT INTO t1 (a,b,c,d) VALUES 
+(0,0xFFFFF,0,1),(0,256,0xAAA,0x12345),(1,16,0,0xFFFFFFF),(0,11,12,13),
+(1,100,101,102),(0,12,13,14),(1,13,14,15),(0,101,201,202),(1,1000,1001,1002),
+(1,0xFFFF,0xFFFFFFFF,0xFFFFFFFFFFFFFFFF);
+EXPLAIN SELECT b+0 FROM t1 ORDER BY b;
+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
+#	#	#	#	#	NULL	#	#	#	#
+SELECT b+0 FROM t1 ORDER BY b;
+b+0
+11
+12
+13
+16
+100
+101
+256
+1000
+65535
+1048575
+CREATE TABLE `t1` (
+  `a` bit(1) DEFAULT NULL,
+  `b` bit(20) NOT NULL,
+  `c` bit(32) NOT NULL,
+  `d` bit(64) DEFAULT NULL,
+  UNIQUE KEY `b_c` (`b`,`c`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+SHOW INDEX IN t1;
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+t1	0	b_c	1	b	#	#	NULL	NULL	#	#		
+t1	0	b_c	2	c	#	#	NULL	NULL	#	#		
+INSERT INTO t1 (a,b,c,d) VALUES
+(0,0xFFFFF,0,1),(0,256,0xAAA,0x12345),(1,16,0,0xFFFFFFF),(0,11,12,13),
+(1,100,101,102),(0,12,13,14),(1,13,14,15),(0,101,201,202),(1,1000,1001,1002),
+(1,0xFFFF,0xFFFFFFFF,0xFFFFFFFFFFFFFFFF);
+EXPLAIN SELECT HEX(b+c) FROM t1 WHERE c > 1 OR HEX(b) < 0xFFFFFF;
+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
+#	#	#	#	#	NULL	#	#	#	#
+SELECT HEX(b+c) FROM t1 WHERE c > 1 OR HEX(b) < 0xFFFFFF;
+HEX(b+c)
+10
+10000FFFE
+12E
+17
+19
+1B
+7D1
+BAA
+C9
+FFFFF
+CREATE TABLE `t1` (
+  `a` bit(1) NOT NULL,
+  `b` bit(20) DEFAULT NULL,
+  `c` bit(32) DEFAULT NULL,
+  `d` bit(64) NOT NULL DEFAULT b'0',
+  PRIMARY KEY (`d`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+SHOW INDEX IN t1;
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+t1	0	PRIMARY	1	d	#	#	NULL	NULL	#	#		
+INSERT INTO t1 (a,b,c,d) VALUES
+(0,0xFFFFF,0,1),(0,256,0xAAA,0x12345),(1,16,0,0xFFFFFFF),(0,11,12,13),
+(1,100,101,102),(0,12,13,14),(1,13,14,15),(0,101,201,202),(1,1000,1001,1002),
+(1,0xFFFF,0xFFFFFFFF,0xFFFFFFFFFFFFFFFF);
+EXPLAIN SELECT DISTINCT a+0 FROM t1 ORDER BY a;
+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
+#	#	#	#	#	NULL	#	#	#	#
+SELECT DISTINCT a+0 FROM t1 ORDER BY a;
+a+0
+0
+1
+CREATE TABLE `t1` (
+  `a` bit(1) DEFAULT NULL,
+  `b` bit(20) DEFAULT NULL,
+  `c` bit(32) DEFAULT NULL,
+  `d` bit(64) NOT NULL,
+  UNIQUE KEY `d` (`d`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+SHOW INDEX IN t1;
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+t1	0	d	1	d	#	#	NULL	NULL	#	#		
+INSERT INTO t1 (a,b,c,d) VALUES
+(0,0xFFFFF,0,1),(0,256,0xAAA,0x12345),(1,16,0,0xFFFFFFF),(0,11,12,13),
+(1,100,101,102),(0,12,13,14),(1,13,14,15),(0,101,201,202),(1,1000,1001,1002),
+(1,0xFFFF,0xFFFFFFFF,0xFFFFFFFFFFFFFFFF);
+EXPLAIN SELECT d FROM t1 WHERE d BETWEEN 1 AND 10000;
+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
+#	#	#	#	#	NULL	#	#	#	#
+SELECT d+0 FROM t1 WHERE d BETWEEN 1 AND 10000;
+d+0
+1
+1002
+102
+13
+14
+15
+202

@@ -1,0 +1,123 @@
+DROP TABLE IF EXISTS t1,t2,t3;
+CREATE DATABASE ldb_se_0;
+USE ldb_se_0;
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a <INT_COLUMN>, b <INT_COLUMN>, c <CHAR_COLUMN>) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+INSERT INTO t1 (a,b,c) VALUES (1,100,'a'),(2,200,'b'),(3,300,'c');
+ALTER ONLINE TABLE t1 MODIFY b <INT_COLUMN> DEFAULT 5;
+ERROR 42000: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ONLINE TABLE t1 MODIFY b <INT_COLUMN> DEFAULT 5' at line 1
+# ERROR: Statement ended with errno 1064, errname ER_PARSE_ERROR (expected to succeed)
+# ------------ UNEXPECTED RESULT ------------
+# The statement|command finished with ER_PARSE_ERROR.
+# Functionality or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+ALTER ONLINE TABLE t1 CHANGE b new_name <INT_COLUMN>;
+ERROR 42000: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ONLINE TABLE t1 CHANGE b new_name <INT_COLUMN>' at line 1
+# ERROR: Statement ended with errno 1064, errname ER_PARSE_ERROR (expected to succeed)
+# ------------ UNEXPECTED RESULT ------------
+# The statement|command finished with ER_PARSE_ERROR.
+# Functionality or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+ALTER ONLINE TABLE t1 COMMENT 'new comment';
+ERROR 42000: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ONLINE TABLE t1 COMMENT 'new comment'' at line 1
+# ERROR: Statement ended with errno 1064, errname ER_PARSE_ERROR (expected to succeed)
+# ------------ UNEXPECTED RESULT ------------
+# The statement|command finished with ER_PARSE_ERROR.
+# Functionality or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+ALTER ONLINE TABLE t1 RENAME TO t2;
+ERROR 42000: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ONLINE TABLE t1 RENAME TO t2' at line 1
+# ERROR: Statement ended with errno 1064, errname ER_PARSE_ERROR (expected to succeed)
+# ------------ UNEXPECTED RESULT ------------
+# The statement|command finished with ER_PARSE_ERROR.
+# Functionality or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+DROP TABLE t1;
+DROP TABLE IF EXISTS t2;
+Warnings:
+Note	1051	Unknown table 'ldb_se_0.t2'
+CREATE DATABASE ldb_se_1;
+USE ldb_se_1;
+CREATE TEMPORARY TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a <INT_COLUMN>, b <CHAR_COLUMN>) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+ERROR HY000: Table storage engine 'LEVELDB' does not support the create option 'TEMPORARY'
+# ERROR: Statement ended with errno 1478, errname ER_ILLEGAL_HA_CREATE_OPTION (expected to succeed)
+ERROR 42S02: Table 'ldb_se_1.t1' doesn't exist
+INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b'),(3,'c');
+ERROR 42S02: Table 'ldb_se_1.t1' doesn't exist
+ALTER ONLINE TABLE t1 MODIFY b <INT_COLUMN> DEFAULT 5;
+ERROR 42000: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ONLINE TABLE t1 MODIFY b <INT_COLUMN> DEFAULT 5' at line 1
+# ERROR: Statement ended with errno 1064, errname ER_PARSE_ERROR (expected results: ER_CANT_DO_ONLINE)
+# ------------ UNEXPECTED RESULT ------------
+# The statement|command finished with ER_PARSE_ERROR.
+# Functionality or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+ALTER ONLINE TABLE t1 CHANGE b new_name <INT_COLUMN>;
+ERROR 42000: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ONLINE TABLE t1 CHANGE b new_name <INT_COLUMN>' at line 1
+# ERROR: Statement ended with errno 1064, errname ER_PARSE_ERROR (expected results: ER_CANT_DO_ONLINE)
+ALTER ONLINE TABLE t1 COMMENT 'new comment';
+ERROR 42000: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ONLINE TABLE t1 COMMENT 'new comment'' at line 1
+# ERROR: Statement ended with errno 1064, errname ER_PARSE_ERROR (expected results: ER_CANT_DO_ONLINE)
+ALTER ONLINE TABLE t1 RENAME TO t2;
+ERROR 42000: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ONLINE TABLE t1 RENAME TO t2' at line 1
+# ERROR: Statement ended with errno 1064, errname ER_PARSE_ERROR (expected results: ER_CANT_DO_ONLINE)
+DROP TABLE t1;
+ERROR 42S02: Unknown table 'ldb_se_1.t1'
+CREATE DATABASE ldb_se_2;
+USE ldb_se_2;
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a <INT_COLUMN>, b <INT_COLUMN>, c <CHAR_COLUMN>) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+INSERT INTO t1 (a,b,c) VALUES (1,100,'a'),(2,200,'b'),(3,300,'c');
+ALTER ONLINE TABLE t1 DROP COLUMN b, ADD b <INT_COLUMN>;
+ERROR 42000: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ONLINE TABLE t1 DROP COLUMN b, ADD b <INT_COLUMN>' at line 1
+# ERROR: Statement ended with errno 1064, errname ER_PARSE_ERROR (expected results: ER_CANT_DO_ONLINE)
+# ------------ UNEXPECTED RESULT ------------
+# The statement|command finished with ER_PARSE_ERROR.
+# Functionality or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+ALTER ONLINE TABLE t1 MODIFY b BIGINT <CUSTOM_COL_OPTIONS>;
+ERROR 42000: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ONLINE TABLE t1 MODIFY b BIGINT <CUSTOM_COL_OPTIONS>' at line 1
+# ERROR: Statement ended with errno 1064, errname ER_PARSE_ERROR (expected results: ER_CANT_DO_ONLINE)
+ALTER ONLINE TABLE t1 ENGINE=PERFORMANCE_SCHEMA;
+ERROR 42000: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ONLINE TABLE t1 ENGINE=PERFORMANCE_SCHEMA' at line 1
+# ERROR: Statement ended with errno 1064, errname ER_PARSE_ERROR (expected results: ER_CANT_DO_ONLINE)
+DROP TABLE t1;
+CREATE DATABASE ldb_se_3;
+USE ldb_se_3;
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a <INT_COLUMN>, b <INT_COLUMN>, c <CHAR_COLUMN>) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+ALTER ONLINE TABLE t1 ADD INDEX (b);
+ERROR 42000: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ONLINE TABLE t1 ADD INDEX (b)' at line 1
+# ERROR: Statement ended with errno 1064, errname ER_PARSE_ERROR (expected results: ER_CANT_DO_ONLINE)
+# ------------ UNEXPECTED RESULT ------------
+# The statement|command finished with ER_PARSE_ERROR.
+# Adding an index or ALTER ONLINE or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+ALTER TABLE t1 ADD INDEX (b);
+ERROR HY000: Table storage engine for 't1' doesn't have this option
+# ERROR: Statement ended with errno 1031, errname ER_ILLEGAL_HA (expected to succeed)
+# ------------ UNEXPECTED RESULT ------------
+# The statement|command finished with ER_ILLEGAL_HA.
+# Adding an index or ALTER TABLE or the syntax or the mix could be unsupported. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+DROP TABLE t1;

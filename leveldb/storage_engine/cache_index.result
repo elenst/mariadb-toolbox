@@ -1,0 +1,68 @@
+CREATE TABLE `t1` (
+  `a` int(11) NOT NULL,
+  `b` char(8) DEFAULT NULL,
+  UNIQUE KEY `a` (`a`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+CREATE TABLE `t2` (
+  `a` int(11) DEFAULT NULL,
+  `b` char(8) NOT NULL,
+  UNIQUE KEY `b` (`b`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+CACHE INDEX t1 INDEX (a), t2 IN <CACHE_NAME>;
+ERROR HY000: Unknown key cache '<CACHE_NAME>'
+SET GLOBAL <CACHE_NAME>.key_buffer_size=128*1024;
+CACHE INDEX t1 INDEX (a), t2 IN <CACHE_NAME>;
+Table	Op	Msg_type	Msg_text
+94811907415867393.t1	assign_to_keycache	note	The storage engine for the table doesn't support assign_to_keycache
+94811907415867393.t2	assign_to_keycache	note	The storage engine for the table doesn't support assign_to_keycache
+LOAD INDEX INTO CACHE t1, t2;
+Table	Op	Msg_type	Msg_text
+94811907415867393.t1	preload_keys	note	The storage engine for the table doesn't support preload_keys
+94811907415867393.t2	preload_keys	note	The storage engine for the table doesn't support preload_keys
+INSERT INTO t1 (a,b) VALUES (3,'c'),(4,'d');
+SET GLOBAL <CACHE_NAME>.key_buffer_size=8*1024;
+LOAD INDEX INTO CACHE t1, t2 IGNORE LEAVES;
+Table	Op	Msg_type	Msg_text
+94811907415867393.t1	preload_keys	note	The storage engine for the table doesn't support preload_keys
+94811907415867393.t2	preload_keys	note	The storage engine for the table doesn't support preload_keys
+SET GLOBAL <CACHE_NAME>.key_cache_age_threshold = 100, <CACHE_NAME>.key_cache_block_size = 512, <CACHE_NAME>.key_cache_division_limit = 1, <CACHE_NAME>.key_cache_segments=2;
+ERROR HY000: Unknown system variable 'key_cache_segments'
+INSERT INTO t1 (a,b) VALUES (5,'e'),(6,'f');
+LOAD INDEX INTO CACHE t1;
+Table	Op	Msg_type	Msg_text
+94811907415867393.t1	preload_keys	note	The storage engine for the table doesn't support preload_keys
+SET GLOBAL new_<CACHE_NAME>.key_buffer_size=128*1024;
+CACHE INDEX t1  IN new_<CACHE_NAME>;
+Table	Op	Msg_type	Msg_text
+94811907415867393.t1	assign_to_keycache	note	The storage engine for the table doesn't support assign_to_keycache
+INSERT INTO t1 (a,b) VALUES (7,'g'),(8,'h');
+LOAD INDEX INTO CACHE t1 IGNORE LEAVES;
+Table	Op	Msg_type	Msg_text
+94811907415867393.t1	preload_keys	note	The storage engine for the table doesn't support preload_keys
+INSERT INTO t1 (a,b) VALUES (9,'i');
+CREATE TABLE `t1` (
+  `a` int(11) NOT NULL,
+  `b` char(8) NOT NULL,
+  UNIQUE KEY `b` (`b`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+CACHE INDEX t1 IN <CACHE_NAME>;
+Table	Op	Msg_type	Msg_text
+94811907415867394.t1	assign_to_keycache	note	The storage engine for the table doesn't support assign_to_keycache
+INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b');
+LOAD INDEX INTO CACHE t1;
+Table	Op	Msg_type	Msg_text
+94811907415867394.t1	preload_keys	note	The storage engine for the table doesn't support preload_keys
+CREATE TABLE `t1` (
+  `a` int(11) NOT NULL,
+  `b` char(8) NOT NULL,
+  UNIQUE KEY `a_b` (`a`,`b`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+CACHE INDEX t1 IN <CACHE_NAME>;
+Table	Op	Msg_type	Msg_text
+94811907415867395.t1	assign_to_keycache	note	The storage engine for the table doesn't support assign_to_keycache
+INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b');
+LOAD INDEX INTO CACHE t1;
+Table	Op	Msg_type	Msg_text
+94811907415867395.t1	preload_keys	note	The storage engine for the table doesn't support preload_keys
+SET GLOBAL <CACHE_NAME>.key_buffer_size=0;
+SET GLOBAL new_<CACHE_NAME>.key_buffer_size=0;

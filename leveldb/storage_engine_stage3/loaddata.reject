@@ -1,0 +1,53 @@
+DROP TABLE IF EXISTS t1;
+CREATE DATABASE ldb_se_0;
+USE ldb_se_0;
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a <INT_COLUMN>, b <CHAR_COLUMN>) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+LOAD DATA INFILE '<DATADIR>/se_loaddata.dat' INTO TABLE t1 
+FIELDS TERMINATED BY ',';
+Warnings:
+Warning	1366	Incorrect integer value: 'foo' for column 'a' at row 1
+Warning	1366	Incorrect integer value: 'bar' for column 'a' at row 2
+Warning	1366	Incorrect integer value: '' for column 'a' at row 3
+Warning	1366	Incorrect integer value: 'abc' for column 'a' at row 4
+SELECT * FROM t1;
+ldb_pk	a	b
+1	0	
+LOAD DATA LOCAL INFILE '<DATADIR>/se_loaddata.dat' INTO TABLE t1
+CHARACTER SET utf8 COLUMNS TERMINATED BY ','
+    ESCAPED BY '/';
+Warnings:
+Warning	1366	Incorrect integer value: 'foo' for column 'a' at row 1
+Warning	1366	Incorrect integer value: 'bar' for column 'a' at row 2
+Warning	1366	Incorrect integer value: '' for column 'a' at row 3
+Warning	1366	Incorrect integer value: 'abc' for column 'a' at row 4
+SELECT * FROM t1;
+ldb_pk	a	b
+1	0	
+2	0	
+LOAD DATA INFILE '<DATADIR>/se_loaddata.dat' INTO TABLE t1
+FIELDS TERMINATED BY ';'
+    OPTIONALLY ENCLOSED BY ''''
+    LINES STARTING BY 'prefix:' 
+IGNORE 2 LINES
+(a,b);
+Warnings:
+Warning	1262	Row 2 was truncated; it contained more data than there were input columns
+SELECT * FROM t1;
+ldb_pk	a	b
+1	0	
+2	0	
+3	0	
+LOAD DATA LOCAL INFILE '<DATADIR>/se_loaddata.dat' INTO TABLE t1
+FIELDS TERMINATED BY ';'
+    (a) SET b='loaded';
+Warnings:
+Warning	1262	Row 1 was truncated; it contained more data than there were input columns
+Warning	1262	Row 2 was truncated; it contained more data than there were input columns
+Warning	1262	Row 3 was truncated; it contained more data than there were input columns
+SELECT * FROM t1;
+ldb_pk	a	b
+1	0	
+2	0	
+3	0	
+4	0	loaded
+DROP TABLE t1;

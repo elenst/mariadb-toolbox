@@ -1,0 +1,54 @@
+#
+# Combinations file for max_query_time 
+# General description: https://kb.askmonty.org/en/how-to-limittimeout-queries/#max_query_time-variable
+# Testing task: TODO-361
+#  
+
+
+$combinations = [
+	[
+	'
+		--no-mask
+		--seed=time
+		--threads=4
+		--duration=300
+		--queries=100M
+		--reporters=Backtrace,ErrorLog,Deadlock,Shutdown
+		--redefine=/home/elenst/mariadb-toolbox/grammars/general-workarounds.yy
+		--redefine=/home/elenst/mariadb-toolbox/grammars/max-query-time.yy
+	'], 
+	[
+		'--views --grammar=conf/runtime/metadata_stability.yy --gendata=conf/runtime/metadata_stability.zz',
+		'--views --grammar=conf/runtime/performance_schema.yy',
+		'--views --grammar=conf/runtime/information_schema.yy',
+		'--views --grammar=conf/engines/many_indexes.yy --gendata=conf/engines/many_indexes.zz',
+		'--grammar=conf/engines/engine_stress.yy --gendata=conf/engines/engine_stress.zz',
+		'--views --grammar=conf/partitioning/partitions.yy',
+		'--views --grammar=conf/partitioning/partition_pruning.yy --gendata=conf/partitioning/partition_pruning.zz',
+		'--views --grammar=conf/replication/replication.yy --gendata=conf/replication/replication-5.1.zz',
+		'--views --grammar=conf/replication/replication-ddl_sql.yy --gendata=conf/replication/replication-ddl_data.zz',
+		'--views --grammar=conf/replication/replication-dml_sql.yy --gendata=conf/replication/replication-dml_data.zz',
+		'--views --grammar=conf/runtime/connect_kill_sql.yy --gendata=conf/runtime/connect_kill_data.zz',
+		'--views --grammar=conf/runtime/WL5004_sql.yy --gendata=conf/runtime/WL5004_data.zz'
+	],
+	[
+		'--engine=InnoDB',
+		'--engine=MyISAM',
+		'--engine=Aria',
+	],
+# slave-skip-errors: 
+# 1054: MySQL:67878 (LOAD DATA in views)
+# 1317: Query partially completed on the master (MDEV-368 which won't be fixed)
+# 1049, 1305, 1539: MySQL:65428 (Unknown database) - fixed in 5.7.0
+# 1505: MySQL:64041 (Partition management on a not partitioned table) 
+	[
+		'--rpl_mode=row --mysqld=--slave-skip-errors=1049,1305,1539,1505',
+		'--rpl_mode=statement --mysqld=--slave-skip-errors=1054,1317,1049,1305,1539,1505',
+		''
+	],
+	[
+		'--mysqld=--thread-handling=one-thread-per-connection',
+		'--mysqld=--thread-handling=pool-of-threads',
+	]
+];
+

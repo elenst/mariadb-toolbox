@@ -1,0 +1,257 @@
+DROP TABLE IF EXISTS t1;
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, d DATE <CUSTOM_COL_OPTIONS>,
+dt DATETIME <CUSTOM_COL_OPTIONS>,
+ts TIMESTAMP <CUSTOM_COL_OPTIONS>,
+t TIME <CUSTOM_COL_OPTIONS>,
+y YEAR <CUSTOM_COL_OPTIONS>,
+<CUSTOM_INDEX> d (d)
+) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+ERROR HY000: Got error 122 from storage engine
+# ERROR: Statement ended with errno 1030, errname ER_GET_ERRNO (expected to succeed)
+ERROR 42S02: Table 'ldb_se_0.t1' doesn't exist
+# ------------ UNEXPECTED RESULT ------------
+# [ CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, d DATE /*!NOT NULL*/ /*Custom indexed column options*/,
+dt DATETIME /*!*/ /*Custom column options*/,
+ts TIMESTAMP /*!*/ /*Custom column options*/,
+t TIME /*!*/ /*Custom column options*/,
+y YEAR /*!*/ /*Custom column options*/,
+/*!UNIQUE INDEX*/ /*Custom index*/ d (d)
+) ENGINE=LevelDB /*!*/ /*Custom table options*/ ]
+# The statement|command finished with ER_GET_ERRNO.
+# Date and time types or indexes or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, d DATE <CUSTOM_COL_OPTIONS>,
+dt DATETIME <CUSTOM_COL_OPTIONS>,
+ts TIMESTAMP <CUSTOM_COL_OPTIONS>,
+t TIME <CUSTOM_COL_OPTIONS>,
+y YEAR <CUSTOM_COL_OPTIONS>,
+<CUSTOM_INDEX> dt (dt)
+) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+ERROR HY000: Got error 122 from storage engine
+# ERROR: Statement ended with errno 1030, errname ER_GET_ERRNO (expected to succeed)
+ERROR 42S02: Table 'ldb_se_1.t1' doesn't exist
+# ------------ UNEXPECTED RESULT ------------
+# [ CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, d DATE /*!*/ /*Custom column options*/,
+dt DATETIME /*!NOT NULL*/ /*Custom indexed column options*/,
+ts TIMESTAMP /*!*/ /*Custom column options*/,
+t TIME /*!*/ /*Custom column options*/,
+y YEAR /*!*/ /*Custom column options*/,
+/*!UNIQUE INDEX*/ /*Custom index*/ dt (dt)
+) ENGINE=LevelDB /*!*/ /*Custom table options*/ ]
+# The statement|command finished with ER_GET_ERRNO.
+# Date and time types or indexes or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, d DATE <CUSTOM_COL_OPTIONS>,
+dt DATETIME <CUSTOM_COL_OPTIONS>,
+ts TIMESTAMP <CUSTOM_COL_OPTIONS>,
+t TIME <CUSTOM_COL_OPTIONS>,
+y YEAR <CUSTOM_COL_OPTIONS>,
+<CUSTOM_INDEX> ts (ts)
+) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+ERROR HY000: Got error 122 from storage engine
+# ERROR: Statement ended with errno 1030, errname ER_GET_ERRNO (expected to succeed)
+ERROR 42S02: Table 'ldb_se_2.t1' doesn't exist
+# ------------ UNEXPECTED RESULT ------------
+# [ CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, d DATE /*!*/ /*Custom column options*/,
+dt DATETIME /*!*/ /*Custom column options*/,
+ts TIMESTAMP /*!NOT NULL*/ /*Custom indexed column options*/,
+t TIME /*!*/ /*Custom column options*/,
+y YEAR /*!*/ /*Custom column options*/,
+/*!UNIQUE INDEX*/ /*Custom index*/ ts (ts)
+) ENGINE=LevelDB /*!*/ /*Custom table options*/ ]
+# The statement|command finished with ER_GET_ERRNO.
+# Date and time types or indexes or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, d DATE <CUSTOM_COL_OPTIONS>,
+dt DATETIME <CUSTOM_COL_OPTIONS>,
+ts TIMESTAMP <CUSTOM_COL_OPTIONS>,
+t TIME <CUSTOM_COL_OPTIONS>,
+y YEAR <CUSTOM_COL_OPTIONS>,
+<CUSTOM_INDEX> t (t)
+) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+ERROR HY000: Got error 122 from storage engine
+# ERROR: Statement ended with errno 1030, errname ER_GET_ERRNO (expected to succeed)
+ERROR 42S02: Table 'ldb_se_3.t1' doesn't exist
+# ------------ UNEXPECTED RESULT ------------
+# [ CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, d DATE /*!*/ /*Custom column options*/,
+dt DATETIME /*!*/ /*Custom column options*/,
+ts TIMESTAMP /*!*/ /*Custom column options*/,
+t TIME /*!NOT NULL*/ /*Custom indexed column options*/,
+y YEAR /*!*/ /*Custom column options*/,
+/*!UNIQUE INDEX*/ /*Custom index*/ t (t)
+) ENGINE=LevelDB /*!*/ /*Custom table options*/ ]
+# The statement|command finished with ER_GET_ERRNO.
+# Date and time types or indexes or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, d DATE <CUSTOM_COL_OPTIONS>,
+dt DATETIME <CUSTOM_COL_OPTIONS>,
+ts TIMESTAMP <CUSTOM_COL_OPTIONS>,
+t TIME <CUSTOM_COL_OPTIONS>,
+y YEAR <CUSTOM_COL_OPTIONS>,
+<CUSTOM_INDEX> y (y)
+) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+ERROR HY000: Got error 122 from storage engine
+# ERROR: Statement ended with errno 1030, errname ER_GET_ERRNO (expected to succeed)
+ERROR 42S02: Table 'ldb_se_4.t1' doesn't exist
+# ------------ UNEXPECTED RESULT ------------
+# [ CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, d DATE /*!*/ /*Custom column options*/,
+dt DATETIME /*!*/ /*Custom column options*/,
+ts TIMESTAMP /*!*/ /*Custom column options*/,
+t TIME /*!*/ /*Custom column options*/,
+y YEAR /*!NOT NULL*/ /*Custom indexed column options*/,
+/*!UNIQUE INDEX*/ /*Custom index*/ y (y)
+) ENGINE=LevelDB /*!*/ /*Custom table options*/ ]
+# The statement|command finished with ER_GET_ERRNO.
+# Date and time types or indexes or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+CREATE TABLE t1 (d DATE <CUSTOM_COL_OPTIONS>,
+dt DATETIME <CUSTOM_COL_OPTIONS> PRIMARY KEY,
+ts TIMESTAMP <CUSTOM_COL_OPTIONS>,
+t TIME <CUSTOM_COL_OPTIONS>,
+y YEAR <CUSTOM_COL_OPTIONS>
+) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+SHOW INDEX IN t1;
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+t1	0	PRIMARY	1	dt	#	#	NULL	NULL	#	#		
+SET @tm = '2012-04-09 05:27:00';
+INSERT INTO t1 (d,dt,ts,t,y) VALUES
+('2012-01-12', '2010-11-22 12:33:54', '2011-11-14 21:45:55', '00:12:33', '2000'),
+('2012-01-12', '2010-11-22 11:43:14', '2011-11-14 21:45:55', '00:12:32', '2001'),
+('2012-03-31', '2011-08-28 21:33:56', '1999-04-30 19:11:08', '12:00:00', '1999'),
+('2012-03-13', '2011-08-27 21:33:56', '1999-03-30 19:11:08', '12:10:00', '1998'),
+('2011-03-31', '2011-08-28 20:33:56', '1997-01-31 11:54:01', '22:04:10', '1994'),
+(DATE(@tm),@tm,TIMESTAMP(@tm),TIME(@tm),YEAR(@tm));
+EXPLAIN SELECT dt FROM t1 ORDER BY dt LIMIT 3;
+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
+#	#	#	#	#	PRIMARY	#	#	#	#
+SELECT dt FROM t1 ORDER BY dt LIMIT 3;
+dt
+2010-11-22 11:43:14
+2010-11-22 12:33:54
+2011-08-27 21:33:56
+EXPLAIN SELECT dt FROM t1 FORCE INDEX FOR ORDER BY (PRIMARY) ORDER BY dt LIMIT 3;
+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
+#	#	#	#	#	PRIMARY	#	#	#	#
+SELECT dt FROM t1 FORCE INDEX FOR ORDER BY (PRIMARY) ORDER BY dt LIMIT 3;
+dt
+2010-11-22 11:43:14
+2010-11-22 12:33:54
+2011-08-27 21:33:56
+INSERT INTO t1 (d,dt,ts,t,y) VALUES
+('2012-01-11', '2010-11-22 12:33:54', '2011-11-14 21:45:55', '00:12:33', '2000');
+ERROR 23000: Duplicate entry '2010-11-22 12:33:54' for key 'PRIMARY'
+# Statement ended with one of expected results (ER_DUP_ENTRY,ER_DUP_KEY). 
+# If you got a difference in error message, just add it to rdiff file
+DROP TABLE t1;
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, d DATE <CUSTOM_COL_OPTIONS>,
+dt DATETIME <CUSTOM_COL_OPTIONS>,
+ts TIMESTAMP <CUSTOM_COL_OPTIONS>,
+t TIME <CUSTOM_COL_OPTIONS>,
+y YEAR <CUSTOM_COL_OPTIONS>,
+INDEX (ts)
+) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+SHOW INDEX IN t1;
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+t1	0	PRIMARY	1	ldb_pk	#	#	NULL	NULL	#	#		
+t1	1	ts	1	ts	#	#	NULL	NULL	#	#		
+SET @tm = '2012-04-09 05:27:00';
+INSERT INTO t1 (d,dt,ts,t,y) VALUES
+('2012-01-12', '2010-11-22 12:33:54', '2011-11-14 21:45:55', '00:12:33', '2000'),
+('2012-01-12', '2010-11-22 11:43:14', '2011-11-14 21:45:55', '00:12:32', '2001'),
+('2012-03-31', '2011-08-28 21:33:56', '1999-04-30 19:11:08', '12:00:00', '1999'),
+('2012-03-13', '2011-08-27 21:33:56', '1999-03-30 19:11:08', '12:10:00', '1998'),
+('2011-03-31', '2011-08-28 20:33:56', '1997-01-31 11:54:01', '22:04:10', '1994'),
+(DATE(@tm),@tm,TIMESTAMP(@tm),TIME(@tm),YEAR(@tm));
+EXPLAIN SELECT ts FROM t1 WHERE ts > NOW();
+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
+#	#	#	#	#	ts	#	#	#	#
+SELECT ts FROM t1 WHERE ts > NOW();
+ts
+EXPLAIN SELECT ts FROM t1 USE INDEX () WHERE ts > NOW();
+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
+#	#	#	#	#	NULL	#	#	#	#
+SELECT ts FROM t1 USE INDEX () WHERE ts > NOW();
+ts
+DROP TABLE t1;
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, d DATE <CUSTOM_COL_OPTIONS>,
+dt DATETIME <CUSTOM_COL_OPTIONS>,
+ts TIMESTAMP <CUSTOM_COL_OPTIONS>,
+t TIME <CUSTOM_COL_OPTIONS>,
+y YEAR <CUSTOM_COL_OPTIONS>,
+UNIQUE INDEX d_t (d,t)
+) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+ERROR HY000: Got error 122 from storage engine
+# ERROR: Statement ended with errno 1030, errname ER_GET_ERRNO (expected to succeed)
+ERROR 42S02: Table 'ldb_se_7.t1' doesn't exist
+# ------------ UNEXPECTED RESULT ------------
+# [ CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, d DATE /*!NOT NULL*/ /*Custom indexed column options*/,
+dt DATETIME /*!*/ /*Custom column options*/,
+ts TIMESTAMP /*!*/ /*Custom column options*/,
+t TIME /*!NOT NULL*/ /*Custom indexed column options*/,
+y YEAR /*!*/ /*Custom column options*/,
+UNIQUE INDEX d_t (d,t)
+) ENGINE=LevelDB /*!*/ /*Custom table options*/ ]
+# The statement|command finished with ER_GET_ERRNO.
+# Date and time types or unique keys or multi-part keys or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, d DATE <CUSTOM_COL_OPTIONS>,
+dt DATETIME <CUSTOM_COL_OPTIONS>,
+ts TIMESTAMP <CUSTOM_COL_OPTIONS>,
+t TIME <CUSTOM_COL_OPTIONS>,
+y YEAR <CUSTOM_COL_OPTIONS>,
+INDEX (y,t)
+) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+SHOW INDEX IN t1;
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+t1	0	PRIMARY	1	ldb_pk	#	#	NULL	NULL	#	#		
+t1	1	y	1	y	#	#	NULL	NULL	#	#		
+t1	1	y	2	t	#	#	NULL	NULL	#	#		
+SET @tm = '2012-04-09 05:27:00';
+INSERT INTO t1 (d,dt,ts,t,y) VALUES
+('2012-01-12', '2010-11-22 12:33:54', '2011-11-14 21:45:55', '00:12:33', '2000'),
+('2012-01-12', '2010-11-22 11:43:14', '2011-11-14 21:45:55', '00:12:32', '2001'),
+('2012-03-31', '2011-08-28 21:33:56', '1999-04-30 19:11:08', '12:00:00', '1999'),
+('2012-03-13', '2011-08-27 21:33:56', '1999-03-30 19:11:08', '12:10:00', '1998'),
+('2011-03-31', '2011-08-28 20:33:56', '1997-01-31 11:54:01', '22:04:10', '1994'),
+(DATE(@tm),@tm,TIMESTAMP(@tm),TIME(@tm),YEAR(@tm));
+EXPLAIN SELECT y, COUNT(*) FROM t1 GROUP BY y;
+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
+#	#	#	#	#	y	#	#	#	#
+SELECT y, COUNT(*) FROM t1 GROUP BY y;
+y	COUNT(*)
+1994	1
+1998	1
+1999	1
+2000	1
+2001	1
+2012	1
+EXPLAIN SELECT y, COUNT(*) FROM t1 USE INDEX FOR GROUP BY () GROUP BY y;
+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
+#	#	#	#	#	y	#	#	#	#
+SELECT y, COUNT(*) FROM t1 USE INDEX FOR GROUP BY () GROUP BY y;
+y	COUNT(*)
+1994	1
+1998	1
+1999	1
+2000	1
+2001	1
+2012	1
+DROP TABLE t1;

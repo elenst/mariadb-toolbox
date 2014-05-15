@@ -1,0 +1,14 @@
+$tables = {
+    rows => [ 0, 1, 100, 1000 ],
+    engines => [ 'Aria', 'MyISAM', 'InnoDB' ],
+    pk => [ undef ],
+};
+
+$fields = {
+    types => [ 'varchar(1000)' ],
+    indexes => [ 'key' ],
+};
+
+$data = {
+    strings => [ 'string(1000)' ],
+}

@@ -1,0 +1,86 @@
+DROP TABLE IF EXISTS t1;
+CREATE DATABASE ldb_se_0;
+USE ldb_se_0;
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a <INT_COLUMN>, b <CHAR_COLUMN>, <CUSTOM_INDEX>(b)) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+ERROR HY000: Got error 122 from storage engine
+# ERROR: Statement ended with errno 1030, errname ER_GET_ERRNO (expected to succeed)
+ERROR 42S02: Table 'ldb_se_0.t1' doesn't exist
+# ------------ UNEXPECTED RESULT ------------
+# [ CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a INT(11) /*!*/ /*Custom column options*/, b CHAR(8) /*!NOT NULL*/ /*Custom indexed column options*/, /*!UNIQUE INDEX*/ /*Custom index*/(b)) ENGINE=LevelDB /*!*/ /*Custom table options*/ ]
+# The statement|command finished with ER_GET_ERRNO.
+# Indexes on CHAR columns or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+CREATE DATABASE ldb_se_1;
+USE ldb_se_1;
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a <INT_COLUMN>, b <CHAR_COLUMN>, UNIQUE INDEX(a)) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+ERROR HY000: Got error 122 from storage engine
+# ERROR: Statement ended with errno 1030, errname ER_GET_ERRNO (expected to succeed)
+ERROR 42S02: Table 'ldb_se_1.t1' doesn't exist
+# ------------ UNEXPECTED RESULT ------------
+# [ CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a INT(11) /*!NOT NULL*/ /*Custom indexed column options*/, b CHAR(8) /*!*/ /*Custom column options*/, UNIQUE INDEX(a)) ENGINE=LevelDB /*!*/ /*Custom table options*/ ]
+# The statement|command finished with ER_GET_ERRNO.
+# Unique indexes or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+CREATE DATABASE ldb_se_2;
+USE ldb_se_2;
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a <INT_COLUMN>, b <CHAR_COLUMN>, UNIQUE INDEX(a,b)) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+ERROR HY000: Got error 122 from storage engine
+# ERROR: Statement ended with errno 1030, errname ER_GET_ERRNO (expected to succeed)
+ERROR 42S02: Table 'ldb_se_2.t1' doesn't exist
+# ------------ UNEXPECTED RESULT ------------
+# [ CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a INT(11) /*!NOT NULL*/ /*Custom indexed column options*/, b CHAR(8) /*!NOT NULL*/ /*Custom indexed column options*/, UNIQUE INDEX(a,b)) ENGINE=LevelDB /*!*/ /*Custom table options*/ ]
+# The statement|command finished with ER_GET_ERRNO.
+# Multi-part indexes or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+CREATE DATABASE ldb_se_3;
+USE ldb_se_3;
+CREATE TABLE t1 (a <INT_COLUMN> PRIMARY KEY, b <CHAR_COLUMN>) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e');
+INSERT INTO t1 (a,b) VALUES (100,'a'), (6,'f');
+INSERT INTO t1 (a,b) VALUES (30,'m'),(29,'n');
+INSERT INTO t1 (a,b) VALUES (1,'a'),(12345,'z');
+ERROR 23000: Duplicate entry '1' for key 'PRIMARY'
+# Statement ended with one of expected results (ER_DUP_ENTRY,ER_DUP_KEY). 
+# If you got a difference in error message, just add it to rdiff file
+INSERT INTO t1 (a,b) VALUES (3,'a'),(0,'');
+ERROR 23000: Duplicate entry '3' for key 'PRIMARY'
+# Statement ended with one of expected results (ER_DUP_ENTRY,ER_DUP_KEY). 
+# If you got a difference in error message, just add it to rdiff file
+INSERT INTO t1 (a,b) VALUES (0,'');
+SELECT * FROM t1;
+a	b
+0	
+1	a
+100	a
+2	b
+29	n
+3	c
+30	m
+4	d
+5	e
+6	f
+INSERT IGNORE INTO t1 (a,b) VALUES (1,'a'),(12345,'z');
+INSERT INTO t1 (a,b) VALUES (1,'a'),(12345,'z') ON DUPLICATE KEY UPDATE b = CONCAT(b,b);
+SELECT * FROM t1;
+a	b
+0	
+1	aa
+100	a
+12345	zz
+2	b
+29	n
+3	c
+30	m
+4	d
+5	e
+6	f
+DROP TABLE t1;

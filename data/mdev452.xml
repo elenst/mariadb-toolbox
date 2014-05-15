@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+
+<resultset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <row>
+	<field name="mdev_1" xsi:nil="true" />
+	<field name="mdev_2" xsi:nil="true" />
+	<field name="mdev_3" xsi:nil="true" />
+  </row>
+
+  <row>
+	<field name="mdev_1">0</field>
+	<field name="mdev_2">0</field>
+	<field name="mdev_3">0</field>
+  </row>
+
+  <row>
+	<field name="mdev_1">2012-12-12 12:12:12</field>
+	<field name="mdev_2">2012-12-12 12:12:12</field>
+	<field name="mdev_3">2012-12-12 12:12:12</field>
+  </row>
+
+  <row>
+	<field name="mdev_1">2012-12-14 21:30:12.061</field>
+	<field name="mdev_2">2012-12-14 21:30:12.061</field>
+	<field name="mdev_3">2012-12-14 21:30:12.061</field>
+  </row>
+
+  <row>
+	<field name="mdev_1"></field>
+	<field name="mdev_2"></field>
+	<field name="mdev_3"></field>
+  </row>
+</resultset>

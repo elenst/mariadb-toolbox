@@ -1,0 +1,29 @@
+
+$combinations = [
+	[
+	'
+		--no-mask
+		--seed=time
+		--threads=4
+		--duration=900
+		--queries=100M
+		--reporters=QueryTimeout,Backtrace,ErrorLog,Deadlock,Recovery
+		--skip-gendata
+		--mysqld=--init-file=/home/elenst/OpenStreetMap/venice.sql
+	'], 
+	[
+		'--grammar=conf/gis/gis.yy',
+		'--grammar=conf/gis/linestring.yy'
+	], 
+	[
+		'',
+		'--rpl_mode=row',
+		'--rpl_mode=mixed',
+		'--rpl_mode=statement'
+	],
+	[
+		'--engine=InnoDB',
+		'--engine=MyISAM',
+		'--engine=Aria'
+	],
+];

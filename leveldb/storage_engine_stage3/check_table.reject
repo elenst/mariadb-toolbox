@@ -1,0 +1,96 @@
+DROP TABLE IF EXISTS t1,t2;
+CREATE DATABASE ldb_se_0;
+USE ldb_se_0;
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a <INT_COLUMN>, b <CHAR_COLUMN>) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+INSERT INTO t1 (a,b) VALUES (1,'a'),(2,'b');
+CREATE DATABASE ldb_se_1;
+USE ldb_se_1;
+CREATE TABLE t1 LIKE ldb_se_0.t1;
+INSERT INTO t1 SELECT * FROM ldb_se_0.t1;
+CREATE TRIGGER tr_pk_t1 BEFORE INSERT ON t1 FOR EACH ROW 
+SET NEW.ldb_pk = ( SELECT COALESCE(MAX(ldb_pk),0)+1 FROM t1 );
+CREATE TABLE t2 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a <INT_COLUMN>, b <CHAR_COLUMN>) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+CHECK TABLE t1;
+Table	Op	Msg_type	Msg_text
+ldb_se_1.t1	check	note	The storage engine for the table doesn't support check
+INSERT INTO t1 (a,b) VALUES (3,'c');
+INSERT INTO t2 (a,b) VALUES (4,'d');
+CHECK TABLE t1, t2 FOR UPGRADE;
+Table	Op	Msg_type	Msg_text
+ldb_se_1.t1	check	status	OK
+ldb_se_1.t2	check	status	OK
+INSERT INTO t2 (a,b) VALUES (5,'e');
+CHECK TABLE t2 QUICK;
+Table	Op	Msg_type	Msg_text
+ldb_se_1.t2	check	note	The storage engine for the table doesn't support check
+INSERT INTO t1 (a,b) VALUES (6,'f');
+CHECK TABLE t1 FAST;
+Table	Op	Msg_type	Msg_text
+ldb_se_1.t1	check	note	The storage engine for the table doesn't support check
+INSERT INTO t1 (a,b) VALUES (7,'g');
+INSERT INTO t2 (a,b) VALUES (8,'h');
+CHECK TABLE t2, t1 MEDIUM;
+Table	Op	Msg_type	Msg_text
+ldb_se_1.t2	check	note	The storage engine for the table doesn't support check
+ldb_se_1.t1	check	note	The storage engine for the table doesn't support check
+INSERT INTO t1 (a,b) VALUES (9,'i');
+INSERT INTO t2 (a,b) VALUES (10,'j');
+CHECK TABLE t1, t2 EXTENDED;
+Table	Op	Msg_type	Msg_text
+ldb_se_1.t1	check	note	The storage engine for the table doesn't support check
+ldb_se_1.t2	check	note	The storage engine for the table doesn't support check
+INSERT INTO t1 (a,b) VALUES (11,'k');
+CHECK TABLE t1 CHANGED;
+Table	Op	Msg_type	Msg_text
+ldb_se_1.t1	check	note	The storage engine for the table doesn't support check
+DROP TABLE t1, t2;
+CREATE DATABASE ldb_se_2;
+USE ldb_se_2;
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a <INT_COLUMN>, <CUSTOM_INDEX>(a)) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+ERROR HY000: Got error 122 from storage engine
+# ERROR: Statement ended with errno 1030, errname ER_GET_ERRNO (expected to succeed)
+ERROR 42S02: Table 'ldb_se_2.t1' doesn't exist
+INSERT INTO t1 (a) VALUES (1),(2),(5);
+ERROR 42S02: Table 'ldb_se_2.t1' doesn't exist
+CHECK TABLE t1;
+Table	Op	Msg_type	Msg_text
+ldb_se_2.t1	check	Error	Table 'ldb_se_2.t1' doesn't exist
+ldb_se_2.t1	check	status	Operation failed
+INSERT INTO t1 (a) VALUES (6),(8),(12);
+ERROR 42S02: Table 'ldb_se_2.t1' doesn't exist
+CHECK TABLE t1 FOR UPGRADE;
+Table	Op	Msg_type	Msg_text
+ldb_se_2.t1	check	Error	Table 'ldb_se_2.t1' doesn't exist
+ldb_se_2.t1	check	status	Operation failed
+INSERT INTO t1 (a) VALUES (13),(15),(16);
+ERROR 42S02: Table 'ldb_se_2.t1' doesn't exist
+CHECK TABLE t1 QUICK;
+Table	Op	Msg_type	Msg_text
+ldb_se_2.t1	check	Error	Table 'ldb_se_2.t1' doesn't exist
+ldb_se_2.t1	check	status	Operation failed
+INSERT INTO t1 (a) VALUES (17),(120),(132);
+ERROR 42S02: Table 'ldb_se_2.t1' doesn't exist
+CHECK TABLE t1 FAST;
+Table	Op	Msg_type	Msg_text
+ldb_se_2.t1	check	Error	Table 'ldb_se_2.t1' doesn't exist
+ldb_se_2.t1	check	status	Operation failed
+INSERT INTO t1 (a) VALUES (801),(900),(7714);
+ERROR 42S02: Table 'ldb_se_2.t1' doesn't exist
+CHECK TABLE t1 MEDIUM;
+Table	Op	Msg_type	Msg_text
+ldb_se_2.t1	check	Error	Table 'ldb_se_2.t1' doesn't exist
+ldb_se_2.t1	check	status	Operation failed
+INSERT INTO t1 (a) VALUES (8760),(10023),(12000);
+ERROR 42S02: Table 'ldb_se_2.t1' doesn't exist
+CHECK TABLE t1 EXTENDED;
+Table	Op	Msg_type	Msg_text
+ldb_se_2.t1	check	Error	Table 'ldb_se_2.t1' doesn't exist
+ldb_se_2.t1	check	status	Operation failed
+INSERT INTO t1 (a) VALUES (13345),(24456),(78302),(143028);
+ERROR 42S02: Table 'ldb_se_2.t1' doesn't exist
+CHECK TABLE t1 CHANGED;
+Table	Op	Msg_type	Msg_text
+ldb_se_2.t1	check	Error	Table 'ldb_se_2.t1' doesn't exist
+ldb_se_2.t1	check	status	Operation failed
+DROP TABLE t1;
+ERROR 42S02: Unknown table 'ldb_se_2.t1'

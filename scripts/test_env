@@ -1,0 +1,52 @@
+unset basedir
+unset datadir
+unset tmpdir
+unset port
+
+# If dirs or port were set manually, we'll reset them
+opts=
+
+path() {
+  val=$1
+  opt="--$2="
+  val=${arg##$opt}
+  if ! [[ "$val" =~ "/" ]]
+  then
+    val=`pwd`/$val
+  fi
+}
+
+for arg do
+  if [[ "$arg" =~ "--datadir=" ]]
+  then
+    path $arg datadir
+    datadir=$val
+  elif [[ "$arg" =~ '--basedir=' ]]
+  then
+    path $arg basedir
+    basedir=$val
+  elif [[ "$arg" =~ '--tmpdir=' ]]
+  then
+    path $arg tmpdir
+    tmpdir=$val
+  elif [[ "$arg" =~ '--port=' ]]
+  then
+    port=${arg##--port=}
+  else
+    opts="$opts $arg"
+  fi
+done
+
+basedir=${basedir-`pwd`}
+datadir=${datadir-$basedir/data}
+tmpdir=${tmpdir-$datadir/tmp}
+port=${port-3306}
+
+if [ -e $basedir/sql/share/english ]
+then
+	langdir=$basedir/sql/share
+	engdir=$basedir/sql/share/english
+else
+	echo "ERROR: Could not find langdir"
+fi
+

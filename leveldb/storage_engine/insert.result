@@ -1,0 +1,120 @@
+CREATE TABLE `t1` (
+  `a` int(11) NOT NULL DEFAULT '0',
+  `b` char(8) DEFAULT NULL,
+  PRIMARY KEY (`a`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+INSERT INTO t1 VALUES (100,'foobar'),(1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e');
+SELECT * FROM t1;
+a	b
+1	a
+100	foobar
+2	b
+3	c
+4	d
+5	e
+INSERT t1 VALUE (10,'foo'),(11,'abc');
+SELECT * FROM t1;
+a	b
+1	a
+10	foo
+100	foobar
+11	abc
+2	b
+3	c
+4	d
+5	e
+INSERT INTO t1 (b,a) VALUES ('test',0);
+SELECT * FROM t1;
+a	b
+0	test
+1	a
+10	foo
+100	foobar
+11	abc
+2	b
+3	c
+4	d
+5	e
+INSERT INTO t1 VALUES (DEFAULT,DEFAULT);
+SELECT * FROM t1;
+a	b
+0	NULL
+1	a
+10	foo
+100	foobar
+11	abc
+2	b
+3	c
+4	d
+5	e
+INSERT t1 (a) VALUE (10),(20);
+SELECT * FROM t1;
+a	b
+0	NULL
+1	a
+10	NULL
+100	foobar
+11	abc
+2	b
+20	NULL
+3	c
+4	d
+5	e
+INSERT INTO t1 SET a = 11, b = 'f';
+SELECT * FROM t1;
+a	b
+0	NULL
+1	a
+10	NULL
+100	foobar
+11	f
+2	b
+20	NULL
+3	c
+4	d
+5	e
+INSERT t1 SET b = DEFAULT;
+SELECT * FROM t1;
+a	b
+0	NULL
+1	a
+10	NULL
+100	foobar
+11	f
+2	b
+20	NULL
+3	c
+4	d
+5	e
+CREATE TABLE `t2` (
+  `a` int(11) NOT NULL DEFAULT '0',
+  `b` char(8) DEFAULT NULL,
+  PRIMARY KEY (`a`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+INSERT INTO t2 SELECT * FROM t1;
+INSERT INTO t1 (a) SELECT a FROM t2 WHERE b = 'foo';
+SELECT * FROM t1;
+a	b
+0	NULL
+1	a
+10	NULL
+100	foobar
+11	f
+2	b
+20	NULL
+3	c
+4	d
+5	e
+INSERT t1 SELECT * FROM t1;
+SELECT * FROM t1;
+a	b
+0	NULL
+1	a
+10	NULL
+100	foobar
+11	f
+2	b
+20	NULL
+3	c
+4	d
+5	e

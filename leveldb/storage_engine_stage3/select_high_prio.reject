@@ -1,0 +1,86 @@
+DROP TABLE IF EXISTS t1;
+connect  con0,localhost,root,,;
+SET lock_wait_timeout = 4;
+connect  con1,localhost,root,,;
+SET lock_wait_timeout = 4;
+connect  con2,localhost,root,,;
+SET lock_wait_timeout = 4;
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a <INT_COLUMN>, b <CHAR_COLUMN>) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+INSERT INTO t1 (a,b) VALUES (1,'f'),(2,'b');
+connection con1;
+LOCK TABLE t1 READ;
+ERROR 42S02: Table 'test.t1' doesn't exist
+connection con0;
+UPDATE t1 SET b = CONCAT(b,b);
+connection con2;
+# Timeout in include/wait_show_condition.inc for LIKE 'Waiting for table%'
+#         show_statement : SHOW PROCESSLIST
+#         field          : State
+#         condition      : LIKE 'Waiting for table%'
+#         max_run_time   : 3
+SELECT * FROM t1;
+connection con1;
+# Timeout in include/wait_show_condition.inc for = 'SELECT * FROM t1'
+#         show_statement : SHOW PROCESSLIST
+#         field          : Info
+#         condition      : = 'SELECT * FROM t1'
+#         max_run_time   : 3
+# ------------ UNEXPECTED RESULT ------------
+# The statement|command finished with timeout in wait_show_condition.inc.
+# Table locking or UPDATE or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+UNLOCK TABLES;
+connection con0;
+ERROR 42S02: Table 'test.t1' doesn't exist
+# ------------ UNEXPECTED RESULT ------------
+# [ UPDATE t1 SET b = CONCAT(b,b) ]
+# The statement|command finished with ER_NO_SUCH_TABLE.
+# UPDATE or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+connection con2;
+# Should return the new data
+ldb_pk	a	b
+1	2	b
+DROP TABLE t1;
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a <INT_COLUMN>, b <CHAR_COLUMN>) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+INSERT INTO t1 (a,b) VALUES (1,'f'),(2,'b');
+connection con1;
+LOCK TABLE t1 READ;
+ERROR 42S02: Table 'test.t1' doesn't exist
+connection con0;
+UPDATE t1 SET b = CONCAT(b,b,b);
+connection con2;
+# Timeout in include/wait_show_condition.inc for LIKE 'Waiting for table%'
+#         show_statement : SHOW PROCESSLIST
+#         field          : State
+#         condition      : LIKE 'Waiting for table%'
+#         max_run_time   : 3
+SET lock_wait_timeout = 1;
+# Should return old data
+SELECT HIGH_PRIORITY * FROM t1;
+ldb_pk	a	b
+1	2	b
+connection con1;
+UNLOCK TABLES;
+connection con0;
+ERROR 42S02: Table 'test.t1' doesn't exist
+# ------------ UNEXPECTED RESULT ------------
+# [ UPDATE t1 SET b = CONCAT(b,b,b) ]
+# The statement|command finished with ER_NO_SUCH_TABLE.
+# UPDATE or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+disconnect con1;
+disconnect con2;
+disconnect con0;
+connection default;
+DROP TABLE t1;
+ERROR 42S02: Unknown table 'test.t1'

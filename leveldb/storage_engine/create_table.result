@@ -1,0 +1,64 @@
+CREATE TABLE `t1` (
+  `a` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`a`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+SHOW CREATE TABLE t1;
+Table	Create Table
+t1	CREATE TABLE `t1` (
+  `a` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`a`)
+) ENGINE=<STORAGE_ENGINE> DEFAULT CHARSET=latin1
+Warnings:
+Note	1050	Table 't1' already exists
+ERROR HY000: Error on rename of './94812190682382336/t1' to './94812190682382336/tmp_t1' (errno: 122 - Internal (unspecified) error in handler)
+CREATE TABLE `t1` (
+  `a` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`a`)
+) ENGINE=LEVELDB DEFAULT CHARSET=latin1;
+ERROR 42S01: Table 't1' already exists
+ERROR 42S02: Table '94812190682382336.tmp_t1' doesn't exist
+ERROR 42S02: Unknown table '94812190682382336.tmp_t1'
+# ERROR: Statement ended with errno 1051, errname ER_BAD_TABLE_ERROR (expected to succeed)
+CREATE TABLE t2 LIKE t1;
+SHOW CREATE TABLE t2;
+Table	Create Table
+t2	CREATE TABLE `t2` (
+  `a` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`a`)
+) ENGINE=<STORAGE_ENGINE> DEFAULT CHARSET=latin1
+CREATE TEMPORARY TABLE t2 LIKE t1;
+SHOW CREATE TABLE t2;
+Table	Create Table
+t2	CREATE TEMPORARY TABLE `t2` (
+  `a` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`a`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1
+DROP TEMPORARY TABLE t2;
+CREATE TABLE `t1` (
+  `1` bigint(20) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`1`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+SHOW CREATE TABLE t1;
+Table	Create Table
+t1	CREATE TABLE `t1` (
+  `1` bigint(20) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`1`)
+) ENGINE=<STORAGE_ENGINE> DEFAULT CHARSET=latin1
+SELECT * FROM t1;
+1
+1
+2
+SET storage_engine = <STORAGE_ENGINE>;
+Warnings:
+Warning	1287	'@@storage_engine' is deprecated and will be removed in a future release. Please use '@@default_storage_engine' instead
+CREATE TABLE `t1` (
+  `a` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`a`)
+) ENGINE=LevelDB DEFAULT CHARSET=latin1;
+SHOW CREATE TABLE t1;
+Table	Create Table
+t1	CREATE TABLE `t1` (
+  `a` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`a`)
+) ENGINE=<STORAGE_ENGINE> DEFAULT CHARSET=latin1
+FLUSH LOGS;

@@ -1,0 +1,43 @@
+DROP TABLE IF EXISTS t1;
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, a SET('') <CUSTOM_COL_OPTIONS>,
+b SET('test1','test2','test3','test4','test5') <CUSTOM_COL_OPTIONS>,
+c SET('01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50''51','52','53','54','55','56','57','58','59','60','61','62','63','64') <CUSTOM_COL_OPTIONS>
+) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+SHOW COLUMNS IN t1;
+Field	Type	Null	Key	Default	Extra
+ldb_pk	int(11)	#	#	#	
+a	set('')	#	#	#	
+b	set('test1','test2','test3','test4','test5')	#	#	#	
+c	set('01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50''51','52','53','54','55','56','57','58','59','60','61','62','63','64')	#	#	#	
+INSERT INTO t1 (a,b,c) VALUES 
+('','test2,test3','01,34,44,,23'),
+('',5,2),
+(',','test4,test2','');
+Warnings:
+Warning	1265	Data truncated for column 'c' at row 1
+SELECT * FROM t1;
+ldb_pk	a	b	c
+1		test2,test4	
+INSERT INTO t1 (a,b,c) VALUES (0,'test6',-1);
+Warnings:
+Warning	1265	Data truncated for column 'b' at row 1
+Warning	1265	Data truncated for column 'c' at row 1
+SELECT * FROM t1;
+ldb_pk	a	b	c
+1		test2,test4	
+2			01,02,03,04,05,06,07,08,09,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50'51,52,53,54,55,56,57,58,59,60,61,62,63,64
+ALTER TABLE t1 ADD COLUMN e SET('a','A') <CUSTOM_COL_OPTIONS>;
+ERROR HY000: Table storage engine for 't1' doesn't have this option
+# ERROR: Statement ended with errno 1031, errname ER_ILLEGAL_HA (expected to succeed)
+# ------------ UNEXPECTED RESULT ------------
+# [ ALTER TABLE t1 ADD COLUMN e SET('a','A') /*!*/ /*Custom column options*/ ]
+# The statement|command finished with ER_ILLEGAL_HA.
+# ALTER TABLE or the syntax or the mix could be unsupported. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+SELECT * FROM t1 WHERE FIND_IN_SET('test2',b)>0 OR a != '';
+ldb_pk	a	b	c
+1		test2,test4	
+DROP TABLE t1;

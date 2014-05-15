@@ -1,0 +1,88 @@
+DROP TABLE IF EXISTS t1;
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, b BLOB <CUSTOM_COL_OPTIONS>,
+t TINYBLOB <CUSTOM_COL_OPTIONS>,
+m MEDIUMBLOB <CUSTOM_COL_OPTIONS>,
+l LONGBLOB <CUSTOM_COL_OPTIONS>,
+<CUSTOM_INDEX> b (b(32))
+) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+ERROR 42000: BLOB column 'b' can't be used in key specification with the used table type
+# ERROR: Statement ended with errno 1073, errname ER_BLOB_USED_AS_KEY (expected to succeed)
+ERROR 42S02: Table 'ldb_se_0.t1' doesn't exist
+# ------------ UNEXPECTED RESULT ------------
+# [ CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, b BLOB /*!NOT NULL*/ /*Custom indexed column options*/,
+t TINYBLOB /*!*/ /*Custom column options*/,
+m MEDIUMBLOB /*!*/ /*Custom column options*/,
+l LONGBLOB /*!*/ /*Custom column options*/,
+/*!UNIQUE INDEX*/ /*Custom index*/ b (b(32))
+) ENGINE=LevelDB /*!*/ /*Custom table options*/ ]
+# The statement|command finished with ER_BLOB_USED_AS_KEY.
+# BLOB types or indexes or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+CREATE TABLE t1 (b BLOB <CUSTOM_COL_OPTIONS>,
+t TINYBLOB <CUSTOM_COL_OPTIONS>,
+m MEDIUMBLOB <CUSTOM_COL_OPTIONS>,
+l LONGBLOB <CUSTOM_COL_OPTIONS>,
+PRIMARY KEY b (b(32))
+) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+ERROR 42000: BLOB column 'b' can't be used in key specification with the used table type
+# ERROR: Statement ended with errno 1073, errname ER_BLOB_USED_AS_KEY (expected to succeed)
+# ------------ UNEXPECTED RESULT ------------
+# [ CREATE TABLE t1 (b BLOB /*!NOT NULL*/ /*Custom indexed column options*/,
+t TINYBLOB /*!*/ /*Custom column options*/,
+m MEDIUMBLOB /*!*/ /*Custom column options*/,
+l LONGBLOB /*!*/ /*Custom column options*/,
+PRIMARY KEY b (b(32))
+) ENGINE=LevelDB /*!*/ /*Custom table options*/ ]
+# The statement|command finished with ER_BLOB_USED_AS_KEY.
+# BLOB types or PK or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, b BLOB <CUSTOM_COL_OPTIONS>,
+t TINYBLOB <CUSTOM_COL_OPTIONS>,
+m MEDIUMBLOB <CUSTOM_COL_OPTIONS>,
+l LONGBLOB <CUSTOM_COL_OPTIONS>,
+UNIQUE INDEX l_t (l(256),t(64))
+) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+ERROR 42000: BLOB column 'l' can't be used in key specification with the used table type
+# ERROR: Statement ended with errno 1073, errname ER_BLOB_USED_AS_KEY (expected to succeed)
+ERROR 42S02: Table 'ldb_se_2.t1' doesn't exist
+# ------------ UNEXPECTED RESULT ------------
+# [ CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, b BLOB /*!*/ /*Custom column options*/,
+t TINYBLOB /*!NOT NULL*/ /*Custom indexed column options*/,
+m MEDIUMBLOB /*!*/ /*Custom column options*/,
+l LONGBLOB /*!NOT NULL*/ /*Custom indexed column options*/,
+UNIQUE INDEX l_t (l(256),t(64))
+) ENGINE=LevelDB /*!*/ /*Custom table options*/ ]
+# The statement|command finished with ER_BLOB_USED_AS_KEY.
+# BLOB types or unique indexes or multi-part indexes or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
+CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, b BLOB <CUSTOM_COL_OPTIONS>,
+t TINYBLOB <CUSTOM_COL_OPTIONS>,
+m MEDIUMBLOB <CUSTOM_COL_OPTIONS>,
+l LONGBLOB <CUSTOM_COL_OPTIONS>,
+INDEX (m(128))
+) ENGINE=<STORAGE_ENGINE> <CUSTOM_TABLE_OPTIONS>;
+ERROR 42000: BLOB column 'm' can't be used in key specification with the used table type
+# ERROR: Statement ended with errno 1073, errname ER_BLOB_USED_AS_KEY (expected to succeed)
+ERROR 42S02: Table 'ldb_se_3.t1' doesn't exist
+# ------------ UNEXPECTED RESULT ------------
+# [ CREATE TABLE t1 (ldb_pk INT DEFAULT 0 PRIMARY KEY, b BLOB /*!*/ /*Custom column options*/,
+t TINYBLOB /*!*/ /*Custom column options*/,
+m MEDIUMBLOB /*!NOT NULL*/ /*Custom indexed column options*/,
+l LONGBLOB /*!*/ /*Custom column options*/,
+INDEX (m(128))
+) ENGINE=LevelDB /*!*/ /*Custom table options*/ ]
+# The statement|command finished with ER_BLOB_USED_AS_KEY.
+# BLOB types or non-unique indexes or the mix could be unsupported|malfunctioning, or the problem was caused by previous errors. 
+# You can change the engine code, or create an rdiff, or disable the test by adding it to disabled.def.
+# Further in this test, the message might sometimes be suppressed; a part of the test might be skipped.
+# Also, this problem may cause a chain effect (more errors of different kinds in the test).
+# -------------------------------------------
