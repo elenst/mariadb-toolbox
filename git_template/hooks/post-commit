@@ -23,9 +23,6 @@
 #   Comma-separated list of email addresses.
 # hooks.postcommitbranches (if not configured, no email is sent)
 #   Space-separated list of branches. * wildcard is allowed
-# hooks.postcommitsender (if not configured, user.email will be used if exists, 
-#   otherwise a generated address)
-#   E-mail address from which the message will be sent.
 # hooks.postcommitmailer (default /usr/sbin/sendmail)
 #   Tool to send the e-mail
 #
@@ -33,7 +30,7 @@
 create_email()
 {
 	# Subject will have format <abbreviated revid>: <First line of commit comment>
-	subj=$(git show --pretty="%h: %B" | head -1)
+	subj=$(git log --pretty="%h: %B" | head -1)
 
 	cat <<-EOF
 	To: $recipients
@@ -43,10 +40,7 @@ create_email()
 	Content-Transfer-Encoding: 8bit
 
 	EOF
-	git log -1 --format="revision-id: %H%nparent(s): %P%ncommitter: %cN%nbranch nick: $branch_nick%ntimestamp: %ci%nmessage:%n%n%B"
-	echo "-----------------------"
-	echo
-	git diff --stat -p HEAD^ HEAD
+	git show --patch-with-stat --format="revision-id: %H%nparent(s): %P%ncommitter: %cN%nbranch nick: $branch_nick%ntimestamp: %ci%nmessage:%n%n%B"
 
 }
 
@@ -108,8 +102,7 @@ if [ -z "$_branch_found" ] ; then
 	exit 0
 fi
 
-sender=$(git config hooks.postcommitsender)
-sender=${sender:-$(git config user.email)}
+sender=$(git config user.email)
 mailer=$(git config hooks.postcommitmailer)
 branch_nick=$(basename `readlink -f \`dirname \\\`git rev-parse --git-dir\\\`\``)
 
