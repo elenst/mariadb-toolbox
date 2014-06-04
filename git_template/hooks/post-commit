@@ -64,7 +64,7 @@ send_mail()
 #######################
 
 if [ -n "$SKIP_COMMIT_EMAIL" ] ; then
-	# Explicit request not to send the email
+	echo "post-commit hook: SKIP_COMMIT_EMAIL set, not sending the commit notification" 1>&2
 	exit 0
 fi
 
@@ -72,13 +72,13 @@ recipients=$(git config hooks.postcommitrecipients)
 
 branches=$(git config hooks.postcommitbranches)
 if [ -z "$branches" ] ; then
-	# No branches are configured
+	echo "post-commit hook: no branches configured, not sending the commit notification" 1>&2	
 	exit 0
 fi
 
 
 if [ -z "$recipients" ]; then
-	echo "ERROR: recipient list is empty, not sending the commit notification" 1>&2
+	echo "post-commit hook: ERROR: recipient list is empty, not sending the commit notification" 1>&2
 	exit 1
 fi
 
@@ -104,7 +104,7 @@ done
 SHELLOPTS=$SHELLOPTS_SAVE
 
 if [ -z "$_branch_found" ] ; then
-	# Branch is not on the configured list
+	echo "post-commit hook: branch $branch is not in the configured branch list, not sending the commit notification" 1>&2	
 	exit 0
 fi
 

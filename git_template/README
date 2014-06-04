@@ -20,11 +20,25 @@ To configure commit notification e-mails, do the following:
     to be sent from;
   = configure postcommitmailer if necessary;
 
-From now on, for all branches listed in hooks/postcommitbranches, commit 
-notifications should be sent. 
+From now on, for all new clones of branches listed in hooks/postcommitbranches, 
+commit notifications should be sent. 
 
-To disable commit notifications, set SKIP_COMMIT_EMAIL environment variable 
-to a non-empty value. 
+If you had already cloned some trees before enabling commit notifications, 
+you will need to amend those trees:
+
+- add the hook script to the tree by either running:
+  = cd <cloned folder>
+    git init
+  = or 
+    cp <git templates path>/hooks/post-commit <cloned folder>/.git/hooks/
+
+- copy hooks/postcommit* options from 
+  <git templates path>/config to <cloned folder>/.git/config
+
+
+To disable commit notification(s), set SKIP_COMMIT_EMAIL environment variable 
+to a non-empty value.
+
 
 Notes:
 
