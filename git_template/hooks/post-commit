@@ -21,6 +21,9 @@
 # -------------
 # hooks.postcommitrecipients (mandatory, error if not set)
 #   Comma-separated list of email addresses.
+# hooks.postcommitsender (if not configured, user.email will be used if exists, 
+#   otherwise a generated address)
+#   E-mail address from which the message will be sent.
 # hooks.postcommitbranches (if not configured, no email is sent)
 #   Space-separated list of branches. * wildcard is allowed
 # hooks.postcommitmailer (default /usr/sbin/sendmail)
