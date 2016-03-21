@@ -2,6 +2,7 @@ unset basedir
 unset datadir
 unset tmpdir
 unset port
+unset srcdir
 
 # If dirs or port were set manually, we'll reset them
 opts=
@@ -16,8 +17,15 @@ path() {
   fi
 }
 
+defaults="--no-defaults"
+valgrind=""
+result=0
+
 for arg do
-  if [[ "$arg" =~ "--datadir=" ]]
+  if [[ "$arg" =~ "--defaults-file" ]]
+  then
+    defaults="$arg"
+  elif [[ "$arg" =~ "--datadir=" ]]
   then
     path $arg datadir
     datadir=$val
@@ -25,6 +33,10 @@ for arg do
   then
     path $arg basedir
     basedir=$val
+  elif [[ "$arg" =~ '--srcdir=' ]]
+  then
+    path $arg srcdir
+    srcdir=$val
   elif [[ "$arg" =~ '--tmpdir=' ]]
   then
     path $arg tmpdir
@@ -32,12 +44,23 @@ for arg do
   elif [[ "$arg" =~ '--port=' ]]
   then
     port=${arg##--port=}
+  elif [[ "$arg" =~ '--valgrind' ]]
+  then
+    valgrind=`which valgrind`
+    if [ -z "$valgrind" ]
+    then
+      echo "--------------------------------------------"
+      echo "ERROR: valgrind was requested but not found!"
+      echo "--------------------------------------------"
+      result=1
+    fi
   else
     opts="$opts $arg"
   fi
 done
 
 basedir=${basedir-`pwd`}
+srcdir=${srcdir-$basedir}
 datadir=${datadir-$basedir/data}
 tmpdir=${tmpdir-$datadir/tmp}
 port=${port-3306}
@@ -49,4 +72,15 @@ then
 else
 	echo "ERROR: Could not find langdir"
 fi
+
+echo "Variables from test_env: 
+     defaults=$defaults 
+     basedir=$basedir 
+     datadir=$datadir 
+     tmpdir=$tmpdir 
+     port=$port
+     valgrind=$valgrind
+     result=$result
+     opts=$opts
+"
 

@@ -1,46 +1,55 @@
 #!/bin/perl
 
-# The script retrieves the last release tag in the given bzr tree
-# and clones the tree using this tag.
+# The script attempts to clone the given bzr/git tree by the last release tag.
 # It can be easily done by a chain of shell commands on linux, 
 # but we need it to work on Windows, too, 
 # so it's better to make it portable from the start.
 
-# The script assumes that releases are tagged as mariadb-<major version>[-<minor version>]
+# The script assumes that releases are tagged as mariadb-<major version>-<minor version>-<patch>[<maybe something else>]
 
 use Getopt::Long;
 use strict;
 
-my ($source_tree, $dest_tree);
+use constant REPO_BZR => 1;
+use constant REPO_GIT => 2;
+
+my ($source_tree, $dest_tree, $repo_type);
+my $debug = 0;
 
 # Sometimes we want to hardcode a specific revision to be used instead of 
 # the release tag. For example, 5.3 has not been released for a long time,
 # and a lot was fixed there since the last release, so it makes more sense
 # to use a newer revision.
-# The map will have a form of <version number> => <revno>,
+# The map will have a form of <version number> => <revision>,
 # which means that if we detected that the current tree has VERSION = <version number>,
 # then we'll use <revno> instead of <previous version number>.
 
-my %overridden_revno = ( '5.3.13' => '3622' );
+my %overridden_rev = ( '5.3' => '3622', '10.2' => 'mariadb-10.1.8' );
 
 GetOptions(
    'source_tree=s' => \$source_tree,
    'source-tree=s' => \$source_tree,
    'dest_tree=s' => \$dest_tree,
    'dest-tree=s' => \$dest_tree,
+	'debug!' => \$debug
 );
 
 if (! $source_tree) {
-   die "ERROR: Source local bazaar tree must be set\n";
+   die "ERROR: Source local bazaar/git tree must be set\n";
 } elsif (! -e $source_tree) {
-   die "ERROR: Bazaar tree $source_tree does not exist\n"
-} 
+   die "ERROR: Source tree $source_tree does not exist\n"
+} elsif (! -e "$source_tree/.bzr" and ! -e "$source_tree/.git") {
+	die "ERROR: Source tree does not look like either bzr or git tree\n";
+}
 
 if (! $dest_tree) {
    die "ERROR: Destination tree must be set\n";
 }
 
-my ($major, $minor, $patch);
+$repo_type = (-e "$source_tree/.git" ? REPO_GIT : REPO_BZR);
+
+
+my ($major, $minor, $patch, $version, $revision);
 
 if ( -e "$source_tree/VERSION" ) {
 	open(VERSION,"$source_tree/VERSION") || die "ERROR: Could not open file $source_tree/VERSION: $!";
@@ -68,24 +77,59 @@ if (! defined $major or ! defined $minor) {
    die "ERROR: Could not retrieve server version\n";
 }
 
-if ( defined $overridden_revno{"$major.$minor.$patch"} ) {
-	my $revno = $overridden_revno{"$major.$minor.$patch"};
-	system("bzr branch -r $revno $source_tree $dest_tree");
-}
-else {
-	my $version = "$major.$minor"; 
+$version = "$major.$minor";
 
-	open(TAGS,"bzr tags -d $source_tree --sort=time |") || die "ERROR: Could not read bzr tags from $source_tree: $!";
-	my $last_release;
-	while (<TAGS>) {
-		next unless /^(mariadb-$version\S*)/;
-		$last_release = $1;
-	}
-	close(TAGS);
+if ( defined $overridden_rev{$version} ) {
+	print "For version $version the previous release tag is overridden to $overridden_rev{$version}\n";
+	$revision = $overridden_rev{$version};
+#	system("bzr branch -r $revno $source_tree $dest_tree");
+} elsif ( $patch == 0 ) { 
+	die "ERROR: it's the first minor release in the line, and there is no overridden revision\n";
+} else {
+#	my $prev_version = "$major.$minor.".($patch-1);
 
-	if (! $last_release) {
+	$revision = find_tag($source_tree, $version, $repo_type);
+
+	if (! $revision) {
 		die "ERROR: Could not find a release tag for $version in $source_tree\n";
 	}
 
-	system("bzr branch -rtag:$last_release $source_tree $dest_tree");
 }
+
+clone_tree($source_tree, $dest_tree, $revision, $repo_type);
+
+
+sub clone_tree {
+	my ( $src, $dest, $rev, $repo ) = @_;
+
+	my $cmd = ( $repo == REPO_BZR 
+		? "bzr branch -r $rev $src $dest"
+		: "cd $src/.. && git clone $src $dest && cd $dest && git checkout $rev"
+	);
+	debug("To clone the tree, running $cmd\n");
+	system("$cmd");
+}
+
+
+sub find_tag {
+	my ( $src, $ver, $repo ) = @_;
+	my $cmd = ( $repo == REPO_BZR 
+		? "bzr tags -d $src --sort=time" 
+		: "cd $src && git for-each-ref --count=1 --sort=-authordate --format=%(refname) refs/tags/mariadb-$ver.*"
+	);
+	debug("To find the tag, running $cmd\n");
+	open(TAGS, "$cmd |") || die "ERROR: Could not read repo tags from $src: $!\n";
+	my $tag;
+	while (<TAGS>) {
+		debug("Checking tag $_\n");
+		next unless /^(?:refs\/tags\/)?(mariadb-$version\.\S+)/;
+		$tag = $1;
+	}
+	close(TAGS);
+	return $tag;
+}
+
+sub debug {
+	print @_ if $debug;
+}
+

@@ -1,0 +1,21 @@
+$tables = {
+	rows => [1000,20000],
+	engines => ['MyISAM','InnoDB','Aria'],
+	partitions => [ 
+		undef,
+		"HASH(pk) PARTITIONS 4",
+		"KEY(pk) PARTITIONS 2"
+	]
+};
+
+$fields = {
+        types => [ 'smallint', 'bigint', 'varchar(10)', 'varchar(256)' ],
+        indexes => [ undef, 'key' ],
+        null => [ undef ]
+};
+
+
+$data = {
+        numbers => [ 0 , 'null', 'digit', 'tinyint_unsigned', 'smallint_unsigned', undef ],
+        strings => [ 'letter', 'english' , 'varchar(2)', 'string(10)', 'states' ]
+};

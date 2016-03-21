@@ -115,14 +115,19 @@ open( PATCH, "<$diffile" ) || die "Could not open $diffile for reading\n";
 while ( my $line = <PATCH> )
 {
 	# Find the next modified or added file
-	if ( $line =~ /^===\s(?:added|modified)\sfile\s\'?([^']+)\'?/ )
+	if ( $line =~ /^===\s(?:added|modified)\sfile\s\'?([^']+)\'?/ 
+			or $line =~ /^diff\s--git\sa\/([^'\s]+)/ )
 	{
 		my $f = $1;
 		next if $f =~ /^mysql-test/ ; # No need to process MTR stuff
 		debug( "File: $f\n" );
-		$line = <PATCH>; # --- <old file>
-		$line = <PATCH>; # +++ <new file>
-		$line = <PATCH>; # @@ -<old pos>,<old length> +<new pos>,<new length> @@
+		do {
+			# index ... (for git)			
+			# --- <old file>
+			# +++ <new file>
+			# @@ -<old pos>,<old length> +<new pos>,<new length> @@
+			$line = <PATCH>;
+		} until ( $line =~ /^\@\@\s\-\d+,\d+\s\+(\d+),(\d+)/ );
 
 		while ( $line =~ /^\@\@\s\-\d+,\d+\s\+(\d+),(\d+)/ )
 		{

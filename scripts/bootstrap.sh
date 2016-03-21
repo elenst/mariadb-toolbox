@@ -3,16 +3,32 @@ script_home=`dirname $script_path`
 
 . $script_home/test_env $*
 
-cat $basedir/scripts/mysql_system_tables.sql > /tmp/init.sql
-cat $basedir/scripts/mysql_performance_tables.sql >> /tmp/init.sql
-cat $basedir/scripts/mysql_system_tables_data.sql >> /tmp/init.sql
-cmd="$basedir/sql/mysqld --no-defaults --basedir=$basedir --datadir=$datadir --log-error=$datadir/bootstrap.err --bootstrap --loose-lc-messages-dir=$langdir --loose-language=$engdir $opts"
-echo Server command line: 
+rm -rf $tmpdir $datadir 
+mkdir $datadir
+
+mysql_install_db=`find $basedir -name mysql_install_db | head -1`
+
+# Serve both binary and source builds
+if [ -d $basedir/bin ] 
+then
+    dir_param="--basedir=$basedir"
+else
+    dir_param="--srcdir=$basedir"
+fi
+
+cmd="$mysql_install_db $defaults $dir_param --datadir=$datadir $opts"
+echo Bootstrap command line: 
 echo $cmd
+$cmd
 
-echo "rm -rf $tmpdir $datadir && mkdir $datadir && mkdir $tmpdir && mkdir $datadir/test && mkdir $datadir/mysql && { echo \"use mysql;\"; cat /tmp/init.sql ; } | $cmd"
-rm -rf $tmpdir $datadir && mkdir $datadir && mkdir $tmpdir && mkdir $datadir/test && mkdir $datadir/mysql && { echo "use mysql;"; cat /tmp/init.sql ; } | $cmd
+if [ $? -eq 0 ]
+then 
+	mkdir -p $tmpdir
+	echo "Datadir created"
+else
+	echo "-----------------------------------------------------"
+	echo "ERROR: Failed to bootstrap, see logs for more details"
+	echo "-----------------------------------------------------"
+fi
 
-echo Result code: $?
-rm /tmp/init.sql
 

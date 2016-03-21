@@ -1,0 +1,33 @@
+create table t1 (
+pk bigint unsigned auto_increment,
+ts timestamp not null default CURRENT_TIMESTAMP,
+data varchar(64),
+primary key(pk),
+key(ts) range_key=system
+) engine=ScaleDB table_type=streaming;
+show create table t1;
+Table	Create Table
+t1	CREATE TABLE `t1` (
+  `pk` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `data` varchar(64) DEFAULT NULL,
+  PRIMARY KEY (`pk`),
+  KEY `ts` (`ts`) `range_key`=system
+) ENGINE=ScaleDB DEFAULT CHARSET=latin1 `table_type`=streaming
+insert into t1 (data) values ('foo'),('bar');
+#
+# If I do another insert here, e.g.
+# insert into t1 (data) values ('baz'),
+# it's not visible in the result, even after 20 sec waiting.
+# It looks like a bug.
+# But I want to make a test which actually works,
+# so I won't do the second insert.
+#
+select pk, data from t1;
+pk	data
+256	foo
+512	bar
+delete from t1;
+select * from t1;
+pk	ts	data
+drop table t1;

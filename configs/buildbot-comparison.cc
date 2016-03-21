@@ -22,14 +22,12 @@ $combinations = [
         '--grammar=conf/optimizer/range_access2.yy --gendata=conf/optimizer/range_access2.zz',
         '--grammar=conf/optimizer/range_access.yy --gendata=conf/optimizer/range_access.zz',
 
-        '--grammar=conf/optimizer/optimizer_subquery_semijoin.yy --engine=MyISAM',
+        '--grammar=conf/mariadb/optimizer.yy --engine=MyISAM',
         '--grammar=conf/optimizer/updateable_views.yy --engine=MyISAM',
-        '--grammar=conf/optimizer/optimizer_no_subquery.yy --engine=MyISAM',
         '--grammar=conf/optimizer/optimizer_access_exp.yy --engine=MyISAM',
 
-        '--grammar=conf/optimizer/optimizer_subquery_semijoin.yy --engine=InnoDB',
+        '--grammar=conf/mariadb/optimizer.yy --engine=InnoDB',
         '--grammar=conf/optimizer/updateable_views.yy --engine=InnoDB',
-        '--grammar=conf/optimizer/optimizer_no_subquery.yy --engine=InnoDB',
         '--grammar=conf/optimizer/optimizer_access_exp.yy --engine=InnoDB',
     ], 
     [

@@ -22,7 +22,7 @@ use constant FAIL => 1;
 my $first = -1;
 my $testcase;
 my $options;
-my $step = 1;
+my $step = 10;
 my $direction = BACKWARDS;
 my $goal = FIXING_REVISION;
 
@@ -102,25 +102,25 @@ while ($step)
 	while ($revno) 
 	{
 		print "\n\n****************** Trying revno $revno ... ***********************\n\n";
-		print "Running bzr revert -r $revno...\n";
-		system("cd $cwd/.. && bzr revert -r $revno > build_$revno.log 2>&1");
+		print "Running\n   cd $cwd/.. && pwd && bzr revert -r $revno > build_$revno.log 2>&1\n";
+		system("cd $cwd/.. && pwd && bzr revert -r $revno > build_$revno.log 2>&1");
 		if ($? > 0) {
 			print "\nbzr revert -r $revno failed, finishing...\n";
 			$revno = undef;
 			last;
 		}
-		print "Bzr revert succeeded, building...\n";
-		system("cd $cwd/.. && make -j3 >> build_$revno.log 2>&1");
+		print "Bzr revert succeeded, building...\n   cd $cwd/.. && pwd && make -j3 >> build_$revno.log 2>&1\n";
+		system("cd $cwd/.. && pwd && make -j3 >> build_$revno.log 2>&1");
 		if ($? > 0 and -e "$cwd/../last_build") {
-			print "\nWARNING: Build failed, trying to rebuild using $cwd/../last_build...\n";
-			system("cd $cwd/.. && . ./last_build >> build_$revno.log 2>&1");
+			print "\nWARNING: Build failed, trying to rebuild using $cwd/../last_build...\n   d $cwd/.. && pwd && rm -f CMakeCache.txt && . ./last_build >> build_$revno.log 2>&1\n";
+			system("cd $cwd/.. && pwd && rm -f CMakeCache.txt && . ./last_build >> build_$revno.log 2>&1");
 		}
 		if ($? > 0) {
 			print "\nWARNING: Build failed, going to the next revision...\n\n";
 		}
 		else {
-			print "\nBuild succeeded, running the test...\n\n";
-			system("cd $cwd && perl ./mtr $testcase $options");
+			print "\nBuild succeeded, running the test...\n   cd $cwd && pwd && perl ./mtr $testcase $options\n\n";
+			system("cd $cwd && pwd && perl ./mtr $testcase $options");
 			$res = ($? ? FAIL : PASS); # Normalize -- we don't care which error code it produces, only care if 0 or not 0
 
 			unless (defined $first_result) {
@@ -148,7 +148,7 @@ There is nothing to look for.\n\n";
 				
 			}
 
-			print "\n\n****************** Test $result_text{$first_result} on revno $revno ***********************\n\n";
+			print "\n\n****************** Test $result_text{$res} on revno $revno ***********************\n\n";
 			if ($res != $first_result) { 
 				last;
 			}

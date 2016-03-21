@@ -1,0 +1,37 @@
+Known problems with the test suite template
+-------------------------------------------
+
+
+ScaleDB produces warnings upon shutdown. I am getting two of them:
+
+160115 16:05:47 [Warning] Plugin 'ScaleDB' will be forced to shutdown
+2016-01-15 16:05:07 ScaleDB Message: [Warning] [Tcpip Client - attempting to connect to server... ]
+
+The second one *might* be caused by forced termination of ScaleDB processes (cas and/or slm). 
+If so, we'll need to think what to do about it in the test suite -- might be not easy, --
+or just add a global suppression. 
+
+I don't know what causes the first one, about being forced to shutdown.
+
+-----------------------------
+
+If the server has to be restarted during test suite execution, e.g. if it's run with
+
+mysql-test-run.pl scaledb.hello_scaledb scaledb.hello_scaledb  --force-restart --force
+
+the second time the server does not come up, at least for me, just stops at ScaleDB startup. 
+It might be the suite code problem, but it's also quite possible that ScaleDB itself misbehaves, 
+it needs to be investigated. 
+
+-----------------------------
+
+The test is still slow for me, on all machines where I tried -- different slow, but slow. 
+My fastest SHOW CREATE TABLE is ~15 seconds or so. 
+
+-----------------------------
+
+There are things with the engine that don't seem to work properly, 
+even on the surface, see for example a comment in hello_scaledb.test. 
+But the test is created as an example, specifically to pass, so all problems 
+are intentionally avoided. 
+

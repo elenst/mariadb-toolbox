@@ -10,7 +10,7 @@ $| = 1;
 my $lineno = 0;
 my $mismatch;
 my $count = 0;
-my $debug = 0;
+my $debug = 1;
 
 my @names = ();
 foreach (@ARGV) {
@@ -116,7 +116,7 @@ sub legitimate
 				$alias_names{$2} = 1;
 				$field_aliases{$1} = $2;
 			}
-			if ( $1 =~ /^\s*(?:MAX|MIN|SUM|COUNT|AVG)/ )
+			if ( $1 =~ /^\s*(?:MAX|MIN|SUM|COUNT|AVG|GROUP_CONCAT|BIT_AND|BIT_COUNT|BIT_LENGTH|BIT_OR|BIT_XOR|STD|STDDEV|STDDEV_POP|STDDEV_SAMP|VAR_POP|VAR_SAMP|VARIANCE)/ )
 			{
 				$aggregate = 1;
 			}

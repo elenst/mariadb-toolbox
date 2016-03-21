@@ -1,27 +1,83 @@
+use Getopt::Long;
+use Cwd 'abs_path';
+use File::Basename;
+use strict;
+
 use strict;
 
 # type should be stmt or line
-my $type = shift @ARGV;
-my $test = shift @ARGV;
-my $output = shift @ARGV;
+my $type = 'stmt';
+my $output = 'signal ';
+my $suitedir = 't';
+my $suitename;
+my $options = '';
+my $test;
+my $path = dirname(abs_path($0));
 
-open( TEST, "t/$test.test" ) or die "could not open t/$test.test for reading: $!";
+
+GetOptions (    
+	"testcase=s"	=> \$test,
+	"type=s"	=> \$type,
+	"output=s" 	=> \$output,
+	"suitedir=s"	=> \$suitedir,
+	"suite=s"	=> \$suitename,
+	"options=s"		=> \$options
+);
+
+if ( $type ne 'stmt' and $type ne 'line' ) {
+	print "ERROR: Wrong simplification type: $type. Only 'stmt' and 'line' are allowed\n";
+	exit 1;
+}
+
+if ( !$test ) {
+	print "ERROR: test is not defined\n";
+	exit 1;
+}
+
+unless ($suitename) {
+	if ($suitedir eq 't') {
+		$suitename = 'main'
+	}
+	elsif ($suitedir =~ /.*[\/\\](.*)/) {
+		$suitename = $1;
+	}
+	else {
+		print "ERROR: Could not retrieve suite name\n";
+		exit 1;
+	}
+}
+
+
+open( TEST, "$suitedir/$test.test" ) or die "could not open $suitedir/$test.test for reading: $!";
 
 my @test = ();
 
 while (<TEST>)
 {
-	if ( /^--/s ) 
+	if ( /^\s*--/s ) 
 	{
+		# SQL comments or MTR commands
 		push @test, $_;
 	}
 	elsif ( /^\s*\#/s )
 	{
+		# Comment lines not needed
 		next;
 	}
 	elsif ( /^\s*$/ )
 	{
+		# Empty lines not needed
 		next;
+	}
+	elsif ( /^\s*(?:if|while)\s*\(/s )
+	{
+		# MTR's if/while constructions, leave them as is for now
+		push @test, $_;
+	}
+	elsif ( /^\s*(?:\{|\})/s )
+	{
+		# Brackets from MTR's if/while constructions
+		push @test, $_;
 	}
 	else {
 		my $cmd = $_;
@@ -110,16 +166,17 @@ sub run_test
 {
 	my $testref = shift;
 	print "Size of the test to run: " . scalar(@$testref) . "\n";
-	open( TEST, ">t/new_test.test" ) or die "Could not open t/new_test.test for writing: $!";
+	open( TEST, ">$suitedir/new_test.tmp" ) or die "Could not open $suitedir/new_test.tmp for writing: $!";
 	print TEST "--disable_abort_on_error\n";
 	#print TEST "--source include/master-slave.inc\n";
 	#print TEST "--source include/have_binlog_format_statement.inc\n";
-        print TEST @$testref;
+	print TEST @$testref;
 	#print TEST "\n--sync_slave_with_master\n";
-        close( TEST );
+	close( TEST );
+	system("perl $path/cleanup_sends_reaps.pl $suitedir/new_test.tmp > $suitedir/new_test.test");
 	my $start = time();
-        my $out = readpipe( "perl ./mtr @ARGV new_test" );
-        $out .= readpipe("cat var/log/mysqld.1.err");
+	my $out = readpipe( "perl ./mtr $options --suite=$suitename new_test" );
+	$out .= readpipe("cat var/log/mysqld.1.err");
 	if (-e 'var/log/mysqld.2.err') {
         $out .= readpipe("cat var/log/mysqld.2.err");
 	}
@@ -128,7 +185,7 @@ sub run_test
 	if ( $result )
 	{
 		print "Reproduced (no: $reproducible_counter)\n";
-		rename( "t/new_test.test", "t/$test.test.reproducible.$reproducible_counter" );
+		rename( "$suitedir/new_test.test", "$suitedir/$test.test.reproducible.$reproducible_counter" );
 		$outfile = "$test.out.reproducible.$reproducible_counter";
 		$reproducible_counter++;
 	}

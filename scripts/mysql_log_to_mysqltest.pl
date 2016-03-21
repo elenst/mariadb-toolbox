@@ -6,12 +6,19 @@ use strict;
 my $opt_load_dir;
 my $opt_tables;
 my $opt_sleep = 1;
+my $opt_threads = '';
+my $opt_timestamps = 0;
 
 GetOptions ( 	
 			"load-dir=s"            => \$opt_load_dir,
 			"tables=s"              => \$opt_tables,
 			"sleep!"                => \$opt_sleep,
+			"timestamps!"                => \$opt_timestamps,
+			"threads=s"					=> \$opt_threads,
+			"connections=s"			=> \$opt_threads,
 			);
+
+my %interesting_connections = map { $_ => 1 } split /,/, $opt_threads;
 
 my @files = @ARGV;
 
@@ -31,11 +38,10 @@ my $last_log_sec = 0;
 
 my $cur_log_con = 0;
 my $cur_log_record = '';
+my $timestamp = 0;
 
 # TODO: how to handle KILL <con num>?
 # TODO: MYSQLTEST_VARDIR 
-
-my %interesting_connections;
 
 if ( $opt_tables ) 
 {
@@ -49,12 +55,13 @@ if ( $opt_tables )
 
 	while (<>) 
 	{
-		if ( /^\s*[\d\:\s]*\s+(\d+)\s+Query/ ) {
+		if ( /^\s*[\d\:\s]*\s+(\d+)\s+(?:Query|Execute)/ ) {
 			$cur_con = $1;
 		}
-		$interesting_connections{$cur_con} = 1
-			if /$pattern/;
+		$interesting_connections{$cur_con} = 2
+			if /$pattern/ and ($opt_threads eq '' or defined $interesting_connections{$cur_con});
 	} 
+	foreach ( keys %interesting_connections ) { delete $interesting_connections{$_} unless $interesting_connections{$_} == 2 };
 	unless ( scalar( keys %interesting_connections) ) {
 		print STDERR "Requested tables not found in the log\n";
 		exit 1;
@@ -70,6 +77,8 @@ print "--source include/have_innodb.inc\n";
 print "--enable_connect_log\n";
 print "--disable_abort_on_error\n";
 print "SET GLOBAL event_scheduler = OFF;\n";
+print "CREATE USER rqg\@localhost;\n";
+print "GRANT ALL ON *.* TO rqg\@localhost;\n";
 
 #foreach my $c ( keys %interesting_connections ) {
 #	print "$c\n";
@@ -80,6 +89,14 @@ my $ignore;
 
 LOGLINE:
 while(<>) {
+
+        # Log rotation looks like this (and should be                 
+        # /home/elenst/bzr/10.0/sql/mysqld, Version: 10.0.14-MariaDB-debug-log (Source distribution). started with:
+        # Tcp port: 19300  Unix socket: /home/elenst/test_results/analyze4/mysql.sock
+        # Time                 Id Command    Argument
+
+        next LOGLINE if /started with:\s*$/ or /^\s*Tcp port:/ or /^\s*Time\s+Id\s+Command\s+Argument/;
+
         my $new_log_con;
         my $new_log_timestamp;
         my $new_log_record_type;
@@ -118,17 +135,22 @@ while(<>) {
 					# can later override sleep time from MTR command line
 					
 	                my $new_log_sec = time_to_sec( $new_log_timestamp );
+	                $timestamp = $new_log_sec;
 	                if ( $opt_sleep and $last_log_sec and ( my $dif = ( $new_log_sec - $last_log_sec - 1 ) > 0 ) ) {
 	                	print "--sleep $dif\n";
 	                }
 	                $last_log_sec = $new_log_sec;
 				}
 
-                # We ignore Prepare, Execute, Statistics and Binlog lines
-        		next LOGLINE if ( $new_log_record_type =~ /(?:Prepare|Execute|Binlog|Field|Statistics|Shutdown)/ );        
-        		
+            # We ignore Prepare, Execute, Statistics and Binlog lines
+
+        		next LOGLINE if ( $new_log_record_type =~ /(?:Prepare|Binlog|Field|Statistics|Shutdown|Close)/ );        
+
         		if ( $new_log_record_type eq 'Connect' ) 
         		{
+
+					next if $_ =~ /Access denied for/;
+
         			# Log record 'Connect' translates into --connect
         			# and also changes current connection in the test
         			 
@@ -137,6 +159,7 @@ while(<>) {
         			my $conname = 'con' . $new_log_con;
         			my $password = ( defined $user_passwords{$user.'@'.$host} ? $user_passwords{$user.'@'.$host} : '' );
         			print "--connect ($conname,$host,$user,$password,$db)\n";
+        			print "SET TIMESTAMP = $timestamp /* 1 */;\n" if $opt_timestamps;
         			print "--let \$${conname}_id = `SELECT CONNECTION_ID() AS ${conname}`\n";
         			$test_connections{$new_log_con} = 0;
         			$cur_test_con = $new_log_con;
@@ -154,6 +177,7 @@ while(<>) {
 					{
 						print "--connection $conname\n";
 						print "--reap\n";
+        				print "SET TIMESTAMP = $timestamp /* 2 */;\n" if $opt_timestamps;
 					}
         			print "--disconnect $conname\n";
         			delete $test_connections{$new_log_con};
@@ -168,6 +192,7 @@ while(<>) {
         			$db = '' unless defined $db;
         			my $conname = 'con' . $new_log_con;
 					print "--connection $conname\n";
+      			print "SET TIMESTAMP = $timestamp /* 3 */;\n" if $opt_timestamps;
 					if ( $test_connections{$new_log_con} ) 
 					{
 						print "--reap\n";
@@ -177,7 +202,7 @@ while(<>) {
         			print "--change_user $user,$password,$db\n";
         			$cur_test_con = $new_log_con;
         		}
-        		elsif ( $new_log_record_type eq 'Query' ) 
+        		elsif ( $new_log_record_type eq 'Query' or $new_log_record_type eq 'Execute' ) 
         		{
         			$cur_log_con = $new_log_con;
         			$cur_log_record = $_;
@@ -190,6 +215,7 @@ while(<>) {
                {
                  	print "--connection $conname\n";
 						print "--reap\n";
+        				print "SET TIMESTAMP = $timestamp /* 4 */;\n" if $opt_timestamps;
 						$test_connections{$new_log_con} = 0;
 					}
 	        		$cur_log_con = $new_log_con;
@@ -288,6 +314,7 @@ sub print_current_record
 		if ( ! exists( $test_connections{$cur_log_con} ) )
 		{
 			print "--connect (con$cur_log_con,localhost,root,,test)\n";
+        	print "SET TIMESTAMP = $timestamp /* 5 */;\n" if $opt_timestamps;
 			print "--let \$con${cur_log_con}_id = `SELECT CONNECTION_ID() AS con${cur_log_con}`\n";
 			$test_connections{$cur_log_con} = 0;
 			$cur_test_con = $cur_log_con;
@@ -299,6 +326,7 @@ sub print_current_record
 		
 		if ( $test_connections{$cur_log_con} ) {
 			print "--reap\n";
+      	print "SET TIMESTAMP = $timestamp /* 6 */;\n" if $opt_timestamps;
 			$test_connections{$cur_log_con} = 0;
 		}
 		chomp $cur_log_record;
