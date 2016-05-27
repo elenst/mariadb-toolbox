@@ -24,7 +24,7 @@ my $debug = 0;
 # which means that if we detected that the current tree has VERSION = <version number>,
 # then we'll use <revno> instead of <previous version number>.
 
-my %overridden_rev = ( '5.3' => '3622', '10.2' => 'mariadb-10.1.8' );
+my %overridden_rev = ( '5.3' => '3622' );
 
 GetOptions(
    'source_tree=s' => \$source_tree,
