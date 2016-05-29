@@ -83,8 +83,8 @@ if ( defined $overridden_rev{$version} ) {
 	print "For version $version the previous release tag is overridden to $overridden_rev{$version}\n";
 	$revision = $overridden_rev{$version};
 #	system("bzr branch -r $revno $source_tree $dest_tree");
-} elsif ( $patch == 0 ) { 
-	die "ERROR: it's the first minor release in the line, and there is no overridden revision\n";
+#} elsif ( $patch == 0 ) { 
+#	die "ERROR: it's the first minor release in the line, and there is no overridden revision\n";
 } else {
 #	my $prev_version = "$major.$minor.".($patch-1);
 
@@ -97,7 +97,6 @@ if ( defined $overridden_rev{$version} ) {
 }
 
 clone_tree($source_tree, $dest_tree, $revision, $repo_type);
-
 
 sub clone_tree {
 	my ( $src, $dest, $rev, $repo ) = @_;
