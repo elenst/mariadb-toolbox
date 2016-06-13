@@ -30,7 +30,7 @@ then
 fi
 
 
-cmd="$valgrind $mysqld_binary $defaults --basedir=$basedir --datadir=$datadir --log-error=$datadir/log.err --loose-lc-messages-dir=$langdir --loose-language=$engdir --port=$port --socket=$tmpdir/mysql.sock --tmpdir=$tmpdir --loose-core $opts"
+cmd="$valgrind $mysqld_binary $defaults --basedir=$basedir --datadir=$datadir --log-error=$datadir/log.err --loose-lc-messages-dir=$langdir --loose-language=$engdir --port=$port --socket=$tmpdir/mysql.sock --tmpdir=$tmpdir --loose-core-file $opts"
 
 echo Server command line:
 echo $cmd
