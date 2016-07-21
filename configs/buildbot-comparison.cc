@@ -2,41 +2,24 @@ $combinations = [
     [
     '
         --no-mask
-        --notnull
         --seed=time
         --threads=4
-        --duration=300
+        --duration=600
         --queries=100M
         --reporters=QueryTimeout,Backtrace,ErrorLog,Deadlock,Shutdown
-        --mysqld1=--innodb_stats_sample_pages=256
-        --mysqld2=--innodb_stats_sample_pages=256
-        --mysqld1=--max_join_size=1000000
-        --mysqld2=--max_join_size=1000000
-        --mysqld1=--character-set-server=latin1
-        --mysqld2=--character-set-server=latin1
-        --mysqld1=--collation-server=latin1_general_cs
-        --mysqld2=--collation-server=latin1_general_cs
     '
     ], 
     [
+        '--grammar=conf/mariadb/optimizer_basic.yy --gendata=conf/mariadb/optimizer_basic.zz --redefine=conf/mariadb/redefine_random_keys.yy --redefine=conf/mariadb/redefine_set_session_vars.yy',
         '--grammar=conf/optimizer/range_access2.yy --gendata=conf/optimizer/range_access2.zz',
         '--grammar=conf/optimizer/range_access.yy --gendata=conf/optimizer/range_access.zz',
-
-        '--grammar=conf/mariadb/optimizer.yy --engine=MyISAM',
-        '--grammar=conf/optimizer/updateable_views.yy --engine=MyISAM',
-        '--grammar=conf/optimizer/optimizer_access_exp.yy --engine=MyISAM',
-
-        '--grammar=conf/mariadb/optimizer.yy --engine=InnoDB',
-        '--grammar=conf/optimizer/updateable_views.yy --engine=InnoDB',
-        '--grammar=conf/optimizer/optimizer_access_exp.yy --engine=InnoDB',
-    ], 
-    [
-        '--views=MERGE',
-        '--views=TEMPTABLE',
-    ],
-    [
-        '--mysqld1=--sql_mode=ONLY_FULL_GROUP_BY --mysqld2=--sql_mode=ONLY_FULL_GROUP_BY',
-        ''
+        '--grammar=conf/mariadb/optimizer.yy --engine=MyISAM --views=MERGE --mysqld1=--sql_mode=ONLY_FULL_GROUP_BY --mysqld2=--sql_mode=ONLY_FULL_GROUP_BY',
+        '--grammar=conf/mariadb/optimizer.yy --engine=MyISAM --views=TEMPTABLE --notnull',
+        '--grammar=conf/mariadb/optimizer.yy --engine=InnoDB --views=MERGE',
+        '--grammar=conf/mariadb/optimizer.yy --engine=InnoDB --views=TEMPTABLE --mysqld1=--sql_mode=ONLY_FULL_GROUP_BY --mysqld2=--sql_mode=ONLY_FULL_GROUP_BY --notnull',
+        '--grammar=conf/optimizer/updateable_views.yy --mysqld1=--default-storage-engine=MyISAM --mysqld2=--default-storage-engine=MyISAM --mysqld1=--init-file='.getcwd().'/conf/optimizer/updateable_views.init --mysqld2=--init-file='.getcwd().'/conf/optimizer/updateable_views.init',
+        '--grammar=conf/optimizer/updateable_views.yy --mysqld1=--default-storage-engine=InnoDB --mysqld2=--default-storage-engine=InnoDB --mysqld1=--init-file='.getcwd().'/conf/optimizer/updateable_views.init --mysqld2=--init-file='.getcwd().'/conf/optimizer/updateable_views.init',
+        '--grammar=conf/optimizer/optimizer_access_exp.yy --gendata=conf/optimizer/range_access.zz',
     ]
 ];
 
