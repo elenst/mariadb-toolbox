@@ -17,8 +17,6 @@ $combinations = [
         '--grammar=conf/mariadb/optimizer.yy --engine=MyISAM --views=TEMPTABLE --notnull',
         '--grammar=conf/mariadb/optimizer.yy --engine=InnoDB --views=MERGE',
         '--grammar=conf/mariadb/optimizer.yy --engine=InnoDB --views=TEMPTABLE --mysqld1=--sql_mode=ONLY_FULL_GROUP_BY --mysqld2=--sql_mode=ONLY_FULL_GROUP_BY --notnull',
-        '--grammar=conf/optimizer/updateable_views.yy --mysqld1=--default-storage-engine=MyISAM --mysqld2=--default-storage-engine=MyISAM --mysqld1=--init-file='.getcwd().'/conf/optimizer/updateable_views.init --mysqld2=--init-file='.getcwd().'/conf/optimizer/updateable_views.init',
-        '--grammar=conf/optimizer/updateable_views.yy --mysqld1=--default-storage-engine=InnoDB --mysqld2=--default-storage-engine=InnoDB --mysqld1=--init-file='.getcwd().'/conf/optimizer/updateable_views.init --mysqld2=--init-file='.getcwd().'/conf/optimizer/updateable_views.init',
         '--grammar=conf/optimizer/optimizer_access_exp.yy --gendata=conf/optimizer/range_access.zz',
     ]
 ];
