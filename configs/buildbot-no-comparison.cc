@@ -4,7 +4,7 @@ $combinations = [
         --no-mask
         --seed=time
         --threads=4
-        --duration=60
+        --duration=600
         --queries=100M
         --reporters=QueryTimeout,Backtrace,ErrorLog,Deadlock,Shutdown
         --redefine=conf/mariadb/redefine_random_keys.yy
