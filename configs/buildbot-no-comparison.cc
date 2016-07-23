@@ -3,14 +3,14 @@ $combinations = [
     '
         --no-mask
         --seed=time
-        --threads=4
+        --threads=5
         --duration=600
         --queries=100M
         --reporters=QueryTimeout,Backtrace,ErrorLog,Deadlock,Shutdown
         --redefine=conf/mariadb/redefine_random_keys.yy
         --redefine=conf/mariadb/redefine_set_session_vars.yy
         --validators=TransformerNoComparator
-        --transformers=ConvertSubqueriesToViews,ConvertTablesToViews,DisableOptimizations,EnableOptimizations,ExecuteAsCTE,ExecuteAsInsertSelect,ExecuteAsPreparedThrice,ExecuteAsSelectItem,ExecuteAsUnion,ExecuteAsUpdateDelete,ExecuteAsView,NullIf,OrderBy,StraightJoin
+        --transformers=ConvertSubqueriesToViews,DisableOptimizations,EnableOptimizations,ExecuteAsCTE,ExecuteAsInsertSelect,ExecuteAsPreparedThrice,ExecuteAsSelectItem,ExecuteAsUnion,ExecuteAsUpdateDelete,ExecuteAsView,NullIf,OrderBy,StraightJoin
     '
     ], 
     [
