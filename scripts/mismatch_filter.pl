@@ -41,9 +41,15 @@ while (<>)
 	$count++;
 	my $init_query = $1;
 	$mismatch = lc($2);
+    my $diff = '';
+    my $line;
+    while ($line = <> and $line !~ /RESULT COMPARISON ISSUE END/) {
+        $diff .= $line;
+    }
+
 	my $query = make_neater( $init_query );
 	debug "########### mismatch $count ###########\n$ARGV, line $lineno, initial query (mismatch: $mismatch):\n$query\n";
-	
+    
 	if ( $query =~ s/UNION/\) \(/i )
 	{
 		print "$ARGV, line $lineno, mismatch " . $count . " is with UNION, check!\n\n";
@@ -59,10 +65,11 @@ while (<>)
 			next LINE;
 		}
 	}
-	print "$ARGV, line $lineno, found $mismatch mismatch between servers:\n";
-	print $init_query, "\n";
-	print "The same query but cleaned up:\n";
-	print $query, "\n\n";
+	print "#------------------------------\n$ARGV, line $lineno, found $mismatch mismatch between servers:\n";
+	print $init_query, "\n\n";
+#	print "The same query but cleaned up:\n";
+#	print $query, "\n\n";
+    print "$diff\n#------------------------------\n";
    $exit_code = 1;
 } 
 
