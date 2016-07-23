@@ -12,6 +12,7 @@ $combinations = [
     [
         '--grammar=conf/mariadb/optimizer_basic.yy --gendata=conf/mariadb/optimizer_basic.zz --redefine=conf/mariadb/redefine_random_keys.yy --redefine=conf/mariadb/redefine_set_session_vars.yy',
         '--grammar=conf/optimizer/range_access2.yy --gendata=conf/optimizer/range_access2.zz',
+        '--grammar=conf/mariadb/oltp-readonly.yy --gendata=conf/mariadb/oltp.zz',
         '--grammar=conf/optimizer/range_access.yy --gendata=conf/optimizer/range_access.zz',
         '--grammar=conf/mariadb/optimizer.yy --engine=MyISAM --views=MERGE --mysqld1=--sql_mode=ONLY_FULL_GROUP_BY --mysqld2=--sql_mode=ONLY_FULL_GROUP_BY',
         '--grammar=conf/mariadb/optimizer.yy --engine=MyISAM --views=TEMPTABLE --notnull',
