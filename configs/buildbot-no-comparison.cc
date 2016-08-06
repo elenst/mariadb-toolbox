@@ -1,5 +1,7 @@
 $combinations = [
     [
+# TODO: restore when MDEV-10504 is fixed
+#        --redefine=conf/mariadb/redefine_set_session_vars.yy
     '
         --no-mask
         --seed=time
@@ -8,7 +10,6 @@ $combinations = [
         --queries=100M
         --reporters=QueryTimeout,Backtrace,ErrorLog,Deadlock,Shutdown
         --redefine=conf/mariadb/redefine_random_keys.yy
-        --redefine=conf/mariadb/redefine_set_session_vars.yy
         --validators=TransformerNoComparator
         --transformers=ConvertSubqueriesToViews,DisableOptimizations,EnableOptimizations,ExecuteAsCTE,ExecuteAsInsertSelect,ExecuteAsPreparedThrice,ExecuteAsSelectItem,ExecuteAsUnion,ExecuteAsUpdateDelete,ExecuteAsView,NullIf,OrderBy,StraightJoin
     '
