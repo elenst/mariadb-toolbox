@@ -1,7 +1,5 @@
 $combinations = [
     [
-# TODO: restore when MDEV-10504 is fixed
-#        --redefine=conf/mariadb/redefine_set_session_vars.yy
     '
         --no-mask
         --seed=time
@@ -10,6 +8,7 @@ $combinations = [
         --queries=100M
         --reporters=QueryTimeout,Backtrace,ErrorLog,Deadlock,Shutdown
         --redefine=conf/mariadb/redefine_random_keys.yy
+        --redefine=conf/mariadb/redefine_set_session_vars.yy
         --validators=TransformerNoComparator
         --transformers=ConvertSubqueriesToViews,DisableOptimizations,EnableOptimizations,ExecuteAsCTE,ExecuteAsInsertSelect,ExecuteAsPreparedThrice,ExecuteAsSelectItem,ExecuteAsUnion,ExecuteAsUpdateDelete,ExecuteAsView,NullIf,OrderBy,StraightJoin
     '
@@ -24,7 +23,6 @@ $combinations = [
         '--grammar=conf/runtime/concurrency_1.yy --gendata=conf/runtime/concurrency_1.zz',
         '--grammar=conf/temporal/temporal_functions.yy --gendata=conf/temporal/temporal_functions.zz',
         '--grammar=conf/temporal/temporal_ranges.yy --gendata=conf/temporal/temporal_ranges.zz',
-        '--grammar=conf/runtime/information_schema.yy',
         '--grammar=conf/runtime/performance_schema.yy --mysqld=--performance-schema',
         '--grammar=conf/mariadb/functions.yy',
         '--grammar=conf/mariadb/oltp-transactional.yy --gendata=conf/mariadb/oltp.zz',
@@ -38,3 +36,5 @@ $combinations = [
     ]
 ];
 
+# TODO: restore when MDEV-10504 is fixed
+#        '--grammar=conf/runtime/information_schema.yy',
