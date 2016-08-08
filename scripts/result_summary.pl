@@ -43,7 +43,7 @@ while (my $line = <>)
 		close(ARGV);
 		@last100lines = ();
 	}
-	if ( $line =~ /The last 100 lines/ ) {
+	if ( $line =~ /The last \d+ lines/ ) {
 		while ($line = <>) {
 			last if ($line =~ /^\#/);
 			push @last100lines, $line;
