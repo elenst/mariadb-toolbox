@@ -10,7 +10,7 @@ $combinations = [
         --redefine=conf/mariadb/redefine_random_keys.yy
         --redefine=conf/mariadb/redefine_set_session_vars.yy
         --validators=TransformerNoComparator
-        --transformers=ConvertSubqueriesToViews,DisableOptimizations,EnableOptimizations,ExecuteAsCTE,ExecuteAsInsertSelect,ExecuteAsPreparedThrice,ExecuteAsSelectItem,ExecuteAsUnion,ExecuteAsUpdateDelete,ExecuteAsView,NullIf,OrderBy,StraightJoin
+        --transformers=ConvertSubqueriesToViews,DisableOptimizations,EnableOptimizations,ExecuteAsCTE,ExecuteAsInsertSelect,ExecuteAsPreparedOnce,ExecuteAsSelectItem,ExecuteAsUnion,ExecuteAsUpdateDelete,ExecuteAsView,NullIf,OrderBy,StraightJoin
     '
     ], 
     [
@@ -38,3 +38,5 @@ $combinations = [
 
 # TODO: restore when MDEV-10504 is fixed
 #        '--grammar=conf/runtime/information_schema.yy',
+# ExecuteAsPreparedThrice has been disabled because of MDEV-7691, re-enable when fixed (if ever)
+
