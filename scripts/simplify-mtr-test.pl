@@ -97,6 +97,10 @@ close( TEST );
 my $reproducible_counter = 0;
 my $not_reproducible_counter = 0;
 
+if ( $ENV{MTR_VERSION} eq "1" and $suitename eq 't' and not -e "r/new_test.result" ) {
+    system("touch r/new_test.result");
+}
+
 print "Running initial test\n";
 unless ( run_test( \@test ) )
 {
@@ -176,7 +180,9 @@ sub run_test
 	system("perl $path/cleanup_sends_reaps.pl $suitedir/new_test.tmp > $suitedir/new_test.test");
 	my $start = time();
 	my $out = readpipe( "perl ./mtr $options --suite=$suitename new_test" );
-	$out .= readpipe("cat var/log/mysqld.1.err");
+    my $errlog = ( $ENV{MTR_VERSION} eq "1" ? 'var/log/master.err' : 'var/log/mysqld.1.err');
+
+	$out .= readpipe("cat $errlog");
 	if (-e 'var/log/mysqld.2.err') {
         $out .= readpipe("cat var/log/mysqld.2.err");
 	}
