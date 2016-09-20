@@ -7,6 +7,8 @@ $combinations = [
         --duration=600
         --queries=100M
         --reporters=QueryTimeout,Backtrace,ErrorLog,Deadlock,Shutdown
+	--mysqld1=--skip-loose-innodb-status-file
+	--mysqld2=--skip-loose-innodb-status-file
     '
     ], 
     [
