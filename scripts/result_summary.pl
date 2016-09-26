@@ -27,7 +27,10 @@ sub debug {
 }
 
 my $exit_code = 0;
-my @last100lines = ();
+my @lastLines = ();
+my %failedThreads = ();
+# Last line which a perl thread printed 
+my %threadLines = ();
 
 LINE:
 while (my $line = <>) 
@@ -41,24 +44,49 @@ while (my $line = <>)
 			$exit_code = 1;
 		}
 		close(ARGV);
-		@last100lines = ();
+		@lastLines = ();
+        %failedThreads = ();
+        %threadLines = ();
 	}
-	if ( $line =~ /The last \d+ lines/ ) {
+
+	if ( $line =~ /The last \d+ lines from .*?(?:current(\d))?/ ) {
+        my $server = '?';
+        if ( $line =~ /current(\d)_\d/ ) { 
+            $server = $1;
+        }
+        push @lastLines, "### Last interesting lines from the error log of server $server ###\n\n";
 		while ($line = <>) {
 			last if ($line =~ /^\#/);
-			push @last100lines, $line;
+            next if ($line =~ / \[Note\] /);
+			push @lastLines, $line;
 		}
-	}
-   if ( $line =~ /exited with exit status\s*(\w*)/ and $line !~ /STATUS_OK/ and $line !~ /MISMATCH/ ) {
+    }
+    elsif ( $line =~ /exited with exit status\s*(\w*)/ and $line !~ /STATUS_OK/ and $line !~ /MISMATCH/ ) {
       $exit_code = 1;
-		if ( scalar(@last100lines) ) {
-			print "\n\n########### $ARGV ($1): last lines from the error log ###\n\n";
-			print @last100lines;
-			print "########### End of last lines from the error log for $ARGV ###\n\n\n";
+		print "\n\n########### $ARGV ($1): ###########\n\n";
+		if ( scalar(@lastLines) ) {
+            print ;
+			print @lastLines;
+			print "########### End of last lines from the error log for $ARGV ###\n\n";
 		}
+        if ( scalar(keys %failedThreads) ) {
+            print "### Last lines for from failed threads ###\n\n";
+            foreach my $t (keys %failedThreads) {
+                print "Thread $t ($failedThreads{$t}):\n\t@{$threadLines{$t}}\n";
+            }
+        }
       next;
-   }
-
+    }
+    # For now lets print last lines only for DATABASE_CORRUPTION
+    elsif ( $line =~ /\[([-\d]+)\]\s+GenTest:\s+child is being stopped with status (STATUS_DATABASE_CORRUPTION)/ ) {
+        $failedThreads{$1} = $2 if $2 ne 'STATUS_OK';
+    }
+    # Store few last lines for each thread
+    elsif ( $line =~ /\#\s\d{4}-\d+-\d+T\d+:\d+:\d+\s\[([-\d]+)\]/ ) {
+        @{$threadLines{$1}} = () if not exists $threadLines{$1};
+        shift @{$threadLines{$1}} if (scalar @{$threadLines{$1}} >=5);
+        push @{$threadLines{$1}}, $line;
+    }
 } 
 
 exit($exit_code);
