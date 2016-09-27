@@ -15,8 +15,8 @@ my $debug = 0;
 
 my @names = ();
 foreach (@ARGV) {
-   my @expansion = glob($_);
-   @names = ( @names, @expansion );
+    my @expansion = glob($_);
+    @names = ( @names, @expansion );
 }
 @ARGV = @names;
 
@@ -35,40 +35,40 @@ my %threadLines = ();
 LINE:
 while (my $line = <>) 
 {  
-	if (eof) {
-		my $mismatches = readpipe("perl $path/mismatch_filter.pl $ARGV");
-		if ($?) {
-			print "\n########### Mismatches in $ARGV ###\n\n";
-			print $mismatches;
-			print "########### End of mismatches ###\n\n";
-			$exit_code = 1;
-		}
-		close(ARGV);
-		@lastLines = ();
+    if (eof) {
+        my $mismatches = readpipe("perl $path/mismatch_filter.pl $ARGV");
+        if ($?) {
+            print "\n########### Mismatches in $ARGV ###\n\n";
+            print $mismatches;
+            print "########### End of mismatches ###\n\n";
+            $exit_code = 1;
+        }
+        close(ARGV);
+        @lastLines = ();
         %failedThreads = ();
         %threadLines = ();
-	}
+    }
 
-	if ( $line =~ /The last \d+ lines from .*?(?:current(\d))?/ ) {
+    if ( $line =~ /The last \d+ lines from .*?(?:current(\d))?/ ) {
         my $server = '?';
         if ( $line =~ /current(\d)_\d/ ) { 
             $server = $1;
         }
         push @lastLines, "### Last interesting lines from the error log of server $server ###\n\n";
-		while ($line = <>) {
-			last if ($line =~ /^\#/);
+        while ($line = <>) {
+            last if ($line =~ /^\#/);
             next if ($line =~ / \[Note\] /);
-			push @lastLines, $line;
-		}
+            push @lastLines, $line;
+        }
     }
-    elsif ( $line =~ /exited with exit status\s*(\w*)/ and $line !~ /STATUS_OK/ and $line !~ /MISMATCH/ ) {
-      $exit_code = 1;
-		print "\n\n########### $ARGV ($1): ###########\n\n";
-		if ( scalar(@lastLines) ) {
+    if ( $line =~ /exited with exit status\s*(\w*)/ and $line !~ /STATUS_OK/ and $line !~ /MISMATCH/ ) {
+        $exit_code = 1;
+        print "\n\n########### $ARGV ($1): ###########\n\n";
+        if ( scalar(@lastLines) ) {
             print ;
-			print @lastLines;
-			print "########### End of last lines from the error log for $ARGV ###\n\n";
-		}
+            print @lastLines;
+            print "########### End of last lines from the error log for $ARGV ###\n\n";
+        }
         if ( scalar(keys %failedThreads) ) {
             print "### Last lines for from failed threads ###\n\n";
             foreach my $t (keys %failedThreads) {
