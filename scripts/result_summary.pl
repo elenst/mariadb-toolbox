@@ -57,7 +57,7 @@ while (my $line = <>)
         push @lastLines, "### Last interesting lines from the error log of server $server ###\n\n";
         while ($line = <>) {
             last if ($line =~ /^\#/);
-            next if ($line =~ / \[Note\] /);
+            next if ($line =~ / \[Note\] / or $line =~ /InnoDB: DEBUG: /);
             push @lastLines, $line;
         }
     }
