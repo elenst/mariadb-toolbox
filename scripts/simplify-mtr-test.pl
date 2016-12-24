@@ -140,6 +140,7 @@ while ( $chunk_size > 0 )
 		}
 		if ( scalar( @preserved_part ) < scalar( @chunk ) )
 		{ 	
+            print "Creating new test as a combination of needed part (".scalar(@needed_part)." lines), preserved part (".scalar(@preserved_part)." lines), and test from ".($end_of_chunk+1)." to $#test\n";
 			my @new_test = ( @needed_part, @preserved_part, @test[$end_of_chunk+1..$#test] );
 
 			if ( run_test( \@new_test ) )

@@ -142,7 +142,9 @@ REVISION:
 				print "\nTest output matches the pattern\n";
 			}
 			elsif ($failure_output) {
-				print "\nTest output does not match the pattern\n";
+				print "\nTest output does not match the pattern:\n";
+                print "Output is:\n", $out, "\n";
+                print "and pattern is: $failure_output\n";
 				$res = PASS;
 			}
 
