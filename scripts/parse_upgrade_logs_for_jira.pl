@@ -45,7 +45,6 @@ while (<>)
 	if (eof) {
         $trialnum= $ARGV;
         close (ARGV);
-        print STDERR "HERE:2: $trialnum: $result\n";
         if ($trialnum =~ /trial(\d+)/) {
             $trialnum= $1;
         }
