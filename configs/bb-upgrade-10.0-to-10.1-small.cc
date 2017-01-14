@@ -47,7 +47,7 @@ $combinations = [
         '',
         '
             --mysqld2=--file-key-management
-            --mysqld2=--file-key-management-filename=/data/encryption_keys.txt
+            --mysqld2=--file-key-management-filename=$BUILD_HOME/encryption_keys.txt
             --mysqld2=--plugin-load-add=file_key_management.so
             --mysqld2=--innodb-encrypt-tables
             --mysqld2=--innodb-encrypt-log
