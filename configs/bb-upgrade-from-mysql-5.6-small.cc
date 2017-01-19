@@ -23,7 +23,7 @@ $combinations = [
     ],
 # Old servers
     [
-        '--basedir1=$BUILD_HOME/10.0',
+        '--basedir1=$BUILD_HOME/mysql-5.6',
     ],
 # New servers
     [
