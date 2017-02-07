@@ -1,4 +1,27 @@
+#!/bin/perl
+
+use Getopt::Long;
 use strict;
+
+my ($mode, $help) = ('text', undef);
+
+my $res = &GetOptions (
+	"mode=s" => \$mode,
+	"help" => \$help,
+);
+
+if ($help) {
+    print "\nUsage:\n";
+    print "perl $0 [--mode=<mode>] <RQG test output files>\n";
+    print "\t--mode: jira|text, default 'text'\n\n";
+    exit 0;
+}
+
+$mode= lc($mode);
+if ($mode ne 'jira' and $mode ne 'text') {
+    print "\nERROR: mode should be either 'jira' or 'text'\n";
+    exit 1;
+}
 
 my @names = ();
 foreach (@ARGV) {
@@ -59,7 +82,11 @@ while (<>)
         fix_encryption(\%new_opts);
         fix_readonly(\%new_opts);
         
-        $output{$trialnum}= [ '{color:gray}'.$type.'{color}', '{color:blue}*'.$new_opts{pagesize}.'*{color}', "$old_opts{version} ($old_opts{innodb})", $old_opts{encryption}, $old_opts{compression}, '{color:gray}*=>*{color}', "$new_opts{version} ($new_opts{innodb})", $new_opts{encryption}, $new_opts{compression}, $new_opts{innodb_read_only}, ( $result eq 'OK' ? ('OK', '') : ('{color:red}FAIL{color}', $result)) ];
+        if ($mode eq 'jira') {
+            $output{$trialnum}= [ '{color:gray}'.$type.'{color}', '{color:blue}*'.$new_opts{pagesize}.'*{color}', "$old_opts{version} ($old_opts{innodb})", $old_opts{encryption}, $old_opts{compression}, '{color:gray}*=>*{color}', "$new_opts{version} ($new_opts{innodb})", $new_opts{encryption}, $new_opts{compression}, $new_opts{innodb_read_only}, ( $result eq 'OK' ? ('OK', '') : ('{color:red}FAIL{color}', $result)) ];
+        } else {
+            $output{$trialnum}= [ sprintf("%6s",$type), sprintf("%8d",$new_opts{pagesize}), sprintf("%25s","$old_opts{version} ($old_opts{innodb})"), sprintf("%9s",$old_opts{encryption}), sprintf("%10s",$old_opts{compression}), '=>', sprintf("%25s","$new_opts{version} ($new_opts{innodb})"), sprintf("%9s",$new_opts{encryption}), sprintf("%10s",$new_opts{compression}), sprintf("%8s",$new_opts{innodb_read_only}), ( $result eq 'OK' ? ('    OK', sprintf("%25s",'')) : ('  FAIL', sprintf("%25s",$result))) ];
+        }
         %old_opts = ();
         %new_opts = ();
         $type= 'normal';
@@ -82,7 +109,7 @@ sub fix_innodb {
 sub fix_compression {
     my $opts= shift;
     if (!$opts->{compression} or $opts->{compression} =~ /none/i) {
-        $opts->{compression}= '\-';
+        $opts->{compression}= ($mode eq 'jira' ? '\-' : '-');
     } else {
         $opts->{compression}= lc($opts->{compression});
     }
@@ -91,7 +118,7 @@ sub fix_compression {
 sub fix_encryption {
     my $opts= shift;
     if (not defined $opts->{encryption} or $opts->{encryption} =~ /(?:0|no|off)/i) {
-        $opts->{encryption}= '\-';
+        $opts->{encryption}= ($mode eq 'jira' ? '\-' : '-');
     } else {
         $opts->{encryption}= 'on';
     }
@@ -100,7 +127,7 @@ sub fix_encryption {
 sub fix_readonly {
     my $opts= shift;
     if (not defined $opts->{innodb_read_only} or $opts->{innodb_read_only} =~ /(?:0|no|off)/i) {
-        $opts->{innodb_read_only}= '\-';
+        $opts->{innodb_read_only}= ($mode eq 'jira' ? '\-' : '-');
     } else {
         $opts->{innodb_read_only}= 'on';
     }
@@ -125,7 +152,21 @@ sub process_line {
 
 $teststart =~ s/T/ /;
 print "h2. $teststart\n";
-print "|| trial || type || pagesize || OLD version || encrypted || compressed || || NEW version || encrypted || compressed || readonly || result || notes ||\n";
+if ($mode eq 'jira') {
+    print "|| trial || type || pagesize || OLD version || encrypted || compressed || || NEW version || encrypted || compressed || readonly || result || notes ||\n";
+} else {
+    print "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n";
+    print "| trial |   type | pagesize |               OLD version | encrypted | compressed |    |               NEW version | encrypted | compressed | readonly | result |                     notes |\n";
+    print "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n";
+}
 foreach my $k (sort {$a <=> $b} keys %output) {
-    print "| $k | " . join( ' | ', @{$output{$k}}) ." |\n";
+    if ($mode eq 'jira') {
+        print "| $k | " . join( ' | ', @{$output{$k}}) ." |\n";
+    } else {
+        print "| ".sprintf("%5d",$k)." | ". join( ' | ', @{$output{$k}}) ." |\n";
+    }
+}
+
+if ($mode eq 'text') {
+    print "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n";
 }
