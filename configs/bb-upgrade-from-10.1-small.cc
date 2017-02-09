@@ -17,9 +17,9 @@ $combinations = [
         --gendata=conf/mariadb/oltp.zz
         --gendata-advanced
     '],
+# Crash upgrade from pre-10.2 to 10.2 is not supported
     [
-        '--upgrade-test=normal',
-        '--upgrade-test=crash'
+        '--upgrade-test=normal'
     ],
 # Old servers
     [
