@@ -2,7 +2,6 @@ $combinations = [
 
 # Common options
     ['
-        --upgrade-test
         --no-mask
         --seed=time
         --threads=4
@@ -18,9 +17,12 @@ $combinations = [
         --gendata=conf/mariadb/oltp.zz
         --gendata-advanced
     '],
+    [
+        '--upgrade-test=normal',
+        '--upgrade-test=crash'
+    ],
 # Old servers
     [
-        '--basedir1=$BUILD_HOME/mysql-5.6',
         '--basedir1=$BUILD_HOME/10.0',
         '--basedir1=$BUILD_HOME/10.0 --mysqld1=--ignore-builtin-innodb --mysqld1=--plugin-load-add=ha_innodb',
         '--basedir1=$BUILD_HOME/10.0.10',

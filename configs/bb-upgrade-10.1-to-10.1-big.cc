@@ -2,7 +2,6 @@ $combinations = [
 
 # Common options
     ['
-        --upgrade-test
         --no-mask
         --seed=time
         --threads=4
@@ -18,6 +17,10 @@ $combinations = [
         --gendata=conf/mariadb/oltp.zz
         --gendata-advanced
     '],
+    [
+        '--upgrade-test=normal',
+        '--upgrade-test=crash'
+    ],
 # Old servers
     [
         '--basedir1=$BUILD_HOME/10.1',
@@ -57,7 +60,7 @@ $combinations = [
         '',
         '
             --mysqld2=--file-key-management
-            --mysqld2=--file-key-management-filename=/data/encryption_keys.txt
+            --mysqld2=--file-key-management-filename=$BUILD_HOME/encryption_keys.txt
             --mysqld2=--plugin-load-add=file_key_management.so
             --mysqld2=--innodb-encrypt-tables
             --mysqld2=--innodb-encrypt-log
@@ -68,7 +71,7 @@ $combinations = [
         ',
         '
             --mysqld=--file-key-management
-            --mysqld=--file-key-management-filename=/data/encryption_keys.txt
+            --mysqld=--file-key-management-filename=$BUILD_HOME/encryption_keys.txt
             --mysqld=--plugin-load-add=file_key_management.so
             --mysqld=--innodb-encrypt-tables
             --mysqld=--innodb-encrypt-log
@@ -79,7 +82,7 @@ $combinations = [
         ',
         '
             --mysqld=--file-key-management
-            --mysqld=--file-key-management-filename=/data/encryption_keys.txt
+            --mysqld=--file-key-management-filename=$BUILD_HOME/encryption_keys.txt
             --mysqld=--plugin-load-add=file_key_management.so
             --mysqld1=--innodb-encrypt-tables
             --mysqld1=--innodb-encrypt-log
