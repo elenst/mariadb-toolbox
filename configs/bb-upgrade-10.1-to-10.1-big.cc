@@ -38,7 +38,7 @@ $combinations = [
     [
         '--mysqld=--innodb-page-size=16K',
         '--mysqld=--innodb-page-size=8K',
-        '--mysqld=--innodb-page-size=4K'
+        '--mysqld=--innodb-page-size=4K',
         '--mysqld=--innodb-page-size=32K',
         '--mysqld=--innodb-page-size=64K',
     ],
