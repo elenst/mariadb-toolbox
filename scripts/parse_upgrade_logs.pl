@@ -13,13 +13,13 @@ my $res = &GetOptions (
 if ($help) {
     print "\nUsage:\n";
     print "perl $0 [--mode=<mode>] <RQG test output files>\n";
-    print "\t--mode: jira|text, default 'text'\n\n";
+    print "\t--mode: jira|text|kb, default 'text'\n\n";
     exit 0;
 }
 
 $mode= lc($mode);
-if ($mode ne 'jira' and $mode ne 'text') {
-    print "\nERROR: mode should be either 'jira' or 'text'\n";
+if ($mode ne 'jira' and $mode ne 'text' and $mode ne 'kb') {
+    print "\nERROR: mode should be either 'jira' or 'text' or 'kb'\n";
     exit 1;
 }
 
@@ -84,7 +84,9 @@ while (<>)
         
         if ($mode eq 'jira') {
             $output{$trialnum}= [ '{color:gray}'.$type.'{color}', '{color:blue}*'.$new_opts{pagesize}.'*{color}', "$old_opts{version} ($old_opts{innodb})", $old_opts{encryption}, $old_opts{compression}, '{color:gray}*=>*{color}', "$new_opts{version} ($new_opts{innodb})", $new_opts{encryption}, $new_opts{compression}, $new_opts{innodb_read_only}, ( $result eq 'OK' ? ('OK', '') : ('{color:red}FAIL{color}', $result)) ];
-        } else {
+        } elsif ($mode eq 'kb') {
+            $output{$trialnum}= [ $type, $new_opts{pagesize}, "$old_opts{version} ($old_opts{innodb})", $old_opts{encryption}, $old_opts{compression}, '=>', "$new_opts{version} ($new_opts{innodb})", $new_opts{encryption}, $new_opts{compression}, $new_opts{innodb_read_only}, ( $result eq 'OK' ? ('OK', '') : ('**FAIL**', $result)) ];
+        } elsif ($mode eq 'text') {
             $output{$trialnum}= [ sprintf("%6s",$type), sprintf("%8d",$new_opts{pagesize}), sprintf("%25s","$old_opts{version} ($old_opts{innodb})"), sprintf("%9s",$old_opts{encryption}), sprintf("%10s",$old_opts{compression}), '=>', sprintf("%25s","$new_opts{version} ($new_opts{innodb})"), sprintf("%9s",$new_opts{encryption}), sprintf("%10s",$new_opts{compression}), sprintf("%8s",$new_opts{innodb_read_only}), ( $result eq 'OK' ? ('    OK', sprintf("%25s",'')) : ('  FAIL', sprintf("%25s",$result))) ];
         }
         %old_opts = ();
@@ -154,7 +156,9 @@ $teststart =~ s/T/ /;
 print "h2. $teststart\n";
 if ($mode eq 'jira') {
     print "|| trial || type || pagesize || OLD version || encrypted || compressed || || NEW version || encrypted || compressed || readonly || result || notes ||\n";
-} else {
+} elsif ($mode eq 'kb') {
+    print "| # | type | pagesize | OLD version | encrypted | compressed | | NEW version | encrypted | compressed | readonly | result | notes |\n";
+} elsif ($mode eq 'text') {
     print "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n";
     print "| trial |   type | pagesize |               OLD version | encrypted | compressed |    |               NEW version | encrypted | compressed | readonly | result |                     notes |\n";
     print "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n";
