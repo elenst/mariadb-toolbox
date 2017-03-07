@@ -153,17 +153,22 @@ sub process_line {
 }
 
 $teststart =~ s/T/ /;
-print "h2. $teststart\n";
 if ($mode eq 'jira') {
+    print "h2. $teststart\n";
     print "|| trial || type || pagesize || OLD version || encrypted || compressed || || NEW version || encrypted || compressed || readonly || result || notes ||\n";
 } elsif ($mode eq 'kb') {
-    print "== Tested revision\n";
+    print "=== Tested revision\n";
     print "//add revision link here//\n";
-    print "== Results\n";
+    print "=== Test date\n";
+    print "$teststart\n";
+    print "=== Summary\n";
+    print "//add summary here//\n";
+    print "=== Details\n";
     print '<<style class="darkheader-nospace-borders centered">>'."\n";
 
     print "|= # |= type |= pagesize |= OLD version |= encrypted |= compressed |= |= NEW version |= encrypted |= compressed |= readonly |= result |= notes |\n";
 } elsif ($mode eq 'text') {
+    print "Test date: $teststart\n";
     print "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n";
     print "| trial |   type | pagesize |               OLD version | encrypted | compressed |    |               NEW version | encrypted | compressed | readonly | result |                     notes |\n";
     print "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n";
