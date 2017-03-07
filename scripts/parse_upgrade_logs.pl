@@ -166,7 +166,10 @@ if ($mode eq 'jira') {
 foreach my $k (sort {$a <=> $b} keys %output) {
     if ($mode eq 'jira') {
         print "| $k | " . join( ' | ', @{$output{$k}}) ." |\n";
-    } else {
+    }
+    elsif ($mode eq 'kb') {
+        print "| $k | " . join( ' | ', @{$output{$k}}) ." |\n";
+    } elsif ($mode eq 'text') {
         print "| ".sprintf("%5d",$k)." | ". join( ' | ', @{$output{$k}}) ." |\n";
     }
 }
