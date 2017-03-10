@@ -24,7 +24,7 @@ my $debug = 0;
 # which means that if we detected that the current tree has VERSION = <version number>,
 # then we'll use <revno> instead of <previous version number>.
 
-my %overridden_rev = ( '5.3' => '3622', '10.1' => 'a02642b66e06f95b80fa9ee592ba50eb61dc2f17' );
+my %overridden_rev = ( '5.3' => '3622' );
 
 GetOptions(
    'source_tree=s' => \$source_tree,
@@ -105,7 +105,7 @@ sub clone_tree {
 		? "bzr branch -r $rev $src $dest"
 		: "cd $src/.. && git clone $src $dest && cd $dest && git checkout $rev"
 	);
-	debug("To clone the tree, running $cmd\n");
+	print("To clone the tree, running $cmd\n");
 	system("$cmd");
 }
 
