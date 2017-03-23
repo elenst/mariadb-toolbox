@@ -26,13 +26,10 @@ $combinations = [
     [
         '--basedir1=$BUILD_HOME/10.1',
         '--basedir1=$BUILD_HOME/10.1 --mysqld1=--ignore-builtin-innodb --mysqld1=--plugin-load-add=ha_innodb',
-        '--basedir1=$BUILD_HOME/10.1.10',
-        '--basedir1=$BUILD_HOME/10.1.10 --mysqld1=--ignore-builtin-innodb --mysqld1=--plugin-load-add=ha_innodb',
     ],
 # New servers
     [
         '--basedir2=$BUILD_HOME/build',
-        '--basedir2=$BUILD_HOME/build --mysqld2=--ignore-builtin-innodb --mysqld2=--plugin-load-add=ha_innodb',
     ],
 
 # Page size combinations

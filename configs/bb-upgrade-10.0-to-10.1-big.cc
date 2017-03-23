@@ -19,6 +19,7 @@ $combinations = [
     '],
     [
         '--upgrade-test=normal',
+        '--upgrade-test=normal --mysqld2=--innodb-read-only --mysqld2=--read-only',
         '--upgrade-test=crash'
     ],
 # Old servers

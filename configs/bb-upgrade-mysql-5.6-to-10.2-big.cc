@@ -29,7 +29,6 @@ $combinations = [
 # New servers
     [
         '--basedir2=$BUILD_HOME/build',
-        '--basedir2=$BUILD_HOME/build --mysqld2=--ignore-builtin-innodb --mysqld2=--plugin-load-add=ha_innodb',
     ],
 
 # Page size combinations

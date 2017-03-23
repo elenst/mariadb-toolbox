@@ -29,15 +29,15 @@ $combinations = [
 # New servers
     [
         '--basedir2=$BUILD_HOME/build',
-        '--basedir2=$BUILD_HOME/build --mysqld2=--ignore-builtin-innodb --mysqld2=--plugin-load-add=ha_innodb',
     ],
 
 # Page size combinations
-# (32K and 64K values are only applicable to 10.1+ and MySQL 5.7, so they are not present here)
     [
         '--mysqld=--innodb-page-size=16K',
         '--mysqld=--innodb-page-size=8K',
         '--mysqld=--innodb-page-size=4K',
+        '--mysqld=--innodb-page-size=32K',
+        '--mysqld=--innodb-page-size=64K',
     ],
 
 # Compression combinations are only applicable to 10.1+, so they are not present here
