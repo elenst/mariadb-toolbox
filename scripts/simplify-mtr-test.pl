@@ -5,8 +5,8 @@ use strict;
 
 use strict;
 
-# type should be stmt or line
-my $type = 'stmt';
+# mode should be stmt or line
+my $mode = 'stmt';
 my $output = 'signal ';
 my $suitedir = 't';
 my $suitename;
@@ -17,15 +17,15 @@ my $path = dirname(abs_path($0));
 
 GetOptions (
     "testcase=s"  => \$test,
-    "type=s"      => \$type,
+    "mode=s"      => \$mode,
     "output=s"    => \$output,
     "suitedir=s"  => \$suitedir,
     "suite=s"     => \$suitename,
     "options=s"   => \$options
 );
 
-if ( $type ne 'stmt' and $type ne 'line' ) {
-    print "ERROR: Wrong simplification type: $type. Only 'stmt' and 'line' are allowed\n";
+if ( $mode ne 'stmt' and $mode ne 'line' ) {
+    print "ERROR: Wrong simplification mode: $mode. Only 'stmt' and 'line' are allowed\n";
     exit 1;
 }
 
@@ -81,7 +81,7 @@ while (<TEST>)
     }
     else {
         my $cmd = $_;
-        if ( $type eq 'stmt' )
+        if ( $mode eq 'stmt' )
         {
             while ( $cmd !~ /;/s )
             {
