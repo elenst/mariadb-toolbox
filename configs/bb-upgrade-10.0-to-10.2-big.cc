@@ -17,8 +17,8 @@ $combinations = [
         --gendata=conf/mariadb/oltp.zz
         --gendata-advanced
     '],
-    # Crash upgrade from 10.0 is not supported
-    # Read-only upgrade from 10.0 does not work (MDEV-12367)
+    # Crash upgrade from previous versions is not supported
+    # Read-only upgrade from previous versions does not work (MDEV-12367)
     [
         '--upgrade-test=normal',
     ],

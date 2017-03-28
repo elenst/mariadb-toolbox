@@ -17,10 +17,10 @@ $combinations = [
         --gendata=conf/mariadb/oltp.zz
         --gendata-advanced
     '],
+    # Crash upgrade from previous versions is not supported
+    # Read-only upgrade from previous versions does not work (MDEV-12367)
     [
         '--upgrade-test=normal',
-        '--upgrade-test=normal --mysqld2=--innodb-read-only --mysqld2=--read-only',
-        '--upgrade-test=crash'
     ],
 # Old servers
     [
