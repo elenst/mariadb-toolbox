@@ -1,16 +1,25 @@
 # The script will return 1 if there are real mismatches, otherwise the exit code is 0.
 #
-# The script is supposed to be used as 
+# The script is supposed to be used as
 #   mismpatch_filter.pl trial*log 1>mismatches 2>/dev/null or alike.
 # But on Windows shell won't do the expansion, so the script has to take care of the wildcard.
 
+use Getopt::Long;
 use strict;
 
 $| = 1;
 my $lineno = 0;
 my $mismatch;
 my $count = 0;
-my $debug = 1;
+my $debug = 0;
+my $report_binary_diffs = 1;
+
+GetOptions (
+    "debug"  => \$debug,
+    "binary_diffs!"      => \$report_binary_diffs,
+    "binary-diffs!"      => \$report_binary_diffs,
+);
+
 
 my @names = ();
 foreach (@ARGV) {
@@ -22,18 +31,24 @@ foreach (@ARGV) {
 #----------------
 
 sub debug {
-   if ($debug) { print STDERR @_ } 
+   if ($debug) { print STDERR @_ }
 }
 
 my $exit_code = 0;
 
 LINE:
-while (<>) 
-{  
+while (<>)
+{
 	$lineno = $.;
 	close (ARGV) if (eof);
 	# This is for comparison test. $1 is the query, $2 is length/content mismatch specification
-	next unless ( 
+#	next unless (
+#		/---------- RESULT COMPARISON ISSUE START ----------/
+#		or
+#		/---------- TRANSFORM ISSUE ----------/
+#	);
+
+	next unless (
 			/Query:\s+(.*)\s+failed:\s+result\s+(length|content)\s+mismatch\s+between\s+servers/i
 			or
 			/Original query:\s+(.*)\s+failed\s+transformation\s+with\s+Transformer\s+\w+\;\s+RQG\s+Status:\s+STATUS_(CONTENT|LENGTH)_MISMATCH/i
@@ -43,13 +58,13 @@ while (<>)
 	$mismatch = lc($2);
     my $diff = '';
     my $line;
-    while ($line = <> and $line !~ /RESULT COMPARISON ISSUE END/) {
+    while ($line = <> and $line !~ /(?:RESULT COMPARISON ISSUE END|END OF TRANSFORM ISSUE)/) {
         $diff .= $line;
     }
 
 	my $query = make_neater( $init_query );
 	debug "########### mismatch $count ###########\n$ARGV, line $lineno, initial query (mismatch: $mismatch):\n$query\n";
-    
+
 	if ( $query =~ s/UNION/\) \(/i )
 	{
 		print "$ARGV, line $lineno, mismatch " . $count . " is with UNION, check!\n\n";
@@ -65,13 +80,16 @@ while (<>)
 			next LINE;
 		}
 	}
-	print "#------------------------------\n$ARGV, line $lineno, found $mismatch mismatch between servers:\n";
-	print $init_query, "\n\n";
-#	print "The same query but cleaned up:\n";
-#	print $query, "\n\n";
-    print "$diff\n#------------------------------\n";
-   $exit_code = 1;
-} 
+
+	if ($report_binary_diffs or $diff !~ /Binary files \S+ and \S+ differ/) {
+		print "#------------------------------\n$ARGV, line $lineno, found $mismatch mismatch between servers:\n";
+		print $init_query, "\n\n";
+	#	print "The same query but cleaned up:\n";
+	#	print $query, "\n\n";
+		print "$diff\n#------------------------------\n";
+	   $exit_code = 1;
+	}
+}
 
 exit($exit_code);
 
@@ -86,7 +104,7 @@ sub make_neater
 	$query =~ s/\ $//;
 	$query =~ s/ ,/,/g;
 #	$query =~ s/, /,/g;
-	$query =~ s/(\S)([\(\)])/$1 $2/g; 
+	$query =~ s/(\S)([\(\)])/$1 $2/g;
 	$query =~ s/\/\*.*?\*\///g;
 	$query =~ s/\)/ \) /g;
 	$query =~ s/\(/ \( /g;
@@ -99,8 +117,8 @@ sub legitimate
 {
 	my $query = shift;
 	if ( $query =~ /^\s*$/ ) { return 1 };
-	# Only SELECTs are interesting for matching  
-	if ( $query !~ /^\s*SELECT/i ) { debug "Query is not SELECT, not legit\n"; return 0 };	
+	# Only SELECTs are interesting for matching
+	if ( $query !~ /^\s*SELECT/i ) { debug "Query is not SELECT, not legit\n"; return 0 };
 
 	my %field_names;
 	my %field_aliases;
@@ -131,14 +149,14 @@ sub legitimate
 				$field_names{$1} = 1;
 				$non_aggregate = 1;
 			}
-		}		
+		}
 	}
 	my $aggregate_mix = $aggregate && $non_aggregate;
-	
+
 	debug "Aggregate mix: $aggregate_mix\n";
-	
+
 	if ( $aggregate_mix and $query !~ /GROUP\s+BY/i ) {
-		debug "Mix of aggregate and non-aggregate without GROUP BY\n";		
+		debug "Mix of aggregate and non-aggregate without GROUP BY\n";
 		return 0;
 	}
 
@@ -146,13 +164,13 @@ sub legitimate
 	{
 		my $fields = $1;
 		my @field_list = split /[,\s]/, $1;
-		my %groupby_names; 
+		my %groupby_names;
 		foreach my $f ( @field_list ) {
 			if ( $f =~ /^\w+$/ and $mismatch eq 'content' and not exists $field_names{$f} and not exists $alias_names{$f} )
 			{
 				debug "GROUP BY contains field $f which is not in the field list\n";
 				return 0;
-			} 
+			}
 			$groupby_names{$f} = 1;
 		}
 		if ( $aggregate_mix ) {
@@ -160,10 +178,10 @@ sub legitimate
 				unless ( defined $groupby_names{$n} or defined $groupby_names{$field_aliases{$n}} ) {
 					debug "Mix of aggregate and non-aggregate, and field list contains field $n which is not in GROUP BY\n";
 					return 0;
-				}			
+				}
 			}
 		}
-		
+
 	}
 
 	if ( $query =~ /\WORDER\s+BY\s+(.*?)(?:LIMIT|PROCEDURE|INTO|FOR\s)/i )
@@ -178,7 +196,7 @@ sub legitimate
 			{
 				debug "   In (sub)query \n     $query \n       ORDER BY contains field $f which is not in the field list\n";
 				return 0;
-			} 
+			}
 		}
 	}
 
@@ -186,11 +204,11 @@ sub legitimate
 	{
 		debug "Query contains LIMIT without ORDER BY\n";
 		return 0;
-	} 
+	}
 
 #	print "Query legitimate\n";
 	return 1;
-	
+
 }
 
 sub extract_subqueries
@@ -202,7 +220,7 @@ sub extract_subqueries
 		$prefix = $1;
 		my @items = split /\s+/, $2;
 		my $level = 0;
-		my $in_suffix = 0;	
+		my $in_suffix = 0;
 #		print "Parsing query: \n$query\n";
 #		print "Prefix: \n$prefix\n";
 		foreach my $i ( @items )
@@ -232,7 +250,7 @@ sub extract_subqueries
 	}
 	else {
 		return ( $query );
-	}	
+	}
 }
 
 
