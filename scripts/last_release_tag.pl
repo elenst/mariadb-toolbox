@@ -26,7 +26,12 @@ my $cd= (osWindows() ? "cd /d" : "cd");
 # which means that if we detected that the current tree has VERSION = <version number>,
 # then we'll use <revno> instead of <previous version number>.
 
-my %overridden_rev = ( '5.3' => '3622' );
+# 10.0 : until 10.0.31 is released
+# TODO:
+# 10.1: wait till b0395d8701ec49f49ad23f9917a3b2369bb49e7a is merged into 10.1, then set
+# the merge until 10.1.23 is released.
+# Same for 10.2 until 10.2.6 is released
+my %overridden_rev = ( '5.3' => '3622', '10.0' => '8d75a7533ee80efa5275a058dfadf8947e5857a6' );
 
 GetOptions(
    'source_tree=s' => \$source_tree,
