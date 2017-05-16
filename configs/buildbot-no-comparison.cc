@@ -12,7 +12,7 @@ $combinations = [
         --validators=TransformerNoComparator
         --transformers=ConvertSubqueriesToViews,DisableOptimizations,EnableOptimizations,ExecuteAsCTE,ExecuteAsInsertSelect,ExecuteAsPreparedOnce,ExecuteAsSelectItem,ExecuteAsUnion,ExecuteAsUpdateDelete,ExecuteAsView,NullIf,OrderBy,StraightJoin,ExecuteAsExecuteImmediate
     '
-    ], 
+    ],
     [
         '--grammar=conf/mariadb/optimizer_basic.yy --gendata=conf/mariadb/optimizer_basic.zz',
         '--grammar=conf/optimizer/range_access2.yy --gendata=conf/optimizer/range_access2.zz',
@@ -38,5 +38,5 @@ $combinations = [
 
 # TODO: restore when MDEV-10504 is fixed
 #        '--grammar=conf/runtime/information_schema.yy',
-# ExecuteAsPreparedThrice has been disabled because of MDEV-7691, re-enable when fixed (if ever)
+# ExecuteAsPreparedThrice has been disabled because of MDEV-9619, re-enable when fixed (if ever)
 

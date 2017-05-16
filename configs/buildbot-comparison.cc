@@ -4,11 +4,11 @@ $combinations = [
         --no-mask
         --seed=time
         --threads=4
-        --duration=600
+        --duration=400
         --queries=100M
         --reporters=QueryTimeout,Backtrace,ErrorLog,Deadlock,Shutdown
     '
-    ], 
+    ],
     [
         '--grammar=conf/mariadb/optimizer_basic.yy --gendata=conf/mariadb/optimizer_basic.zz --redefine=conf/mariadb/redefine_random_keys.yy --redefine=conf/mariadb/redefine_set_session_vars.yy',
         '--grammar=conf/optimizer/range_access2.yy --gendata=conf/optimizer/range_access2.zz',
