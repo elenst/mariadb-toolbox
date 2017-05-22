@@ -12,6 +12,7 @@ $combinations = [
         --validators=TransformerLight
         --transformers=ConvertSubqueriesToViews,DisableOptimizations,EnableOptimizations,ExecuteAsInsertSelect,ExecuteAsSelectItem,ExecuteAsUpdateDelete,ExecuteAsView,ExecuteAsDerived,DisableJoinCache
     '
+        --appverif
     ],
     [
 		'--grammar=conf/mariadb/optimizer.yy --gendata=conf/mariadb/optimizer.zz',
