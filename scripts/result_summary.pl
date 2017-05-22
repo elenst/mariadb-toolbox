@@ -1,4 +1,4 @@
-# The script will return 1 if any output file shows exit code other than OK or MISMATCH;
+# The script will return 1 if any output file shows exit code other than OK or MISMATCH, or no exit codes at all;
 # otherwise, it will return the exit code of mismatch_filter.pl
 #
 # The script is supposed to be used as
@@ -33,6 +33,7 @@ my %failedThreads = ();
 my %threadLines = ();
 my $seed;
 my $start_cmd;
+my $found_status_ok = 1;
 
 LINE:
 while (my $line = <>)
@@ -45,12 +46,14 @@ while (my $line = <>)
             print "########### End of mismatches ###\n\n";
             $exit_code = 1;
         }
+        $exit_code= 1 if $found_status_ok= 0;
         close(ARGV);
         @lastLines = ();
         %failedThreads = ();
         %threadLines = ();
 		$seed= undef;
 		$start_cmd= undef;
+        $found_status_ok= 0;
     }
 
     if ( $line =~ /Starting:\s+(.*runall\.pl.*)/ ) {
@@ -80,27 +83,32 @@ while (my $line = <>)
             push @lastLines, $line;
         }
     }
-    if ( $line =~ /exited with exit status\s*(\w*)/ and $line !~ /STATUS_OK/ and $line !~ /MISMATCH/ ) {
-        $exit_code = 1;
-        print "\n\n########### $ARGV ($1): ###########\n\n";
-		if ($seed) {
-			print "$seed\n";
-		}
-        if ($start_cmd) {
-			print "Command line:\n$start_cmd\n\n";
-		}
-        if ( scalar(@lastLines) ) {
-            print ;
-            print @lastLines;
-            print "########### End of last lines from the error log for $ARGV ###\n\n";
-        }
-        if ( scalar(keys %failedThreads) ) {
-            print "### Last lines for from failed threads ###\n\n";
-            foreach my $t (keys %failedThreads) {
-                print "Thread $t ($failedThreads{$t}):\n\t@{$threadLines{$t}}\n";
+    if ( $line =~ /exited with exit status\s*(\w*)/) {
+        # We need to check for cases when the test was aborted without producing ANY status at all
+        if ( $line =~ /STATUS_OK/ ) {
+            $found_status_ok= 1;
+        } elsif ( $line !~ /STATUS_OK/ and $line !~ /MISMATCH/ ) {
+            $exit_code = 1;
+            print "\n\n########### $ARGV ($1): ###########\n\n";
+            if ($seed) {
+                print "$seed\n";
             }
+            if ($start_cmd) {
+                print "Command line:\n$start_cmd\n\n";
+            }
+            if ( scalar(@lastLines) ) {
+                print ;
+                print @lastLines;
+                print "########### End of last lines from the error log for $ARGV ###\n\n";
+            }
+            if ( scalar(keys %failedThreads) ) {
+                print "### Last lines for from failed threads ###\n\n";
+                foreach my $t (keys %failedThreads) {
+                    print "Thread $t ($failedThreads{$t}):\n\t@{$threadLines{$t}}\n";
+                }
+            }
+            next;
         }
-		next;
     }
     # For now lets print last lines only for DATABASE_CORRUPTION
     elsif ( $line =~ /\[([-\d]+)\]\s+GenTest:\s+child is being stopped with status (STATUS_DATABASE_CORRUPTION)/ ) {
