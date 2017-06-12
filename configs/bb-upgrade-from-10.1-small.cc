@@ -64,4 +64,10 @@ $combinations = [
             --mysqld=--encrypt-binlog
         ',
     ],
+# Check both Antelope and Barracuda
+    [
+        '--mysqld=--innodb-file-format=Antelope',
+        '--mysqld=--innodb-file-format=Barracuda',
+        '--mysqld1=--innodb-file-format=Antelope',
+    ]
 ]
