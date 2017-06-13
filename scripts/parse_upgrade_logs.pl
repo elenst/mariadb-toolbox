@@ -83,11 +83,11 @@ while (<>)
         fix_readonly(\%new_opts);
         
         if ($mode eq 'jira') {
-            $output{$trialnum}= [ '{color:gray}'.$type.'{color}', '{color:blue}*'.$new_opts{pagesize}.'*{color}', "$old_opts{version} ($old_opts{innodb})", $old_opts{encryption}, $old_opts{compression}, '{color:gray}*=>*{color}', "$new_opts{version} ($new_opts{innodb})", $new_opts{encryption}, $new_opts{compression}, $new_opts{innodb_read_only}, ( $result eq 'OK' ? ('OK', '') : ('{color:red}FAIL{color}', $result)) ];
+            $output{$trialnum}= [ '{color:gray}'.$type.'{color}', '{color:blue}*'.$new_opts{pagesize}.'*{color}', "$old_opts{version} ($old_opts{innodb})", $old_opts{file_format}, $old_opts{encryption}, $old_opts{compression}, '{color:gray}*=>*{color}', "$new_opts{version} ($new_opts{innodb})", $new_opts{file_format}, $new_opts{encryption}, $new_opts{compression}, $new_opts{innodb_read_only}, ( $result eq 'OK' ? ('OK', '') : ('{color:red}FAIL{color}', $result)) ];
         } elsif ($mode eq 'kb') {
-            $output{$trialnum}= [ $type, $new_opts{pagesize}, "$old_opts{version} ($old_opts{innodb})", $old_opts{encryption}, $old_opts{compression}, '=>', "$new_opts{version} ($new_opts{innodb})", $new_opts{encryption}, $new_opts{compression}, $new_opts{innodb_read_only}, ( $result eq 'OK' ? ('OK', '') : ('**FAIL**', $result)) ];
+            $output{$trialnum}= [ $type, $new_opts{pagesize}, "$old_opts{version} ($old_opts{innodb})", $old_opts{file_format}, $old_opts{encryption}, $old_opts{compression}, '=>', "$new_opts{version} ($new_opts{innodb})", $new_opts{file_format}, $new_opts{encryption}, $new_opts{compression}, $new_opts{innodb_read_only}, ( $result eq 'OK' ? ('OK', '') : ('**FAIL**', $result)) ];
         } elsif ($mode eq 'text') {
-            $output{$trialnum}= [ sprintf("%6s",$type), sprintf("%8d",$new_opts{pagesize}), sprintf("%25s","$old_opts{version} ($old_opts{innodb})"), sprintf("%9s",$old_opts{encryption}), sprintf("%10s",$old_opts{compression}), '=>', sprintf("%25s","$new_opts{version} ($new_opts{innodb})"), sprintf("%9s",$new_opts{encryption}), sprintf("%10s",$new_opts{compression}), sprintf("%8s",$new_opts{innodb_read_only}), ( $result eq 'OK' ? ('    OK', sprintf("%25s",'')) : ('  FAIL', sprintf("%25s",$result))) ];
+            $output{$trialnum}= [ sprintf("%6s",$type), sprintf("%8d",$new_opts{pagesize}), sprintf("%25s","$old_opts{version} ($old_opts{innodb})"), sprintf("%11s",$old_opts{file_format}), sprintf("%9s",$old_opts{encryption}), sprintf("%10s",$old_opts{compression}), '=>', sprintf("%25s","$new_opts{version} ($new_opts{innodb})"), sprintf("%11s",$new_opts{file_format}), sprintf("%9s",$new_opts{encryption}), sprintf("%10s",$new_opts{compression}), sprintf("%8s",$new_opts{innodb_read_only}), ( $result eq 'OK' ? ('    OK', sprintf("%25s",'')) : ('  FAIL', sprintf("%25s",$result))) ];
         }
         %old_opts = ();
         %new_opts = ();
@@ -149,13 +149,15 @@ sub process_line {
         $opts->{innodb}= $1;
     } elsif ($l =~ /[-_]innodb[-_]read[-_]only(?:=on|=1|=0)/i) {
         $opts->{innodb_read_only}= ( defined $1 ? $1 : '' );
+    } elsif ($l =~ /[-_]innodb[-_]file[-_]format=(\w*)/) {
+        $opts->{file_format}= $1;
     }
 }
 
 $teststart =~ s/T/ /;
 if ($mode eq 'jira') {
     print "h2. $teststart\n";
-    print "|| trial || type || pagesize || OLD version || encrypted || compressed || || NEW version || encrypted || compressed || readonly || result || notes ||\n";
+    print "|| trial || type || pagesize || OLD version || file format || encrypted || compressed || || NEW version || file format || encrypted || compressed || readonly || result || notes ||\n";
 } elsif ($mode eq 'kb') {
     print "=== Tested revision\n";
     print "//add revision link here//\n";
@@ -166,11 +168,11 @@ if ($mode eq 'jira') {
     print "=== Details\n";
     print '<<style class="darkheader-nospace-borders centered">>'."\n";
 
-    print "|= # |= type |= pagesize |= OLD version |= encrypted |= compressed |= |= NEW version |= encrypted |= compressed |= readonly |= result |= notes |\n";
+    print "|= # |= type |= pagesize |= OLD version |= file format |= encrypted |= compressed |= |= NEW version |= file format |= encrypted |= compressed |= readonly |= result |= notes |\n";
 } elsif ($mode eq 'text') {
     print "Test date: $teststart\n";
     print "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n";
-    print "| trial |   type | pagesize |               OLD version | encrypted | compressed |    |               NEW version | encrypted | compressed | readonly | result |                     notes |\n";
+    print "| trial |   type | pagesize |               OLD version | file format | encrypted | compressed |    |               NEW version | file format | encrypted | compressed | readonly | result |                     notes |\n";
     print "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n";
 }
 foreach my $k (sort {$a <=> $b} keys %output) {
