@@ -14,7 +14,7 @@ $combinations = [
         --mysqld=--binlog-format=ROW
         --mysqld=--server-id=111
         --grammar=conf/mariadb/oltp.yy
-        --gendata=conf/mariadb/oltp.zz
+        --gendata=conf/mariadb/innodb_upgrade.zz
         --gendata-advanced
     '],
     [

@@ -14,7 +14,7 @@ $combinations = [
         --mysqld=--binlog-format=ROW
         --mysqld=--server-id=111
         --grammar=conf/mariadb/oltp.yy
-        --gendata=conf/mariadb/oltp.zz
+        --gendata=conf/mariadb/innodb_upgrade.zz
         --gendata-advanced
     '],
 # Crash upgrade from pre-10.2 to 10.2 is not supported
@@ -24,6 +24,7 @@ $combinations = [
 # Old servers
     [
         '--basedir1=$BUILD_HOME/10.1',
+        '--basedir1=$BUILD_HOME/10.2',
     ],
 # New servers
     [

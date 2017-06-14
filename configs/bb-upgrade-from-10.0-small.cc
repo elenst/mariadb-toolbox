@@ -14,7 +14,7 @@ $combinations = [
         --mysqld=--binlog-format=ROW
         --mysqld=--server-id=111
         --grammar=conf/mariadb/oltp.yy
-        --gendata=conf/mariadb/oltp.zz
+        --gendata=conf/mariadb/innodb_upgrade.zz
         --gendata-advanced
     '],
 # Crash upgrade from pre-10.2 to 10.2 is not supported
@@ -59,4 +59,10 @@ $combinations = [
             --mysqld2=--encrypt-binlog
         '
     ],
+# File formats
+    [
+        '--mysqld=--innodb-file-format=Antelope',
+        '--mysqld=--innodb-file-format=Barracuda',
+        '--mysqld1=--innodb-file-format=Antelope --mysqld2=--innodb-file-format=Barracuda',
+    ]
 ]
