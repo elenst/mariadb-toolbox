@@ -19,11 +19,12 @@ $combinations = [
     '],
 # Crash upgrade from pre-10.2 to 10.2 is not supported
     [
-        '--upgrade-test=normal'
+        '--upgrade-test=normal',
+        '--upgrade-test=crash',
     ],
 # Old servers
     [
-        '--basedir1=$BUILD_HOME/10.1',
+        '--basedir1=$BUILD_HOME/10.2',
     ],
 # New servers
     [
@@ -66,7 +67,6 @@ $combinations = [
     ],
 # File formats - let's hope nobody will set it to Antelope in 10.2+
     [
-        '--mysqld=--innodb-file-format=Barracuda',
-        '',
+        ''
     ]
 ]
