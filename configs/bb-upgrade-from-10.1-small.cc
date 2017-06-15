@@ -24,6 +24,7 @@ $combinations = [
 # Old servers
     [
         '--basedir1=$BUILD_HOME/10.1',
+        '--basedir1=$BUILD_HOME/10.1-new',
     ],
 # New servers
     [
