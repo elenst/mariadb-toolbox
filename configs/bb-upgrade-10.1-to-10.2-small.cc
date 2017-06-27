@@ -67,7 +67,7 @@ $combinations = [
     ],
 # File formats - let's hope nobody will set it to Antelope in 10.2+
     [
-        '--mysqld=--innodb-file-format=Barracuda',
-        '',
+        '--mysqld1=--innodb-file-format=Antelope',
+        '--mysqld1=--innodb-file-format=Barracuda',
     ]
 ]

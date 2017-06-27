@@ -68,6 +68,5 @@ $combinations = [
     [
         '--mysqld=--innodb-file-format=Antelope',
         '--mysqld=--innodb-file-format=Barracuda',
-        '--mysqld1=--innodb-file-format=Antelope --mysqld2=--innodb-file-format=Barracuda',
     ]
 ]

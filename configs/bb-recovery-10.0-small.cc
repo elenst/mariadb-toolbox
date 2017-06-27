@@ -36,6 +36,11 @@ $combinations = [
         '--mysqld=--loose-innodb-page-size=8K',
         '--mysqld=--loose-innodb-page-size=4K'
     ],
+# File formats
+    [
+        '--mysqld=--innodb-file-format=Antelope',
+        '--mysqld=--innodb-file-format=Barracuda',
+    ]
 
 # Compression combinations are only applicable to 10.1+, so they are not present here
 # Encryption combinations are only applicable to 10.1+, so they are not present here

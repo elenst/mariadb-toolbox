@@ -59,4 +59,9 @@ $combinations = [
             --mysqld2=--encrypt-binlog
         '
     ],
+# File formats
+    [
+        '--mysqld=--innodb-file-format=Antelope',
+        '--mysqld=--innodb-file-format=Barracuda',
+    ]
 ]
