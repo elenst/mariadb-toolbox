@@ -62,7 +62,7 @@ unless ($suitename) {
     }
 }
 
-if ($ENV{MTR_VERSION} eq "1" and $suitename eq 't' and not -e "r/new_test.result") {
+if ($ENV{MTR_VERSION} eq "1" and ($suitename eq 't' or $suitename eq 'main') and not -e "r/new_test.result") {
     system("touch r/new_test.result");
 }
 
