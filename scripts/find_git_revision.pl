@@ -112,7 +112,7 @@ while ($step) {
 REVISION:
 	while ($commit) {
 		print "\n\n****************** Trying revision $commit (~$pos_from_start from starting point) ***********************\n\n";
-		my $cmd = "cd $cwd && pwd && git checkout -f $commit > build_$commit.log 2>&1";
+		my $cmd = "cd $cwd && pwd && git checkout -f $commit && git submodule update > build_$commit.log 2>&1";
 		print "Running\n   $cmd\n";
 		system($cmd);
 		if ($? > 0) {
