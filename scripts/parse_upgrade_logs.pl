@@ -31,11 +31,13 @@ foreach (@ARGV) {
 @ARGV = @names;
 
 my ($trialnum,$result,$type);
-my %output = ();
+my %output= ();
 my $teststart= '999';
 my $trialstart;
-my %old_opts = ();
-my %new_opts = ();
+my %old_opts= ();
+my %new_opts= ();
+my @known_bugs= ();
+my @warnings;
 
 LINE:
 while (<>) 
@@ -47,6 +49,9 @@ while (<>)
     }
     elsif ($line =~ /will exit with exit status STATUS_(\w+)/) {
         $result= $1;
+    }
+    elsif ($line =~/ Detected possible appearance of known bugs: (.*)/) {
+        @known_bugs= split / /, $1;
     }
     elsif ($line =~ /\#\s+--upgrade[-_]test=(\w+)/) {
         $type= lc($1);
@@ -81,19 +86,107 @@ while (<>)
         fix_encryption(\%old_opts);
         fix_encryption(\%new_opts);
         fix_readonly(\%new_opts);
+        fix_result(\$result, \@known_bugs, \$trialnum, \%new_opts, \%old_opts);
         
         if ($mode eq 'jira') {
-            $output{$trialnum}= [ '{color:gray}'.$type.'{color}', '{color:blue}*'.$new_opts{pagesize}.'*{color}', "$old_opts{version} ($old_opts{innodb})", $old_opts{file_format}, $old_opts{encryption}, $old_opts{compression}, '{color:gray}*=>*{color}', "$new_opts{version} ($new_opts{innodb})", $new_opts{file_format}, $new_opts{encryption}, $new_opts{compression}, $new_opts{innodb_read_only}, ( $result eq 'OK' ? ('OK', '') : ('{color:red}FAIL{color}', $result)) ];
+            $output{$trialnum}= [
+                '{color:gray}'.$type.'{color}',
+                '{color:blue}*'.$new_opts{pagesize}.'*{color}',
+                "$old_opts{version} ($old_opts{innodb})",
+                $old_opts{file_format},
+                $old_opts{encryption},
+                $old_opts{compression},
+                '{color:gray}*=>*{color}',
+                "$new_opts{version} ($new_opts{innodb})",
+                $new_opts{file_format},
+                $new_opts{encryption},
+                $new_opts{compression},
+                $new_opts{innodb_read_only},
+                ( $result eq 'OK' ? 'OK' : '{color:red}FAIL{color}' ),
+                ( $result eq 'OK' ? "@known_bugs" : "$result @known_bugs")
+            ];
         } elsif ($mode eq 'kb') {
-            $output{$trialnum}= [ $type, $new_opts{pagesize}, "$old_opts{version} ($old_opts{innodb})", $old_opts{file_format}, $old_opts{encryption}, $old_opts{compression}, '=>', "$new_opts{version} ($new_opts{innodb})", $new_opts{file_format}, $new_opts{encryption}, $new_opts{compression}, $new_opts{innodb_read_only}, ( $result eq 'OK' ? ('OK', '') : ('**FAIL**', $result)) ];
+            $output{$trialnum}= [
+                $type, $new_opts{pagesize},
+                "$old_opts{version} ($old_opts{innodb})",
+                $old_opts{file_format},
+                $old_opts{encryption},
+                $old_opts{compression},
+                '=>',
+                "$new_opts{version} ($new_opts{innodb})",
+                $new_opts{file_format},
+                $new_opts{encryption},
+                $new_opts{compression},
+                $new_opts{innodb_read_only},
+                ( $result eq 'OK' ? 'OK' : '**FAIL**' ),
+                ( $result eq 'OK' ? "@known_bugs" : "$result @known_bugs" )
+            ];
         } elsif ($mode eq 'text') {
-            $output{$trialnum}= [ sprintf("%6s",$type), sprintf("%8d",$new_opts{pagesize}), sprintf("%25s","$old_opts{version} ($old_opts{innodb})"), sprintf("%11s",$old_opts{file_format}), sprintf("%9s",$old_opts{encryption}), sprintf("%10s",$old_opts{compression}), '=>', sprintf("%25s","$new_opts{version} ($new_opts{innodb})"), sprintf("%11s",$new_opts{file_format}), sprintf("%9s",$new_opts{encryption}), sprintf("%10s",$new_opts{compression}), sprintf("%8s",$new_opts{innodb_read_only}), ( $result eq 'OK' ? ('    OK', sprintf("%25s",'')) : ('  FAIL', sprintf("%25s",$result))) ];
+            $output{$trialnum}= [
+                sprintf("%6s",$type),
+                sprintf("%8d",$new_opts{pagesize}),
+                sprintf("%25s","$old_opts{version} ($old_opts{innodb})"),
+                sprintf("%11s",$old_opts{file_format}),
+                sprintf("%9s",$old_opts{encryption}),
+                sprintf("%10s",$old_opts{compression}),
+                '=>',
+                sprintf("%25s","$new_opts{version} ($new_opts{innodb})"),
+                sprintf("%11s",$new_opts{file_format}),
+                sprintf("%9s",$new_opts{encryption}),
+                sprintf("%10s",$new_opts{compression}),
+                sprintf("%8s",$new_opts{innodb_read_only}),
+                sprintf("%6s", ($result eq 'OK' ? 'OK':'FAIL')),
+                sprintf("%25s",( $result eq 'OK' ? "@known_bugs" : "$result @known_bugs"))
+            ];
         }
         %old_opts = ();
         %new_opts = ();
         $type= 'normal';
         $result= '';
+        @known_bugs= ();
     }
+}
+
+# If the result was STATUS_CUSTOM_OUTCOME, the upgrade test leaves it to the result parser
+# to decide whether the detected known bugs should be raised as test failure or demoted to warnings
+sub fix_result {
+    my ($res, $known_bugs, $trial, $new_opts, $old_opts)= @_;
+    return unless $$res eq 'CUSTOM_OUTCOME';
+    my $warning_pattern= "WARNING: trial%i: Detected %i possible appearance(s) of MDEV-%i (%s)\n";
+    foreach my $b (@$known_bugs) {
+        my $jira= '';
+        my $jira_subj= '';
+        my $occurrences= 0;
+        if ($b =~ /MDEV-(\d+)\((\d+)\)/) {
+            $jira= $1;
+            $occurrences= $2;
+        }
+        if ($jira == 13094) {
+            $jira_subj= '(Wrong AUTO_INCREMENT value on the table after server restart)';
+            if ($new_opts{version} =~ /10\.2\.?/) {
+                push @warnings, sprintf($warning_pattern, $$trial, $occurrences, $jira, $jira_subj);
+            } else {
+                $$res= 'UPGRADE_FAILURE';
+            }
+        }
+        elsif ($jira == 13112) {
+            $jira_subj= 'InnoDB: Corruption: Page is marked as compressed but uncompress failed with error';
+            if ($new_opts{version} =~ /10\.1\.?/ and $old_opts{version} =~ /10\.1\.?/) {
+                push @warnings, sprintf($warning_pattern, $$trial, $occurrences, $jira, $jira_subj);
+            } else {
+                $$res= 'UPGRADE_FAILURE';
+            }
+        }
+        elsif ($jira == 13103) {
+            $jira_subj= 'Assertion `flags & BUF_PAGE_PRINT_NO_CRASH\' failed in buf_page_print';
+            if ($old_opts{encryption} eq 'on' and $new_opts{version} =~ /10\.2\.?/) {
+                push @warnings, sprintf($warning_pattern, $$trial, $occurrences, $jira, $jira_subj);
+            } else {
+                $$res= 'UPGRADE_FAILURE';
+            }
+        }
+    }
+    $$res= 'OK' if $$res eq 'CUSTOM_OUTCOME';
 }
 
 sub fix_innodb {
@@ -171,9 +264,9 @@ if ($mode eq 'jira') {
     print "|= # |= type |= pagesize |= OLD version |= file format |= encrypted |= compressed |= |= NEW version |= file format |= encrypted |= compressed |= readonly |= result |= notes |\n";
 } elsif ($mode eq 'text') {
     print "Test date: $teststart\n";
-    print "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n";
+    print "-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n";
     print "| trial |   type | pagesize |               OLD version | file format | encrypted | compressed |    |               NEW version | file format | encrypted | compressed | readonly | result |                     notes |\n";
-    print "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n";
+    print "-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n";
 }
 foreach my $k (sort {$a <=> $b} keys %output) {
     if ($mode eq 'jira') {
@@ -187,7 +280,11 @@ foreach my $k (sort {$a <=> $b} keys %output) {
 }
 
 if ($mode eq 'text') {
-    print "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n";
+    print "-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n";
 } elsif ($mode eq 'kb') {
     print "<</style>>\n";
+}
+
+foreach (@warnings) {
+    print $_;
 }
