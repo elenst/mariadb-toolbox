@@ -39,6 +39,8 @@ my %new_opts= ();
 my @known_bugs= ();
 my @warnings;
 
+my $exit_code= 0;
+
 LINE:
 while (<>) 
 {  
@@ -88,6 +90,8 @@ while (<>)
         fix_readonly(\%new_opts);
         fix_result(\$result, \@known_bugs, \$trialnum, \%new_opts, \%old_opts);
         
+        $exit_code= 1 if ($result ne 'OK' and $result ne 'KNOWN_BUGS');
+
         if ($mode eq 'jira') {
             $output{$trialnum}= [
                 '{color:gray}'.$type.'{color}',
@@ -147,6 +151,52 @@ while (<>)
     }
 }
 
+$teststart =~ s/T/ /;
+if ($mode eq 'jira') {
+    print "h2. $teststart\n";
+    print "|| trial || type || pagesize || OLD version || file format || encrypted || compressed || || NEW version || file format || encrypted || compressed || readonly || result || notes ||\n";
+} elsif ($mode eq 'kb') {
+    print "=== Tested revision\n";
+    print "//add revision link here//\n";
+    print "=== Test date\n";
+    print "$teststart\n";
+    print "=== Summary\n";
+    print "//add summary here//\n";
+    print "=== Details\n";
+    print '<<style class="darkheader-nospace-borders centered">>'."\n";
+
+    print "|= # |= type |= pagesize |= OLD version |= file format |= encrypted |= compressed |= |= NEW version |= file format |= encrypted |= compressed |= readonly |= result |= notes |\n";
+} elsif ($mode eq 'text') {
+    print "Test date: $teststart\n";
+    print "-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n";
+    print "| trial |   type | pagesize |               OLD version | file format | encrypted | compressed |    |               NEW version | file format | encrypted | compressed | readonly | result |                     notes |\n";
+    print "-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n";
+}
+foreach my $k (sort {$a <=> $b} keys %output) {
+    if ($mode eq 'jira') {
+        print "| $k | " . join( ' | ', @{$output{$k}}) ." |\n";
+    }
+    elsif ($mode eq 'kb') {
+        print "| $k | " . join( ' | ', @{$output{$k}}) ." |\n";
+    } elsif ($mode eq 'text') {
+        print "| ".sprintf("%5d",$k)." | ". join( ' | ', @{$output{$k}}) ." |\n";
+    }
+}
+
+if ($mode eq 'text') {
+    print "-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n";
+} elsif ($mode eq 'kb') {
+    print "<</style>>\n";
+}
+
+foreach (@warnings) {
+    print $_;
+}
+
+exit $exit_code;
+
+### SUBROUTINES
+
 # If the result was STATUS_CUSTOM_OUTCOME, the upgrade test leaves it to the result parser
 # to decide whether the detected known bugs should be raised as test failure or demoted to warnings
 sub fix_result {
@@ -163,7 +213,7 @@ sub fix_result {
         }
         if ($jira == 13094) {
             $jira_subj= '(Wrong AUTO_INCREMENT value on the table after server restart)';
-            if ($new_opts{version} =~ /10\.2\.?/) {
+            if ($new_opts{version} =~ /10\.[23]\.?/) {
                 push @warnings, sprintf($warning_pattern, $$trial, $occurrences, $jira, $jira_subj);
             } else {
                 $$res= 'UPGRADE_FAILURE';
@@ -185,8 +235,12 @@ sub fix_result {
                 $$res= 'UPGRADE_FAILURE';
             }
         }
+        else {
+            # Something new?
+            $$res= 'UPGRADE_FAILURE';
+        }
     }
-    $$res= 'OK' if $$res eq 'CUSTOM_OUTCOME';
+    $$res= 'KNOWN_BUGS' if $$res eq 'CUSTOM_OUTCOME';
 }
 
 sub fix_innodb {
@@ -245,46 +299,4 @@ sub process_line {
     } elsif ($l =~ /[-_]innodb[-_]file[-_]format=(\w*)/) {
         $opts->{file_format}= $1;
     }
-}
-
-$teststart =~ s/T/ /;
-if ($mode eq 'jira') {
-    print "h2. $teststart\n";
-    print "|| trial || type || pagesize || OLD version || file format || encrypted || compressed || || NEW version || file format || encrypted || compressed || readonly || result || notes ||\n";
-} elsif ($mode eq 'kb') {
-    print "=== Tested revision\n";
-    print "//add revision link here//\n";
-    print "=== Test date\n";
-    print "$teststart\n";
-    print "=== Summary\n";
-    print "//add summary here//\n";
-    print "=== Details\n";
-    print '<<style class="darkheader-nospace-borders centered">>'."\n";
-
-    print "|= # |= type |= pagesize |= OLD version |= file format |= encrypted |= compressed |= |= NEW version |= file format |= encrypted |= compressed |= readonly |= result |= notes |\n";
-} elsif ($mode eq 'text') {
-    print "Test date: $teststart\n";
-    print "-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n";
-    print "| trial |   type | pagesize |               OLD version | file format | encrypted | compressed |    |               NEW version | file format | encrypted | compressed | readonly | result |                     notes |\n";
-    print "-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n";
-}
-foreach my $k (sort {$a <=> $b} keys %output) {
-    if ($mode eq 'jira') {
-        print "| $k | " . join( ' | ', @{$output{$k}}) ." |\n";
-    }
-    elsif ($mode eq 'kb') {
-        print "| $k | " . join( ' | ', @{$output{$k}}) ." |\n";
-    } elsif ($mode eq 'text') {
-        print "| ".sprintf("%5d",$k)." | ". join( ' | ', @{$output{$k}}) ." |\n";
-    }
-}
-
-if ($mode eq 'text') {
-    print "-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n";
-} elsif ($mode eq 'kb') {
-    print "<</style>>\n";
-}
-
-foreach (@warnings) {
-    print $_;
 }
