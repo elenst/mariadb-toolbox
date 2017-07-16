@@ -25,6 +25,9 @@ for arg do
   if [[ "$arg" =~ "--defaults-file" ]]
   then
     defaults="$arg"
+  elif [[ "$arg" =~ "--defaults-group-suffix" ]]
+  then
+    group_suffix="$arg"
   elif [[ "$arg" =~ "--datadir=" ]]
   then
     path $arg datadir
