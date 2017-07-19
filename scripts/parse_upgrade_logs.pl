@@ -229,7 +229,7 @@ sub fix_result {
         }
         elsif ($jira == 13103) {
             $jira_subj= 'Assertion `flags & BUF_PAGE_PRINT_NO_CRASH\' failed in buf_page_print';
-            if ($old_opts{encryption} eq 'on' and $new_opts{version} =~ /10\.2\.?/) {
+            if ($old_opts{encryption} eq 'on' and $new_opts{version} =~ /10\.[23]\.?/) {
                 push @warnings, sprintf($warning_pattern, $$trial, $occurrences, $jira, $jira_subj);
             } else {
                 $$res= 'UPGRADE_FAILURE';
