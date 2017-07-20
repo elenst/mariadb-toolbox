@@ -3,10 +3,11 @@
 use Getopt::Long;
 use strict;
 
-my ($mode, $help) = ('text', undef);
+my ($mode, $warnings, $help) = ('text', 1, undef);
 
 my $res = &GetOptions (
 	"mode=s" => \$mode,
+    "warnings!" => \$warnings,
 	"help" => \$help,
 );
 
@@ -189,8 +190,10 @@ if ($mode eq 'text') {
     print "<</style>>\n";
 }
 
-foreach (@warnings) {
-    print $_;
+if ($warnings) {
+    foreach (@warnings) {
+        print $_;
+    }
 }
 
 exit $exit_code;
@@ -238,6 +241,14 @@ sub fix_result {
         elsif ($jira == 13101) {
             $jira_subj= 'Assertion `0 || offs == 0 + (38U + 36 + 2 * 10) + 0 ... 38U + 0 + 6` failed in recv_parse_or_apply_log_rec_body';
             if ($old_opts{encryption} eq 'on' and $old_opts{version} =~ /10\.[23]\.?/ and $new_opts{version} =~ /10\.[23]\.?/) {
+                push @warnings, sprintf($warning_pattern, $$trial, $occurrences, $jira, $jira_subj);
+            } else {
+                $$res= 'UPGRADE_FAILURE';
+            }
+        }
+        elsif ($jira == 13247) {
+            $jira_subj= 'innodb_log_compressed_pages=OFF breaks crash recovery of ROW_FORMAT=COMPRESSED tables';
+            if ($old_opts{version} =~ /10\.1\.(\d+)/ and $1 >= 2 and $1 <= 25) {
                 push @warnings, sprintf($warning_pattern, $$trial, $occurrences, $jira, $jira_subj);
             } else {
                 $$res= 'UPGRADE_FAILURE';
