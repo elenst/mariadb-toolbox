@@ -17,9 +17,10 @@ $combinations = [
         --gendata=conf/mariadb/innodb_upgrade.zz
         --gendata-advanced
     '],
+#        '--upgrade-test=crash'
     [
         '--upgrade-test=normal',
-        '--upgrade-test=crash'
+        '--upgrade-test=undo'
     ],
 # Old servers
     [

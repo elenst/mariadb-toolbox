@@ -19,7 +19,8 @@ $combinations = [
     '],
 # Crash upgrade from pre-10.2 to 10.2+ is not supported
     [
-        '--upgrade-test=normal'
+        '--upgrade-test=normal',
+        '--upgrade-test=undo',
     ],
 # Old servers
     [
