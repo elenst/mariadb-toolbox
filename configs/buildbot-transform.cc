@@ -1,4 +1,5 @@
 $combinations = [
+#        --appverif
     [
     '
         --no-mask
@@ -11,7 +12,6 @@ $combinations = [
         --redefine=conf/mariadb/redefine_set_session_vars.yy
         --validators=TransformerLight
         --transformers=ConvertSubqueriesToViews,DisableOptimizations,EnableOptimizations,ExecuteAsInsertSelect,ExecuteAsSelectItem,ExecuteAsUpdateDelete,ExecuteAsView,ExecuteAsDerived,DisableJoinCache
-        --appverif
     '
     ],
     [
