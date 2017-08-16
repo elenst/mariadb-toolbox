@@ -11,11 +11,10 @@ $combinations = [
         --redefine=conf/mariadb/redefine_random_keys.yy
         --redefine=conf/mariadb/redefine_set_session_vars.yy
         --validators=TransformerLight
-        --transformers=ConvertSubqueriesToViews,DisableOptimizations,EnableOptimizations,ExecuteAsInsertSelect,ExecuteAsSelectItem,ExecuteAsUpdateDelete,ExecuteAsView,ExecuteAsDerived,DisableJoinCache
+        --transformers=ConvertSubqueriesToViews,DisableOptimizations,EnableOptimizations,ExecuteAsSelectItem,ExecuteAsView,ExecuteAsDerived
     '
     ],
     [
-		'--grammar=conf/mariadb/optimizer.yy --gendata=conf/mariadb/optimizer.zz',
 		'--grammar=conf/mariadb/optimizer.yy',
 		'--grammar=conf/mariadb/optimizer.yy --notnull',
 		'--grammar=conf/mariadb/optimizer.yy --skip-gendata --mysqld=--init-file=$RQG_HOME/conf/mariadb/world.sql',
