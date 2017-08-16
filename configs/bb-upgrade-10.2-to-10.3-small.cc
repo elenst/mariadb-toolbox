@@ -5,7 +5,6 @@ $combinations = [
         --no-mask
         --seed=time
         --threads=4
-        --duration=60
         --queries=100M
         --mysqld=--loose-max-statement-time=20
         --mysqld=--loose-lock-wait-timeout=20
@@ -17,10 +16,10 @@ $combinations = [
         --gendata=conf/mariadb/innodb_upgrade.zz
         --gendata-advanced
     '],
-        '--upgrade-test=crash',
+#        '--upgrade-test=crash --duration=60',
     [
-        '--upgrade-test=normal',
-        '--upgrade-test=undo',
+        '--upgrade-test=normal --duration=60',
+        '--upgrade-test=undo --duration=200',
     ],
 # Old servers
     [
