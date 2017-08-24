@@ -1,6 +1,8 @@
 $combinations = [
 
 # Common options
+#        --mysqld=--log-bin
+#        --mysqld=--binlog-format=ROW
     ['
         --no-mask
         --seed=time
@@ -9,8 +11,6 @@ $combinations = [
         --mysqld=--loose-max-statement-time=20
         --mysqld=--loose-lock-wait-timeout=20
         --mysqld=--innodb-lock-wait-timeout=10
-        --mysqld=--log-bin
-        --mysqld=--binlog-format=ROW
         --mysqld=--server-id=111
         --grammar=conf/mariadb/oltp.yy
         --gendata=conf/mariadb/innodb_upgrade.zz
