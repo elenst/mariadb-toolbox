@@ -5,7 +5,6 @@ $combinations = [
         --no-mask
         --seed=time
         --threads=4
-        --duration=60
         --queries=100M
         --mysqld=--loose-max-statement-time=20
         --mysqld=--loose-lock-wait-timeout=20
@@ -19,15 +18,8 @@ $combinations = [
     '],
 # Crash upgrade from pre-10.2 (pre-5.7) to 10.2+ is not supported
     [
-        '--upgrade-test=normal'
-    ],
-# Old servers
-    [
-        '--basedir1=$BUILD_HOME/mysql-5.6',
-    ],
-# New servers
-    [
-        '--basedir2=$BUILD_HOME/build',
+        '--upgrade-test=normal --duration=60',
+        '--upgrade-test=undo --duration=200',
     ],
 
 # Page size combinations

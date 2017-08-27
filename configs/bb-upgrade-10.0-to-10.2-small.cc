@@ -19,15 +19,8 @@ $combinations = [
     '],
 # Crash upgrade from pre-10.2 to 10.2 is not supported
     [
-        '--upgrade-test=normal'
-    ],
-# Old servers
-    [
-        '--basedir1=$BUILD_HOME/10.0',
-    ],
-# New servers
-    [
-        '--basedir2=$BUILD_HOME/build',
+        '--upgrade-test=normal --duration=60',
+        '--upgrade-test=undo --duration=200',
     ],
 
 # Page size combinations

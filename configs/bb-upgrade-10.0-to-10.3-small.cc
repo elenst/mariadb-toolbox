@@ -21,14 +21,6 @@ $combinations = [
         '--upgrade-test=normal --duration=60',
         '--upgrade-test=undo --duration=200',
     ],
-# Old servers
-    [
-        '--basedir1=$BUILD_HOME/10.0',
-    ],
-# New servers
-    [
-        '--basedir2=$BUILD_HOME/build',
-    ],
 
 # Page size combinations
 # (32K and 64K values are only applicable to 10.1+ and MySQL 5.7, so they are not present here)

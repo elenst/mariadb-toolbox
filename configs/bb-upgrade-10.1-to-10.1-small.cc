@@ -21,14 +21,6 @@ $combinations = [
         '--upgrade-test=normal',
         '--upgrade-test=crash'
     ],
-# Old servers
-    [
-        '--basedir1=$BUILD_HOME/10.1',
-    ],
-# New servers
-    [
-        '--basedir2=$BUILD_HOME/build',
-    ],
 
 # Page size combinations
     [
