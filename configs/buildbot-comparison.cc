@@ -1,6 +1,7 @@
 $combinations = [
     [
     '
+	--appverif
         --no-mask
         --seed=time
         --threads=4
