@@ -8,7 +8,6 @@ $combinations = [
         --duration=400
         --queries=100M
         --reporters=QueryTimeout,Backtrace,ErrorLog,Deadlock,Shutdown
-        --redefine=conf/mariadb/redefine_random_keys.yy
         --redefine=conf/mariadb/redefine_set_session_vars.yy
         --validators=TransformerLight
         --transformers=ConvertSubqueriesToViews,DisableOptimizations,EnableOptimizations,ExecuteAsSelectItem,ExecuteAsView,ExecuteAsDerived
