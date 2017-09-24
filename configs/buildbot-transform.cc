@@ -11,6 +11,8 @@ $combinations = [
         --redefine=conf/mariadb/redefine_set_session_vars.yy
         --validators=TransformerLight
         --transformers=ConvertSubqueriesToViews,DisableOptimizations,EnableOptimizations,ExecuteAsSelectItem,ExecuteAsView,ExecuteAsDerived
+        --mysqld=--loose-max-statement-time=60
+        --querytimeout=60
     '
     ],
     [

@@ -8,6 +8,8 @@ $combinations = [
         --duration=400
         --queries=100M
         --reporters=QueryTimeout,Backtrace,ErrorLog,Deadlock,Shutdown
+        --mysqld=--loose-max-statement-time=60
+        --querytimeout=60
     '
     ],
     [
