@@ -31,7 +31,7 @@ my $cd= (osWindows() ? "cd /d" : "cd");
 # 10.1: wait till b0395d8701ec49f49ad23f9917a3b2369bb49e7a is merged into 10.1, then set
 # the merge until 10.1.23 is released.
 # Same for 10.2 until 10.2.6 is released
-my %overridden_rev = ( '5.3' => '3622', '10.0' => '8d75a7533ee80efa5275a058dfadf8947e5857a6', '10.2' => 'c91ecf9e9bebf3cf2dafbd3193de4df94be09870' );
+my %overridden_rev = ( '5.3' => '3622' );
 
 GetOptions(
    'source_tree=s' => \$source_tree,
