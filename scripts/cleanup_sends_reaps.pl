@@ -123,7 +123,7 @@ do
     elsif ( $ln =~ /^\s*\-\-disconnect\s*(\w+)/ )
     {
         # if there was a --send for this connection, say --reap before disconnecting
-        if ( $con_sends{$1} ) {
+        if ( $con_sends{$1} and $cur_con ) {
             print "--reap\n";
         }
         # Now print --disconnect and forget the connection
