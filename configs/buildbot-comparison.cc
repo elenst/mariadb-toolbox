@@ -10,6 +10,7 @@ $combinations = [
         --reporters=QueryTimeout,Backtrace,ErrorLog,Deadlock,Shutdown
         --mysqld=--loose-max-statement-time=60
         --querytimeout=60
+        --store-binaries
     '
     ],
     [

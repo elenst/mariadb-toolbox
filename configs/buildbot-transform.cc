@@ -13,6 +13,7 @@ $combinations = [
         --transformers=ConvertSubqueriesToViews,DisableOptimizations,EnableOptimizations,ExecuteAsSelectItem,ExecuteAsView,ExecuteAsDerived
         --mysqld=--loose-max-statement-time=60
         --querytimeout=60
+        --store-binaries
     '
     ],
     [
