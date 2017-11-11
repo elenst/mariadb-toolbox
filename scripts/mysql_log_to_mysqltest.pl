@@ -37,6 +37,7 @@ my $last_log_sec= 0;
 my $cur_log_con= 0;
 my $cur_log_record= '';
 my $timestamp= 0;
+my $server_restarts= 0;
 
 # TODO: how to handle KILL <con num>?
 # TODO: MYSQLTEST_VARDIR
@@ -86,6 +87,7 @@ print "GRANT ALL ON *.* TO rqg\@localhost;\n";
 
 # The flag will be used if we are only interested in certain connections
 my $ignore;
+my $normal_shutdown= 0;
 
 LOGLINE:
 while(<>)
@@ -95,7 +97,10 @@ while(<>)
   # Tcp port: 19300  Unix socket: /home/elenst/test_results/analyze4/mysql.sock
   # Time                 Id Command    Argument
 
-  next LOGLINE if /started with:\s*$/ or /^\s*Tcp port:/ or /^\s*Time\s+Id\s+Command\s+Argument/;
+  # We should only ignore 'started with' here if it's the first line in the log.
+  # Otherwise it will be caught later in the code and handled separately
+
+  next LOGLINE if ($. == 1 and /started with:\s*$/) or /^\s*Tcp port:/ or /^\s*Time\s+Id\s+Command\s+Argument/;
 
   my $new_log_con;
   my $new_log_timestamp;
@@ -115,18 +120,23 @@ while(<>)
     $new_log_con= $1;
     $new_log_record_type= $2;
 
-    if ( scalar( keys %interesting_connections )
-        and not $interesting_connections{$new_log_con} )
+    if ( $new_log_record_type =~ /Shutdown/ )
     {
-      $ignore= 1;
+      $normal_shutdown= 1;
       next LOGLINE;
     }
-    $ignore= 0;
 
     # If we have built a previous record (possibly from several lines),
-    # now it's time to print it
+    # now it's time to print it. We'll take into account the $ignore flag there
 
     print_current_record( $new_log_con );
+
+
+    # If the record was produced by one of connections we are not interested in,
+    # set the flag, but proceed parsing, in case the connection does something
+    # important on the system level (like server shutdown)
+
+    $ignore= scalar(keys %interesting_connections) and not $interesting_connections{$new_log_con};
 
     if ( $new_log_timestamp )
     {
@@ -143,7 +153,7 @@ while(<>)
     }
 
     # We ignore Prepare, Execute, Statistics and Binlog lines
-    next LOGLINE if ( $new_log_record_type =~ /(?:Prepare|Binlog|Field|Statistics|Shutdown|Close)/ );
+    next LOGLINE if ( $new_log_record_type =~ /(?:Prepare|Binlog|Field|Statistics|Close)/ );
 
     if ( $new_log_record_type eq 'Connect' )
     {
@@ -156,7 +166,7 @@ while(<>)
       $db= '' unless defined $db;
       my $conname= 'con' . $new_log_con;
       my $password= ( defined $user_passwords{$user.'@'.$host} ? $user_passwords{$user.'@'.$host} : '' );
-      print "--connect ($conname,$host,$user,$password,$db)\n";
+      print '--connect ('.$conname.'_'.$server_restarts.",$host,$user,$password,$db)\n";
       print "SET TIMESTAMP= $timestamp /* 1 */;\n" if $opt_timestamps;
       print "--let \$${conname}_id= `SELECT CONNECTION_ID() AS ${conname}`\n";
       $test_connections{$new_log_con}= 0;
@@ -173,11 +183,11 @@ while(<>)
       my $conname= 'con' . $new_log_con;
       if ( $test_connections{$new_log_con} )
       {
-        print "--connection $conname\n";
+        print '--connection '.$conname.'_'.$server_restarts."\n";
         print "--reap\n";
         print "SET TIMESTAMP= $timestamp /* 2 */;\n" if $opt_timestamps;
       }
-      print "--disconnect $conname\n";
+      print "--disconnect ".$conname.'_'.$server_restarts."\n";
       delete $test_connections{$new_log_con};
       $cur_test_con= 0;
     }
@@ -189,7 +199,7 @@ while(<>)
       my ( $user, $host, $db )= ( $_ =~ /^\s*user\s+(\w+)\@(\S+)\s+(?:as.*?\s+)?on\s*(\w*)/ );
       $db= '' unless defined $db;
       my $conname= 'con' . $new_log_con;
-      print "--connection $conname\n";
+      print '--connection '.$conname.'_'.$server_restarts."\n";
       print "SET TIMESTAMP= $timestamp /* 3 */;\n" if $opt_timestamps;
       if ( $test_connections{$new_log_con} )
       {
@@ -211,7 +221,7 @@ while(<>)
       my $db_name= $1;
       if ( $test_connections{$new_log_con} )
       {
-        print "--connection $conname\n";
+        print '--connection '.$conname.'_'.$server_restarts."\n";
         print "--reap\n";
         print "SET TIMESTAMP= $timestamp /* 4 */;\n" if $opt_timestamps;
         $test_connections{$new_log_con}= 0;
@@ -224,6 +234,13 @@ while(<>)
       exit 1;
     }
   } # end if <new record>
+  elsif ( /started with:\s*$/ ) {
+    print_current_record($cur_log_con);
+    print "\n".'--let $shutdown_timeout= '.($normal_shutdown ? 10 : 0)."\n";
+    print "--source include/restart_mysqld.inc\n\n";
+    $server_restarts++;
+    $normal_shutdown= 0;
+  }
   elsif ( $ignore ) {
     # This is a continuation of a line we decided to ignore
     next LOGLINE;
@@ -242,7 +259,7 @@ print_current_record($cur_log_con);
 
 foreach my $c ( keys %test_connections ) {
   if ( $test_connections{$c} ) {
-    print "--connection con", $c, "\n";
+    print "--connection con", $c, '_'.$server_restarts, "\n";
     print "--reap\n";
   }
 }
@@ -304,18 +321,33 @@ sub time_to_sec
 sub print_current_record
 {
   my $new_log_con= shift;
+
+  # If the query was 'shutdown', don't print it, but prepare
+  # for restart_mysqld.inc
   if ( $cur_log_record )
   {
+    if ( $cur_log_record =~ /^\s*shutdown\s*$/i ) {
+      $normal_shutdown= 1;
+      $cur_log_record= '';
+      $cur_log_con= 0;
+      return;
+    }
+    if ($ignore) {
+      $ignore= 0;
+      $cur_log_record= '';
+      $cur_log_con= 0;
+      return;
+    }
     if ( ! exists( $test_connections{$cur_log_con} ) )
     {
-      print "--connect (con$cur_log_con,localhost,root,,test)\n";
+      print '--connect (con'.$cur_log_con.'_'.$server_restarts.',localhost,root,,test)'."\n";
       print "SET TIMESTAMP= $timestamp /* 5 */;\n" if $opt_timestamps;
       print "--let \$con${cur_log_con}_id= `SELECT CONNECTION_ID() AS con${cur_log_con}`\n";
       $test_connections{$cur_log_con}= 0;
       $cur_test_con= $cur_log_con;
     }
     elsif ( $cur_log_con != $cur_test_con ) {
-      print "--connection con" . $cur_log_con . "\n";
+      print '--connection con' . $cur_log_con . '_'.$server_restarts. "\n";
       $cur_test_con= $cur_log_con;
     }
 
