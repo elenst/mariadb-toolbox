@@ -152,7 +152,7 @@ foreach my $mode (@modes)
 				my @preserved_part = ();
 				foreach my $l ( @chunk )
 				{
-					if ( $l =~ /\#\s+PRESERVE/i )
+					if ( $l =~ /\#\s+PRESERVE/i or $l =~ /^\s*(?:if|while|{|}|--let|--dec|--inc|--eval)/ )
 					{
 						push @preserved_part, $l;
 					}
