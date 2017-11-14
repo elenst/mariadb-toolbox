@@ -235,11 +235,13 @@ while(<>)
       exit 1;
     }
   } # end if <new record>
-  elsif ( /started with:\s*$/ and not $no_shutdown ) {
+  elsif ( /started with:\s*$/ ) {
     print_current_record($cur_log_con);
-    print "\n".'--let $shutdown_timeout= '.($normal_shutdown ? 10 : 0)."\n";
-    print "--source include/restart_mysqld.inc\n\n";
-    $server_restarts++;
+    if ($normal_shutdown or not $no_shutdown) {
+      print "\n".'--let $shutdown_timeout= '.($normal_shutdown ? 10 : 0)."\n";
+      print "--source include/restart_mysqld.inc\n\n";
+      $server_restarts++;
+    }
     $normal_shutdown= 0;
     $no_shutdown= 0;
   }
