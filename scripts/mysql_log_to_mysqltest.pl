@@ -88,6 +88,7 @@ print "GRANT ALL ON *.* TO rqg\@localhost;\n";
 # The flag will be used if we are only interested in certain connections
 my $ignore;
 my $normal_shutdown= 0;
+my $no_shutdown= 0;
 
 LOGLINE:
 while(<>)
@@ -234,12 +235,13 @@ while(<>)
       exit 1;
     }
   } # end if <new record>
-  elsif ( /started with:\s*$/ ) {
+  elsif ( /started with:\s*$/ and not $no_shutdown ) {
     print_current_record($cur_log_con);
     print "\n".'--let $shutdown_timeout= '.($normal_shutdown ? 10 : 0)."\n";
     print "--source include/restart_mysqld.inc\n\n";
     $server_restarts++;
     $normal_shutdown= 0;
+    $no_shutdown= 0;
   }
   elsif ( $ignore ) {
     # This is a continuation of a line we decided to ignore
@@ -331,6 +333,11 @@ sub print_current_record
       $cur_log_record= '';
       $cur_log_con= 0;
       return;
+    }
+    # FLUSH LOGS will produce lines similar to server restart.
+    # Recognize it and do not restart
+    if ( $cur_log_record =~ /^\s*flush logs\s*$/i ) {
+      $no_shutdown= 1;
     }
     if ($ignore) {
       $ignore= 0;
