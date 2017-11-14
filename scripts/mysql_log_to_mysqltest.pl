@@ -336,7 +336,7 @@ sub print_current_record
     }
     # FLUSH LOGS will produce lines similar to server restart.
     # Recognize it and do not restart
-    if ( $cur_log_record =~ /^\s*flush logs\s*$/i ) {
+    if ( $cur_log_record =~ /flush logs/i ) {
       $no_shutdown= 1;
     }
     if ($ignore) {
