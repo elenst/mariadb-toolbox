@@ -8,6 +8,7 @@ my $opt_tables;
 my $opt_sleep= 1;
 my $opt_threads= '';
 my $opt_timestamps= 0;
+my $enable_result_log= 0;
 
 GetOptions (
   "load-dir=s"       => \$opt_load_dir,
@@ -16,6 +17,7 @@ GetOptions (
   "timestamps!"      => \$opt_timestamps,
   "threads=s"        => \$opt_threads,
   "connections=s"    => \$opt_threads,
+  "enable_result_log|enable-result-log" => \$enable_result_log
   );
 
 my %interesting_connections= map { $_ => 1 } split /,/, $opt_threads;
@@ -76,6 +78,9 @@ my $systest_partition_folders_created= 0;
 
 print "--source include/have_innodb.inc\n";
 print "--enable_connect_log\n";
+unless ($enable_result_log) {
+  print "--disable_result_log\n";
+}
 print "--disable_abort_on_error\n";
 print "SET GLOBAL event_scheduler= OFF;\n";
 print "CREATE USER rqg\@localhost;\n";
