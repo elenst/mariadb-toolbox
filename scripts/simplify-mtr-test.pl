@@ -19,10 +19,12 @@ my %preserve_connections;
 
 my @modes;
 
-require Win32::API;
-my $errfunc = Win32::API->new('kernel32', 'SetErrorMode', 'I', 'I');
-my $initial_mode = $errfunc->Call(2);
-$errfunc->Call($initial_mode | 2);
+if ($^O eq 'MSWin32' or $^O eq 'MSWin64') {
+  require Win32::API;
+  my $errfunc = Win32::API->new('kernel32', 'SetErrorMode', 'I', 'I');
+  my $initial_mode = $errfunc->Call(2);
+  $errfunc->Call($initial_mode | 2);
+}
 
 GetOptions (
     "testcase=s"  => \$testcase,
@@ -128,13 +130,11 @@ foreach my $mode (@modes)
 	else
 	{
 		# Re-read the test in the new mode
-		print("HERE: size of the last failed test: ".scalar(@last_failed_test)."\n");
 		write_testfile(\@last_failed_test);
 		# We don't need connections (second returned value) anymore
 		($test, undef)= read_testfile("$suitedir/new_test.test",$mode);
 
 		my @test= @$test;
-		print("HERE: size of the re-read test file: ".scalar(@test)."\n");
 		if (scalar(@test) <= 1) {
 			exit;
 		}
@@ -260,7 +260,6 @@ sub write_testfile
     print TEST "--disable_abort_on_error\n";
     #print TEST "--source include/master-slave.inc\n";
     #print TEST "--source include/have_binlog_format_statement.inc\n";
-	print("HERE: printing testref to new_test.tmp: ".scalar(@$testref)."\n");
     print TEST @$testref;
     #print TEST "\n--sync_slave_with_master\n";
     close( TEST );
@@ -276,7 +275,6 @@ sub read_testfile
 	open( TEST, $testfile ) or die "could not open $testfile for reading: $!";
 	while (<TEST>)
 	{
-		print ("HERE: found line $_ in $testfile\n");
 		if ( /^\s*--/s )
 		{
 			# SQL comments or MTR commands
@@ -312,7 +310,6 @@ sub read_testfile
 			$connections{$current_con}++;
 		}
 		else {
-			print("HERE: the line is recognized as else\n");
 			my $cmd = $_;
 			if ( $mode eq 'stmt' or $mode eq 'conn' )
 			{
@@ -321,7 +318,6 @@ sub read_testfile
 					$cmd .= <TEST>;
 				}
 			}
-			print("HERE: collected $cmd\n");
 			push @test, $cmd;
 			$connections{$current_con}++;
 		}
