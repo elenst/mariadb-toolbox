@@ -13,6 +13,7 @@ my $options = '';
 my $testcase;
 my $path = dirname(abs_path($0));
 my $opt_preserve_connections;
+my $rpl= 0;
 
 my @preserve_connections;
 my %preserve_connections;
@@ -33,6 +34,7 @@ GetOptions (
     "suitedir=s"  => \$suitedir,
     "suite=s"     => \$suitename,
     "options=s"   => \$options,
+    "rpl"         => \$rpl,
     "preserve_connections=s" => \$opt_preserve_connections,
     "preserve-connections=s" => \$opt_preserve_connections,
 );
@@ -71,16 +73,18 @@ unless ($suitename) {
     }
 }
 
-if ($ENV{MTR_VERSION} eq "1" and ($suitename eq 't' or $suitename eq 'main') and not -e "r/new_test.result") {
-    system("touch r/new_test.result");
+my $test_basename= ($rpl ? 'new_rpl' : 'new_test');
+
+if ($ENV{MTR_VERSION} eq "1" and ($suitename eq 't' or $suitename eq 'main') and not -e "r/$test_basename.result") {
+    system("touch r/$test_basename.result");
 }
 
-copy("$suitedir/$testcase.test","$suitedir/new_test.test") || die "Could not copy $suitedir/$testcase.test to $suitedir/new_test.test";
+copy("$suitedir/$testcase.test","$suitedir/$test_basename.test") || die "Could not copy $suitedir/$testcase.test to $suitedir/$test_basename.test";
 
 my $reproducible_counter = 0;
 my $not_reproducible_counter = 0;
 
-my ($test, $connections) = read_testfile("$suitedir/new_test.test",$modes[0]);
+my ($test, $connections) = read_testfile("$suitedir/$test_basename.test",$modes[0]);
 
 print "Running initial test\n";
 unless (run_test($test))
@@ -132,7 +136,7 @@ foreach my $mode (@modes)
 		# Re-read the test in the new mode
 		write_testfile(\@last_failed_test);
 		# We don't need connections (second returned value) anymore
-		($test, undef)= read_testfile("$suitedir/new_test.test",$mode);
+		($test, undef)= read_testfile("$suitedir/$test_basename.test",$mode);
 
 		my @test= @$test;
 		if (scalar(@test) <= 1) {
@@ -213,7 +217,7 @@ sub run_test
 
     write_testfile($testref);
     my $start = time();
-    my $out = readpipe( "perl mysql-test-run.pl $options --suite=$suitename new_test" );
+    my $out = readpipe( "perl mysql-test-run.pl $options --suite=$suitename $test_basename" );
     my $errlog = ( $ENV{MTR_VERSION} eq "1" ? 'var/log/master.err' : 'var/log/mysqld.1.err');
 
 	my $separ= $/;
@@ -232,7 +236,7 @@ sub run_test
     if ( $result )
     {
         print "Reproduced (no: $reproducible_counter)\n";
-        copy("$suitedir/new_test.test", "$suitedir/$testcase.test.reproducible.$reproducible_counter") || die "Could not copy $suitedir/new_test.test to $suitedir/$testcase.test.reproducible.$reproducible_counter: $!";
+        copy("$suitedir/$test_basename.test", "$suitedir/$testcase.test.reproducible.$reproducible_counter") || die "Could not copy $suitedir/$test_basename.test to $suitedir/$testcase.test.reproducible.$reproducible_counter: $!";
         $outfile = "$testcase.out.reproducible.$reproducible_counter";
         $reproducible_counter++;
     }
@@ -256,14 +260,18 @@ sub min
 sub write_testfile
 {
 	my $testref= shift;
-    open( TEST, ">$suitedir/new_test.tmp" ) or die "Could not open $suitedir/new_test.tmp for writing: $!";
+    open( TEST, ">$suitedir/$test_basename.tmp" ) or die "Could not open $suitedir/$test_basename.tmp for writing: $!";
     print TEST "--disable_abort_on_error\n";
-    #print TEST "--source include/master-slave.inc\n";
-    #print TEST "--source include/have_binlog_format_statement.inc\n";
+    if ($rpl) {
+      print TEST "--source include/master-slave.inc\n";
+#      print TEST "--source include/have_binlog_format_statement.inc\n";
+    }
     print TEST @$testref;
-    #print TEST "\n--sync_slave_with_master\n";
+    if ($rpl) {
+      print TEST "\n--sync_slave_with_master\n";
+    }
     close( TEST );
-    system("perl $path/cleanup_sends_reaps.pl $suitedir/new_test.tmp > $suitedir/new_test.test");
+    system("perl $path/cleanup_sends_reaps.pl $suitedir/$test_basename.tmp > $suitedir/$test_basename.test");
 }
 
 sub read_testfile
@@ -275,7 +283,12 @@ sub read_testfile
 	open( TEST, $testfile ) or die "could not open $testfile for reading: $!";
 	while (<TEST>)
 	{
-		if ( /^\s*--/s )
+		if ( /include\/master-slave\.inc/s or /sync*_with_master/s )
+		{
+			# If replication is needed, it will be added separately
+			next;
+		}
+		elsif ( /^\s*--/s )
 		{
 			# SQL comments or MTR commands
 			push @test, $_;
