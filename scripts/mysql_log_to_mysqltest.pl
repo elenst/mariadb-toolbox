@@ -8,6 +8,7 @@ my $opt_tables;
 my $opt_sleep= 1;
 my $opt_threads= '';
 my $opt_timestamps= 0;
+my $opt_convert_to_ei= 0;
 my $enable_result_log= 0;
 
 GetOptions (
@@ -17,6 +18,7 @@ GetOptions (
   "timestamps!"      => \$opt_timestamps,
   "threads=s"        => \$opt_threads,
   "connections=s"    => \$opt_threads,
+  "convert-to-execute-immediate|convert_to_execute_immediate" => \$opt_convert_to_ei,
   "enable_result_log|enable-result-log" => \$enable_result_log
   );
 
@@ -56,7 +58,7 @@ if ( $opt_tables )
 
   while (<>)
   {
-    if ( /^\s*[\d\:\s]*\s+(\d+)\s+(?:Query|Execute)/ ) {
+    if ( /^\s*[\d\:\s]*\s+(\d+)\s+(?:Query|Prepare)/ ) {
       $cur_con= $1;
     }
     $interesting_connections{$cur_con}= 2
@@ -159,7 +161,7 @@ while(<>)
     }
 
     # We ignore Prepare, Execute, Statistics and Binlog lines
-    next LOGLINE if ( $new_log_record_type =~ /(?:Prepare|Binlog|Field|Statistics|Close)/ );
+    next LOGLINE if ( $new_log_record_type =~ /(?:Execute|Binlog|Field|Statistics|Close|Reset)/ );
 
     if ( $new_log_record_type eq 'Connect' )
     {
@@ -173,6 +175,7 @@ while(<>)
       my $conname= 'con' . $new_log_con;
       my $password= ( defined $user_passwords{$user.'@'.$host} ? $user_passwords{$user.'@'.$host} : '' );
       print '--connect ('.$conname.'_'.$server_restarts.",$host,$user,$password,$db)\n";
+      print "--enable_reconnect\n";
       print "SET TIMESTAMP= $timestamp /* 1 */;\n" if $opt_timestamps;
       print "--let \$${conname}_id= `SELECT CONNECTION_ID() AS ${conname}`\n";
       $test_connections{$new_log_con}= 0;
@@ -216,7 +219,7 @@ while(<>)
       print "--change_user $user,$password,$db\n";
       $cur_test_con= $new_log_con;
     }
-    elsif ( $new_log_record_type eq 'Query' or $new_log_record_type eq 'Execute' )
+    elsif ( $new_log_record_type eq 'Query' or $new_log_record_type eq 'Prepare' )
     {
       $cur_log_con= $new_log_con;
       $cur_log_record= $_;
@@ -389,7 +392,14 @@ sub print_current_record
         $test_connections{$cur_log_con}= 1;
       }
 
-      print $cur_log_record, $delimiter, "\n";
+      if ($opt_convert_to_ei) {
+        my $converted= $cur_log_record;
+        $converted =~ s/[^\\]\"/\\\"/g;
+        print 'EXECUTE IMMEDIATE " '.$converted.' "', $delimiter, "\n";
+      }
+      else {
+        print $cur_log_record, $delimiter, "\n";
+      }
       if ( $delimiter ne ';' ) {
         print "--delimiter ;\n";
       }
