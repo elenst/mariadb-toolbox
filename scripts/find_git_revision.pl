@@ -19,7 +19,7 @@ use constant FIXING_REVISION => 0;   # fixing, 0
 use constant PASS => 0;
 use constant FAIL => 1;
 
-my $first = -1;
+my $first = 0;
 my $testcase;
 my $options;
 my $step = 10;
