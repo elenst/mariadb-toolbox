@@ -1,0 +1,19 @@
+if [ -z "$1" ]
+then
+    echo "But what to build?"
+    exit
+else
+    source=$1
+    shift
+fi
+
+if [ -z "$1" ]
+then
+    target=$source
+else
+    target=$1
+    shift
+fi
+
+build_script $source $target -DCMAKE_BUILD_TYPE=Debug $*
+

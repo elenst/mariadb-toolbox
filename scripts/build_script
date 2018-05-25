@@ -1,0 +1,31 @@
+source=$1
+target=$2
+shift
+shift
+
+case "$target" in
+*mysql-5\.[789]*|mysql-8\.0*)
+  mysql_boost="-DDOWNLOAD_BOOST=1 -DWITH_BOOST=/data/releases/boost"
+  ;;
+*)
+  mysql_boost=""
+  ;;
+esac
+
+
+
+mkdir -p /data/bld/tmp/$target
+mkdir -p /data/bld/$target
+cd /data/bld/tmp/$target
+
+cmd="cmake /data/src/$source -DCMAKE_INSTALL_PREFIX=/data/bld/$target $* $mysql_boost && make -j5 && make install"
+cd /data/src/$source
+git log -1 | sed -e "s/^/# /" > /data/bld/$target/last_build
+echo "# " >> /data/bld/$target/last_build
+cd -
+echo $cmd >> /data/bld/$target/last_build
+echo "Building /data/src/$source and installing into /data/bld/$target"
+echo "Running: $cmd"
+sh -c "$cmd 2>&1 | tee /data/bld/tmp/$target/build.log"
+
+cd -
