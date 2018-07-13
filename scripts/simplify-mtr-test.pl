@@ -6,7 +6,7 @@ use File::Copy "copy";
 use strict;
 
 my $opt_mode = 'all';
-my $output = 'signal ';
+my $output;
 my $suitedir = 't';
 my $suitename;
 my $options = '';
@@ -39,8 +39,6 @@ GetOptions (
     "preserve-connections=s" => \$opt_preserve_connections,
 );
 
-
-
 if (!$testcase) {
     print "ERROR: testcase is not defined\n";
     exit 1;
@@ -71,6 +69,11 @@ unless ($suitename) {
         print "ERROR: Could not retrieve suite name\n";
         exit 1;
     }
+}
+
+if ($output) {
+  $output= qr/$output/s;
+  print "Pattern to search: $output\n";
 }
 
 my $test_basename= ($rpl ? 'new_rpl' : 'new_test');
@@ -218,13 +221,14 @@ sub run_test
     write_testfile($testref);
     my $start = time();
     my $out = readpipe( "perl mysql-test-run.pl $options --suite=$suitename $test_basename" );
+    my $result= $?;
     my $errlog = ( $ENV{MTR_VERSION} eq "1" ? 'var/log/master.err' : 'var/log/mysqld.1.err');
 
-	my $separ= $/;
-	$/= undef;
-	open(ERRLOG, "$errlog") || die "Cannot open $errlog\n";
-	$out.= <ERRLOG>;
-	close(ERRLOG);
+    my $separ= $/;
+    $/= undef;
+    open(ERRLOG, "$errlog") || die "Cannot open $errlog\n";
+    $out.= <ERRLOG>;
+    close(ERRLOG);
     if (-e 'var/log/mysqld.2.err') {
 		open(ERRLOG, "var/log/mysqld.2.err") || die "Cannot open var/log/mysqld.2.err\n";
 		$out.= <ERRLOG>;
@@ -232,7 +236,9 @@ sub run_test
     }
 	$/= $separ;
     my $outfile;
-    my $result = ( $out =~ /$output/ );
+    if ($output) {
+      $result = ( $out =~ /$output/ )
+    }
     if ( $result )
     {
         print "Reproduced (no: $reproducible_counter)\n";
