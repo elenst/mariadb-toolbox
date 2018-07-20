@@ -109,13 +109,15 @@ foreach my $mode (@modes)
 		print "\nTotal number of connections: " . scalar(@$connections) . "\n\n";
 
 		my $skip= 0;
+    my $counter= 0;
 		foreach my $c (@$connections)
 		{
+      print "Checking connection $c (" . (++$counter) . " out of " . scalar(@$connections) . ")\n";
+
 			if ($preserve_connections{$c}) {
 				print "\nPreserving connection $c\n";
 				next;
 			}
-			print "\nNext connection to remove: $c\n";
 
 			my @new_test = ();
 			foreach my $t (@last_failed_test) {
@@ -127,10 +129,10 @@ foreach my $mode (@modes)
 				push @new_test, $t unless $skip;
 			}
 			if (run_test(\@new_test)) {
-				print "Connection $c is not needed\n";
+				print "Connection $c is not needed\n\n";
 				@last_failed_test= @new_test;
 			} else {
-				print "Saving connection $c\n";
+				print "Saving connection $c\n\n";
 			}
 		}
 	}
