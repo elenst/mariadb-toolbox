@@ -15,5 +15,5 @@ else
     shift
 fi
 
-build_script $source $target -DCMAKE_BUILD_TYPE=Debug $*
+/usr/local/bin/build_script $source $target -DCMAKE_BUILD_TYPE=Debug $*
 

@@ -15,5 +15,5 @@ else
     shift
 fi
 
-build_script $source $target $*
+/usr/local/bin/build_script $source $target $*
 

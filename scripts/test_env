@@ -1,3 +1,5 @@
+#!/bin/bash
+
 unset basedir
 unset datadir
 unset tmpdir
