@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 # Expects: 
 # - TOOLBOX_DIR (mandatory)
