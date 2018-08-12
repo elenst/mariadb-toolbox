@@ -21,6 +21,8 @@
 # $GLOBAL_CMAKE_OPTIONS (optional)
 # $JOB_CMAKE_OPTIONS (optional)
 
+set -x
+
 if [ -e $BASEDIR/revno ] ; then
   CACHED_REVISION=`cat $BASEDIR/revno`
 fi
@@ -68,3 +70,4 @@ else
   fi
 fi
 
+set +x
