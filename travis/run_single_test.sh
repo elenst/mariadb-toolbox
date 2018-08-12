@@ -18,8 +18,10 @@ test_result=0
 
 if [ $((JOB_END - CURTIME)) -gt $((TEST_DURATION + 60)) ] ; then
   cd $RQG_HOME
+  cmd="perl ./runall-new.pl --basedir=$BASEDIR --vardir=$LOGDIR/vardir $GLOBAL_RQG_OPTIONS $JOB_RQG_OPTIONS $TEST_RQG_OPTIONS"
+  echo "Running $cmd"
   date
-  perl ./runall-new.pl --basedir=$BASEDIR --vardir=$LOGDIR/vardir $GLOBAL_RQG_OPTIONS $JOB_RQG_OPTIONS $TEST_RQG_OPTIONS > $LOGDIR/trial.log 2>&1
+  $cmd > $LOGDIR/trial.log 2>&1
   test_result=$?
   date
   . $SCRIPT_DIR/collect_single_failure_info.sh
