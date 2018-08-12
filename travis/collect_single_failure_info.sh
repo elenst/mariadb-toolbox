@@ -49,13 +49,6 @@ fi
 
 ###### Functions
 
-function soft_exit
-{
-  cd $OLDDIR
-#  return $res
-  return 0
-}
-
 function insert_success
 {
    $MYSQL --host=$DB_HOST --port=$DB_PORT -u$DB_USER -p$DBP -e "REPLACE INTO travis.success SET build_id = $TRAVIS_BUILD_NUMBER, job_id = $TRAVIS_JOB, trial_id = $TRIAL, travis_branch = \"$TRAVIS_BRANCH\", result = \"$TRIAL_RESULT\", status = \"$TRIAL_STATUS\", command_line = \"$TRIAL_CMD\", server_branch = \"$SERVER_BRANCH\", server_revision = \"$SERVER_REVISION\", cmake_options = \"$CMAKE_OPTIONS\", test_branch = \"$RQG_BRANCH\", test_revision = \"$RQG_REVISION\""
@@ -76,7 +69,6 @@ function load_failure
 
   if [ "$?" != "0" ] ; then
     echo "ERROR: Failed to insert the failure $TRIAL_RESULT and load ${LOGDIR}/${ARCHDIR}.tar.gz for build_id = $TRAVIS_BUILD_NUMBER, job_id = $TRAVIS_JOB, trial_id = $TRIAL"
-    res=1
   else
     echo "Inserted the failure $TRIAL_RESULT and loaded ${LOGDIR}/${ARCHDIR}.tar.gz for build_id = $TRAVIS_BUILD_NUMBER, job_id = $TRAVIS_JOB, trial_id = $TRIAL"
   fi
@@ -153,9 +145,11 @@ if [ "$res" == "0" ] ; then
   if [[ "$TRIAL_STATUS" == "OK" ]] ; then
     TRIAL_RESULT=PASS
     insert_success
+    res=0
 
   # Failure processing
   else
+    res=1
 
     perl $HOME/mariadb-tests/scripts/check_for_known_bugs.pl ${VARDIR}*/mysql.err $TRIAL_LOG
 
@@ -228,5 +222,5 @@ if [ "$res" == "0" ] ; then
   echo "============================= End of trial $TRIAL results ======================="
 fi
 
-
-soft_exit
+cd $OLDDIR
+. $SCRIPT_DIR/soft_exit.sh $res

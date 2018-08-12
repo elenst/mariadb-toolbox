@@ -18,11 +18,6 @@ CURTIME=`date '+%s'`
 
 test_result=0
 
-function soft_exit
-{
-  return $test_result
-}
-
 if [ $((JOB_END - CURTIME)) -gt $((TEST_DURATION + 60)) ] ; then
   cd $RQG_HOME
   perl ./runall-new.pl --basedir=$BASEDIR --vardir=$LOGDIR/vardir $GLOBAL_RQG_OPTIONS $JOB_RQG_OPTIONS $TEST_RQG_OPTIONS > $LOGDIR/trial.log 2>&1
@@ -32,6 +27,6 @@ else
   echo "Too little time left, skipping the test"
 fi
 
-soft_exit
+. $SCRIPT_DIR/soft_exit.sh $test_result
 
 set +x
