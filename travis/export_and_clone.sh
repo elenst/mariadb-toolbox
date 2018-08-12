@@ -25,6 +25,7 @@ if [ -n "$RQG_BRANCH" ] ; then RQG_BRANCH_OPTION="--branch $RQG_BRANCH" ; fi
 
 git clone https://github.com/MariaDB/server --depth=1 $SERVER_BRANCH_OPTION $SRCDIR
 git clone https://github.com/elenst/rqg --depth=1 $RQG_BRANCH_OPTION $RQG_HOME
+cd $RQG_HOME
 export RQG_REVISION=`git log -1 --pretty="%H"`
 echo $RQG_REVISION
 cd $TOOLBOX_DIR
