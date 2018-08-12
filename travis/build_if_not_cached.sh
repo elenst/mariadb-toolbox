@@ -16,16 +16,17 @@
 #  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA */
 
 # The script gets from the environment:
-# $HOME
-# $BASEDIR
-# $CMAKE_OPTIONS
+# $HOME (mandatory)
+# $BASEDIR (mandatory)
+# $GLOBAL_CMAKE_OPTIONS (optional)
+# $JOB_CMAKE_OPTIONS (optional)
 
 if [ -e $BASEDIR/revno ] ; then
   CACHED_REVISION=`cat $BASEDIR/revno`
 fi
 
-cd $HOME/src
-export REVISION=`git log -1 | head -1 | sed -e 's/^commit \([a-f0-9]*\)/\1/'`
+cd $SRCDIR
+export SERVER_REVISION=`git log -1 | head -1 | sed -e 's/^commit \([a-f0-9]*\)/\1/'`
 
 if [ "$REVISION" == "$CACHED_REVISION" ] && [ -z "$RERUN_OLD_SERVER" ] && [ -e $BASEDIR/test_result ] ; then
   echo "Test result for revision $REVISION has already been cached, re-run is not requested, tests will be skipped with the previous stored error code"
@@ -38,6 +39,7 @@ rm -f $BASEDIR/test_result
 
 if [ "$REVISION" != "$CACHED_REVISION" ] || [ -n "$REBUILD_OLD_SERVER" ] ; then 
   echo "Cached revision $CACHED_REVISION, new revision $REVISION, build is required or requested"
+  export CMAKE_OPTIONS= "$GLOBAL_CMAKE_OPTIONS $JOB_CMAKE_OPTIONS"
   rm -rf $BASEDIR && mkdir $BASEDIR
   rm -rf $HOME/out-of-source && mkdir $HOME/out-of-source && cd $HOME/out-of-source
   cmake $HOME/src $CMAKE_OPTIONS -DCMAKE_INSTALL_PREFIX=$BASEDIR > cmake.out 2>&1
@@ -52,10 +54,13 @@ if [ "$REVISION" != "$CACHED_REVISION" ] || [ -n "$REBUILD_OLD_SERVER" ] ; then
   fi
   make install > /dev/null
   echo $REVISION > $BASEDIR/revno
+  echo $CMAKE_OPTIONS > $BASEDIR/cmake_options
   rm -rf $HOME/out-of-source
 elif [ -n "$RERUN_OLD_SERVER" ] ; then
   echo "Revision $REVISION has already been cached, build is not needed, tests will be re-run as requested"
+  CMAKE_OPTIONS=`cat $BASEDIR/cmake_options`
 else
   echo "Revision $REVISION has already been cached, build is not needed, but there is no stored test result, so tests will be run"
+  CMAKE_OPTIONS=`cat $BASEDIR/cmake_options`
 fi
 
