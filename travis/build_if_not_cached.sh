@@ -58,9 +58,13 @@ if [ "$REVISION" != "$CACHED_REVISION" ] || [ -n "$REBUILD_OLD_SERVER" ] ; then
   rm -rf $HOME/out-of-source
 elif [ -n "$RERUN_OLD_SERVER" ] ; then
   echo "Revision $REVISION has already been cached, build is not needed, tests will be re-run as requested"
-  CMAKE_OPTIONS=`cat $BASEDIR/cmake_options`
+  if [ -e "$BASEDIR/cmake_options" ] ; then
+    CMAKE_OPTIONS=`cat $BASEDIR/cmake_options`
+  fi
 else
   echo "Revision $REVISION has already been cached, build is not needed, but there is no stored test result, so tests will be run"
-  CMAKE_OPTIONS=`cat $BASEDIR/cmake_options`
+  if [ -e "$BASEDIR/cmake_options" ] ; then
+    CMAKE_OPTIONS=`cat $BASEDIR/cmake_options`
+  fi
 fi
 
