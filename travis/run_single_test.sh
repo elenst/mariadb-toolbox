@@ -12,7 +12,7 @@
 
 set -x
 
-TEST_DURATION="${$TEST_DURATION:-600}"
+TEST_DURATION="${TEST_DURATION:-600}"
 
 CURTIME=`date '+%s'`
 
