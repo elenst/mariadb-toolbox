@@ -63,7 +63,6 @@ while (<DATA>) {
 __DATA__
 
 MDEV-654: share->now_transactional
-MDEV-4312: make_lock_and_pin
 MDEV-5628: Diagnostics_area::set_ok_status
 MDEV-5791:  in Field::is_real_null
 MDEV-6453:  int handler::ha_rnd_init
@@ -222,9 +221,11 @@ MDEV-16789: in insert_fields
 MDEV-16792: in Diagnostics_area::sql_errno
 MDEV-16794: thd->transaction.stmt.is_empty
 MDEV-16940: in unsafe_key_update
+MDEV-16957: Field_iterator_natural_join::next
 
 # Fixed:
 
+MDEV-4312: make_lock_and_pin
 MDEV-11071: thd->transaction.stmt.is_empty
 MDEV-11071: in THD::mark_tmp_table_as_free_for_reuse
 MDEV-14100: dict_index_get_n_unique_in_tree_nonleaf
