@@ -105,14 +105,6 @@ function process_coredump
 
 ###### "main"
 
-TRIAL_COUNT="${TRIAL_COUNT:-0}"
-TRIAL_COUNT=$((TRIAL_COUNT+1))
-
-# Only use the internal counter if the external value doesn't exist or doesn't get updated
-if [[ "$TRIAL" -lt "$TRIAL_COUNT" ]] ; then
-    TRIAL=$TRIAL_COUNT
-fi
-
 # Only do the job if initial checks passed
 
 if [ "$res" == "0" ] ; then
@@ -129,7 +121,7 @@ if [ "$res" == "0" ] ; then
   rm -rf ${LOGDIR}/${ARCHDIR} && mkdir ${LOGDIR}/${ARCHDIR}
 
   echo ""
-  echo "============================= Trial $TRIAL results ============================="
+  echo "----------------------------- RESULTS -----------------------------"
 
   if [ -e $TRIAL_LOG ] ; then
     TRIAL_STATUS=`grep 'will exit with exit status' $TRIAL_LOG | sed -e 's/.*will exit with exit status STATUS_\([A-Z_]*\).*/\1/'`
@@ -167,7 +159,7 @@ if [ "$res" == "0" ] ; then
       for fname in $dname/mysql.err* $dname/boot.log
       do
         if [ -e $fname ] ; then
-          echo "------------------- $fname -----------------------------"
+          echo "------------------- $fname ------"
           cat $fname | grep -v "\[Note\]" | grep -v "\[Warning\]" | grep -v "^$" | cut -c 1-4096
           echo "-------------------"
         fi
@@ -219,7 +211,6 @@ if [ "$res" == "0" ] ; then
   fi
 
   rm -rf ${LOGDIR}/${ARCHDIR}*
-  echo "============================= End of trial $TRIAL results ======================="
 fi
 
 cd $OLDDIR

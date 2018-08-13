@@ -10,11 +10,22 @@
 # - $TEST_RQG_OPTIONS (optional)
 # - $TEST_DURATION (optional)
 
+TRIAL_COUNT="${TRIAL_COUNT:-0}"
+export TRIAL_COUNT=$((TRIAL_COUNT+1))
+
+# Only use the internal counter if the external value doesn't exist or doesn't get updated
+if [[ "$TRIAL" -lt "$TRIAL_COUNT" ]] ; then
+    export TRIAL=$TRIAL_COUNT
+fi
+
 TEST_DURATION="${TEST_DURATION:-600}"
 
 CURTIME=`date '+%s'`
 
 test_result=0
+
+echo ""
+echo "============================= Trial $TRIAL ===================================="
 
 if [ $((JOB_END - CURTIME)) -gt $((TEST_DURATION + 60)) ] ; then
   cd $RQG_HOME
@@ -28,5 +39,7 @@ if [ $((JOB_END - CURTIME)) -gt $((TEST_DURATION + 60)) ] ; then
 else
   echo "Too little time left, skipping the test"
 fi
+
+echo "============================= End of trial $TRIAL ============================="
 
 . $SCRIPT_DIR/soft_exit.sh $test_result
