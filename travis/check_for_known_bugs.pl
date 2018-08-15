@@ -95,7 +95,6 @@ MDEV-14472: is_current_stmt_binlog_format_row
 MDEV-14557: m_sp == __null
 MDEV-14642: table->s->db_create_options == part_table->s->db_create_options
 MDEV-14693: clust_index->online_log
-MDEV-14695: n < m_size
 MDEV-14697: in TABLE::mark_default_fields_for_write
 MDEV-14711: fix_block->page.file_page_was_freed
 MDEV-14762: has_stronger_or_equal_type
@@ -222,6 +221,7 @@ MDEV-16957: Field_iterator_natural_join::next
 MDEV-16971: adjust_time_range_or_invalidate
 MDEV-16980: == table_name_arg->length
 MDEV-16982: in mem_heap_dup
+MDEV-16994: in base_list_iterator::next
 
 # Fixed:
 
@@ -229,6 +229,7 @@ MDEV-4312: make_lock_and_pin
 MDEV-11071: thd->transaction.stmt.is_empty
 MDEV-11071: in THD::mark_tmp_table_as_free_for_reuse
 MDEV-14100: dict_index_get_n_unique_in_tree_nonleaf
+MDEV-14695: n < m_size
 MDEV-15114: mem_heap_dup
 MDEV-15855: innobase_get_computed_value
 MDEV-15855: innobase_allocate_row_for_vcol
