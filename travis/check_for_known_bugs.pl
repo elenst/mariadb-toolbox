@@ -122,7 +122,6 @@ MDEV-15060: row_log_table_apply_op
 MDEV-15103: virtual ha_rows ha_partition::part_records
 MDEV-15130: table->s->null_bytes == 0
 MDEV-15130: static void PFS_engine_table::set_field_char_utf8
-MDEV-15114: mem_heap_dup
 MDEV-15115: dict_tf2_is_valid
 MDEV-15161: in get_addon_fields
 MDEV-15164: ikey_.type == kTypeValue
@@ -174,8 +173,6 @@ MDEV-15797: thd->killed != 0
 MDEV-15812: virtual handler::~handler
 MDEV-15816: m_lock_rows == RDB_LOCK_WRITE
 MDEV-15828: num_fts_index <= 1
-MDEV-15855: innobase_get_computed_value
-MDEV-15855: innobase_allocate_row_for_vcol
 MDEV-15872: row_log_table_get_pk_col
 MDEV-15872: in mem_heap_dup
 MDEV-15878: table->file->stats.records > 0
@@ -222,6 +219,9 @@ MDEV-16792: in Diagnostics_area::sql_errno
 MDEV-16794: thd->transaction.stmt.is_empty
 MDEV-16940: in unsafe_key_update
 MDEV-16957: Field_iterator_natural_join::next
+MDEV-16971: adjust_time_range_or_invalidate
+MDEV-16980: == table_name_arg->length
+MDEV-16982: in mem_heap_dup
 
 # Fixed:
 
@@ -229,5 +229,8 @@ MDEV-4312: make_lock_and_pin
 MDEV-11071: thd->transaction.stmt.is_empty
 MDEV-11071: in THD::mark_tmp_table_as_free_for_reuse
 MDEV-14100: dict_index_get_n_unique_in_tree_nonleaf
+MDEV-15114: mem_heap_dup
+MDEV-15855: innobase_get_computed_value
+MDEV-15855: innobase_allocate_row_for_vcol
 MDEV-16512: in find_field_in_tables
 MDEV-16779: rw_lock_own
