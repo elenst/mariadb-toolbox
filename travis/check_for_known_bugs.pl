@@ -229,7 +229,7 @@ MDEV-17004: in innobase_get_fts_charset
 MDEV-17005: innobase_get_computed_value
 MDEV-17015: m_year <= 9999
 MDEV-17016: auto_increment_safe_stmt_log_lock
-MDEV-17019: length > 0
+MDEV-17019: multi_delete::~multi_delete
 
 # Fixed:
 
