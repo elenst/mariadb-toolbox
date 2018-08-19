@@ -68,8 +68,6 @@ MDEV-5791:  in Field::is_real_null
 MDEV-6453:  int handler::ha_rnd_init
 MDEV-8203:  rgi->tables_to_lock
 MDEV-9137:  in _ma_ck_real_write_btree
-MDEV-10130: share->in_trans == 0
-MDEV-10130: file->trn == trn
 MDEV-11080: table->n_waiting_or_granted_auto_inc_locks > 0
 MDEV-11167: Can't find record
 MDEV-11539: mi_open.c:67: test_if_reopen
@@ -147,6 +145,7 @@ MDEV-15465: Item_func_match::cleanup
 MDEV-15468: table_events_waits_common::make_row 
 MDEV-15470: TABLE::mark_columns_used_by_index_no_reset
 MDEV-15471: new_clustered == ctx->need_rebuild
+MDEV-15475: table->read_set, field_index
 MDEV-15481: I_P_List_null_counter, I_P_List_fast_push_back
 MDEV-15482: Type_std_attributes::set
 MDEV-15484: element->m_flush_tickets.is_empty
@@ -201,6 +200,7 @@ MDEV-16292: Item_func::print
 MDEV-16397: Can't find record in
 MDEV-16407: in MDL_key::mdl_key_init
 MDEV-16407: Error: Freeing overrun buffer
+MDEV-16429: table->read_set, field_index
 MDEV-16499: from the internal data dictionary of InnoDB though the .frm file for the table exists
 MDEV-16500: user_table->n_def > table->s->fields
 MDEV-16501: in dict_mem_table_col_rename
@@ -218,14 +218,24 @@ MDEV-16792: in Diagnostics_area::sql_errno
 MDEV-16794: thd->transaction.stmt.is_empty
 MDEV-16940: in unsafe_key_update
 MDEV-16957: Field_iterator_natural_join::next
+MDEV-16961: table->read_set, field_index
+MDEV-16962: ot_ctx.can_recover_from_failed_open
 MDEV-16971: adjust_time_range_or_invalidate
 MDEV-16980: == table_name_arg->length
 MDEV-16982: in mem_heap_dup
+MDEV-16992: Field_iterator_table_ref::set_field_iterator
 MDEV-16994: in base_list_iterator::next
+MDEV-17004: in innobase_get_fts_charset
+MDEV-17005: innobase_get_computed_value
+MDEV-17015: m_year <= 9999
+MDEV-17016: auto_increment_safe_stmt_log_lock
+MDEV-17019: length > 0
 
 # Fixed:
 
 MDEV-4312: make_lock_and_pin
+MDEV-10130: share->in_trans == 0
+MDEV-10130: file->trn == trn
 MDEV-11071: thd->transaction.stmt.is_empty
 MDEV-11071: in THD::mark_tmp_table_as_free_for_reuse
 MDEV-14100: dict_index_get_n_unique_in_tree_nonleaf
