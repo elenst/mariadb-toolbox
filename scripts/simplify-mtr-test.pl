@@ -14,6 +14,7 @@ my $testcase;
 my $path = dirname(abs_path($0));
 my $opt_preserve_connections;
 my $rpl= 0;
+my $max_chunk= 0;
 
 my @preserve_connections;
 my %preserve_connections;
@@ -35,8 +36,8 @@ GetOptions (
     "suite=s"     => \$suitename,
     "options=s"   => \$options,
     "rpl"         => \$rpl,
-    "preserve_connections=s" => \$opt_preserve_connections,
-    "preserve-connections=s" => \$opt_preserve_connections,
+    "preserve-connections|preserve_connections=s" => \$opt_preserve_connections,
+    "max-chunk-size|max_chunk_size" => \$max_chunk,
 );
 
 if (!$testcase) {
@@ -148,11 +149,13 @@ foreach my $mode (@modes)
 			exit;
 		}
 
+    $max_chunk= int(scalar(@test)/10) unless $max_chunk;
 		my $chunk_size = 1;
-		while ( $chunk_size*10 < scalar( @test ) )
+		while ( $chunk_size < $max_chunk )
 		{
 			$chunk_size *= 10;
 		}
+    $chunk_size= $max_chunk if ($chunk_size > $max_chunk);
 
 		my @needed_part = @test;
 
