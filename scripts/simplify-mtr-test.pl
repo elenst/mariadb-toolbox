@@ -37,7 +37,7 @@ GetOptions (
     "options=s"   => \$options,
     "rpl"         => \$rpl,
     "preserve-connections|preserve_connections=s" => \$opt_preserve_connections,
-    "max-chunk-size|max_chunk_size" => \$max_chunk,
+    "max-chunk-size|max_chunk_size=i" => \$max_chunk,
 );
 
 if (!$testcase) {
