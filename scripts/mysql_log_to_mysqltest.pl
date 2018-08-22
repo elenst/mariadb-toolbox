@@ -9,6 +9,7 @@ my $opt_sleep= 1;
 my $opt_threads= '';
 my $opt_timestamps= 0;
 my $opt_convert_to_ei= 0;
+my $opt_convert_to_ps= 0;
 my $enable_result_log= 0;
 
 GetOptions (
@@ -19,6 +20,7 @@ GetOptions (
   "threads=s"        => \$opt_threads,
   "connections=s"    => \$opt_threads,
   "convert-to-execute-immediate|convert_to_execute_immediate" => \$opt_convert_to_ei,
+  "convert-to-ps|convert_to_ps" => \$opt_convert_to_ps,
   "enable_result_log|enable-result-log" => \$enable_result_log
   );
 
@@ -396,6 +398,12 @@ sub print_current_record
         my $converted= $cur_log_record;
         $converted =~ s/[^\\]\"/\\\"/g;
         print 'EXECUTE IMMEDIATE " '.$converted.' "', $delimiter, "\n";
+      }
+      elsif ($opt_convert_to_ps) {
+        my $converted= $cur_log_record;
+        $converted =~ s/[^\\]\"/\\\"/g;
+        print 'PREPARE converter_stmt FROM " '.$converted.' "', $delimiter, "\n";
+        print "EXECUTE converter_stmt\n";
       }
       else {
         print $cur_log_record, $delimiter, "\n";
