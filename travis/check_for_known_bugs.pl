@@ -171,8 +171,6 @@ MDEV-15797: thd->killed != 0
 MDEV-15812: virtual handler::~handler
 MDEV-15816: m_lock_rows == RDB_LOCK_WRITE
 MDEV-15828: num_fts_index <= 1
-MDEV-15872: row_log_table_get_pk_col
-MDEV-15872: in mem_heap_dup
 MDEV-15878: table->file->stats.records > 0
 MDEV-15907: in fill_effective_table_privileges
 MDEV-15912: purge_sys.tail.commit <= purge_sys.rseg->last_commi
@@ -238,6 +236,11 @@ MDEV-17021: in write_block_record
 MDEV-17027: table_list->table
 MDEV-17027: Field_iterator_table_ref::set_field_iterator
 MDEV-17027: in add_key_field
+MDEV-17051: sec_mtr->has_committed
+MDEV-17053: sync_check_iterate
+MDEV-17054: in innobase_get_fts_charset
+MDEV-17054: InnoDB needs charset 0 for doing a comparison
+MDEV-17055: in find_order_in_list
 
 # Fixed:
 
@@ -251,5 +254,7 @@ MDEV-14695: n < m_size
 MDEV-15114: mem_heap_dup
 MDEV-15855: innobase_get_computed_value
 MDEV-15855: innobase_allocate_row_for_vcol
+MDEV-15872: row_log_table_get_pk_col
+MDEV-15872: in mem_heap_dup
 MDEV-16512: in find_field_in_tables
 MDEV-16779: rw_lock_own
