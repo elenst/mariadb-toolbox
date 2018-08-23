@@ -193,6 +193,7 @@ MDEV-16171: in setup_table_map
 MDEV-16184: nest->counter > 0
 MDEV-16190: in Item_null_result::field_type
 MDEV-16217: table->read_set, field_index
+MDEV-16222: InnoDB: tried to purge non-delete-marked record in index
 MDEV-16241: inited==RND
 MDEV-16242: Slave worker thread retried transaction
 MDEV-16242: Can't find record
@@ -212,6 +213,7 @@ MDEV-16635: sequence_insert
 MDEV-16659: anc_page->org_size == anc_page->size
 MDEV-16745: thd->transaction.stmt.is_empty
 MDEV-16783: in mysql_delete
+MDEV-16783: !conds
 MDEV-16788: ls->length == strlen
 MDEV-16789: in insert_fields
 MDEV-16792: in Diagnostics_area::sql_errno
@@ -230,6 +232,12 @@ MDEV-17005: innobase_get_computed_value
 MDEV-17015: m_year <= 9999
 MDEV-17016: auto_increment_safe_stmt_log_lock
 MDEV-17019: multi_delete::~multi_delete
+MDEV-17020: length > 0
+MDEV-17021: length <= column->length
+MDEV-17021: in write_block_record
+MDEV-17027: table_list->table
+MDEV-17027: Field_iterator_table_ref::set_field_iterator
+MDEV-17027: in add_key_field
 
 # Fixed:
 
