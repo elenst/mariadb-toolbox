@@ -1,0 +1,8 @@
+# The argument is a location of the patch, e.g.
+# /home/ubuntu/mariadb-toolbox/mtr/mtr_default_server.patch
+
+if ! grep 'default-server-options' ./mtr ; then
+  rm -f include/hard_default_my.cnf
+  patch -p 2 < $1
+fi
+
