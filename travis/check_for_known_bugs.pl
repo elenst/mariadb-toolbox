@@ -209,6 +209,8 @@ MDEV-16549: Item_direct_view_ref::fix_fields
 MDEV-16523: level_and_file.second->being_compacted
 MDEV-16635: sequence_insert
 MDEV-16659: anc_page->org_size == anc_page->size
+MDEV-16682: == HEAD_PAGE
+MDEV-16682: in _ma_read_block_record
 MDEV-16745: thd->transaction.stmt.is_empty
 MDEV-16783: in mysql_delete
 MDEV-16783: !conds
@@ -216,6 +218,8 @@ MDEV-16788: ls->length == strlen
 MDEV-16789: in insert_fields
 MDEV-16792: in Diagnostics_area::sql_errno
 MDEV-16794: thd->transaction.stmt.is_empty
+MDEV-16903: auto_increment_field_not_null
+MDEV-16929: thd->transaction.stmt.is_empty
 MDEV-16940: in unsafe_key_update
 MDEV-16957: Field_iterator_natural_join::next
 MDEV-16961: table->read_set, field_index
