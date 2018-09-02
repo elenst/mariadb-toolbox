@@ -126,7 +126,6 @@ MDEV-15175: Item_temporal_hybrid_func::val_str_ascii
 MDEV-15216: m_can_overwrite_status
 MDEV-15217: transaction.xid_state.xid.is_null
 MDEV-15226: Could not get index information for Index Number
-MDEV-15243: in Field_blob::pack
 MDEV-15245: myrocks::ha_rocksdb::position
 MDEV-15255: m_lock_type == 2
 MDEV-15255: sequence_insert
@@ -167,7 +166,6 @@ MDEV-15738: in my_strcasecmp_utf8
 MDEV-15744: derived->table
 MDEV-15742: m_lock_type == 1
 MDEV-15753: thd->is_error
-MDEV-15797: thd->killed != 0
 MDEV-15812: virtual handler::~handler
 MDEV-15816: m_lock_rows == RDB_LOCK_WRITE
 MDEV-15828: num_fts_index <= 1
@@ -201,6 +199,7 @@ MDEV-16407: in MDL_key::mdl_key_init
 MDEV-16407: Error: Freeing overrun buffer
 MDEV-16429: table->read_set, field_index
 MDEV-16499: from the internal data dictionary of InnoDB though the .frm file for the table exists
+MDEV-16499: is corrupted. Please drop the table and recreate
 MDEV-16500: user_table->n_def > table->s->fields
 MDEV-16501: in dict_mem_table_col_rename
 MDEV-16516: inited==RND
@@ -212,8 +211,6 @@ MDEV-16659: anc_page->org_size == anc_page->size
 MDEV-16682: == HEAD_PAGE
 MDEV-16682: in _ma_read_block_record
 MDEV-16745: thd->transaction.stmt.is_empty
-MDEV-16783: in mysql_delete
-MDEV-16783: !conds
 MDEV-16788: ls->length == strlen
 MDEV-16789: in insert_fields
 MDEV-16792: in Diagnostics_area::sql_errno
@@ -245,6 +242,7 @@ MDEV-17053: sync_check_iterate
 MDEV-17054: in innobase_get_fts_charset
 MDEV-17054: InnoDB needs charset 0 for doing a comparison
 MDEV-17055: in find_order_in_list
+MDEV-17107: table_list->table
 
 # Fixed:
 
@@ -256,9 +254,13 @@ MDEV-11071: in THD::mark_tmp_table_as_free_for_reuse
 MDEV-14100: dict_index_get_n_unique_in_tree_nonleaf
 MDEV-14695: n < m_size
 MDEV-15114: mem_heap_dup
+MDEV-15243: in Field_blob::pack
+MDEV-15797: thd->killed != 0
 MDEV-15855: innobase_get_computed_value
 MDEV-15855: innobase_allocate_row_for_vcol
 MDEV-15872: row_log_table_get_pk_col
 MDEV-15872: in mem_heap_dup
 MDEV-16512: in find_field_in_tables
 MDEV-16779: rw_lock_own
+MDEV-16783: in mysql_delete
+MDEV-16783: !conds
