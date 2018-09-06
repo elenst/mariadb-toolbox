@@ -144,7 +144,6 @@ MDEV-15465: Item_func_match::cleanup
 MDEV-15468: table_events_waits_common::make_row 
 MDEV-15470: TABLE::mark_columns_used_by_index_no_reset
 MDEV-15471: new_clustered == ctx->need_rebuild
-MDEV-15475: table->read_set, field_index
 MDEV-15481: I_P_List_null_counter, I_P_List_fast_push_back
 MDEV-15482: Type_std_attributes::set
 MDEV-15484: element->m_flush_tickets.is_empty
@@ -210,6 +209,7 @@ MDEV-16635: sequence_insert
 MDEV-16659: anc_page->org_size == anc_page->size
 MDEV-16682: == HEAD_PAGE
 MDEV-16682: in _ma_read_block_record
+MDEV-16738: == Item_func::MULT_EQUAL_FUNC
 MDEV-16745: thd->transaction.stmt.is_empty
 MDEV-16788: ls->length == strlen
 MDEV-16789: in insert_fields
@@ -243,6 +243,7 @@ MDEV-17054: in innobase_get_fts_charset
 MDEV-17054: InnoDB needs charset 0 for doing a comparison
 MDEV-17055: in find_order_in_list
 MDEV-17107: table_list->table
+MDEV-17120: base_list::push_back
 
 # Fixed:
 
@@ -255,6 +256,7 @@ MDEV-14100: dict_index_get_n_unique_in_tree_nonleaf
 MDEV-14695: n < m_size
 MDEV-15114: mem_heap_dup
 MDEV-15243: in Field_blob::pack
+MDEV-15475: table->read_set, field_index
 MDEV-15797: thd->killed != 0
 MDEV-15855: innobase_get_computed_value
 MDEV-15855: innobase_allocate_row_for_vcol
