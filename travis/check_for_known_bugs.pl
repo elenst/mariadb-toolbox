@@ -244,6 +244,7 @@ MDEV-17054: InnoDB needs charset 0 for doing a comparison
 MDEV-17055: in find_order_in_list
 MDEV-17107: table_list->table
 MDEV-17120: base_list::push_back
+MDEV-17167: table->get_ref_count() == 0
 
 # Fixed:
 
