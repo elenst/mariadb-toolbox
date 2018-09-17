@@ -68,6 +68,7 @@ if (defined $ENV{TYPE}) {
         . ' --grammar2=conf/mariadb/oltp_and_ddl.yy'
         . ' --gendata=conf/mariadb/innodb_upgrade.zz'
         . ' --gendata-advanced'
+        . ' --vcols'
         . ' --mysqld=--server-id=111'
         . ' --scenario='.$scenario
         . ' --duration='.$duration
