@@ -10,6 +10,10 @@ my @files;
 map { push @files, $_ if -e $_ } @expected_files;
 
 while (<DATA>) {
+  if (/^\# Fixed/) {
+    print "--------------------------------------\n";
+    next;
+  }
   next unless /^\s*(MDEV-\d+):\s*(.*)/;
   my ($mdev, $pattern)= ($1, $2);
   chomp $pattern;
@@ -219,7 +223,6 @@ MDEV-16903: auto_increment_field_not_null
 MDEV-16929: thd->transaction.stmt.is_empty
 MDEV-16940: in unsafe_key_update
 MDEV-16957: Field_iterator_natural_join::next
-MDEV-16961: table->read_set, field_index
 MDEV-16962: ot_ctx.can_recover_from_failed_open
 MDEV-16971: adjust_time_range_or_invalidate
 MDEV-16980: == table_name_arg->length
@@ -245,6 +248,14 @@ MDEV-17055: in find_order_in_list
 MDEV-17107: table_list->table
 MDEV-17120: base_list::push_back
 MDEV-17167: table->get_ref_count() == 0
+MDEV-17199: pos < table->n_v_def
+MDEV-17215: in row_purge_remove_clust_if_poss_low
+MDEV-17216: !dt->fraction_remainder
+MDEV-17217: in make_sortkey
+MDEV-17218: in row_purge_upd_exist_or_extern_func
+MDEV-17219: !dt->fraction_remainder
+MDEV-17257: in get_datetime_value
+MDEV-17257: in Item::field_type_for_temporal_comparison
 
 # Fixed:
 
@@ -267,3 +278,4 @@ MDEV-16512: in find_field_in_tables
 MDEV-16779: rw_lock_own
 MDEV-16783: in mysql_delete
 MDEV-16783: !conds
+MDEV-16961: table->read_set, field_index
