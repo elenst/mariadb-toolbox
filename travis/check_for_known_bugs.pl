@@ -247,7 +247,7 @@ MDEV-17054: InnoDB needs charset 0 for doing a comparison
 MDEV-17055: in find_order_in_list
 MDEV-17107: table_list->table
 MDEV-17120: base_list::push_back
-MDEV-17167: table->get_ref_count() == 0
+MDEV-17167: table->get_ref_count
 MDEV-17199: pos < table->n_v_def
 MDEV-17215: in row_purge_remove_clust_if_poss_low
 MDEV-17216: !dt->fraction_remainder
