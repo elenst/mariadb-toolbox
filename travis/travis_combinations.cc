@@ -63,12 +63,15 @@ if (defined $ENV{TYPE}) {
       } else {
         $scenario= 'UndoLogUpgrade';
       }
+
+# TODO: Add vcols back after MDEV-17199, MDEV-17215, MDEV-17218 are fixed
+#        . ' --vcols'
+
       push @type_options,
           ' --grammar=conf/mariadb/oltp-transactional.yy'
         . ' --grammar2=conf/mariadb/oltp_and_ddl.yy'
         . ' --gendata=conf/mariadb/innodb_upgrade.zz'
         . ' --gendata-advanced'
-        . ' --vcols'
         . ' --mysqld=--server-id=111'
         . ' --scenario='.$scenario
         . ' --duration='.$duration
