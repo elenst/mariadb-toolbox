@@ -256,6 +256,7 @@ MDEV-17218: in row_purge_upd_exist_or_extern_func
 MDEV-17219: !dt->fraction_remainder
 MDEV-17257: in get_datetime_value
 MDEV-17257: in Item::field_type_for_temporal_comparison
+MDEV-17275: Diagnostics_area::set_ok_status
 
 # Fixed:
 
