@@ -34,6 +34,16 @@ my $common_options=
   . ' --mysqld=--loose-innodb_log_compressed_pages=on'
 ;
 
+if ($ENV{GLOBAL_RQG_OPTIONS}) {
+  $common_options .= ' '.$ENV{GLOBAL_RQG_OPTIONS};
+}
+if ($ENV{JOB_RQG_OPTIONS}) {
+  $common_options .= ' '.$ENV{JOB_RQG_OPTIONS};
+}
+if ($ENV{TEST_RQG_OPTIONS}) {
+  $common_options .= ' '.$ENV{TEST_RQG_OPTIONS};
+}
+
 my $test_data_dir=($ENV{SCRIPT_DIR} ? "$ENV{SCRIPT_DIR}/../data" : "$ENV{TRAVIS_BUILD_DIR}/data");
 
 #        . ' --mysqld=--log-bin'
