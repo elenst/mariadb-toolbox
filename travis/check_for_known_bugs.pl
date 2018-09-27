@@ -200,7 +200,6 @@ MDEV-16292: Item_func::print
 MDEV-16397: Can't find record in
 MDEV-16407: in MDL_key::mdl_key_init
 MDEV-16407: Error: Freeing overrun buffer
-MDEV-16429: table->read_set, field_index
 MDEV-16499: from the internal data dictionary of InnoDB though the .frm file for the table exists
 MDEV-16499: is corrupted. Please drop the table and recreate
 MDEV-16500: user_table->n_def > table->s->fields
@@ -275,6 +274,7 @@ MDEV-15855: innobase_get_computed_value
 MDEV-15855: innobase_allocate_row_for_vcol
 MDEV-15872: row_log_table_get_pk_col
 MDEV-15872: in mem_heap_dup
+MDEV-16429: table->read_set, field_index
 MDEV-16512: in find_field_in_tables
 MDEV-16779: rw_lock_own
 MDEV-16783: in mysql_delete
