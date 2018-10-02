@@ -47,11 +47,11 @@ if [ -n "$OLD" ] ; then
   mkdir old
   cd old
   tar zxf ../${fname}.tar.gz
-  # Workaround for MDEV-17294
-  rm -f lib/plugin/ha_tokudb.so
   dname=`ls`
   mv $dname/* ./
   rmdir $dname
+  # Workaround for MDEV-17294
+  rm -f lib/plugin/ha_tokudb.so
   cd $HOME
 else
   echo "Old and new versions are the same"
