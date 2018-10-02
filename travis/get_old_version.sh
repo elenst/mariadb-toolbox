@@ -15,6 +15,8 @@
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA */
 
+set -x
+
 OLD=$1
 
 cd $HOME
@@ -55,3 +57,5 @@ else
   echo "Old and new versions are the same"
   ln -s $BASEDIR $HOME/old
 fi
+
+set +x
