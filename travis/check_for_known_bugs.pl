@@ -260,6 +260,8 @@ MDEV-17275: Diagnostics_area::set_ok_status
 MDEV-17314: thd->transaction.stmt.is_empty
 MDEV-17319: int Field_temporal::store_invalid_with_warning
 MDEV-17333: next_insert_id >= auto_inc_interval_for_cur_row.minimum
+MDEV-17349: table->read_set, field_index
+MDEV-17354: in add_key_field
 
 # Fixed:
 
