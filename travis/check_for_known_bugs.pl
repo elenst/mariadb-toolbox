@@ -159,6 +159,7 @@ MDEV-15537: in mysql_prepare_alter_table
 MDEV-15551: share->last_version
 MDEV-15576: item->null_value
 MDEV-15626: old_part_id == m_last_part
+MDEV-15653: lock_word <= 0x20000000
 MDEV-15656: is_last_prefix <= 0
 MDEV-15657: file->inited == handler::NONE
 MDEV-15658: expl_lock->trx == arg->impl_trx
@@ -258,10 +259,12 @@ MDEV-17257: in get_datetime_value
 MDEV-17257: in Item::field_type_for_temporal_comparison
 MDEV-17275: Diagnostics_area::set_ok_status
 MDEV-17314: thd->transaction.stmt.is_empty
+MDEV-17319: ts_type != MYSQL_TIMESTAMP_TIME
 MDEV-17319: int Field_temporal::store_invalid_with_warning
 MDEV-17333: next_insert_id >= auto_inc_interval_for_cur_row.minimum
 MDEV-17349: table->read_set, field_index
 MDEV-17354: in add_key_field
+MDEV-17356: table->read_set, field_index
 
 # Fixed:
 
