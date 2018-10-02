@@ -253,9 +253,13 @@ MDEV-17216: !dt->fraction_remainder
 MDEV-17217: in make_sortkey
 MDEV-17218: in row_purge_upd_exist_or_extern_func
 MDEV-17219: !dt->fraction_remainder
+MDEV-17223: thd->killed != 0
 MDEV-17257: in get_datetime_value
 MDEV-17257: in Item::field_type_for_temporal_comparison
 MDEV-17275: Diagnostics_area::set_ok_status
+MDEV-17314: thd->transaction.stmt.is_empty
+MDEV-17319: int Field_temporal::store_invalid_with_warning
+MDEV-17333: next_insert_id >= auto_inc_interval_for_cur_row.minimum
 
 # Fixed:
 
