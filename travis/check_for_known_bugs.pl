@@ -72,6 +72,8 @@ MDEV-5791:  in Field::is_real_null
 MDEV-6453:  int handler::ha_rnd_init
 MDEV-8203:  rgi->tables_to_lock
 MDEV-9137:  in _ma_ck_real_write_btree
+MDEV-10710: Diagnostics_area::set_ok_status
+MDEV-11015: precision > 0
 MDEV-11080: table->n_waiting_or_granted_auto_inc_locks > 0
 MDEV-11167: Can't find record
 MDEV-11539: mi_open.c:67: test_if_reopen
@@ -253,7 +255,6 @@ MDEV-17215: in row_purge_remove_clust_if_poss_low
 MDEV-17216: !dt->fraction_remainder
 MDEV-17217: in make_sortkey
 MDEV-17218: in row_purge_upd_exist_or_extern_func
-MDEV-17219: !dt->fraction_remainder
 MDEV-17223: thd->killed != 0
 MDEV-17257: in get_datetime_value
 MDEV-17257: in Item::field_type_for_temporal_comparison
@@ -265,6 +266,7 @@ MDEV-17333: next_insert_id >= auto_inc_interval_for_cur_row.minimum
 MDEV-17349: table->read_set, field_index
 MDEV-17354: in add_key_field
 MDEV-17356: table->read_set, field_index
+MDEV-17361: in Query_arena::set_query_arena
 
 # Fixed:
 
@@ -289,3 +291,4 @@ MDEV-16779: rw_lock_own
 MDEV-16783: in mysql_delete
 MDEV-16783: !conds
 MDEV-16961: table->read_set, field_index
+MDEV-17219: !dt->fraction_remainder
