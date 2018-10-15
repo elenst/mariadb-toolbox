@@ -267,6 +267,7 @@ MDEV-17349: table->read_set, field_index
 MDEV-17354: in add_key_field
 MDEV-17356: table->read_set, field_index
 MDEV-17361: in Query_arena::set_query_arena
+MDEV-17432: lock_trx_has_sys_table_locks
 
 # Fixed:
 
