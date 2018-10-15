@@ -229,6 +229,7 @@ MDEV-16962: ot_ctx.can_recover_from_failed_open
 MDEV-16971: adjust_time_range_or_invalidate
 MDEV-16980: == table_name_arg->length
 MDEV-16982: in mem_heap_dup
+MDEV-16982: row_mysql_convert_row_to_innobase
 MDEV-16992: Field_iterator_table_ref::set_field_iterator
 MDEV-16994: in base_list_iterator::next
 MDEV-17004: in innobase_get_fts_charset
