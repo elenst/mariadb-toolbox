@@ -213,8 +213,6 @@ MDEV-16549: Item_direct_view_ref::fix_fields
 MDEV-16523: level_and_file.second->being_compacted
 MDEV-16635: sequence_insert
 MDEV-16659: anc_page->org_size == anc_page->size
-MDEV-16682: == HEAD_PAGE
-MDEV-16682: in _ma_read_block_record
 MDEV-16738: == Item_func::MULT_EQUAL_FUNC
 MDEV-16745: thd->transaction.stmt.is_empty
 MDEV-16788: ls->length == strlen
@@ -291,6 +289,8 @@ MDEV-15872: row_log_table_get_pk_col
 MDEV-15872: in mem_heap_dup
 MDEV-16429: table->read_set, field_index
 MDEV-16512: in find_field_in_tables
+MDEV-16682: == HEAD_PAGE
+MDEV-16682: in _ma_read_block_record
 MDEV-16779: rw_lock_own
 MDEV-16783: in mysql_delete
 MDEV-16783: !conds
