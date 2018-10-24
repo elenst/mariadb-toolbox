@@ -270,6 +270,7 @@ MDEV-17356: table->read_set, field_index
 MDEV-17361: in Query_arena::set_query_arena
 MDEV-17432: lock_trx_has_sys_table_locks
 MDEV-17464: Operating system error number 2
+MDEV-17466: dfield2->type.mtype
 
 # Fixed:
 
