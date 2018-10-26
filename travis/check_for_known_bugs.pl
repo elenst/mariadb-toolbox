@@ -77,11 +77,6 @@ MDEV-11015: precision > 0
 MDEV-11080: table->n_waiting_or_granted_auto_inc_locks > 0
 MDEV-11167: Can't find record
 MDEV-11539: mi_open.c:67: test_if_reopen
-MDEV-11741: table->s->all_set
-MDEV-11741: in ha_heap::rnd_next
-MDEV-11741: in handler::ha_reset
-MDEV-11741: mi_reset
-MDEV-11741: old_top == initial_top
 MDEV-13024: in multi_delete::send_data
 MDEV-13103: fil0pagecompress.cc:[0-9]+: void fil_decompress_page
 MDEV-13202: ltime->neg == 0
@@ -272,6 +267,8 @@ MDEV-17537: Diagnostics_area::set_ok_status
 MDEV-17538: == UNALLOCATED_PAGE
 MDEV-17539: Protocol::end_statement
 MDEV-17540: dict_table_get_first_index
+MDEV-17556: bitmap_is_set_all
+MDEV-17556: table->s->all_set
 
 # Fixed:
 
@@ -280,6 +277,11 @@ MDEV-10130: share->in_trans == 0
 MDEV-10130: file->trn == trn
 MDEV-11071: thd->transaction.stmt.is_empty
 MDEV-11071: in THD::mark_tmp_table_as_free_for_reuse
+MDEV-11741: table->s->all_set
+MDEV-11741: in ha_heap::rnd_next
+MDEV-11741: in handler::ha_reset
+MDEV-11741: mi_reset
+MDEV-11741: old_top == initial_top
 MDEV-14100: dict_index_get_n_unique_in_tree_nonleaf
 MDEV-14695: n < m_size
 MDEV-15114: mem_heap_dup
