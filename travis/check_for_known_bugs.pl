@@ -222,7 +222,7 @@ MDEV-16792: in Diagnostics_area::sql_errno
 MDEV-16794: thd->transaction.stmt.is_empty
 MDEV-16903: auto_increment_field_not_null
 MDEV-16929: thd->transaction.stmt.is_empty
-MDEV-16940: in unsafe_key_update
+MDEV-16940: unsafe_key_update
 MDEV-16957: Field_iterator_natural_join::next
 MDEV-16962: ot_ctx.can_recover_from_failed_open
 MDEV-16971: adjust_time_range_or_invalidate
@@ -267,7 +267,7 @@ MDEV-17356: table->read_set, field_index
 MDEV-17361: in Query_arena::set_query_arena
 MDEV-17432: lock_trx_has_sys_table_locks
 MDEV-17464: Operating system error number 2
-MDEV-17466: dfield2->type.mtype
+MDEV-17466: dfield2->type.mtypex
 MDEV-17537: Diagnostics_area::set_ok_status
 MDEV-17538: == UNALLOCATED_PAGE
 MDEV-17539: Protocol::end_statement
