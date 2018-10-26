@@ -172,6 +172,7 @@ MDEV-15738: in my_strcasecmp_utf8
 MDEV-15744: derived->table
 MDEV-15742: m_lock_type == 1
 MDEV-15753: thd->is_error
+MDEV-15800: next_insert_id >= auto_inc_interval_for_cur_row.minimum
 MDEV-15812: virtual handler::~handler
 MDEV-15816: m_lock_rows == RDB_LOCK_WRITE
 MDEV-15828: num_fts_index <= 1
@@ -250,10 +251,8 @@ MDEV-17107: table_list->table
 MDEV-17120: base_list::push_back
 MDEV-17167: table->get_ref_count
 MDEV-17199: pos < table->n_v_def
-MDEV-17215: in row_purge_remove_clust_if_poss_low
 MDEV-17216: !dt->fraction_remainder
 MDEV-17217: in make_sortkey
-MDEV-17218: in row_purge_upd_exist_or_extern_func
 MDEV-17223: thd->killed != 0
 MDEV-17257: in get_datetime_value
 MDEV-17257: in Item::field_type_for_temporal_comparison
@@ -271,6 +270,8 @@ MDEV-17464: Operating system error number 2
 MDEV-17466: dfield2->type.mtype
 MDEV-17537: Diagnostics_area::set_ok_status
 MDEV-17538: == UNALLOCATED_PAGE
+MDEV-17539: Protocol::end_statement
+MDEV-17540: dict_table_get_first_index
 
 # Fixed:
 
@@ -297,4 +298,6 @@ MDEV-16779: rw_lock_own
 MDEV-16783: in mysql_delete
 MDEV-16783: !conds
 MDEV-16961: table->read_set, field_index
+MDEV-17215: in row_purge_remove_clust_if_poss_low
+MDEV-17215: in row_purge_upd_exist_or_extern_func
 MDEV-17219: !dt->fraction_remainder
