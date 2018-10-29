@@ -252,7 +252,6 @@ MDEV-17223: thd->killed != 0
 MDEV-17257: in get_datetime_value
 MDEV-17257: in Item::field_type_for_temporal_comparison
 MDEV-17275: Diagnostics_area::set_ok_status
-MDEV-17314: thd->transaction.stmt.is_empty
 MDEV-17319: ts_type != MYSQL_TIMESTAMP_TIME
 MDEV-17319: int Field_temporal::store_invalid_with_warning
 MDEV-17333: next_insert_id >= auto_inc_interval_for_cur_row.minimum
@@ -263,6 +262,9 @@ MDEV-17361: in Query_arena::set_query_arena
 MDEV-17432: lock_trx_has_sys_table_locks
 MDEV-17464: Operating system error number 2
 MDEV-17466: dfield2->type.mtypex
+MDEV-17470: Operating system error number 17 in a file operation
+MDEV-17479: mysql_socket.fd != -1
+MDEV-17485: Operating system error number 80 in a file operation
 MDEV-17537: Diagnostics_area::set_ok_status
 MDEV-17538: == UNALLOCATED_PAGE
 MDEV-17539: Protocol::end_statement
