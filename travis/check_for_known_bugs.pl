@@ -60,6 +60,7 @@ while (<DATA>) {
     print "RESOLUTION: $resolution". ($resolutiondate ? " ($resolutiondate)" : "") . "\n";
     print "Affects versions: @affected\n";
     print "Fix versions: @versions\n";
+    print "-------------\n";
   }
 }
 
@@ -252,6 +253,7 @@ MDEV-17223: thd->killed != 0
 MDEV-17257: in get_datetime_value
 MDEV-17257: in Item::field_type_for_temporal_comparison
 MDEV-17275: Diagnostics_area::set_ok_status
+MDEV-17307: Incorrect key file for table
 MDEV-17319: ts_type != MYSQL_TIMESTAMP_TIME
 MDEV-17319: int Field_temporal::store_invalid_with_warning
 MDEV-17333: next_insert_id >= auto_inc_interval_for_cur_row.minimum
@@ -272,6 +274,7 @@ MDEV-17539: Protocol::end_statement
 MDEV-17540: dict_table_get_first_index
 MDEV-17556: bitmap_is_set_all
 MDEV-17556: table->s->all_set
+MDEV-17576: share->reopen == 1
 
 # Fixed:
 
@@ -306,3 +309,4 @@ MDEV-16961: table->read_set, field_index
 MDEV-17215: in row_purge_remove_clust_if_poss_low
 MDEV-17215: in row_purge_upd_exist_or_extern_func
 MDEV-17219: !dt->fraction_remainder
+MDEV-17314: thd->transaction.stmt.is_empty
