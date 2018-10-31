@@ -220,6 +220,7 @@ MDEV-16903: auto_increment_field_not_null
 MDEV-16929: thd->transaction.stmt.is_empty
 MDEV-16940: unsafe_key_update
 MDEV-16957: Field_iterator_natural_join::next
+MDEV-16958: field_length < 5
 MDEV-16962: ot_ctx.can_recover_from_failed_open
 MDEV-16971: adjust_time_range_or_invalidate
 MDEV-16980: == table_name_arg->length
