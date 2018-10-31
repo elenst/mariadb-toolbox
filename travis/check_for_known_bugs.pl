@@ -9,6 +9,8 @@ my @expected_files= glob "@ARGV";
 my @files;
 map { push @files, $_ if -e $_ } @expected_files;
 
+my %found_mdevs= ();
+
 while (<DATA>) {
   if (/^\# Fixed/) {
     print "--------------------------------------\n";
@@ -16,9 +18,11 @@ while (<DATA>) {
   }
   next unless /^\s*(MDEV-\d+):\s*(.*)/;
   my ($mdev, $pattern)= ($1, $2);
+  next if $found_mdevs{$mdev}; # Don't search for other MDEV patterns if one was already found
   chomp $pattern;
   system("grep -h -E \"$pattern\" @files > /dev/null 2>&1");
   unless ($?) {
+    $found_mdevs{$mdev}= 1;
     unless (-e "/tmp/$mdev.resolution") {
       system("wget https://jira.mariadb.org//rest/api/2/issue/$mdev?fields=resolution -O /tmp/$mdev.resolution -o /dev/null");
     }
