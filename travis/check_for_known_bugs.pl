@@ -275,6 +275,7 @@ MDEV-17540: dict_table_get_first_index
 MDEV-17556: bitmap_is_set_all
 MDEV-17556: table->s->all_set
 MDEV-17576: share->reopen == 1
+MDEV-17580: Diagnostics_area::set_ok_status
 
 # Fixed:
 
