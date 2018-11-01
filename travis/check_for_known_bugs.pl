@@ -281,6 +281,9 @@ MDEV-17556: bitmap_is_set_all
 MDEV-17556: table->s->all_set
 MDEV-17576: share->reopen == 1
 MDEV-17580: Diagnostics_area::set_ok_status
+MDEV-17595: copy_data_between_tables
+MDEV-17595: Open_tables_state::BACKUPS_AVAIL
+MDEV-17595: close_tables_for_reopen
 
 # Fixed:
 
