@@ -285,6 +285,10 @@ MDEV-17595: copy_data_between_tables
 MDEV-17595: Open_tables_state::BACKUPS_AVAIL
 MDEV-17595: close_tables_for_reopen
 MDEV-17596: block->page.flush_observer == __null
+MDEV-17597: pure virtual method called
+MDEV-17619: Index file is crashed
+MDEV-17619: Table is crashed and last repair failed
+MDEV-17619: Incorrect key file for table
 
 # Fixed:
 
