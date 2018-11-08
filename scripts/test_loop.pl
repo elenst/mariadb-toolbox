@@ -51,16 +51,21 @@ if (!$opt_result) {
 my @branches= split /,/, $branch_list;
 my @tests= split /,/, $test_list;
 
-my $last_tested_branch= undef;
 my %last_tried_revision= ();
 
 while (1) {
+
+  # First we'll skip all branches that haven't been changed since last test run.
+  # If it turns out that nothing has been changed and everything was skipped, we'll to the next due branch and run tests on it anyway
+  
+  my $all_skipped= 1; 
+  my $next_branch= undef;
 
   foreach my $branch (@branches) {
 
     check_stopfile();
     check_pausefile();
-
+    
     if (git_pull($branch)) {
       print "ERROR: failed to run git pull on branch $branch\n";
       next; # Next branch
@@ -70,6 +75,7 @@ while (1) {
     
     if ( $revision eq $prev_revision ) {
       print "Revision $revision on branch $branch has been already tested or tried, skipping for now\n";
+      $next_branch= $branch unless defined $next_branch;
       next; # Next branch
     }
     
@@ -77,23 +83,46 @@ while (1) {
     print "# Revision $revision, branch $branch\n";
     print "##################################################################\n";
 
+    $all_skipped= 0;
     $last_tried_revision{$branch}= $revision;
 
     if (build_server($branch)) {
       print "ERROR: failed to build branch $branch revision $revision\n";
       next; # Next branch
     }
-
-    foreach (@tests) {
-      my $config= "conf/mariadb/${branch}-combo.cc";
-      my $t= time();
-      my $workdir= "$log_location/${branch}-${t}-${revision}";
-      my $cmd= "perl ./combinations.pl --new --force --run-all-combinations-once --config=$config --basedir=$build_location/${branch}-testloop --workdir=$workdir";
-      
-      print "# Running $cmd\n\n";
-      system("cd $rqg ; git pull ; $cmd");
-    }
+    
+    run_tests($branch, $revision);
   }
+  
+  if ($all_skipped) {
+    print "# No changes in branches have been detected, running tests on $next_branch\n";
+
+    print "##################################################################\n";
+    print "# Revision $revision, branch $next_branch (re-run)\n";
+    print "##################################################################\n";
+
+    run_tests($next_branch, $revision);
+  }
+}
+
+sub run_tests {
+  my $branch= shift;
+  my $revision= shift;
+
+  foreach (@tests) {
+
+    check_stopfile();
+    check_pausefile();
+
+    my $config= "conf/mariadb/${branch}-combo.cc";
+    my $t= time();
+    my $workdir= "$log_location/${branch}-${t}-${revision}";
+    my $cmd= "perl ./combinations.pl --new --force --run-all-combinations-once --config=$config --basedir=$build_location/${branch}-testloop --workdir=$workdir";
+    
+    print "# Running $cmd\n\n";
+    system("cd $rqg ; git pull ; $cmd");
+  }
+
 }
 
 sub check_stopfile {
