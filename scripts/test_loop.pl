@@ -95,13 +95,14 @@ while (1) {
   }
   
   if ($all_skipped) {
+
     print "# No changes in branches have been detected, running tests on $next_branch\n";
 
     print "##################################################################\n";
-    print "# Revision $revision, branch $next_branch (re-run)\n";
+    print "# Revision $last_tried_revision{$next_branch}, branch $next_branch (re-run)\n";
     print "##################################################################\n";
 
-    run_tests($next_branch, $revision);
+    run_tests($next_branch, $last_tried_revision{$next_branch});
   }
 }
 
