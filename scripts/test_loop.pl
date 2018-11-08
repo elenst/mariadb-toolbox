@@ -121,7 +121,7 @@ sub run_tests {
     my $cmd= "perl ./combinations.pl --new --force --run-all-combinations-once --config=$config --basedir=$build_location/${branch}-testloop --workdir=$workdir";
     
     print "# Running $cmd\n\n";
-    system("cd $rqg ; git pull ; $cmd");
+    system("cd $rqg ; git pull ; RQG_HOME=$rqg $cmd");
   }
 
 }
@@ -160,7 +160,7 @@ sub build_server {
   system("rm -rf $build_location/ongoing_build");
   system("mkdir $build_location/ongoing_build");
   open(LAST_BUILD,">$build_location/ongoing_build/last_build") || print "ERROR: Could not open $build_location/ongoing_build/last_build for writing\n";
-  print LAST_BUILD "cmake $src_location/b -DCMAKE_INSTALL_PREFIX=$build_location/${b}-testloop -DCMAKE_BUILD_TYPE=Debug\n";
+  print LAST_BUILD "cmake $src_location/$b -DCMAKE_INSTALL_PREFIX=$build_location/${b}-testloop -DCMAKE_BUILD_TYPE=Debug\n";
   print LAST_BUILD "make -j5\n";
   print LAST_BUILD "make install\n";
   close(LAST_BUILD);
