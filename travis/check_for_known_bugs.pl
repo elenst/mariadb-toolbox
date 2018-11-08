@@ -289,6 +289,8 @@ MDEV-17597: pure virtual method called
 MDEV-17619: Index file is crashed
 MDEV-17619: Table is crashed and last repair failed
 MDEV-17619: Incorrect key file for table
+MDEV-17622: type == PAGECACHE_LSN_PAGE
+MDEV-17636: pagecache->block_root
 
 # Fixed:
 
