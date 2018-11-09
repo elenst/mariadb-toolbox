@@ -283,6 +283,9 @@ sub write_testfile
     }
     close( TEST );
     system("perl $path/cleanup_sends_reaps.pl $suitedir/$test_basename.tmp > $suitedir/$test_basename.test");
+    # In some cases cleanup makes the test stop failing (on whatever reason).
+    # Then I comment the line above and uncomment the line below
+    #system("cp $suitedir/$test_basename.tmp $suitedir/$test_basename.test");
 }
 
 sub read_testfile
