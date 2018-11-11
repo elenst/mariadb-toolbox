@@ -10,10 +10,14 @@ my @files;
 map { push @files, $_ if -e $_ } @expected_files;
 
 my %found_mdevs= ();
+my $fixed_part= 0;
+
+print "--- Open bugs ------------------------\n";
 
 while (<DATA>) {
   if (/^\# Fixed/) {
-    print "--------------------------------------\n";
+    print "--- Fixed bugs -----------------------\n";
+    $fixed_part= 1;
     next;
   }
   next unless /^\s*(MDEV-\d+):\s*(.*)/;
@@ -29,10 +33,10 @@ while (<DATA>) {
     unless (-e "/tmp/$mdev.summary") {
       system("wget https://jira.mariadb.org//rest/api/2/issue/$mdev?fields=summary -O /tmp/$mdev.summary -o /dev/null");
     }
-    unless (-e "/tmp/$mdev.fixVersions") {
+    unless (-e "/tmp/$mdev.fixVersions" or $fixed_part == 0) {
       system("wget https://jira.mariadb.org//rest/api/2/issue/$mdev?fields=fixVersions -O /tmp/$mdev.fixVersions -o /dev/null");
     }
-    unless (-e "/tmp/$mdev.affectsVersions") {
+    unless (-e "/tmp/$mdev.affectsVersions" or $fixed_part) {
       system("wget https://jira.mariadb.org//rest/api/2/issue/$mdev?fields=versions -O /tmp/$mdev.affectsVersions -o /dev/null");
     }
 
@@ -77,11 +81,12 @@ MDEV-5791:  in Field::is_real_null
 MDEV-6453:  int handler::ha_rnd_init
 MDEV-8203:  rgi->tables_to_lock
 MDEV-9137:  in _ma_ck_real_write_btree
-MDEV-10710: Diagnostics_area::set_ok_status
+MDEV-10945: Diagnostics_area::set_ok_status
 MDEV-11015: precision > 0
 MDEV-11080: table->n_waiting_or_granted_auto_inc_locks > 0
 MDEV-11167: Can't find record
 MDEV-11539: mi_open.c:67: test_if_reopen
+MDEV-12329: 1024U, trx, rec, block
 MDEV-13024: in multi_delete::send_data
 MDEV-13103: fil0pagecompress.cc:[0-9]+: void fil_decompress_page
 MDEV-13202: ltime->neg == 0
@@ -207,12 +212,12 @@ MDEV-16499: from the internal data dictionary of InnoDB though the .frm file for
 MDEV-16499: is corrupted. Please drop the table and recreate
 MDEV-16500: user_table->n_def > table->s->fields
 MDEV-16501: in dict_mem_table_col_rename
-MDEV-16516: inited==RND
 MDEV-16523: level_and_file.second->being_compacted
 MDEV-16549: Item_direct_view_ref::fix_fields
 MDEV-16523: level_and_file.second->being_compacted
 MDEV-16635: sequence_insert
 MDEV-16659: anc_page->org_size == anc_page->size
+MDEV-16699: my_strnncollsp_binary
 MDEV-16738: == Item_func::MULT_EQUAL_FUNC
 MDEV-16745: thd->transaction.stmt.is_empty
 MDEV-16788: ls->length == strlen
@@ -249,7 +254,6 @@ MDEV-17054: InnoDB needs charset 0 for doing a comparison
 MDEV-17055: in find_order_in_list
 MDEV-17107: table_list->table
 MDEV-17120: base_list::push_back
-MDEV-17167: table->get_ref_count
 MDEV-17199: pos < table->n_v_def
 MDEV-17216: !dt->fraction_remainder
 MDEV-17217: in make_sortkey
@@ -261,7 +265,6 @@ MDEV-17307: Incorrect key file for table
 MDEV-17319: ts_type != MYSQL_TIMESTAMP_TIME
 MDEV-17319: int Field_temporal::store_invalid_with_warning
 MDEV-17333: next_insert_id >= auto_inc_interval_for_cur_row.minimum
-MDEV-17349: table->read_set, field_index
 MDEV-17354: in add_key_field
 MDEV-17356: table->read_set, field_index
 MDEV-17361: in Query_arena::set_query_arena
@@ -276,6 +279,7 @@ MDEV-17537: Diagnostics_area::set_ok_status
 MDEV-17538: == UNALLOCATED_PAGE
 MDEV-17539: Protocol::end_statement
 MDEV-17540: dict_table_get_first_index
+MDEV-17552: commit_try_rebuild
 MDEV-17556: bitmap_is_set_all
 MDEV-17556: table->s->all_set
 MDEV-17576: share->reopen == 1
@@ -289,8 +293,10 @@ MDEV-17619: Index file is crashed
 MDEV-17619: Table is crashed and last repair failed
 MDEV-17619: Incorrect key file for table
 MDEV-17622: type == PAGECACHE_LSN_PAGE
+MDEV-17627: handler::ha_rnd_end
 MDEV-17636: pagecache->block_root
 MDEV-17659: File too short; Expected more data in file
+MDEV-17665: share->page_type == PAGECACHE_LSN_PAGE
 
 # Fixed:
 
@@ -317,13 +323,16 @@ MDEV-15872: row_log_table_get_pk_col
 MDEV-15872: in mem_heap_dup
 MDEV-16429: table->read_set, field_index
 MDEV-16512: in find_field_in_tables
+MDEV-16516: inited==RND
 MDEV-16682: == HEAD_PAGE
 MDEV-16682: in _ma_read_block_record
 MDEV-16779: rw_lock_own
 MDEV-16783: in mysql_delete
 MDEV-16783: !conds
 MDEV-16961: table->read_set, field_index
+MDEV-17167: table->get_ref_count
 MDEV-17215: in row_purge_remove_clust_if_poss_low
 MDEV-17215: in row_purge_upd_exist_or_extern_func
 MDEV-17219: !dt->fraction_remainder
 MDEV-17314: thd->transaction.stmt.is_empty
+MDEV-17349: table->read_set, field_index
