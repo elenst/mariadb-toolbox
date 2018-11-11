@@ -117,7 +117,6 @@ MDEV-14894: tdc_remove_table
 MDEV-14894: table->in_use == thd
 MDEV-14905: purge_sys->state == PURGE_STATE_INIT
 MDEV-14906: index->is_instant
-MDEV-14943: type == PAGECACHE_LSN_PAGE
 MDEV-14994: join->best_read < double
 MDEV-14996: int ha_maria::external_lock
 MDEV-15013: trx->state == TRX_STATE_NOT_STARTED
@@ -291,6 +290,7 @@ MDEV-17619: Table is crashed and last repair failed
 MDEV-17619: Incorrect key file for table
 MDEV-17622: type == PAGECACHE_LSN_PAGE
 MDEV-17636: pagecache->block_root
+MDEV-17659: File too short; Expected more data in file
 
 # Fixed:
 
@@ -306,6 +306,7 @@ MDEV-11741: mi_reset
 MDEV-11741: old_top == initial_top
 MDEV-14100: dict_index_get_n_unique_in_tree_nonleaf
 MDEV-14695: n < m_size
+MDEV-14943: type == PAGECACHE_LSN_PAGE
 MDEV-15114: mem_heap_dup
 MDEV-15243: in Field_blob::pack
 MDEV-15475: table->read_set, field_index
