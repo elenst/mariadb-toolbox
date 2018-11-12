@@ -9,16 +9,18 @@ my $pausefile= "$ENV{HOME}/test_loop.pause";
 my $rqg= "/data/src/rqg-test_loop";
 my $test_list= 'combo';
 my $log_location= "$ENV{HOME}/test_loop_logs";
+my $help= 0;
 
 my $opt_result= GetOptions(
-  'branches' => \$branch_list,
-  'builds' => \$build_location,
-  'logs' => \$log_location,
-  'pausefile' => \$pausefile,
-  'rqg' => \$rqg,
-  'sources' => \$src_location,
-  'stopfile' => \$stopfile,
-  'tests' => \$test_list,
+  'branches=s' => \$branch_list,
+  'builds=s' => \$build_location,
+  'help' => \$help,
+  'logs=s' => \$log_location,
+  'pausefile=s' => \$pausefile,
+  'rqg=s' => \$rqg,
+  'sources=s' => \$src_location,
+  'stopfile=s' => \$stopfile,
+  'tests=s' => \$test_list,
 );
 
 sub help {
@@ -48,6 +50,11 @@ if (!$opt_result) {
     exit 1;
 }
 
+if ($help) {
+  help();
+  exit 0;
+}
+
 my @branches= split /,/, $branch_list;
 my @tests= split /,/, $test_list;
 
@@ -67,27 +74,27 @@ while (1) {
     check_pausefile();
     
     if (git_pull($branch)) {
-      print "ERROR: failed to run git pull on branch $branch\n";
+      print_log( "ERROR: failed to run git pull on branch $branch" );
       next; # Next branch
     }
     my $revision= git_revision($branch);
     my $prev_revision= $last_tried_revision{$branch} || 'N/A';
     
     if ( $revision eq $prev_revision ) {
-      print "Revision $revision on branch $branch has been already tested or tried, skipping for now\n";
+      print_log( "Revision $revision on branch $branch has been already tested or tried, skipping for now" );
       $next_branch= $branch unless defined $next_branch;
       next; # Next branch
     }
     
-    print "##################################################################\n";
-    print "# Revision $revision, branch $branch\n";
-    print "##################################################################\n";
+    print_log( "##################################################################" );
+    print_log( "# Revision $revision, branch $branch" );
+    print_log( "##################################################################" );
 
     $all_skipped= 0;
     $last_tried_revision{$branch}= $revision;
 
     if (build_server($branch)) {
-      print "ERROR: failed to build branch $branch revision $revision\n";
+      print_log( "ERROR: failed to build branch $branch revision $revision" );
       next; # Next branch
     }
     
@@ -96,11 +103,11 @@ while (1) {
   
   if ($all_skipped) {
 
-    print "# No changes in branches have been detected, running tests on $next_branch\n";
+    print_log( "# No changes in branches have been detected, running tests on $next_branch" );
 
-    print "##################################################################\n";
-    print "# Revision $last_tried_revision{$next_branch}, branch $next_branch (re-run)\n";
-    print "##################################################################\n";
+    print_log( "##################################################################" );
+    print_log( "# Revision $last_tried_revision{$next_branch}, branch $next_branch (re-run)" );
+    print_log( "##################################################################" );
 
     run_tests($next_branch, $last_tried_revision{$next_branch});
   }
@@ -116,11 +123,10 @@ sub run_tests {
     check_pausefile();
 
     my $config= "conf/mariadb/${branch}-combo.cc";
-    my $t= time();
-    my $workdir= "$log_location/${branch}-${t}-${revision}";
+    my $workdir= $log_location.'/'.$branch.'-'.ts().'-'.substr(${revision},0,8);
     my $cmd= "perl ./combinations.pl --new --force --run-all-combinations-once --config=$config --basedir=$build_location/${branch}-testloop --workdir=$workdir";
     
-    print "# Running $cmd\n\n";
+    print_log( "# Running $cmd", "" );
     system("cd $rqg ; git pull ; RQG_HOME=$rqg $cmd");
   }
 
@@ -128,21 +134,21 @@ sub run_tests {
 
 sub check_stopfile {
   if (-e $stopfile) {
-    print "Stop file has been found, finishing the loop\n";
+    print_log( "Stop file has been found, finishing the loop" );
     exit;
   }
 }
 
 sub check_pausefile {
   while (-e $pausefile) {
-    print "Pause file has been found, waiting for 5 minutes\n";
+    print_log( "Pause file has been found, waiting for 5 minutes" );
     sleep 300;
   }
 }
 
 sub git_pull {
   my $b= shift;
-  print "Trying to pull in $src_location/$b\n";
+  print_log( "Trying to pull in $src_location/$b" );
   system("cd $src_location/$b ; git clean -dfx ; git submodule foreach --recursive git clean -xdf ; git pull");
   return $?;
 }
@@ -156,14 +162,28 @@ sub git_revision {
 
 sub build_server {
   my $b= shift;
-  print "# Building $b\n";
+  print_log( "# Building $b" );
   system("rm -rf $build_location/ongoing_build");
   system("mkdir $build_location/ongoing_build");
-  open(LAST_BUILD,">$build_location/ongoing_build/last_build") || print "ERROR: Could not open $build_location/ongoing_build/last_build for writing\n";
-  print LAST_BUILD "cmake $src_location/$b -DCMAKE_INSTALL_PREFIX=$build_location/${b}-testloop -DCMAKE_BUILD_TYPE=Debug\n";
+  open(LAST_BUILD,">$build_location/ongoing_build/last_build") || print_log( "ERROR: Could not open $build_location/ongoing_build/last_build for writing" );
+  print LAST_BUILD "cmake $src_location/$b -DCMAKE_INSTALL_PREFIX=$build_location/${b}-testloop -DCMAKE_BUILD_TYPE=Debug";
   print LAST_BUILD "make -j5\n";
   print LAST_BUILD "make install\n";
   close(LAST_BUILD);
   system("cd $build_location/ongoing_build ; . $build_location/ongoing_build/last_build");
   return $?;
+}
+
+sub ts {
+  my ($sec, $min, $hour, $day, $month, $year, undef, undef, undef) = localtime();
+  $year+= 1900;
+  $month+= 1;
+  return sprintf("%4d-%02d-%02dT%02d:%02d:%02d", $year, $month, $day, $hour, $min, $sec);
+}
+
+sub print_log {
+  my @lines= @_;
+  foreach my $l (@lines) {
+    print ts().' '.$l."\n";
+  }
 }
