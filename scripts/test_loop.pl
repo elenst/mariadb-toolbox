@@ -117,13 +117,14 @@ sub run_tests {
   my $branch= shift;
   my $revision= shift;
 
-  foreach (@tests) {
+  foreach my $test (@tests) {
 
     check_stopfile();
     check_pausefile();
 
-    my $config= "conf/mariadb/${branch}-combo.cc";
-    my $workdir= $log_location.'/'.$branch.'-'.ts().'-'.substr(${revision},0,8);
+    my $config= "conf/mariadb/${branch}-${test}.cc";
+    next unless -e "$rqg/$config";
+    my $workdir= $log_location.'/'.$branch.'-'.ts().'-'.$test.'-'.substr(${revision},0,8);
     my $cmd= "perl ./combinations.pl --new --force --run-all-combinations-once --config=$config --basedir=$build_location/${branch}-testloop --workdir=$workdir";
     
     print_log( "# Running $cmd", "" );
