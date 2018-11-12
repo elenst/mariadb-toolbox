@@ -164,6 +164,6 @@ sub build_server {
   print LAST_BUILD "make -j5\n";
   print LAST_BUILD "make install\n";
   close(LAST_BUILD);
-  system(". $build_location/ongoing_build/last_build");
+  system("cd $build_location/ongoing_build ; . $build_location/ongoing_build/last_build");
   return $?;
 }
