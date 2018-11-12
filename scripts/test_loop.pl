@@ -124,7 +124,7 @@ sub run_tests {
 
     my $config= "conf/mariadb/${branch}-${test}.cc";
     next unless -e "$rqg/$config";
-    my $workdir= $log_location.'/'.$branch.'-'.ts().'-'.$test.'-'.substr(${revision},0,8);
+    my $workdir= $log_location.'/'.$branch.'-'.ts_alphanum().'-'.$test.'-'.substr(${revision},0,8);
     my $cmd= "perl ./combinations.pl --new --force --run-all-combinations-once --config=$config --basedir=$build_location/${branch}-testloop --workdir=$workdir";
     
     print_log( "# Running $cmd", "" );
@@ -180,6 +180,13 @@ sub ts {
   $year+= 1900;
   $month+= 1;
   return sprintf("%4d-%02d-%02dT%02d:%02d:%02d", $year, $month, $day, $hour, $min, $sec);
+}
+
+sub ts_alphanum {
+  my ($sec, $min, $hour, $day, $month, $year, undef, undef, undef) = localtime();
+  $year+= 1900;
+  $month+= 1;
+  return sprintf("%4d%02d%02dT%02d%02d%02d", $year, $month, $day, $hour, $min, $sec);
 }
 
 sub print_log {
