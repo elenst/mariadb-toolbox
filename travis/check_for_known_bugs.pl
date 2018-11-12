@@ -12,11 +12,11 @@ map { push @files, $_ if -e $_ } @expected_files;
 my %found_mdevs= ();
 my $fixed_part= 0;
 
-print "--- Open bugs ------------------------\n";
+print "\n--- OPEN bugs ------------------------\n";
 
 while (<DATA>) {
   if (/^\# Fixed/) {
-    print "--- Fixed bugs -----------------------\n";
+    print "--- FIXED bugs -----------------------\n";
     $fixed_part= 1;
     next;
   }
@@ -33,10 +33,10 @@ while (<DATA>) {
     unless (-e "/tmp/$mdev.summary") {
       system("wget https://jira.mariadb.org//rest/api/2/issue/$mdev?fields=summary -O /tmp/$mdev.summary -o /dev/null");
     }
-    unless (-e "/tmp/$mdev.fixVersions" or $fixed_part == 0) {
+    unless (-e "/tmp/$mdev.fixVersions" or ! $fixed_part) {
       system("wget https://jira.mariadb.org//rest/api/2/issue/$mdev?fields=fixVersions -O /tmp/$mdev.fixVersions -o /dev/null");
     }
-    unless (-e "/tmp/$mdev.affectsVersions" or $fixed_part) {
+    unless (-e "/tmp/$mdev.affectsVersions") {
       system("wget https://jira.mariadb.org//rest/api/2/issue/$mdev?fields=versions -O /tmp/$mdev.affectsVersions -o /dev/null");
     }
 
@@ -58,8 +58,6 @@ while (<DATA>) {
     } else {
       $resolution= 'Unresolved';
     }
-    my $fixVersions= `cat /tmp/$mdev.fixVersions`;
-    my @versions = ($fixVersions =~ /\"name\":\"(.*?)\"/g);
 
     my $affectsVersions= `cat /tmp/$mdev.affectsVersions`;
     my @affected = ($affectsVersions =~ /\"name\":\"(.*?)\"/g);
@@ -67,10 +65,16 @@ while (<DATA>) {
     print "$mdev: $summary\n";
     print "RESOLUTION: $resolution". ($resolutiondate ? " ($resolutiondate)" : "") . "\n";
     print "Affects versions: @affected\n";
-    print "Fix versions: @versions\n";
+    if ($fixed_part) {
+      my $fixVersions= `cat /tmp/$mdev.fixVersions`;
+      my @versions = ($fixVersions =~ /\"name\":\"(.*?)\"/g);
+      print "Fix versions: @versions\n";
+    }
     print "-------------\n";
   }
 }
+
+print "--------------------------------------\n";
 
 
 __DATA__
