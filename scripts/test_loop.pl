@@ -93,7 +93,7 @@ while (1) {
     $all_skipped= 0;
     $last_tried_revision{$branch}= $revision;
 
-    if (build_server($branch)) {
+    if (build_server($branch,$revision)) {
       print_log( "ERROR: failed to build branch $branch revision $revision" );
       next; # Next branch
     }
@@ -163,16 +163,38 @@ sub git_revision {
 
 sub build_server {
   my $b= shift;
+  my $revision= shift;
+
+  if (-e "$build_location/${b}-testloop/last_build") {
+    open(LAST_BUILD, "$build_location/${b}-testloop/last_build");
+    my $prev_revision = <LAST_BUILD>;
+    chomp $prev_revision;
+    $prev_revision =~ s/^\#\s//;
+
+    if ($prev_revision eq $revision) {
+      print_log("$b $revision has already been built");
+      return 0;
+    }
+    else {
+      print_log("Previous built revision on $b was $prev_revision, rebuilding");
+    }
+  }
+
   print_log( "# Building $b" );
   system("rm -rf $build_location/ongoing_build");
   system("mkdir $build_location/ongoing_build");
   open(LAST_BUILD,">$build_location/ongoing_build/last_build") || print_log( "ERROR: Could not open $build_location/ongoing_build/last_build for writing" );
+  print LAST_BUILD "# $revision\n#\n";
   print LAST_BUILD "cmake $src_location/$b -DCMAKE_INSTALL_PREFIX=$build_location/${b}-testloop -DCMAKE_BUILD_TYPE=Debug\n";
   print LAST_BUILD "make -j5\n";
   print LAST_BUILD "make install\n";
   close(LAST_BUILD);
   system("cd $build_location/ongoing_build ; . $build_location/ongoing_build/last_build");
-  return $?;
+  my $build_res= $?;
+  if ($build_res == 0) {
+    system("cp $build_location/ongoing_build/last_build $build_location/${b}-testloop/last_build");
+  }
+  return $build_res;
 }
 
 sub ts {
