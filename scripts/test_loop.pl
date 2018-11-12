@@ -166,7 +166,7 @@ sub build_server {
   system("rm -rf $build_location/ongoing_build");
   system("mkdir $build_location/ongoing_build");
   open(LAST_BUILD,">$build_location/ongoing_build/last_build") || print_log( "ERROR: Could not open $build_location/ongoing_build/last_build for writing" );
-  print LAST_BUILD "cmake $src_location/$b -DCMAKE_INSTALL_PREFIX=$build_location/${b}-testloop -DCMAKE_BUILD_TYPE=Debug";
+  print LAST_BUILD "cmake $src_location/$b -DCMAKE_INSTALL_PREFIX=$build_location/${b}-testloop -DCMAKE_BUILD_TYPE=Debug\n";
   print LAST_BUILD "make -j5\n";
   print LAST_BUILD "make install\n";
   close(LAST_BUILD);
