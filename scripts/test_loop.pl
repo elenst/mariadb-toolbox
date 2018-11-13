@@ -9,6 +9,7 @@ my $pausefile= "$ENV{HOME}/test_loop.pause";
 my $rqg= "/data/src/rqg-test_loop";
 my $test_list= 'combo,random-cnf';
 my $log_location= "$ENV{HOME}/test_loop_logs";
+my $trials= 10;
 my $help= 0;
 
 my $opt_result= GetOptions(
@@ -21,6 +22,7 @@ my $opt_result= GetOptions(
   'sources=s' => \$src_location,
   'stopfile=s' => \$stopfile,
   'tests=s' => \$test_list,
+  'trials=i' => \$trials,
 );
 
 sub help {
@@ -125,7 +127,7 @@ sub run_tests {
     my $config= "conf/mariadb/${branch}-${test}.cc";
     next unless -e "$rqg/$config";
     my $workdir= $log_location.'/'.$branch.'-'.ts_alphanum().'-'.$test.'-'.substr(${revision},0,8);
-    my $cmd= "perl ./combinations.pl --new --force --run-all-combinations-once --config=$config --basedir=$build_location/${branch}-testloop --workdir=$workdir";
+    my $cmd= "perl ./combinations.pl --new --force --trials=$trials --config=$config --basedir=$build_location/${branch}-testloop --workdir=$workdir";
     
     print_log( "# Running $cmd", "" );
     system("cd $rqg ; git pull ; RQG_HOME=$rqg $cmd");
