@@ -205,7 +205,6 @@ MDEV-16184: nest->counter > 0
 MDEV-16190: in Item_null_result::field_type
 MDEV-16217: table->read_set, field_index
 MDEV-16222: InnoDB: tried to purge non-delete-marked record in index
-MDEV-16241: inited==RND
 MDEV-16242: Slave worker thread retried transaction
 MDEV-16242: Can't find record
 MDEV-16292: Item_func::print
@@ -230,6 +229,7 @@ MDEV-16792: in Diagnostics_area::sql_errno
 MDEV-16794: thd->transaction.stmt.is_empty
 MDEV-16903: auto_increment_field_not_null
 MDEV-16929: thd->transaction.stmt.is_empty
+MDEV-16932: Well_formed_prefix_status::Well_formed_prefix_status
 MDEV-16940: unsafe_key_update
 MDEV-16957: Field_iterator_natural_join::next
 MDEV-16958: field_length < 5
@@ -325,9 +325,9 @@ MDEV-15855: innobase_get_computed_value
 MDEV-15855: innobase_allocate_row_for_vcol
 MDEV-15872: row_log_table_get_pk_col
 MDEV-15872: in mem_heap_dup
+MDEV-16241: inited==RND
 MDEV-16429: table->read_set, field_index
 MDEV-16512: in find_field_in_tables
-MDEV-16516: inited==RND
 MDEV-16682: == HEAD_PAGE
 MDEV-16682: in _ma_read_block_record
 MDEV-16779: rw_lock_own
