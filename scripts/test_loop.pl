@@ -7,7 +7,7 @@ my $branch_list= '10.0,10.1,10.2,10.3,10.4';
 my $stopfile= "$ENV{HOME}/test_loop.stop";
 my $pausefile= "$ENV{HOME}/test_loop.pause";
 my $rqg= "/data/src/rqg-test_loop";
-my $test_list= 'combo';
+my $test_list= 'combo,random-cnf';
 my $log_location= "$ENV{HOME}/test_loop_logs";
 my $help= 0;
 
