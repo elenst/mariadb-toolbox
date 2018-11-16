@@ -129,7 +129,6 @@ MDEV-14906: index->is_instant
 MDEV-14994: join->best_read < double
 MDEV-14996: int ha_maria::external_lock
 MDEV-15013: trx->state == TRX_STATE_NOT_STARTED
-MDEV-15060: row_log_table_apply_op
 MDEV-15103: virtual ha_rows ha_partition::part_records
 MDEV-15130: table->s->null_bytes == 0
 MDEV-15130: static void PFS_engine_table::set_field_char_utf8
@@ -153,6 +152,7 @@ MDEV-15374: trx_undo_rec_copy
 MDEV-15380: is corrupt; try to repair it
 MDEV-15391: join->best_read < double
 MDEV-15401: Item_direct_view_ref::used_tables
+MDEV-15458: in heap_scan
 MDEV-15464: in TrxUndoRsegsIterator::set_next
 MDEV-15465: Item_func_match::cleanup
 MDEV-15468: table_events_waits_common::make_row 
@@ -203,7 +203,6 @@ MDEV-16170: Item_null_result::type_handler
 MDEV-16171: in setup_table_map
 MDEV-16184: nest->counter > 0
 MDEV-16190: in Item_null_result::field_type
-MDEV-16217: table->read_set, field_index
 MDEV-16222: InnoDB: tried to purge non-delete-marked record in index
 MDEV-16242: Slave worker thread retried transaction
 MDEV-16242: Can't find record
@@ -288,6 +287,7 @@ MDEV-17556: bitmap_is_set_all
 MDEV-17556: table->s->all_set
 MDEV-17576: share->reopen == 1
 MDEV-17580: Diagnostics_area::set_ok_status
+MDEV-17583: next_mrec == next_mrec_end
 MDEV-17595: copy_data_between_tables
 MDEV-17595: Open_tables_state::BACKUPS_AVAIL
 MDEV-17595: close_tables_for_reopen
@@ -301,6 +301,10 @@ MDEV-17627: handler::ha_rnd_end
 MDEV-17636: pagecache->block_root
 MDEV-17659: File too short; Expected more data in file
 MDEV-17665: share->page_type == PAGECACHE_LSN_PAGE
+MDEV-17725: m_status == DA_OK_BULK
+MDEV-17738: in Item::delete_self
+MDEV-17741: thd->Item_change_list::is_empty
+MDEV-17755: table->s->reclength
 
 # Fixed:
 
@@ -317,6 +321,7 @@ MDEV-11741: old_top == initial_top
 MDEV-14100: dict_index_get_n_unique_in_tree_nonleaf
 MDEV-14695: n < m_size
 MDEV-14943: type == PAGECACHE_LSN_PAGE
+MDEV-15060: row_log_table_apply_op
 MDEV-15114: mem_heap_dup
 MDEV-15243: in Field_blob::pack
 MDEV-15475: table->read_set, field_index
@@ -325,6 +330,7 @@ MDEV-15855: innobase_get_computed_value
 MDEV-15855: innobase_allocate_row_for_vcol
 MDEV-15872: row_log_table_get_pk_col
 MDEV-15872: in mem_heap_dup
+MDEV-16217: table->read_set, field_index
 MDEV-16241: inited==RND
 MDEV-16429: table->read_set, field_index
 MDEV-16512: in find_field_in_tables
