@@ -181,6 +181,7 @@ MDEV-15744: derived->table
 MDEV-15742: m_lock_type == 1
 MDEV-15753: thd->is_error
 MDEV-15800: next_insert_id >= auto_inc_interval_for_cur_row.minimum
+MDEV-15802: Item::delete_self
 MDEV-15812: virtual handler::~handler
 MDEV-15816: m_lock_rows == RDB_LOCK_WRITE
 MDEV-15828: num_fts_index <= 1
@@ -268,6 +269,7 @@ MDEV-17307: Incorrect key file for table
 MDEV-17319: ts_type != MYSQL_TIMESTAMP_TIME
 MDEV-17319: int Field_temporal::store_invalid_with_warning
 MDEV-17333: next_insert_id >= auto_inc_interval_for_cur_row.minimum
+MDEV_17344: Prepared_statement::~Prepared_statement
 MDEV-17354: in add_key_field
 MDEV-17356: table->read_set, field_index
 MDEV-17361: in Query_arena::set_query_arena
@@ -303,6 +305,8 @@ MDEV-17659: File too short; Expected more data in file
 MDEV-17665: share->page_type == PAGECACHE_LSN_PAGE
 MDEV-17725: m_status == DA_OK_BULK
 MDEV-17738: in Item::delete_self
+MDEV-17738: st_select_lex::fix_prepare_information
+MDEV-17738: TABLE_LIST::change_refs_to_fields
 MDEV-17741: thd->Item_change_list::is_empty
 MDEV-17755: table->s->reclength
 
