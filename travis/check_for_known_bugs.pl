@@ -90,6 +90,7 @@ MDEV-11015: precision > 0
 MDEV-11080: table->n_waiting_or_granted_auto_inc_locks > 0
 MDEV-11167: Can't find record
 MDEV-11539: mi_open.c:67: test_if_reopen
+MDEV-12059: precision > 0
 MDEV-12329: 1024U, trx, rec, block
 MDEV-13024: in multi_delete::send_data
 MDEV-13103: fil0pagecompress.cc:[0-9]+: void fil_decompress_page
@@ -101,6 +102,7 @@ MDEV-13828: in handler::ha_index_or_rnd_end
 MDEV-14040: in Field::is_real_null
 MDEV-14041: in String::length
 MDEV-14134: dberr_t row_upd_sec_index_entry
+MDEV-14264: binlog_cache_data::reset
 MDEV-14407: trx_undo_rec_copy
 MDEV-14410: table->pos_in_locked_tables->table == table
 MDEV-14440: inited==RND
@@ -185,6 +187,7 @@ MDEV-15802: Item::delete_self
 MDEV-15812: virtual handler::~handler
 MDEV-15816: m_lock_rows == RDB_LOCK_WRITE
 MDEV-15828: num_fts_index <= 1
+MDEV-15873: precision > 0
 MDEV-15878: table->file->stats.records > 0
 MDEV-15907: in fill_effective_table_privileges
 MDEV-15912: purge_sys.tail.commit <= purge_sys.rseg->last_commi
@@ -309,6 +312,7 @@ MDEV-17738: st_select_lex::fix_prepare_information
 MDEV-17738: TABLE_LIST::change_refs_to_fields
 MDEV-17741: thd->Item_change_list::is_empty
 MDEV-17755: table->s->reclength
+MDEV-17759: precision > 0
 
 # Fixed:
 
