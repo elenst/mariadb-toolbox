@@ -46,11 +46,11 @@ if (!$testcase) {
 }
 
 if (lc($opt_mode) eq 'all') {
-	@modes= ('conn','stmt','line');
-} elsif ($opt_mode =~ /^(stmt|line|conn)/i) {
+	@modes= ('conn','stmt','line','sql');
+} elsif ($opt_mode =~ /^(stmt|line|conn|sql)/i) {
 	@modes= lc($1);
 } else {
-    print "ERROR: Unknown simplification mode: $opt_mode. Only 'stmt', 'line', 'conn', 'all' are allowed\n";
+    print "ERROR: Unknown simplification mode: $opt_mode. Only 'stmt', 'line', 'conn', 'sql', 'all' are allowed\n";
     exit 1;
 }
 
@@ -137,7 +137,7 @@ foreach my $mode (@modes)
 			}
 		}
 	}
-	else
+	elsif ($mode eq 'stmt' or $mode eq 'line')
 	{
 		# Re-read the test in the new mode
 		write_testfile(\@last_failed_test);
@@ -209,6 +209,67 @@ foreach my $mode (@modes)
 			$chunk_size = int( $chunk_size/2 );
 		}
 	}
+	elsif ($mode eq 'sql') {
+		# Re-read the test in the new mode
+		write_testfile(\@last_failed_test);
+		# We don't need connections (second returned value) anymore, and we need statements, not lines
+		($test, undef)= read_testfile("$suitedir/$test_basename.test",'stmt');
+
+		my @test= @$test;
+		if (scalar(@test) <= 1) {
+			exit;
+		}
+
+    # Clauses we are currently able to process:
+    # - LIMIT n : try to remove
+    # - OFFSET n : try to remove
+    # - LOW_PRIORITY : try to remove
+    # - QUICK - try to remove
+    # - ORDER BY <list of fields> : try to remove
+    # - SELECT <list of fields> : try to replace with SELECT *
+
+    my %patterns= (
+      qr/LIMIT\s+\d+/ => '',
+      qr/OFFSET\s+\d+/ => '',
+      qr/\sLOW_PRIORITY/ => '',
+      qr/\sQUICK/ => '',
+      qr/ORDER\s+BY\s+[\w\`,]+/ => '',
+      qr/LEFT\s+JOIN/ => 'JOIN',
+      qr/RIGHT\s+JOIN/ => 'JOIN',
+      qr/NATURAL\s+JOIN/ => 'JOIN',
+      qr/SELECT\s+[\w\`,\.]?\s+FROM/ => 'SELECT * FROM',
+      qr/PARTITION\s+BY\s+.*?\s+PARTITIONS\s+\d+/ => '',
+      qr/\/\*[^\!].*?\*\// => ''
+    );
+
+    foreach my $p (keys %patterns) {
+			print "\n\nNew replacement: $p => $patterns{$p}\n";
+
+      my $count= 0;
+      my @new_test= ();
+      foreach my $s (@test) {
+        if (my $n = ($s =~ s/$p/$patterns{$p}/isg)) {
+          $count+= $n;
+        }
+        push @new_test, $s;
+      }
+
+      if ($count) {
+        print "Found $count occurrences of the pattern\n";
+        if ( run_test( \@new_test ) )
+        {
+          @test= @new_test;
+          print "Clause $p has been replaced with $patterns{$p}\n";
+        }
+        else {
+          print "Keeping clause $p\n";
+        }
+      }
+      else {
+        print "Haven't found any occurrences of the pattern\n";
+      }
+    }
+  }
 }
 
 print "\nLast reproducible testcase: $suitedir/$testcase.test.reproducible.".($reproducible_counter-1)."\n\n";
