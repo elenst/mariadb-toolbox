@@ -154,6 +154,7 @@ if [ "$res" == "0" ] ; then
       ls -l /home/travis/logs/vardir/data/
       ulimit -a
       cat /proc/sys/kernel/core_*
+      ls -ltr /usr/share/apport/apport/
       set +x
       # Quoting bootstrap log all existing error logs
       for fname in $dname/mysql.err* $dname/boot.log
