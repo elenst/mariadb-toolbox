@@ -27,7 +27,6 @@
 # - RQG_REVISION
 # - CMAKE_OPTIONS
 
-set -x
 
 OLDDIR=`pwd`
 res=0
@@ -150,6 +149,7 @@ if [ "$res" == "0" ] ; then
 
     for dname in ${VARDIR}*
     do
+      find ${dname} -name core*
       # Quoting bootstrap log all existing error logs
       for fname in $dname/mysql.err* $dname/boot.log
       do
