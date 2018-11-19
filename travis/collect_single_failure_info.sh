@@ -49,29 +49,24 @@ fi
 
 ###### Functions
 
-function insert_success
-{
-#   $MYSQL --host=$DB_HOST --port=$DB_PORT -u$DB_USER -p$DBP -e "REPLACE INTO travis.success SET build_id = $TRAVIS_BUILD_NUMBER, job_id = $TRAVIS_JOB, trial_id = $TRIAL, travis_branch = \"$TRAVIS_BRANCH\", result = \"$TRIAL_RESULT\", status = \"$TRIAL_STATUS\", command_line = \"$TRIAL_CMD\", server_branch = \"$SERVER_BRANCH\", server_revision = \"$SERVER_REVISION\", cmake_options = \"$CMAKE_OPTIONS\", test_branch = \"$RQG_BRANCH\", test_revision = \"$RQG_REVISION\""
-
-  if [ "$?" != "0" ] ; then
-    echo "ERROR: Failed to insert the successful result $TRIAL_RESULT for build_id = $TRAVIS_BUILD_NUMBER, job_id = $TRAVIS_JOB, trial_id = $TRIAL"
-    res=1
-  else
-    echo "Inserted the successful result $TRIAL_RESULT for build_id = $TRAVIS_BUILD_NUMBER, job_id = $TRAVIS_JOB, trial_id = $TRIAL"
-  fi
-}
-
 function load_failure
 {
-  ls -l ${LOGDIR}/${ARCHDIR}.tar.gz
+  ls -l ${LOGDIR}/${ARCHDIR}*.tar.gz
 
-#  $MYSQL --local-infile --host=$DB_HOST --port=$DB_PORT -u$DB_USER -p$DBP -e "LOAD DATA LOCAL INFILE \"${LOGDIR}/${ARCHDIR}.tar.gz\" REPLACE INTO TABLE travis.failure CHARACTER SET BINARY FIELDS TERMINATED BY 'xxxxxthisxxlinexxxshouldxxneverxxeverxxappearxxinxxanyxxfilexxxxxxxxxxxxxxxxxxxxxxxx' ESCAPED BY '' LINES TERMINATED BY 'XXXTHISXXLINEXXSHOULDXXNEVERXXEVERXXAPPEARXXINXXANYXXFILEXXXXXXXXXXXXXXXXXXXX' (data) SET build_id = $TRAVIS_BUILD_NUMBER, job_id = $TRAVIS_JOB, trial_id = $TRIAL, travis_branch = \"$TRAVIS_BRANCH\", result = \"$TRIAL_RESULT\", status = \"$TRIAL_STATUS\", command_line = \"$TRIAL_CMD\", server_branch = \"$SERVER_BRANCH\", server_revision = \"$SERVER_REVISION\", cmake_options = \"$CMAKE_OPTIONS\", test_branch = \"$RQG_BRANCH\", test_revision = \"$RQG_REVISION\""
+  for $f in logs datadirs coredumps ; do
 
-  if [ "$?" != "0" ] ; then
-    echo "ERROR: Failed to insert the failure $TRIAL_RESULT and load ${LOGDIR}/${ARCHDIR}.tar.gz for build_id = $TRAVIS_BUILD_NUMBER, job_id = $TRAVIS_JOB, trial_id = $TRIAL"
-  else
-    echo "Inserted the failure $TRIAL_RESULT and loaded ${LOGDIR}/${ARCHDIR}.tar.gz for build_id = $TRAVIS_BUILD_NUMBER, job_id = $TRAVIS_JOB, trial_id = $TRIAL"
-  fi
+    if [ -e ${LOGDIR}/${ARCHDIR}_${f}.tar.gz ] ; then
+
+      $MYSQL --local-infile --host=$DB_HOST --port=$DB_PORT -u$DB_USER -p$DBP -e "LOAD DATA LOCAL INFILE \"${LOGDIR}/${ARCHDIR}_${f}.tar.gz\" REPLACE INTO TABLE travis.${f} CHARACTER SET BINARY FIELDS TERMINATED BY 'xxxxxthisxxlinexxxshouldxxneverxxeverxxappearxxinxxanyxxfilexxxxxxxxxxxxxxxxxxxxxxxx' ESCAPED BY '' LINES TERMINATED BY 'XXXTHISXXLINEXXSHOULDXXNEVERXXEVERXXAPPEARXXINXXANYXXFILEXXXXXXXXXXXXXXXXXXXX' (data) SET build_id = $TRAVIS_BUILD_NUMBER, job_id = $TRAVIS_JOB, trial_id = $TRIAL, command_line = \"$TRIAL_CMD\", server_branch = \"$SERVER_BRANCH\", server_revision = \"$SERVER_REVISION\", test_branch = \"$RQG_BRANCH\", test_revision = \"$RQG_REVISION\""
+
+      if [ "$?" != "0" ] ; then
+        echo "ERROR: Failed to load $f for build_id = $TRAVIS_BUILD_NUMBER, job_id = $TRAVIS_JOB, trial_id = $TRIAL"
+      else
+        echo "Loaded $f for build_id = $TRAVIS_BUILD_NUMBER, job_id = $TRAVIS_JOB, trial_id = $TRIAL"
+      fi
+    fi
+
+  done
 }
 
 function process_coredump
@@ -111,14 +106,13 @@ if [ "$res" == "0" ] ; then
 
   VARDIR="${VARDIR:-$LOGDIR/vardir}"
   TRIAL_LOG="${TRIAL_LOG:-$LOGDIR/trial.log}"
-  ARCHDIR="logs_${TRAVIS_JOB_NUMBER}.${TRIAL}"
+  ARCHDIR="arch_${TRAVIS_JOB_NUMBER}.${TRIAL}"
   TRAVIS_JOB=`echo $TRAVIS_JOB_NUMBER | sed -e 's/.*\.//'`
 
   TRIAL_CMD=""
-  TRIAL_RESULT=""
   TRIAL_STATUS=""
 
-  rm -rf ${LOGDIR}/${ARCHDIR} && mkdir ${LOGDIR}/${ARCHDIR}
+  rm -rf ${LOGDIR}/${ARCHDIR} 
 
   echo ""
   echo "----------------------------- RESULTS -----------------------------"
@@ -126,7 +120,8 @@ if [ "$res" == "0" ] ; then
   if [ -e $TRIAL_LOG ] ; then
     TRIAL_STATUS=`grep 'will exit with exit status' $TRIAL_LOG | sed -e 's/.*will exit with exit status STATUS_\([A-Z_]*\).*/\1/'`
     TRIAL_CMD=`grep -A 1 'Final command line:' $TRIAL_LOG`
-    cp $TRIAL_LOG ${LOGDIR}/${ARCHDIR}/
+    mkdir -p ${LOGDIR}/${ARCHDIR}/logs
+    cp $TRIAL_LOG ${LOGDIR}/${ARCHDIR}/logs/
   else
     echo "$TRIAL_LOG does not exist"
   fi
@@ -135,8 +130,6 @@ if [ "$res" == "0" ] ; then
   
   # Success processing
   if [[ "$TRIAL_STATUS" == "OK" ]] ; then
-    TRIAL_RESULT=PASS
-    insert_success
     res=0
 
   # Failure processing
@@ -162,6 +155,17 @@ if [ "$res" == "0" ] ; then
           echo "------------------- $fname ------"
           cat $fname | grep -v "\[Note\]" | grep -v "\[Warning\]" | grep -v "^$" | cut -c 1-4096
           echo "-------------------"
+          mkdir -p ${LOGDIR}/${ARCHDIR}/logs/${dname}
+          cp $fname ${LOGDIR}/${ARCHDIR}/logs/${dname}/
+        fi
+      done
+
+      # Storing general logs
+      for fname in $dname/mysql.log
+      do
+        if [ -e $fname ] ; then
+          mkdir -p ${LOGDIR}/${ARCHDIR}/logs/${dname}
+          cp $fname ${LOGDIR}/${ARCHDIR}/logs/${dname}/
         fi
       done
 
@@ -172,6 +176,11 @@ if [ "$res" == "0" ] ; then
         # Since it's in the _orig dir, it is definitely from the old server
         bname=$HOME/old
         process_coredump
+        mkdir -p ${LOGDIR}/${ARCHDIR}/coredumps
+        mv $coredump ${LOGDIR}/${ARCHDIR}/coredumps/core.orig
+        if [ -e $datadir/mysqld ] ; then
+          mv $datadir/mysqld ${LOGDIR}/${ARCHDIR}/coredumps/mysqld.orig
+        fi
       fi
 
       # Checking for coredump in the datadir
@@ -195,18 +204,28 @@ if [ "$res" == "0" ] ; then
         fi
 
         process_coredump
+        mkdir -p ${LOGDIR}/${ARCHDIR}/coredumps
+        mv $coredump ${LOGDIR}/${ARCHDIR}/coredumps/
+        if [ -e $datadir/mysqld ] ; then
+          mv $datadir/mysqld ${LOGDIR}/${ARCHDIR}/coredumps/mysqld
+        fi
       fi
       
-      mv $dname $LOGDIR/$ARCHDIR/
+      mkdir -p $LOGDIR/$ARCHDIR/datadirs/
+      mv $dname $LOGDIR/$ARCHDIR/datadirs/
     done
 
     cd $LOGDIR
-    tar zcf $ARCHDIR.tar.gz $ARCHDIR
-    if [[ "$TRIAL_STATUS" == "CUSTOM_OUTCOME" ]] ; then
-      TRIAL_RESULT=UNKNOWN
-    else
-      TRIAL_RESULT=FAIL
+    if [ -e $ARCHDIR/logs ] ; then
+      tar zcf $ARCHDIR_logs.tar.gz $ARCHDIR/logs
     fi
+    if [ -e $ARCHDIR/coredumps ] ; then
+      tar zcf $ARCHDIR_coredumps.tar.gz $ARCHDIR/coredumps
+    fi
+    if [ -e $ARCHDIR/datadirs ] ; then
+      tar zcf $ARCHDIR_datadirs.tar.gz $ARCHDIR/datadirs
+    fi
+
     load_failure
   fi
 
