@@ -151,6 +151,8 @@ if [ "$res" == "0" ] ; then
     do
       set -x
       find ${dname} -name core*
+      ls -l /home/travis/logs/vardir/data/
+      ulimit -a
       set +x
       # Quoting bootstrap log all existing error logs
       for fname in $dname/mysql.err* $dname/boot.log
