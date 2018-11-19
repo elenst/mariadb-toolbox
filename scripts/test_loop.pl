@@ -3,13 +3,13 @@ use strict;
 
 my $build_location= '/data/bld';
 my $src_location= '/data/src';
-my $branch_list= '10.0,10.1,10.2,10.3,10.4';
+my $branch_list= '10.4,10.3,10.2,10.1,10.0';
 my $stopfile= "$ENV{HOME}/test_loop.stop";
 my $pausefile= "$ENV{HOME}/test_loop.pause";
 my $rqg= "/data/src/rqg-test_loop";
 my $test_list= 'combo,random-cnf';
 my $log_location= "$ENV{HOME}/test_loop_logs";
-my $trials= 10;
+my $trials= 0;
 my $help= 0;
 
 my $opt_result= GetOptions(
@@ -127,7 +127,12 @@ sub run_tests {
     my $config= "conf/mariadb/${branch}-${test}.cc";
     next unless -e "$rqg/$config";
     my $workdir= $log_location.'/'.$branch.'-'.ts_alphanum().'-'.$test.'-'.substr(${revision},0,8);
-    my $cmd= "perl ./combinations.pl --new --force --trials=$trials --config=$config --basedir=$build_location/${branch}-testloop --workdir=$workdir";
+    my $cmd= "perl ./combinations.pl  --basedir=$build_location/${branch}-testloop --workdir=$workdir --new --force --config=$config ";
+    if ($trials) {
+      $cmd .= "--trials=$trials";
+    } else {
+      $cmd .= "--run-all-combinations-once";
+    }
     
     print_log( "# Running $cmd", "" );
     system("cd $rqg ; git pull ; RQG_HOME=$rqg $cmd");
