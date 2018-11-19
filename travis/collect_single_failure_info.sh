@@ -219,13 +219,13 @@ if [ "$res" == "0" ] ; then
 
     cd $LOGDIR
     if [ -e $ARCHDIR/logs ] ; then
-      tar zcf $ARCHDIR_logs.tar.gz $ARCHDIR/logs
+      tar zcf ${ARCHDIR}_logs.tar.gz $ARCHDIR/logs
     fi
     if [ -e $ARCHDIR/coredumps ] ; then
-      tar zcf $ARCHDIR_coredumps.tar.gz $ARCHDIR/coredumps
+      tar zcf ${ARCHDIR}_coredumps.tar.gz $ARCHDIR/coredumps
     fi
     if [ -e $ARCHDIR/datadirs ] ; then
-      tar zcf $ARCHDIR_datadirs.tar.gz $ARCHDIR/datadirs
+      tar zcf ${ARCHDIR}_datadirs.tar.gz $ARCHDIR/datadirs
     fi
 
     load_failure
