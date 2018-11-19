@@ -27,6 +27,8 @@
 # - RQG_REVISION
 # - CMAKE_OPTIONS
 
+set -x
+
 OLDDIR=`pwd`
 res=0
 
@@ -53,7 +55,7 @@ function load_failure
 {
   ls -l ${LOGDIR}/${ARCHDIR}*.tar.gz
 
-  for $f in logs datadirs coredumps ; do
+  for f in logs datadirs coredumps ; do
 
     if [ -e ${LOGDIR}/${ARCHDIR}_${f}.tar.gz ] ; then
 
