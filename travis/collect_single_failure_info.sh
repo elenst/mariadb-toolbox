@@ -153,6 +153,7 @@ if [ "$res" == "0" ] ; then
       find ${dname} -name core*
       ls -l /home/travis/logs/vardir/data/
       ulimit -a
+      cat /proc/sys/kernel/core_*
       set +x
       # Quoting bootstrap log all existing error logs
       for fname in $dname/mysql.err* $dname/boot.log
