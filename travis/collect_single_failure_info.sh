@@ -149,7 +149,9 @@ if [ "$res" == "0" ] ; then
 
     for dname in ${VARDIR}*
     do
+      set -x
       find ${dname} -name core*
+      set +x
       # Quoting bootstrap log all existing error logs
       for fname in $dname/mysql.err* $dname/boot.log
       do
