@@ -243,6 +243,7 @@ MDEV-16982: in mem_heap_dup
 MDEV-16982: row_mysql_convert_row_to_innobase
 MDEV-16992: Field_iterator_table_ref::set_field_iterator
 MDEV-16994: in base_list_iterator::next
+MDEV-16994: partition_info::prune_partition_bitmaps
 MDEV-17004: in innobase_get_fts_charset
 MDEV-17005: innobase_get_computed_value
 MDEV-17015: m_year <= 9999
@@ -313,6 +314,8 @@ MDEV-17738: TABLE_LIST::change_refs_to_fields
 MDEV-17741: thd->Item_change_list::is_empty
 MDEV-17755: table->s->reclength
 MDEV-17759: precision > 0
+MDEV-17760: table->read_set, field_index
+MDEV-17763: len == 20U
 
 # Fixed:
 
