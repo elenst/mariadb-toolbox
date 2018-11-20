@@ -196,8 +196,6 @@ MDEV-15949: space->n_pending_ops == 0
 MDEV-15950: find_dup_table
 MDEV-15950: find_table_in_list
 MDEV-15977: thd->in_sub_stmt
-MDEV-16043: st_select_lex::fix_prepare_information
-MDEV-16043: thd->Item_change_list::is_empty
 MDEV-16131: id == DICT_INDEXES_ID
 MDEV-16153: Apc_target::disable
 MDEV-16154: in myrocks::ha_rocksdb::load_auto_incr_value_from_index
@@ -259,7 +257,7 @@ MDEV-17051: sec_mtr->has_committed
 MDEV-17053: sync_check_iterate
 MDEV-17054: in innobase_get_fts_charset
 MDEV-17054: InnoDB needs charset 0 for doing a comparison
-MDEV-17055: in find_order_in_list
+MDEV-17055: find_order_in_list
 MDEV-17107: table_list->table
 MDEV-17120: base_list::push_back
 MDEV-17199: pos < table->n_v_def
@@ -341,6 +339,8 @@ MDEV-15855: innobase_get_computed_value
 MDEV-15855: innobase_allocate_row_for_vcol
 MDEV-15872: row_log_table_get_pk_col
 MDEV-15872: in mem_heap_dup
+MDEV-16043: st_select_lex::fix_prepare_information
+MDEV-16043: thd->Item_change_list::is_empty
 MDEV-16217: table->read_set, field_index
 MDEV-16241: inited==RND
 MDEV-16429: table->read_set, field_index
