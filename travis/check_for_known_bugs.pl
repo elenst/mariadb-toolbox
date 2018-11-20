@@ -305,6 +305,7 @@ MDEV-17627: handler::ha_rnd_end
 MDEV-17636: pagecache->block_root
 MDEV-17659: File too short; Expected more data in file
 MDEV-17665: share->page_type == PAGECACHE_LSN_PAGE
+MDEV-17711: arena_for_set_stmt== 0
 MDEV-17725: m_status == DA_OK_BULK
 MDEV-17738: in Item::delete_self
 MDEV-17738: st_select_lex::fix_prepare_information
