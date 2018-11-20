@@ -15,6 +15,7 @@ my $path = dirname(abs_path($0));
 my $opt_preserve_connections;
 my $rpl= 0;
 my $max_chunk= 0;
+my $trials= 1;
 
 my @preserve_connections;
 my %preserve_connections;
@@ -38,6 +39,7 @@ GetOptions (
   "rpl"         => \$rpl,
   "preserve-connections|preserve_connections=s" => \$opt_preserve_connections,
   "max-chunk-size|max_chunk_size=i" => \$max_chunk,
+  "trials=i"    => \$trials,
 );
 
 if (!$testcase) {
@@ -74,7 +76,7 @@ unless ($suitename) {
 
 if ($output) {
   $output= qr/$output/s;
-  print "Pattern to search: $output\n";
+  print "\nPattern to search: $output\n";
 }
 
 my $test_basename= ($rpl ? 'new_rpl' : 'new_test');
@@ -90,7 +92,7 @@ my $not_reproducible_counter = 0;
 
 my ($test, $connections) = read_testfile("$suitedir/$test_basename.test",$modes[0]);
 
-print "Running initial test\n";
+print "\nRunning initial test\n";
 
 unless (run_test($test))
 {
@@ -283,45 +285,71 @@ print "\nLast reproducible testcase: $suitedir/$testcase.test.reproducible.".($r
 sub run_test
 {
   my $testref = shift;
-  print "Size of the test to run: " . scalar(@$testref) . "\n";
+
+  unlink "$testcase.out.not_reproducible.$not_reproducible_counter";
+  unlink "$testcase.out.reproducible.$not_reproducible_counter";
+
+  print "\nSize of the test to run: " . scalar(@$testref) . "\n";
 
   write_testfile($testref);
-  my $start = time();
-  my $out = readpipe( "perl mysql-test-run.pl $options --suite=$suitename $test_basename" );
-  my $result= $?;
-  my $errlog = ( $ENV{MTR_VERSION} eq "1" ? 'var/log/master.err' : 'var/log/mysqld.1.err');
 
-  my $separ= $/;
-  $/= undef;
-  open(ERRLOG, "$errlog") || die "Cannot open $errlog\n";
-  $out.= <ERRLOG>;
-  close(ERRLOG);
-  if (-e 'var/log/mysqld.2.err') {
-    open(ERRLOG, "var/log/mysqld.2.err") || die "Cannot open var/log/mysqld.2.err\n";
+  my $result= 0;
+
+  foreach my $i (1 .. $trials) {
+    my $start = time();
+    print sprintf("Trial $i out if $trials started at %02d:%02d:%02d\n",(localtime($start))[2],(localtime($start))[1],(localtime($start))[0]);
+    my $out = readpipe( "perl mysql-test-run.pl $options --suite=$suitename $test_basename" );
+
+    my $test_result= $?;
+    my $errlog = ( $ENV{MTR_VERSION} eq "1" ? 'var/log/master.err' : 'var/log/mysqld.1.err');
+
+    my $separ= $/;
+    $/= undef;
+    open(ERRLOG, "$errlog") || die "Cannot open $errlog\n";
     $out.= <ERRLOG>;
     close(ERRLOG);
+    if (-e 'var/log/mysqld.2.err') {
+      open(ERRLOG, "var/log/mysqld.2.err") || die "Cannot open var/log/mysqld.2.err\n";
+      $out.= <ERRLOG>;
+      close(ERRLOG);
+    }
+    $/= $separ;
+
+    # Refined diagnostics
+    if ($output) {
+      $result= ( $out =~ /$output/ );
+      if ($result) {
+        print "Reproduced (no: $reproducible_counter) - output matched the pattern\n";
+      } elsif ($test_result) {
+        print "Could not reproduce - test failed, but output didn't match the pattern\n";
+      } else {
+        print "Could not reproduce - test passed, and output didn't match the pattern\n";
+      }
+    }
+    elsif ($test_result) {
+      $result= $test_result;
+      print "Reproduced (no: $reproducible_counter) - test failed, and there was no pattern to match\n";
+    }
+    else {
+      print "Could not reproduce - test passed, and there was no pattern to match\n";
+    }
+
+    my $outfile = ($result ? "$testcase.out.reproducible.$reproducible_counter" : "$testcase.out.not_reproducible.$not_reproducible_counter");
+    open( OUT, ">>$outfile" ) || die "Could not open $outfile for writing: $!";
+    print OUT "\nTrial $i\n\n";
+    print OUT $out;
+    close( OUT );
+
+    print "Trial $i time: " . ( time() - $start ) . "\n";
+
+    if ($result)
+    {
+      copy("$suitedir/$test_basename.test", "$suitedir/$testcase.test.reproducible.$reproducible_counter") || die "Could not copy $suitedir/$test_basename.test to $suitedir/$testcase.test.reproducible.$reproducible_counter: $!";
+      last;
+    }
   }
-  $/= $separ;
-  my $outfile;
-  if ($output) {
-    $result = ( $out =~ /$output/ )
-  }
-  if ($result)
-  {
-    print "Reproduced (no: $reproducible_counter)\n";
-    copy("$suitedir/$test_basename.test", "$suitedir/$testcase.test.reproducible.$reproducible_counter") || die "Could not copy $suitedir/$test_basename.test to $suitedir/$testcase.test.reproducible.$reproducible_counter: $!";
-    $outfile = "$testcase.out.reproducible.$reproducible_counter";
-    $reproducible_counter++;
-  }
-  else {
-    $outfile = "$testcase.out.not_reproducible.$not_reproducible_counter";
-    print "Could not reproduce\n";
-    $not_reproducible_counter++;
-  }
-  print "Test time: " . ( time() - $start ) . "\n";
-  open( OUT, ">$outfile" ) || die "Could not open $outfile for writing: $!";
-  print OUT $out;
-  close( OUT );
+
+  ($result ? $reproducible_counter++ : $not_reproducible_counter++);
   return $result;
 }
 
