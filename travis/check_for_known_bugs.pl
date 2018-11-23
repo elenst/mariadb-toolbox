@@ -206,6 +206,7 @@ MDEV-16171: in setup_table_map
 MDEV-16184: nest->counter > 0
 MDEV-16190: in Item_null_result::field_type
 MDEV-16222: InnoDB: tried to purge non-delete-marked record in index
+MDEV-16240: row_sel_convert_mysql_key_to_innobase
 MDEV-16242: Slave worker thread retried transaction
 MDEV-16242: Can't find record
 MDEV-16292: Item_func::print
@@ -305,6 +306,7 @@ MDEV-17627: handler::ha_rnd_end
 MDEV-17636: pagecache->block_root
 MDEV-17659: File too short; Expected more data in file
 MDEV-17665: share->page_type == PAGECACHE_LSN_PAGE
+MDEV-17697: col.vers_sys_end
 MDEV-17711: arena_for_set_stmt== 0
 MDEV-17725: m_status == DA_OK_BULK
 MDEV-17738: in Item::delete_self
@@ -315,6 +317,10 @@ MDEV-17755: table->s->reclength
 MDEV-17759: precision > 0
 MDEV-17760: table->read_set, field_index
 MDEV-17763: len == 20U
+MDEV-17814: is_current_stmt_binlog_format_row
+MDEV-17815: index->table->name.m_name
+MDEV-17816: trx->dict_operation_lock_mode == RW_X_LATCH
+MDEV-17818: parse_vcol_defs
 
 # Fixed:
 
