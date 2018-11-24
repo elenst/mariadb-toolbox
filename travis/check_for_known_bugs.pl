@@ -101,9 +101,11 @@ MDEV-13699: == new_field->field_name.length
 MDEV-13828: in handler::ha_index_or_rnd_end
 MDEV-14040: in Field::is_real_null
 MDEV-14041: in String::length
+MDEV-14126: page_get_page_no
 MDEV-14134: dberr_t row_upd_sec_index_entry
 MDEV-14264: binlog_cache_data::reset
 MDEV-14407: trx_undo_rec_copy
+MDEV-14409: page_rec_is_leaf
 MDEV-14410: table->pos_in_locked_tables->table == table
 MDEV-14440: inited==RND
 MDEV-14472: is_current_stmt_binlog_format_row
@@ -321,6 +323,8 @@ MDEV-17814: is_current_stmt_binlog_format_row
 MDEV-17815: index->table->name.m_name
 MDEV-17816: trx->dict_operation_lock_mode == RW_X_LATCH
 MDEV-17818: parse_vcol_defs
+MDEV-17820: == BTR_NO_LOCKING_FLAG
+MDEV-17823: row_sel_sec_rec_is_for_clust_rec
 
 # Fixed:
 
