@@ -325,6 +325,7 @@ MDEV-17816: trx->dict_operation_lock_mode == RW_X_LATCH
 MDEV-17818: parse_vcol_defs
 MDEV-17820: == BTR_NO_LOCKING_FLAG
 MDEV-17823: row_sel_sec_rec_is_for_clust_rec
+MDEV-17826: dfield_is_ext
 
 # Fixed:
 
