@@ -2,6 +2,7 @@ use Getopt::Long;
 use Cwd 'abs_path';
 use File::Basename;
 use File::Copy "copy";
+use File::Path qw(make_path remove_tree);
 
 use strict;
 
@@ -89,6 +90,9 @@ copy("$suitedir/$testcase.test","$suitedir/$test_basename.test") || die "Could n
 
 my $reproducible_counter = 0;
 my $not_reproducible_counter = 0;
+
+remove_tree("$testcase.output");
+make_path("$testcase.output");
 
 my ($test, $connections) = read_testfile("$suitedir/$test_basename.test",$modes[0]);
 
@@ -286,9 +290,6 @@ sub run_test
 {
   my $testref = shift;
 
-  unlink "$testcase.out.not_reproducible.$not_reproducible_counter";
-  unlink "$testcase.out.reproducible.$not_reproducible_counter";
-
   print "\nSize of the test to run: " . scalar(@$testref) . "\n";
 
   write_testfile($testref);
@@ -334,7 +335,7 @@ sub run_test
       print "Could not reproduce - test passed, and there was no pattern to match\n";
     }
 
-    my $outfile = ($result ? "$testcase.out.reproducible.$reproducible_counter" : "$testcase.out.not_reproducible.$not_reproducible_counter");
+    my $outfile = ($result ? "$testcase.output/$testcase.out.reproducible.$reproducible_counter" : "$testcase.output/$testcase.out.not_reproducible.$not_reproducible_counter");
     open( OUT, ">>$outfile" ) || die "Could not open $outfile for writing: $!";
     print OUT "\nTrial $i\n\n";
     print OUT $out;
