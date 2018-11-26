@@ -311,7 +311,7 @@ MDEV-17665: share->page_type == PAGECACHE_LSN_PAGE
 MDEV-17697: col.vers_sys_end
 MDEV-17711: arena_for_set_stmt== 0
 MDEV-17725: m_status == DA_OK_BULK
-MDEV-17738: in Item::delete_self
+MDEV-17738: Item::delete_self
 MDEV-17738: st_select_lex::fix_prepare_information
 MDEV-17738: TABLE_LIST::change_refs_to_fields
 MDEV-17741: thd->Item_change_list::is_empty
@@ -326,6 +326,9 @@ MDEV-17818: parse_vcol_defs
 MDEV-17820: == BTR_NO_LOCKING_FLAG
 MDEV-17823: row_sel_sec_rec_is_for_clust_rec
 MDEV-17826: dfield_is_ext
+MDEV-17830: Item_null_result::field_type
+MDEV-17831: supports_instant
+MDEV-17834: row_upd_build_difference_binary
 
 # Fixed:
 
