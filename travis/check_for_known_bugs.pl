@@ -283,6 +283,7 @@ MDEV-17432: lock_trx_has_sys_table_locks
 MDEV-17464: Operating system error number 2
 MDEV-17466: dfield2->type.mtypex
 MDEV-17470: Operating system error number 17 in a file operation
+MDEV-17470: returned OS error 71. Cannot continue operation
 MDEV-17479: mysql_socket.fd != -1
 MDEV-17485: Operating system error number 80 in a file operation
 MDEV-17537: Diagnostics_area::set_ok_status
@@ -332,6 +333,8 @@ MDEV-17834: row_upd_build_difference_binary
 MDEV-17842: pfs_lock::allocated_to_free
 MDEV-17843: lock_rec_queue_validate
 MDEV-17844: rec_offs_validate
+MDEV-17854: decimals <= 6
+MDEV-17857: TIME_from_longlong_datetime_packed
 
 # Fixed:
 
