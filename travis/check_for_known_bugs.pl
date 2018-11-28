@@ -108,6 +108,7 @@ MDEV-14407: trx_undo_rec_copy
 MDEV-14409: page_rec_is_leaf
 MDEV-14410: table->pos_in_locked_tables->table == table
 MDEV-14440: inited==RND
+MDEV-14440: in ha_partition::external_lock
 MDEV-14472: is_current_stmt_binlog_format_row
 MDEV-14557: m_sp == __null
 MDEV-14642: table->s->db_create_options == part_table->s->db_create_options
