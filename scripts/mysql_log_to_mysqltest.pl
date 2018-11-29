@@ -387,25 +387,29 @@ sub print_current_record
         print "--delimiter |||\n";
       }
 
+      my $need_send= 0;
       if ( $cur_log_con != $new_log_con and !( $cur_log_record =~ /^\s*LOAD DATA/ ) )
       {
         # Whenever log connection changes, we will do --send
-        print "--send\n";
+        $need_send= "--send\n";
         $test_connections{$cur_log_con}= 1;
       }
 
       if ($opt_convert_to_ei) {
         my $converted= $cur_log_record;
         $converted =~ s/[^\\]\"/\\\"/g;
+        print $need_send if $need_send;
         print 'EXECUTE IMMEDIATE " '.$converted.' "', $delimiter, "\n";
       }
       elsif ($opt_convert_to_ps) {
         my $converted= $cur_log_record;
         $converted =~ s/[^\\]\"/\\\"/g;
         print 'PREPARE converter_stmt FROM " '.$converted.' "', $delimiter, "\n";
-        print "EXECUTE converter_stmt\n";
+        print $need_send if $need_send;
+        print "EXECUTE converter_stmt",$delimiter,"\n";
       }
       else {
+        print $need_send if $need_send;
         print $cur_log_record, $delimiter, "\n";
       }
       if ( $delimiter ne ';' ) {
