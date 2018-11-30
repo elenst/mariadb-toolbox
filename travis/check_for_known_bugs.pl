@@ -170,7 +170,6 @@ MDEV-15486: String::needs_conversion
 MDEV-15490: in trx_update_mod_tables_timestamp
 MDEV-15493: lock_trx_table_locks_remove
 MDEV-15533: log->blobs
-MDEV-15537: in mysql_prepare_alter_table
 MDEV-15551: share->last_version
 MDEV-15576: item->null_value
 MDEV-15626: old_part_id == m_last_part
@@ -336,6 +335,7 @@ MDEV-17843: lock_rec_queue_validate
 MDEV-17844: rec_offs_validate
 MDEV-17854: decimals <= 6
 MDEV-17857: TIME_from_longlong_datetime_packed
+MDEV-17884: is marked as crashed and should be repaired
 
 # Fixed:
 
@@ -356,6 +356,7 @@ MDEV-15060: row_log_table_apply_op
 MDEV-15114: mem_heap_dup
 MDEV-15243: in Field_blob::pack
 MDEV-15475: table->read_set, field_index
+MDEV-15537: in mysql_prepare_alter_table
 MDEV-15797: thd->killed != 0
 MDEV-15855: innobase_get_computed_value
 MDEV-15855: innobase_allocate_row_for_vcol
