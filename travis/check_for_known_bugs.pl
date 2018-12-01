@@ -198,6 +198,7 @@ MDEV-15949: space->n_pending_ops == 0
 MDEV-15950: find_dup_table
 MDEV-15950: find_table_in_list
 MDEV-15977: thd->in_sub_stmt
+MDEV-16060: Failing assertion: ut_strcmp
 MDEV-16131: id == DICT_INDEXES_ID
 MDEV-16153: Apc_target::disable
 MDEV-16154: in myrocks::ha_rocksdb::load_auto_incr_value_from_index
@@ -336,6 +337,7 @@ MDEV-17844: rec_offs_validate
 MDEV-17854: decimals <= 6
 MDEV-17857: TIME_from_longlong_datetime_packed
 MDEV-17884: is marked as crashed and should be repaired
+MDEV-17885: Could not remove temporary table
 
 # Fixed:
 
