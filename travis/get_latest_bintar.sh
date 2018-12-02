@@ -1,7 +1,6 @@
 if [ -z "$1" ] ; then
   echo "Usage: $0 <server_branch>"
-  soft_exit 1
-  exit 1
+  $SCRIPT_DIR/soft_exit.sh 1
 fi
 
 SERVER_BRANCH=$1
@@ -27,5 +26,5 @@ if [ -n "$tarball" ] ; then
   mv $tarball server
 else
   echo "Could not find the server bintar"
-  soft_exit 1
+  $SCRIPT_DIR/soft_exit.sh 1
 fi
