@@ -20,7 +20,7 @@ for b in $builds ; do
 done
 
 if [ -n "$tarball" ] ; then
-  wget -nv http://hasky.askmonty.org/archive/$SERVER_BRANCH/$b/kvm-bintar-trusty-amd64/$tarball.tar.gz
+  wget -nv http://hasky.askmonty.org/archive/$SERVER_BRANCH/$b/kvm-bintar-quantal-amd64/$tarball.tar.gz
   tar zxf $tarball.tar.gz
   rm -rf server
   mv $tarball server
