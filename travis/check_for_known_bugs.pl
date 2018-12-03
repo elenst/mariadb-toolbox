@@ -102,7 +102,6 @@ MDEV-13828: in handler::ha_index_or_rnd_end
 MDEV-14040: in Field::is_real_null
 MDEV-14041: in String::length
 MDEV-14126: page_get_page_no
-MDEV-14134: dberr_t row_upd_sec_index_entry
 MDEV-14264: binlog_cache_data::reset
 MDEV-14407: trx_undo_rec_copy
 MDEV-14409: page_rec_is_leaf
@@ -338,6 +337,7 @@ MDEV-17854: decimals <= 6
 MDEV-17857: TIME_from_longlong_datetime_packed
 MDEV-17884: is marked as crashed and should be repaired
 MDEV-17885: Could not remove temporary table
+MDEV-17890: row_upd_sec_index_entry
 
 # Fixed:
 
@@ -352,10 +352,12 @@ MDEV-11741: in handler::ha_reset
 MDEV-11741: mi_reset
 MDEV-11741: old_top == initial_top
 MDEV-14100: dict_index_get_n_unique_in_tree_nonleaf
+MDEV-14134: dberr_t row_upd_sec_index_entry
 MDEV-14695: n < m_size
 MDEV-14943: type == PAGECACHE_LSN_PAGE
 MDEV-15060: row_log_table_apply_op
 MDEV-15114: mem_heap_dup
+MDEV-15114: dberr_t row_upd_sec_index_entry
 MDEV-15243: in Field_blob::pack
 MDEV-15475: table->read_set, field_index
 MDEV-15537: in mysql_prepare_alter_table
