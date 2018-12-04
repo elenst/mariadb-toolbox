@@ -31,9 +31,10 @@ cd $SRCDIR
 export SERVER_REVISION=`git log -1 | head -1 | sed -e 's/^commit \([a-f0-9]*\)/\1/'`
 
 if [ "$SERVER_REVISION" == "$CACHED_REVISION" ] && [ "$RERUN_OLD_SERVER" != "yes" ] && [ -e $BASEDIR/test_result ] ; then
-  echo "Test result for revision $SERVER_REVISION has already been cached, re-run is not requested, tests will be skipped with the previous stored error code"
-  echo "For details of the test run, check logs of previous builds"
-  exit `cat $BASEDIR/test_result`
+  echo "Test result for revision $SERVER_REVISION has already been cached, re-run is not requested, tests will be skipped."
+  echo "For details of the test run, check logs of previous builds. Cached result:"
+  cat $BASEDIR/test_result
+  $SCRIPT_DIR/soft_exit.sh 0
 fi
 
 # In all other cases, we want to rewrite the old result, so we are removing it
