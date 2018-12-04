@@ -330,6 +330,7 @@ MDEV-17826: dfield_is_ext
 MDEV-17830: Item_null_result::field_type
 MDEV-17831: supports_instant
 MDEV-17834: row_upd_build_difference_binary
+MDEV-17837: m_status == DA_OK_BULK
 MDEV-17842: pfs_lock::allocated_to_free
 MDEV-17843: lock_rec_queue_validate
 MDEV-17844: rec_offs_validate
