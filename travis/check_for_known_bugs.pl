@@ -338,6 +338,12 @@ MDEV-17857: TIME_from_longlong_datetime_packed
 MDEV-17884: is marked as crashed and should be repaired
 MDEV-17885: Could not remove temporary table
 MDEV-17890: row_upd_sec_index_entry
+MDEV-17890: row_upd_build_difference_binary
+MDEV-17891: thd->transaction.stmt.modified_non_trans_table
+MDEV-17895: trx->dict_operation != TRX_DICT_OP_NONE
+MDEV-17896: pfs->get_refcount
+MDEV-17897: block->frame
+MDEV-17901: row_parse_int
 
 # Fixed:
 
@@ -384,3 +390,5 @@ MDEV-17215: in row_purge_upd_exist_or_extern_func
 MDEV-17219: !dt->fraction_remainder
 MDEV-17314: thd->transaction.stmt.is_empty
 MDEV-17349: table->read_set, field_index
+MDEV-17892: index->was_not_null
+MDEV-17893: nulls < null_mask
