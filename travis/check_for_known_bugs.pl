@@ -63,12 +63,14 @@ while (<DATA>) {
     my @affected = ($affectsVersions =~ /\"name\":\"(.*?)\"/g);
     
     print "$mdev: $summary\n";
-    print "RESOLUTION: $resolution". ($resolutiondate ? " ($resolutiondate)" : "") . "\n";
-    print "Affects versions: @affected\n";
+    if (!$fixed_part) {
+      print "RESOLUTION: $resolution". ($resolutiondate ? " ($resolutiondate)" : "") . "\n";
+      print "Affects versions: @affected\n";
+    }
     if ($fixed_part) {
       my $fixVersions= `cat /tmp/$mdev.fixVersions`;
       my @versions = ($fixVersions =~ /\"name\":\"(.*?)\"/g);
-      print "Fix versions: @versions\n";
+      print "Fix versions: @versions ($resolutiondate)\n";
     }
     print "-------------\n";
   }
@@ -345,6 +347,8 @@ MDEV-17895: trx->dict_operation != TRX_DICT_OP_NONE
 MDEV-17896: pfs->get_refcount
 MDEV-17897: block->frame
 MDEV-17901: row_parse_int
+MDEV-17904: fts_is_sync_needed
+MDEV-17912: Aria engine: Redo phase failed
 
 # Fixed:
 
