@@ -154,7 +154,7 @@ if [ "$res" == "0" ] ; then
       do
         if [ -e $fname ] ; then
           echo "------------------- $fname ------"
-          cat $fname | grep -v "\[Note\]" | grep -v "^$" | cut -c 1-4096
+          cat $fname | grep -v -f ${SCRIPT_DIR}/server_warnings.supp | grep -v "\[Note\]" | grep -v "^$" | cut -c 1-4096
           echo "-------------------"
           mkdir -p ${LOGDIR}/${ARCHDIR}/logs/${dname}
           cp $fname ${LOGDIR}/${ARCHDIR}/logs/${dname}/
