@@ -34,7 +34,7 @@ if [ "$SERVER_REVISION" == "$CACHED_REVISION" ] && [ "$RERUN_OLD_SERVER" != "yes
   echo "Test result for revision $SERVER_REVISION has already been cached, re-run is not requested, tests will be skipped."
   echo "For details of the test run, check logs of previous builds. Cached result:"
   cat $BASEDIR/test_result
-  $SCRIPT_DIR/soft_exit.sh 0
+  travis_terminate 0
 fi
 
 # In all other cases, we want to rewrite the old result, so we are removing it
@@ -52,11 +52,11 @@ if [ "$SERVER_REVISION" != "$CACHED_REVISION" ] || [ "$REBUILD_OLD_SERVER" == "y
   if [ "$?" != "0" ] ; then
     cat cmake.out
     echo "FATAL ERROR: cmake failed"
-    exit 1
+    travis_terminate 1
   fi
   if ! make -j6 ; then
     echo "FATAL ERROR: make failed"
-    exit 1
+    travis_terminate 1
   fi
   make install > /dev/null
   echo $SERVER_REVISION > $BASEDIR/revno
