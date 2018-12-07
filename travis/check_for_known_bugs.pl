@@ -349,6 +349,8 @@ MDEV-17897: block->frame
 MDEV-17901: row_parse_int
 MDEV-17904: fts_is_sync_needed
 MDEV-17912: Aria engine: Redo phase failed
+MDEV-17923: trx_undo_page_report_modify
+MDEV-17932: get_username
 
 # Fixed:
 
