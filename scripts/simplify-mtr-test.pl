@@ -4,6 +4,7 @@ use Cwd 'abs_path';
 use File::Basename;
 use File::Copy "copy";
 use File::Path qw(make_path remove_tree);
+use List::Util qw(min max);
 
 use strict;
 
@@ -97,7 +98,7 @@ my $not_reproducible_counter = 0;
 remove_tree("$testcase.output");
 make_path("$testcase.output");
 
-my ($test, $connections) = read_testfile("$suitedir/$test_basename.test",$modes[0]);
+my ($test, $big_connections, $small_connections) = read_testfile("$suitedir/$test_basename.test",$modes[0]);
 
 print "\nRunning initial test\n";
 
@@ -117,36 +118,34 @@ foreach my $mode (@modes)
   {
     # Connection mode is always first, no need to re-read the test file
 
-    print "\nTotal number of connections: " . scalar(@$connections) . "\n\n";
+    print "\nTotal number of big connections: " . scalar(@$big_connections) . ", small connections: " . scalar(@$small_connections) . "\n\n";
 
-    my $skip= 0;
-    my $counter= 0;
-    foreach my $c (@$connections)
-    {
-      print "Checking connection $c (" . (++$counter) . " out of " . scalar(@$connections) . ")\n";
+    check_connections_one_by_one(@$big_connections);
 
-      if ($preserve_connections{$c}) {
-        print "\nPreserving connection $c\n";
-        next;
-      }
+    if (scalar @$small_connections) {
+      print "Trying to get rid of all small connections at once: @$small_connections\n";
 
+      my %cons = map { $_ => 1 } @$small_connections;
       my @new_test = ();
+      my $skip= 0;
       foreach my $t (@last_failed_test) {
         if ( $t =~ /^\s*\-\-(?:connect\s*\(\s*|disconnect\s+|connection\s+)([^\s\,]+)/s )
         {
-          $skip = ( $1 eq $c );
+          $skip = ( exists $cons{$1} );
           #print STDERR "COnnection $1 - in hash? $connections{$1}; ignore? $ignore\n";
         }
         push @new_test, $t unless $skip;
       }
       if (run_test(\@new_test)) {
-        print "Connection $c is not needed\n\n";
+        print "Small connections are not needed\n\n";
         @last_failed_test= @new_test;
       } else {
-        print "Saving connection $c\n\n";
+        print "Some of small connections are needed, have to check them one by one\n\n";
+        check_connections_one_by_one(@$small_connections);
       }
     }
   }
+
   elsif ($mode eq 'stmt' or $mode eq 'line')
   {
     # Re-read the test in the new mode
@@ -159,13 +158,11 @@ foreach my $mode (@modes)
       exit;
     }
 
-    $max_chunk= int(scalar(@test)/10) unless $max_chunk;
-    my $chunk_size = 1;
-    while ( $chunk_size < $max_chunk )
-    {
-      $chunk_size *= 10;
-    }
-    $chunk_size= $max_chunk if ($chunk_size > $max_chunk);
+    # We are setting initial chunk size to 1/10th of the test size
+    # If a limitation on chunk size was provided as an option,
+    # it is applied on top of it
+    my $max_chunk_size= $max_chunk || int(scalar(@test)/10);
+    my $chunk_size= max(1, min($max_chunk_size,int(scalar(@test)/10)));
 
     my @needed_part = @test;
 
@@ -384,11 +381,6 @@ sub run_test
   return $result;
 }
 
-sub min
-{
-  return ( $_[0] < $_[1] ? $_[0] : $_[1] );
-}
-
 sub write_testfile
 {
   my $testref= shift;
@@ -473,7 +465,10 @@ sub read_testfile
   close( TEST );
 
 
-  my @connections= ();
+  my @big_connections= ();
+  my @small_connections= ();
+  my $small_connection_threshold= 8;
+
   # Only bother to sort connections by usage if operate in connection mode
   if ($mode eq 'conn') {
     # Make sure that values are unique, so that we can invert the hash safely
@@ -483,9 +478,43 @@ sub read_testfile
     }
     my %lengths= reverse %connections;
     foreach my $k (reverse sort {$a<=>$b} keys %lengths) {
-      push @connections, $lengths{$k};
+      $k > $small_connection_threshold ? push @big_connections, $lengths{$k} : push @small_connections, $lengths{$k};
     }
   }
 
-  return (\@test, \@connections);
+  return (\@test, \@big_connections, \@small_connections);
+}
+
+
+sub check_connections_one_by_one {
+
+  my $skip= 0;
+  my $counter= 0;
+
+  foreach my $c (@_)
+  {
+    print "Checking connection $c (" . (++$counter) . " out of " . scalar(@_) . ")\n";
+
+    if ($preserve_connections{$c}) {
+      print "\nPreserving connection $c\n";
+      next;
+    }
+
+    my @new_test = ();
+    foreach my $t (@last_failed_test) {
+      if ( $t =~ /^\s*\-\-(?:connect\s*\(\s*|disconnect\s+|connection\s+)([^\s\,]+)/s )
+      {
+        $skip = ( $1 eq $c );
+        #print STDERR "COnnection $1 - in hash? $connections{$1}; ignore? $ignore\n";
+      }
+      push @new_test, $t unless $skip;
+    }
+    if (run_test(\@new_test)) {
+      print "Connection $c is not needed\n\n";
+      @last_failed_test= @new_test;
+    } else {
+      print "Saving connection $c\n\n";
+    }
+  }
+
 }
