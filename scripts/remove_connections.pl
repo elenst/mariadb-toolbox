@@ -39,7 +39,7 @@ my $ignore;
 
 while (<>)
 {
-  if ( /^\s*\-\-(?:connect\s*\(\s*|disconnect\s+|connection\s+)([^\s\,_]+)/s )
+  if ( /^\s*\-\-(?:connect\s*\(\s*|disconnect\s+|connection\s+)([^\s\,]+)/s )
   {
     $ignore = ( $opt_remove_connections and $connections{$1} ) || ( $opt_preserve_connections and not $connections{$1} );
     #print STDERR "COnnection $1 - in hash? $connections{$1}; ignore? $ignore\n";
