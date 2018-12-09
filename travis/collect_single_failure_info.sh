@@ -140,7 +140,7 @@ if [ "$res" == "0" ] ; then
     perl $SCRIPT_DIR/check_for_known_bugs.pl ${VARDIR}*/mysql.err $TRIAL_LOG
 
     echo
-    echo '#' ${TRAVIS_BUILD_NUMBER},${TRAVIS_JOB},${TRIAL} / ${TRAVIS_BUILD_NUMBER}.${TRAVIS_JOB}.${TRIAL}
+    echo '#' ${TRAVIS_BUILD_NUMBER} ${TRAVIS_JOB} ${TRIAL}
     echo Server: $SERVER_BRANCH $SERVER_REVISION
     echo Tests: $RQG_BRANCH $RQG_REVISION
     echo
