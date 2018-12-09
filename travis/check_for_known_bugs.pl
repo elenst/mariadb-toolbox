@@ -16,7 +16,7 @@ print "\n--- OPEN bugs ------------------------\n";
 
 while (<DATA>) {
   if (/^\# Fixed/) {
-    print "--- FIXED bugs -----------------------\n";
+    print "\n--- FIXED bugs -----------------------\n";
     $fixed_part= 1;
     next;
   }
@@ -288,7 +288,6 @@ MDEV-17470: Operating system error number 17 in a file operation
 MDEV-17470: returned OS error 71. Cannot continue operation
 MDEV-17479: mysql_socket.fd != -1
 MDEV-17485: Operating system error number 80 in a file operation
-MDEV-17537: Diagnostics_area::set_ok_status
 MDEV-17538: == UNALLOCATED_PAGE
 MDEV-17539: Protocol::end_statement
 MDEV-17540: dict_table_get_first_index
@@ -317,6 +316,7 @@ MDEV-17725: m_status == DA_OK_BULK
 MDEV-17738: Item::delete_self
 MDEV-17738: st_select_lex::fix_prepare_information
 MDEV-17738: TABLE_LIST::change_refs_to_fields
+MDEV-17738: in change_group_ref
 MDEV-17741: thd->Item_change_list::is_empty
 MDEV-17755: table->s->reclength
 MDEV-17759: precision > 0
@@ -351,6 +351,11 @@ MDEV-17904: fts_is_sync_needed
 MDEV-17912: Aria engine: Redo phase failed
 MDEV-17923: trx_undo_page_report_modify
 MDEV-17932: get_username
+MDEV-17936: Field::is_null
+MDEV-17937: pfs_lock::allocated_to_free
+MDEV-17938: block->magic_n == MEM_BLOCK_MAGIC_N
+MDEV-17938: dict_mem_table_free
+MDEV-17939: ++loop_count < 2
 
 # Fixed:
 
