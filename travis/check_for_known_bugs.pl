@@ -362,6 +362,10 @@ MDEV-17962: setup_jtbm_semi_joins
 MDEV-17971: Field_iterator_table::set
 MDEV-17971: Field_iterator_table_ref::set_field_iterator
 MDEV-17972: is_valid_value_slow
+MDEV-17974: sp_process_definer
+MDEV-17975: m_status == DA_OK_BULK
+MDEV-17976: lock->magic_n == 22643
+MDEV-17977: Count >= rest_length
 
 # Fixed:
 
