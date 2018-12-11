@@ -357,6 +357,11 @@ MDEV-17937: pfs_lock::allocated_to_free
 MDEV-17938: block->magic_n == MEM_BLOCK_MAGIC_N
 MDEV-17938: dict_mem_table_free
 MDEV-17939: ++loop_count < 2
+MDEV-17959: thd->lex->select_stack_top == 0
+MDEV-17962: setup_jtbm_semi_joins
+MDEV-17971: Field_iterator_table::set
+MDEV-17971: Field_iterator_table_ref::set_field_iterator
+MDEV-17972: is_valid_value_slow
 
 # Fixed:
 
