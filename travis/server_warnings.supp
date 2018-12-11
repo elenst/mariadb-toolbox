@@ -3,3 +3,4 @@ Deadlock found when trying to get lock; try restarting transaction
 Sort aborted, host:
 Lock wait timeout exceeded; try restarting transaction
 Unsafe statement written to the binary log
+Aborted connection
