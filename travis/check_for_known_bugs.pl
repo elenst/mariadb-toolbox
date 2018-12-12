@@ -106,7 +106,6 @@ MDEV-14041: in String::length
 MDEV-14126: page_get_page_no
 MDEV-14264: binlog_cache_data::reset
 MDEV-14407: trx_undo_rec_copy
-MDEV-14409: page_rec_is_leaf
 MDEV-14410: table->pos_in_locked_tables->table == table
 MDEV-14440: inited==RND
 MDEV-14440: in ha_partition::external_lock
@@ -321,10 +320,10 @@ MDEV-17759: precision > 0
 MDEV-17760: table->read_set, field_index
 MDEV-17763: len == 20U
 MDEV-17814: is_current_stmt_binlog_format_row
-MDEV-17815: index->table->name.m_name
 MDEV-17816: trx->dict_operation_lock_mode == RW_X_LATCH
 MDEV-17818: parse_vcol_defs
 MDEV-17820: == BTR_NO_LOCKING_FLAG
+MDEV-17821: page_rec_is_supremum
 MDEV-17823: row_sel_sec_rec_is_for_clust_rec
 MDEV-17826: dfield_is_ext
 MDEV-17830: Item_null_result::field_type
@@ -380,6 +379,7 @@ MDEV-11741: mi_reset
 MDEV-11741: old_top == initial_top
 MDEV-14100: dict_index_get_n_unique_in_tree_nonleaf
 MDEV-14134: dberr_t row_upd_sec_index_entry
+MDEV-14409: page_rec_is_leaf
 MDEV-14695: n < m_size
 MDEV-14943: type == PAGECACHE_LSN_PAGE
 MDEV-15060: row_log_table_apply_op
@@ -414,5 +414,6 @@ MDEV-17215: in row_purge_upd_exist_or_extern_func
 MDEV-17219: !dt->fraction_remainder
 MDEV-17314: thd->transaction.stmt.is_empty
 MDEV-17349: table->read_set, field_index
+MDEV-17815: index->table->name.m_name
 MDEV-17892: index->was_not_null
 MDEV-17893: nulls < null_mask
