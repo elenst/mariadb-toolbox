@@ -179,9 +179,6 @@ MDEV-15653: lock_word <= 0x20000000
 MDEV-15656: is_last_prefix <= 0
 MDEV-15657: file->inited == handler::NONE
 MDEV-15658: expl_lock->trx == arg->impl_trx
-MDEV-15729: in Field::make_field
-MDEV-15729: Field::make_send_field
-MDEV-15729: send_result_set_metadata
 MDEV-15738: in my_strcasecmp_utf8
 MDEV-15744: derived->table
 MDEV-15742: m_lock_type == 1
@@ -366,6 +363,8 @@ MDEV-17974: sp_process_definer
 MDEV-17975: m_status == DA_OK_BULK
 MDEV-17976: lock->magic_n == 22643
 MDEV-17977: Count >= rest_length
+MDEV-17978: mysqld_show_create_get_fields
+MDEV-17979: Item::val_native
 
 # Fixed:
 
@@ -389,6 +388,9 @@ MDEV-15114: dberr_t row_upd_sec_index_entry
 MDEV-15243: in Field_blob::pack
 MDEV-15475: table->read_set, field_index
 MDEV-15537: in mysql_prepare_alter_table
+MDEV-15729: in Field::make_field
+MDEV-15729: Field::make_send_field
+MDEV-15729: send_result_set_metadata
 MDEV-15797: thd->killed != 0
 MDEV-15855: innobase_get_computed_value
 MDEV-15855: innobase_allocate_row_for_vcol
