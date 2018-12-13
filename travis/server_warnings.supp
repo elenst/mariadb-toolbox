@@ -4,3 +4,4 @@ Sort aborted, host:
 Lock wait timeout exceeded; try restarting transaction
 Unsafe statement written to the binary log
 Aborted connection
+Invalid roles_mapping table entry user
