@@ -154,7 +154,6 @@ MDEV-15329: in dict_table_check_for_dup_indexes
 MDEV-15330: table->insert_values
 MDEV-15336: ha_partition::print_error
 MDEV-15374: trx_undo_rec_copy
-MDEV-15380: is corrupt; try to repair it
 MDEV-15391: join->best_read < double
 MDEV-15401: Item_direct_view_ref::used_tables
 MDEV-15458: in heap_scan
@@ -319,6 +318,7 @@ MDEV-17755: table->s->reclength
 MDEV-17759: precision > 0
 MDEV-17760: table->read_set, field_index
 MDEV-17763: len == 20U
+MDEV-17717: table->pos_in_locked_tables
 MDEV-17814: is_current_stmt_binlog_format_row
 MDEV-17816: trx->dict_operation_lock_mode == RW_X_LATCH
 MDEV-17818: parse_vcol_defs
@@ -364,6 +364,7 @@ MDEV-17976: lock->magic_n == 22643
 MDEV-17977: Count >= rest_length
 MDEV-17978: mysqld_show_create_get_fields
 MDEV-17979: Item::val_native
+MDEV-17998: table->pos_in_locked_tables
 
 # Fixed:
 
@@ -392,6 +393,7 @@ MDEV-15729: in Field::make_field
 MDEV-15729: Field::make_send_field
 MDEV-15729: send_result_set_metadata
 MDEV-15797: thd->killed != 0
+MDEV-15380: is corrupt; try to repair it
 MDEV-15855: innobase_get_computed_value
 MDEV-15855: innobase_allocate_row_for_vcol
 MDEV-15872: row_log_table_get_pk_col
