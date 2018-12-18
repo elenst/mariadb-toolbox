@@ -365,6 +365,10 @@ MDEV-17977: Count >= rest_length
 MDEV-17978: mysqld_show_create_get_fields
 MDEV-17979: Item::val_native
 MDEV-17998: table->pos_in_locked_tables
+MDEV-18016: dict_table_check_for_dup_indexes
+MDEV-18017: index->to_be_dropped
+MDEV-18018: TABLE_LIST::reinit_before_use
+MDEV-18020: prebuilt->trx->check_foreigns
 
 # Fixed:
 
