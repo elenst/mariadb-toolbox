@@ -373,6 +373,13 @@ MDEV-18020: ctx->prebuilt->trx->check_foreigns
 MDEV-18020: m_prebuilt->trx->check_foreigns
 MDEV-18039: index->table->name.m_name
 MDEV-18042: mysql_alter_table
+MDEV-18046: in Rotate_log_event::Rotate_log_event
+MDEV-18046: var_header_len >= 2
+MDEV-18046: binlog_get_uncompress_len
+MDEV-18046: m_field_metadata_size <=
+MDEV-18046: in inline_mysql_mutex_destroy
+MDEV-18046: Update_rows_log_event::~Update_rows_log_event
+MDEV-18047: index->magic_n == 76789786
 
 # Fixed:
 
