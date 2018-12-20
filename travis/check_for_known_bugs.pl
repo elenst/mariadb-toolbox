@@ -90,7 +90,6 @@ MDEV-9137:  in _ma_ck_real_write_btree
 MDEV-10945: Diagnostics_area::set_ok_status
 MDEV-11015: precision > 0
 MDEV-11080: table->n_waiting_or_granted_auto_inc_locks > 0
-MDEV-11167: Can't find record
 MDEV-11539: mi_open.c:67: test_if_reopen
 MDEV-12059: precision > 0
 MDEV-12329: 1024U, trx, rec, block
@@ -116,7 +115,6 @@ MDEV-14693: clust_index->online_log
 MDEV-14697: in TABLE::mark_default_fields_for_write
 MDEV-14711: fix_block->page.file_page_was_freed
 MDEV-14762: has_stronger_or_equal_type
-MDEV-14743: Item_func_match::init_search
 MDEV-14815: in has_old_lock
 MDEV-14825: col->ord_part
 MDEV-14829: protocol.cc:588: void Protocol::end_statement
@@ -199,7 +197,6 @@ MDEV-16060: Failing assertion: ut_strcmp
 MDEV-16131: id == DICT_INDEXES_ID
 MDEV-16153: Apc_target::disable
 MDEV-16154: in myrocks::ha_rocksdb::load_auto_incr_value_from_index
-MDEV-16166: Can't find record in
 MDEV-16169: space->referenced
 MDEV-16170: Item_null_result::type_handler
 MDEV-16171: in setup_table_map
@@ -355,6 +352,7 @@ MDEV-17938: dict_mem_table_free
 MDEV-17939: ++loop_count < 2
 MDEV-17959: thd->lex->select_stack_top == 0
 MDEV-17962: setup_jtbm_semi_joins
+MDEV-17964: status == 0
 MDEV-17971: Field_iterator_table::set
 MDEV-17971: Field_iterator_table_ref::set_field_iterator
 MDEV-17972: is_valid_value_slow
@@ -365,10 +363,16 @@ MDEV-17977: Count >= rest_length
 MDEV-17978: mysqld_show_create_get_fields
 MDEV-17979: Item::val_native
 MDEV-17998: table->pos_in_locked_tables
+MDEV-17999: Invalid roles_mapping table entry user
+MDEV-18003: grantee->counter > 0
 MDEV-18016: dict_table_check_for_dup_indexes
 MDEV-18017: index->to_be_dropped
 MDEV-18018: TABLE_LIST::reinit_before_use
 MDEV-18020: prebuilt->trx->check_foreigns
+MDEV-18020: ctx->prebuilt->trx->check_foreigns
+MDEV-18020: m_prebuilt->trx->check_foreigns
+MDEV-18039: index->table->name.m_name
+MDEV-18042: mysql_alter_table
 
 # Fixed:
 
@@ -377,6 +381,7 @@ MDEV-10130: share->in_trans == 0
 MDEV-10130: file->trn == trn
 MDEV-11071: thd->transaction.stmt.is_empty
 MDEV-11071: in THD::mark_tmp_table_as_free_for_reuse
+MDEV-11167: Can't find record
 MDEV-11741: table->s->all_set
 MDEV-11741: in ha_heap::rnd_next
 MDEV-11741: in handler::ha_reset
@@ -386,6 +391,7 @@ MDEV-14100: dict_index_get_n_unique_in_tree_nonleaf
 MDEV-14134: dberr_t row_upd_sec_index_entry
 MDEV-14409: page_rec_is_leaf
 MDEV-14695: n < m_size
+MDEV-14743: Item_func_match::init_search
 MDEV-14943: type == PAGECACHE_LSN_PAGE
 MDEV-15060: row_log_table_apply_op
 MDEV-15114: mem_heap_dup
@@ -404,6 +410,7 @@ MDEV-15872: row_log_table_get_pk_col
 MDEV-15872: in mem_heap_dup
 MDEV-16043: st_select_lex::fix_prepare_information
 MDEV-16043: thd->Item_change_list::is_empty
+MDEV-16166: Can't find record in
 MDEV-16217: table->read_set, field_index
 MDEV-16241: inited==RND
 MDEV-16429: table->read_set, field_index
