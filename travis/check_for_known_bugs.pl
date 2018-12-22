@@ -179,6 +179,8 @@ MDEV-15738: in my_strcasecmp_utf8
 MDEV-15744: derived->table
 MDEV-15742: m_lock_type == 1
 MDEV-15753: thd->is_error
+MDEV-15776: commit_try_rebuild
+MDEV-15776: user_table->get_ref_count
 MDEV-15800: next_insert_id >= auto_inc_interval_for_cur_row.minimum
 MDEV-15802: Item::delete_self
 MDEV-15812: virtual handler::~handler
@@ -274,7 +276,6 @@ MDEV-17354: in add_key_field
 MDEV-17356: table->read_set, field_index
 MDEV-17361: in Query_arena::set_query_arena
 MDEV-17361: THD::set_n_backup_active_arena
-MDEV-17432: lock_trx_has_sys_table_locks
 MDEV-17464: Operating system error number 2
 MDEV-17466: dfield2->type.mtypex
 MDEV-17470: Operating system error number 17 in a file operation
@@ -284,7 +285,6 @@ MDEV-17485: Operating system error number 80 in a file operation
 MDEV-17538: == UNALLOCATED_PAGE
 MDEV-17539: Protocol::end_statement
 MDEV-17540: dict_table_get_first_index
-MDEV-17552: commit_try_rebuild
 MDEV-17556: bitmap_is_set_all
 MDEV-17556: table->s->all_set
 MDEV-17576: share->reopen == 1
@@ -380,6 +380,11 @@ MDEV-18046: m_field_metadata_size <=
 MDEV-18046: in inline_mysql_mutex_destroy
 MDEV-18046: Update_rows_log_event::~Update_rows_log_event
 MDEV-18047: index->magic_n == 76789786
+MDEV-18054: ret > 0
+MDEV-18054: mach_read_from_1
+MDEV-18057: node->state == 5
+MDEV-18058: trx0i_s.cc line
+MDEV-18062: ha_innobase::innobase_get_index
 
 # Fixed:
 
@@ -434,6 +439,7 @@ MDEV-17215: in row_purge_upd_exist_or_extern_func
 MDEV-17219: !dt->fraction_remainder
 MDEV-17314: thd->transaction.stmt.is_empty
 MDEV-17349: table->read_set, field_index
+MDEV-17432: lock_trx_has_sys_table_locks
 MDEV-17815: index->table->name.m_name
 MDEV-17892: index->was_not_null
 MDEV-17893: nulls < null_mask
