@@ -228,7 +228,6 @@ MDEV-16788: ls->length == strlen
 MDEV-16789: in insert_fields
 MDEV-16792: in Diagnostics_area::sql_errno
 MDEV-16794: thd->transaction.stmt.is_empty
-MDEV-16903: auto_increment_field_not_null
 MDEV-16929: thd->transaction.stmt.is_empty
 MDEV-16932: Well_formed_prefix_status::Well_formed_prefix_status
 MDEV-16940: unsafe_key_update
@@ -298,6 +297,8 @@ MDEV-17597: pure virtual method called
 MDEV-17619: Index file is crashed
 MDEV-17619: Table is crashed and last repair failed
 MDEV-17619: Incorrect key file for table
+MDEV-17619: Got an error from thread_id=
+MDEV-17619: Couldn't repair table
 MDEV-17622: type == PAGECACHE_LSN_PAGE
 MDEV-17627: handler::ha_rnd_end
 MDEV-17636: pagecache->block_root
@@ -311,7 +312,6 @@ MDEV-17738: st_select_lex::fix_prepare_information
 MDEV-17738: TABLE_LIST::change_refs_to_fields
 MDEV-17738: in change_group_ref
 MDEV-17741: thd->Item_change_list::is_empty
-MDEV-17755: table->s->reclength
 MDEV-17759: precision > 0
 MDEV-17760: table->read_set, field_index
 MDEV-17763: len == 20U
@@ -371,6 +371,7 @@ MDEV-18018: TABLE_LIST::reinit_before_use
 MDEV-18020: prebuilt->trx->check_foreigns
 MDEV-18020: ctx->prebuilt->trx->check_foreigns
 MDEV-18020: m_prebuilt->trx->check_foreigns
+MDEV-18033: n < update->n_fields
 MDEV-18039: index->table->name.m_name
 MDEV-18042: mysql_alter_table
 MDEV-18046: in Rotate_log_event::Rotate_log_event
@@ -385,6 +386,7 @@ MDEV-18054: mach_read_from_1
 MDEV-18057: node->state == 5
 MDEV-18058: trx0i_s.cc line
 MDEV-18062: ha_innobase::innobase_get_index
+MDEV-18063: is corrupt; try to repair it
 
 # Fixed:
 
@@ -432,6 +434,7 @@ MDEV-16682: in _ma_read_block_record
 MDEV-16779: rw_lock_own
 MDEV-16783: in mysql_delete
 MDEV-16783: !conds
+MDEV-16903: auto_increment_field_not_null
 MDEV-16961: table->read_set, field_index
 MDEV-17167: table->get_ref_count
 MDEV-17215: in row_purge_remove_clust_if_poss_low
@@ -440,6 +443,7 @@ MDEV-17219: !dt->fraction_remainder
 MDEV-17314: thd->transaction.stmt.is_empty
 MDEV-17349: table->read_set, field_index
 MDEV-17432: lock_trx_has_sys_table_locks
+MDEV-17755: table->s->reclength
 MDEV-17815: index->table->name.m_name
 MDEV-17892: index->was_not_null
 MDEV-17893: nulls < null_mask
