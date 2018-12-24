@@ -393,6 +393,9 @@ MDEV-18067: backup_end
 MDEV-18068: this == ticket->get_ctx
 MDEV-18069: MDL_lock::incompatible_granted_types_bitmap
 MDEV-18070: nanoseconds <= 1000000000
+MDEV-18072: == item->null_value || conv
+MDEV-18076: in row_parse_int
+MDEV-18077: n < tuple->n_fields
 
 # Fixed:
 
