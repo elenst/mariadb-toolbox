@@ -387,6 +387,12 @@ MDEV-18057: node->state == 5
 MDEV-18058: trx0i_s.cc line
 MDEV-18062: ha_innobase::innobase_get_index
 MDEV-18063: is corrupt; try to repair it
+MDEV-18065: Fatal error: Can't open and lock privilege tables
+MDEV-18067: ticket->m_duration == MDL_EXPLICIT
+MDEV-18067: backup_end
+MDEV-18068: this == ticket->get_ctx
+MDEV-18069: MDL_lock::incompatible_granted_types_bitmap
+MDEV-18070: nanoseconds <= 1000000000
 
 # Fixed:
 
