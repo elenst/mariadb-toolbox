@@ -10,6 +10,7 @@ my $opt_threads= '';
 my $opt_timestamps= 0;
 my $opt_convert_to_ei= 0;
 my $opt_convert_to_ps= 0;
+my $opt_skip_log_rotate= 1;
 my $enable_result_log= 0;
 
 GetOptions (
@@ -21,7 +22,8 @@ GetOptions (
   "connections=s"    => \$opt_threads,
   "convert-to-execute-immediate|convert_to_execute_immediate" => \$opt_convert_to_ei,
   "convert-to-ps|convert_to_ps" => \$opt_convert_to_ps,
-  "enable_result_log|enable-result-log" => \$enable_result_log
+  "enable_result_log|enable-result-log" => \$enable_result_log,
+  "skip_log_rotate|skip-log-rotate" => \$opt_skip_log_rotate,
   );
 
 my %interesting_connections= map { $_ => 1 } split /,/, $opt_threads;
@@ -245,7 +247,7 @@ while(<>)
       exit 1;
     }
   } # end if <new record>
-  elsif ( /started with:\s*$/ ) {
+  elsif ( /started with:\s*$/ and not $opt_skip_log_rotate ) {
     print_current_record($cur_log_con);
     if ($normal_shutdown or not $no_shutdown) {
       print "\n".'--let $shutdown_timeout= '.($normal_shutdown ? 10 : 0)."\n";
