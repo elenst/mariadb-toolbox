@@ -1,0 +1,3 @@
+$rules = {
+  'flush_export' => sub { $_ =~ m{.*FLUSH\s+TABLE.*FOR\s+EXPORT.*}is }
+}
