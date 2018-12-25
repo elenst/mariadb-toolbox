@@ -259,7 +259,6 @@ MDEV-17054: InnoDB needs charset 0 for doing a comparison
 MDEV-17055: find_order_in_list
 MDEV-17107: table_list->table
 MDEV-17120: base_list::push_back
-MDEV-17199: pos < table->n_v_def
 MDEV-17216: !dt->fraction_remainder
 MDEV-17217: in make_sortkey
 MDEV-17223: thd->killed != 0
@@ -396,6 +395,7 @@ MDEV-18070: nanoseconds <= 1000000000
 MDEV-18072: == item->null_value || conv
 MDEV-18076: in row_parse_int
 MDEV-18077: n < tuple->n_fields
+MDEV-18078: trnman_has_locked_tables
 
 # Fixed:
 
@@ -446,6 +446,7 @@ MDEV-16783: !conds
 MDEV-16903: auto_increment_field_not_null
 MDEV-16961: table->read_set, field_index
 MDEV-17167: table->get_ref_count
+MDEV-17199: pos < table->n_v_def
 MDEV-17215: in row_purge_remove_clust_if_poss_low
 MDEV-17215: in row_purge_upd_exist_or_extern_func
 MDEV-17219: !dt->fraction_remainder
