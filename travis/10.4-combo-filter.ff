@@ -1,4 +1,4 @@
 $rules = {
   'flush_export' => sub { $_ =~ m{.*FLUSH\s+TABLE.*FOR\s+EXPORT.*}is },
-  'ftwrl' => { $_ =~ m{.*FLUSH\s+TABLE.*WITH\s+READ\s+LOCK.*}is }
+  'ftwrl' => sub { $_ =~ m{.*FLUSH\s+TABLE.*WITH\s+READ\s+LOCK.*}is }
 }
