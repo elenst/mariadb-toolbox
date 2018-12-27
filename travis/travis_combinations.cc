@@ -74,7 +74,7 @@ if (defined $ENV{TYPE}) {
         $scenario= 'UndoLogUpgrade';
       }
 
-# TODO: Add vcols back after MDEV-18084, MDEV-18085, MDEV-18086, MDEV-18087, MDEV-18089 are fixed
+# TODO: Add vcols back after MDEV-18084, MDEV-18085, MDEV-18086, MDEV-18087, MDEV-18090 are fixed
 #        . ' --vcols'
 
       push @type_options,
