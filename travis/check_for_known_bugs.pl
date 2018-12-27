@@ -169,6 +169,7 @@ MDEV-15490: in trx_update_mod_tables_timestamp
 MDEV-15493: lock_trx_table_locks_remove
 MDEV-15533: log->blobs
 MDEV-15551: share->last_version
+MDEV-15572: ha_maria::end_bulk_insert
 MDEV-15576: item->null_value
 MDEV-15626: old_part_id == m_last_part
 MDEV-15653: lock_word <= 0x20000000
@@ -391,11 +392,21 @@ MDEV-18067: ticket->m_duration == MDL_EXPLICIT
 MDEV-18067: backup_end
 MDEV-18068: this == ticket->get_ctx
 MDEV-18069: MDL_lock::incompatible_granted_types_bitmap
+MDEV-18069: MDL_ticket::has_stronger_or_equal_type
 MDEV-18070: nanoseconds <= 1000000000
-MDEV-18072: == item->null_value || conv
 MDEV-18076: in row_parse_int
 MDEV-18077: n < tuple->n_fields
 MDEV-18078: trnman_has_locked_tables
+MDEV-18082: Diagnostics_area::disable_status
+MDEV-18083: Field::set_warning_truncated_wrong_value
+MDEV-18084: pos < index->n_def
+MDEV-18084: row_upd_changes_some_index_ord_field_binary
+MDEV-18084: pos < table->n_v_def
+MDEV-18085: len >= col->mbminlen
+MDEV-18086: rec_get_converted_size_comp_prefix_low
+MDEV-18087: mach_read_from_n_little_endian
+MDEV-18088: share->in_trans == 0
+MDEV-18090: table->s->fields + 3
 
 # Fixed:
 
@@ -457,3 +468,4 @@ MDEV-17755: table->s->reclength
 MDEV-17815: index->table->name.m_name
 MDEV-17892: index->was_not_null
 MDEV-17893: nulls < null_mask
+MDEV-18072: == item->null_value
