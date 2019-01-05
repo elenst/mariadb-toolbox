@@ -5,3 +5,4 @@ Lock wait timeout exceeded; try restarting transaction
 Unsafe statement written to the binary log
 Aborted connection
 Invalid roles_mapping table entry user
+Can't open and lock privilege tables: Table 'user' was not locked with LOCK TABLES
