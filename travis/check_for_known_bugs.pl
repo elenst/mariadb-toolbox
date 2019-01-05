@@ -337,7 +337,6 @@ MDEV-17891: thd->transaction.stmt.modified_non_trans_table
 MDEV-17895: trx->dict_operation != TRX_DICT_OP_NONE
 MDEV-17896: pfs->get_refcount
 MDEV-17897: block->frame
-MDEV-17901: row_parse_int
 MDEV-17904: fts_is_sync_needed
 MDEV-17912: Aria engine: Redo phase failed
 MDEV-17923: trx_undo_page_report_modify
@@ -390,7 +389,6 @@ MDEV-18068: this == ticket->get_ctx
 MDEV-18069: MDL_lock::incompatible_granted_types_bitmap
 MDEV-18069: MDL_ticket::has_stronger_or_equal_type
 MDEV-18070: nanoseconds <= 1000000000
-MDEV-18076: in row_parse_int
 MDEV-18077: n < tuple->n_fields
 MDEV-18078: trnman_has_locked_tables
 MDEV-18082: Diagnostics_area::disable_status
@@ -475,5 +473,7 @@ MDEV-17755: table->s->reclength
 MDEV-17815: index->table->name.m_name
 MDEV-17892: index->was_not_null
 MDEV-17893: nulls < null_mask
+MDEV-17901: row_parse_int
 MDEV-17975: m_status == DA_OK_BULK
 MDEV-18072: == item->null_value
+MDEV-18076: in row_parse_int
