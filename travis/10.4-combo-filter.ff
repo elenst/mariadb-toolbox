@@ -1,5 +1,5 @@
 $rules = {
-  'mdev18067_1' => sub { $_ =~ m{.*FLUSH\s+TABLE.*FOR\s+EXPORT.*}is },
-  'mdev18067_2' => sub { $_ =~ m{.*FLUSH\s+TABLE.*WITH\s+READ\s+LOCK.*}is },
-  'mdev17610_1' => sub { $_ =~ m{.*CREATE.*PROCEDURE.*SHOW.*STATISTICS.*}is }
+  'mdev18067_1' => sub { $_ =~ m{FLUSH\s+TABLE.*FOR\s+EXPORT}s },
+  'mdev18067_2' => sub { $_ =~ m{FLUSH\s+TABLE.*WITH\s+READ\s+LOCK}s },
+  'mdev17610_1' => sub { $_ =~ m{CREATE.*PROCEDURE.*SHOW.*_STATISTICS}s }
 }
