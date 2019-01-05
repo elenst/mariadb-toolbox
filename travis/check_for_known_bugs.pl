@@ -395,6 +395,9 @@ MDEV-18077: n < tuple->n_fields
 MDEV-18078: trnman_has_locked_tables
 MDEV-18082: Diagnostics_area::disable_status
 MDEV-18083: Field::set_warning_truncated_wrong_value
+MDEV-18083: in intern_close_table
+MDEV-18083: tc_purge
+MDEV-18083: tc_remove_all_unused_tables
 MDEV-18084: pos < index->n_def
 MDEV-18084: row_upd_changes_some_index_ord_field_binary
 MDEV-18084: pos < table->n_v_def
