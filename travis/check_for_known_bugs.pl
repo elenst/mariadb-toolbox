@@ -249,8 +249,6 @@ MDEV-17015: m_year <= 9999
 MDEV-17016: auto_increment_safe_stmt_log_lock
 MDEV-17019: multi_delete::~multi_delete
 MDEV-17020: length > 0
-MDEV-17021: length <= column->length
-MDEV-17021: in write_block_record
 MDEV-17027: table_list->table
 MDEV-17027: Field_iterator_table_ref::set_field_iterator
 MDEV-17027: in add_key_field
@@ -356,7 +354,6 @@ MDEV-17971: Field_iterator_table::set
 MDEV-17971: Field_iterator_table_ref::set_field_iterator
 MDEV-17972: is_valid_value_slow
 MDEV-17974: sp_process_definer
-MDEV-17975: m_status == DA_OK_BULK
 MDEV-17976: lock->magic_n == 22643
 MDEV-17977: Count >= rest_length
 MDEV-17978: mysqld_show_create_get_fields
@@ -409,6 +406,7 @@ MDEV-18090: table->s->fields + 3
 MDEV-18121: type.vers_sys_end
 MDEV-18122: == m_prebuilt->table->versioned
 MDEV-18139: Table rename would cause two FOREIGN KEY constraints
+MDEV-18141: Can't find record in
 
 # Fixed:
 
@@ -458,6 +456,8 @@ MDEV-16783: in mysql_delete
 MDEV-16783: !conds
 MDEV-16903: auto_increment_field_not_null
 MDEV-16961: table->read_set, field_index
+MDEV-17021: length <= column->length
+MDEV-17021: in write_block_record
 MDEV-17167: table->get_ref_count
 MDEV-17199: pos < table->n_v_def
 MDEV-17215: in row_purge_remove_clust_if_poss_low
@@ -472,4 +472,5 @@ MDEV-17755: table->s->reclength
 MDEV-17815: index->table->name.m_name
 MDEV-17892: index->was_not_null
 MDEV-17893: nulls < null_mask
+MDEV-17975: m_status == DA_OK_BULK
 MDEV-18072: == item->null_value
