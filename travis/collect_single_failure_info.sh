@@ -116,18 +116,18 @@ if [ "$res" == "0" ] ; then
   rm -rf ${LOGDIR}/${ARCHDIR} 
 
   echo ""
-  echo "----------------------------- RESULTS -----------------------------"
+  echo "--------------------------------------"
 
   if [ -e $TRIAL_LOG ] ; then
     TRIAL_STATUS=`grep 'will exit with exit status' $TRIAL_LOG | sed -e 's/.*will exit with exit status STATUS_\([A-Z_]*\).*/\1/'`
     TRIAL_CMD=`grep -A 1 'Final command line:' $TRIAL_LOG`
     mkdir -p ${LOGDIR}/${ARCHDIR}/logs
     cp $TRIAL_LOG ${LOGDIR}/${ARCHDIR}/logs/
+    echo "TEST RESULT: $TRIAL_STATUS"
   else
     echo "$TRIAL_LOG does not exist"
   fi
-
-  echo "Status: $TRIAL_STATUS"
+  echo ""
   
   # Success processing
   if [[ "$TRIAL_STATUS" == "OK" ]] ; then
