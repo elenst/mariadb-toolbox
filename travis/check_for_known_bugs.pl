@@ -408,6 +408,7 @@ MDEV-18121: type.vers_sys_end
 MDEV-18122: == m_prebuilt->table->versioned
 MDEV-18139: Table rename would cause two FOREIGN KEY constraints
 MDEV-18141: Can't find record in
+MDEV-18145: Item_singlerow_subselect::val_native
 
 # Fixed:
 
