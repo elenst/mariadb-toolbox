@@ -118,7 +118,6 @@ MDEV-14711: fix_block->page.file_page_was_freed
 MDEV-14762: has_stronger_or_equal_type
 MDEV-14815: in has_old_lock
 MDEV-14825: col->ord_part
-MDEV-14829: protocol.cc:588: void Protocol::end_statement
 MDEV-14833: trx->error_state == DB_SUCCESS
 MDEV-14836: m_status == DA_ERROR
 MDEV-14846: prebuilt->trx, TRX_STATE_ACTIVE
@@ -187,7 +186,6 @@ MDEV-15800: next_insert_id >= auto_inc_interval_for_cur_row.minimum
 MDEV-15802: Item::delete_self
 MDEV-15812: virtual handler::~handler
 MDEV-15816: m_lock_rows == RDB_LOCK_WRITE
-MDEV-15828: num_fts_index <= 1
 MDEV-15873: precision > 0
 MDEV-15878: table->file->stats.records > 0
 MDEV-15907: in fill_effective_table_privileges
@@ -409,6 +407,14 @@ MDEV-18122: == m_prebuilt->table->versioned
 MDEV-18139: Table rename would cause two FOREIGN KEY constraints
 MDEV-18141: Can't find record in
 MDEV-18145: Item_singlerow_subselect::val_native
+MDEV-18146: btr_page_reorganize_low
+MDEV-18146: merge_page, index
+MDEV-18146: field_ref + 12U
+MDEV-18147: templ->mysql_col_len >= len
+MDEV-18148: ha_maria::end_bulk_insert
+MDEV-18149: in row_parse_int
+MDEV-18150: decimals_to_set <= 38
+MDEV-18151: Protocol::end_statement
 
 # Fixed:
 
@@ -428,6 +434,7 @@ MDEV-14134: dberr_t row_upd_sec_index_entry
 MDEV-14409: page_rec_is_leaf
 MDEV-14695: n < m_size
 MDEV-14743: Item_func_match::init_search
+MDEV-14829: protocol.cc:588: void Protocol::end_statement
 MDEV-14943: type == PAGECACHE_LSN_PAGE
 MDEV-15060: row_log_table_apply_op
 MDEV-15114: mem_heap_dup
@@ -440,6 +447,7 @@ MDEV-15729: Field::make_send_field
 MDEV-15729: send_result_set_metadata
 MDEV-15797: thd->killed != 0
 MDEV-15380: is corrupt; try to repair it
+MDEV-15828: num_fts_index <= 1
 MDEV-15855: innobase_get_computed_value
 MDEV-15855: innobase_allocate_row_for_vcol
 MDEV-15872: row_log_table_get_pk_col
