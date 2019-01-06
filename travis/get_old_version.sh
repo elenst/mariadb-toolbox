@@ -15,6 +15,10 @@
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA */
 
+function soft_exit {
+  return $1
+}
+
 set -x
 
 OLD=$1
@@ -33,12 +37,16 @@ if [ -n "$OLD" ] ; then
       fi
       echo "MySQL version $ver"
       fname=mysql-${ver}-linux-glibc2.12-x86_64
-      wget -nv https://dev.mysql.com/get/Downloads/MySQL-${major_ver}/${fname}.tar.gz
+      if ! wget -nv https://dev.mysql.com/get/Downloads/MySQL-${major_ver}/${fname}.tar.gz ; then
+        soft_exit 1
+      fi
     ;;
     10.*|5.*)
       wget https://downloads.mariadb.com/MariaDB/mariadb-${OLD}/bintar-linux-glibc_214-x86_64/
       fname=`grep "\"mariadb-.*tar.gz\"" index.html | sed -e 's/.*\(mariadb-.*\)\.tar\.gz.*/\1/'`
-      wget -nv https://downloads.mariadb.com/MariaDB/mariadb-${OLD}/bintar-linux-glibc_214-x86_64/${fname}.tar.gz
+      if ! wget -nv https://downloads.mariadb.com/MariaDB/mariadb-${OLD}/bintar-linux-glibc_214-x86_64/${fname}.tar.gz ; then
+        soft_exit 1
+      fi
     ;;
     *)
     ;;
