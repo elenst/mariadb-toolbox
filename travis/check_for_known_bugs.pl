@@ -415,12 +415,16 @@ MDEV-18148: ha_maria::end_bulk_insert
 MDEV-18149: in row_parse_int
 MDEV-18150: decimals_to_set <= 38
 MDEV-18151: Protocol::end_statement
+MDEV-18152: num_fts_index <= 1
+MDEV-18153: is corrupt; try to repair it
+MDEV-18153: was not found on update: TUPLE
+MDEV-18153: row_upd_sec_index_entry
 
 # Fixed:
 
 MDEV-4312: make_lock_and_pin
-MDEV-10130: share->in_trans == 0
-MDEV-10130: file->trn == trn
+# MDEV-10130: share->in_trans == 0
+# MDEV-10130: file->trn == trn
 MDEV-11071: thd->transaction.stmt.is_empty
 MDEV-11071: in THD::mark_tmp_table_as_free_for_reuse
 MDEV-11167: Can't find record
@@ -434,7 +438,7 @@ MDEV-14134: dberr_t row_upd_sec_index_entry
 MDEV-14409: page_rec_is_leaf
 MDEV-14695: n < m_size
 MDEV-14743: Item_func_match::init_search
-MDEV-14829: protocol.cc:588: void Protocol::end_statement
+# MDEV-14829: protocol.cc:588: void Protocol::end_statement
 MDEV-14943: type == PAGECACHE_LSN_PAGE
 MDEV-15060: row_log_table_apply_op
 MDEV-15114: mem_heap_dup
@@ -462,8 +466,8 @@ MDEV-16512: in find_field_in_tables
 MDEV-16682: == HEAD_PAGE
 MDEV-16682: in _ma_read_block_record
 MDEV-16779: rw_lock_own
-MDEV-16783: in mysql_delete
-MDEV-16783: !conds
+# MDEV-16783: in mysql_delete
+# MDEV-16783: !conds
 MDEV-16903: auto_increment_field_not_null
 MDEV-16961: table->read_set, field_index
 MDEV-17021: length <= column->length
