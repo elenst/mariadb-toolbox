@@ -163,6 +163,7 @@ MDEV-17319: ts_type != MYSQL_TIMESTAMP_TIME
 MDEV-17223: thd->killed != 0
 MDEV-17199: pos < table->n_v_def
 MDEV-17015: m_year <= 9999
+MDEV-16994: Alloced_length >=
 MDEV-16958: field_length < 5
 MDEV-16903: auto_increment_field_not_null
 MDEV-16659: anc_page->org_size == anc_page->size
