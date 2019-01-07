@@ -93,10 +93,11 @@ while (<DATA>) {
 }
 
 # If it's non-empty at this point, it's weak matches
-
-print "\n--- WEAK matches -----------------------\n";
-print $matches_info if $matches_info;
-print "--------------------------------------\n";
+if ($matches_info) {
+  print "\n--- WEAK matches -----------------------\n";
+  print $matches_info;
+  print "--------------------------------------\n";
+}
 
 if (keys %fixed_mdevs) {
   print "--- \nATTENTION! FOUND FIXED MDEVs: ---\n";
@@ -110,6 +111,7 @@ __DATA__
 
 # Strong matches
 
+MDEV-18160: index->n_fields >= n_core
 MDEV-18157: Explain_node::print_explain_for_children
 MDEV-18152: num_fts_index <= 1
 MDEV-18150: decimals_to_set <= 38
@@ -141,6 +143,7 @@ MDEV-18017: index->to_be_dropped
 MDEV-18003: grantee->counter > 0
 MDEV-17977: Count >= rest_length
 MDEV-17976: lock->magic_n == 22643
+MDEV-17969: THD::push_warning_truncated_value_for_field
 MDEV-17959: thd->lex->select_stack_top == 0
 MDEV-17939: ++loop_count < 2
 MDEV-17938: block->magic_n == MEM_BLOCK_MAGIC_N
@@ -149,6 +152,8 @@ MDEV-17895: trx->dict_operation != TRX_DICT_OP_NONE
 MDEV-17893: nulls < null_mask
 MDEV-17892: index->was_not_null
 MDEV-17854: decimals <= 6
+MDEV-17843: page_rec_is_leaf
+MDEV-17821: page_rec_is_supremum
 MDEV-17816: trx->dict_operation_lock_mode == RW_X_LATCH
 MDEV-17815: index->table->name.m_name
 MDEV-17763: len == 20U
@@ -162,10 +167,14 @@ MDEV-17333: next_insert_id >= auto_inc_interval_for_cur_row.minimum
 MDEV-17319: ts_type != MYSQL_TIMESTAMP_TIME
 MDEV-17223: thd->killed != 0
 MDEV-17199: pos < table->n_v_def
+MDEV-17091: part_id == m_last_part
+MDEV-17091: old_part_id == m_last_part
 MDEV-17015: m_year <= 9999
 MDEV-16994: Alloced_length >=
 MDEV-16958: field_length < 5
+MDEV-16940: unsafe_key_update
 MDEV-16903: auto_increment_field_not_null
+MDEV-16788: ls->length < 0xFFFFFFFFL
 MDEV-16659: anc_page->org_size == anc_page->size
 MDEV-16523: level_and_file.second->being_compacted
 MDEV-16500: user_table->n_def > table->s->fields
@@ -175,7 +184,6 @@ MDEV-15878: table->file->stats.records > 0
 MDEV-15800: next_insert_id >= auto_inc_interval_for_cur_row.minimum
 MDEV-15656: is_last_prefix <= 0
 MDEV-15653: lock_word <= 0x20000000
-MDEV-15626: old_part_id == m_last_part
 MDEV-15481: I_P_List_null_counter, I_P_List_fast_push_back
 MDEV-15308: ha_alter_info->alter_info->drop_list.elements > 0
 MDEV-15164: ikey_.type == kTypeValue
@@ -193,6 +201,8 @@ MDEV-11080: table->n_waiting_or_granted_auto_inc_locks > 0
 MDEV-654:   share->now_transactional
 
 # Weak matches
+
+MDEV-18162: dict_index_t::reconstruct_fields
 
 MDEV-5628:  Diagnostics_area::set_ok_status
 MDEV-5791:  in Field::is_real_null
@@ -311,13 +321,11 @@ MDEV-16549: Item_direct_view_ref::fix_fields
 MDEV-16699: my_strnncollsp_binary
 MDEV-16738: == Item_func::MULT_EQUAL_FUNC
 MDEV-16745: thd->transaction.stmt.is_empty
-MDEV-16788: ls->length == strlen
 MDEV-16789: in insert_fields
 MDEV-16792: in Diagnostics_area::sql_errno
 MDEV-16794: thd->transaction.stmt.is_empty
 MDEV-16929: thd->transaction.stmt.is_empty
 MDEV-16932: Well_formed_prefix_status::Well_formed_prefix_status
-MDEV-16940: unsafe_key_update
 MDEV-16957: Field_iterator_natural_join::next
 MDEV-16962: ot_ctx.can_recover_from_failed_open
 MDEV-16971: adjust_time_range_or_invalidate
@@ -393,7 +401,6 @@ MDEV-17717: table->pos_in_locked_tables
 MDEV-17814: is_current_stmt_binlog_format_row
 MDEV-17818: parse_vcol_defs
 MDEV-17820: == BTR_NO_LOCKING_FLAG
-MDEV-17821: page_rec_is_supremum
 MDEV-17823: row_sel_sec_rec_is_for_clust_rec
 MDEV-17826: dfield_is_ext
 MDEV-17830: Item_null_result::field_type
@@ -492,6 +499,7 @@ MDEV-18158: Can't find record in
 # MDEV-15243: in Field_blob::pack
 # MDEV-15475: table->read_set, field_index
 # MDEV-15537: in mysql_prepare_alter_table
+# MDEV-15626: old_part_id == m_last_part
 # MDEV-15729: in Field::make_field
 # MDEV-15729: Field::make_send_field
 # MDEV-15729: send_result_set_metadata
