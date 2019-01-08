@@ -27,9 +27,10 @@ if [ -n "$RQG_BRANCH" ] ; then RQG_BRANCH_OPTION="--branch $RQG_BRANCH" ; fi
 git clone https://github.com/MariaDB/randgen --depth=1 $RQG_BRANCH_OPTION $RQG_HOME
 cd $RQG_HOME
 export RQG_REVISION=`git log -1 --pretty="%H"`
-echo $RQG_REVISION
+echo "RQG revision: $RQG_REVISION"
 cd $TOOLBOX_DIR
-git log -1
+export TOOLBOX_REVISION=`git log -1 --pretty="%H"`
+echo "Toolbox revision: $TOOLBOX_REVISION"
 
 set +x
 

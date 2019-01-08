@@ -143,6 +143,7 @@ if [ "$res" == "0" ] ; then
     echo '#' ${TRAVIS_BUILD_NUMBER} ${TRAVIS_JOB} ${TRIAL}
     echo Server: $SERVER_BRANCH $SERVER_REVISION
     echo Tests: $RQG_BRANCH $RQG_REVISION
+    echo Toolbox: $TOOLBOX_BRANCH $TOOLBOX_REVISION
     echo
     echo $TRIAL_CMD
     echo
