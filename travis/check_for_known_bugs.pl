@@ -111,6 +111,7 @@ __DATA__
 
 # Strong matches
 
+MDEV-18166: table->s->reclength
 MDEV-18160: index->n_fields >= n_core
 MDEV-18157: Explain_node::print_explain_for_children
 MDEV-18152: num_fts_index <= 1
@@ -161,7 +162,6 @@ MDEV-17816: trx->dict_operation_lock_mode == RW_X_LATCH
 MDEV-17815: index->table->name.m_name
 MDEV-17763: len == 20U
 MDEV-17759: precision > 0
-MDEV-17755: table->s->reclength
 MDEV-17697: col.vers_sys_end
 MDEV-17596: block->page.flush_observer == __null
 MDEV-17576: share->reopen == 1
@@ -540,6 +540,7 @@ MDEV-18158: Can't find record in
 # MDEV-17314: thd->transaction.stmt.is_empty
 # MDEV-17349: table->read_set, field_index
 # MDEV-17432: lock_trx_has_sys_table_locks
+# MDEV-17755: table->s->reclength
 # MDEV-17901: row_parse_int
 # MDEV-18072: == item->null_value
 # MDEV-18076: in row_parse_int
