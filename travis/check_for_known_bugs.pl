@@ -18,7 +18,7 @@ while (<DATA>) {
   if (/^\# Weak matches/) {
     # Don't search for weak matches if strong ones have been found
     if ($matches_info) {
-      print "\n--- STRONG matches -----------------------\n";
+      print "--- STRONG matches -----------------------\n";
       print $matches_info;
       $matches_info= '';
       last;
@@ -94,7 +94,7 @@ while (<DATA>) {
 
 # If it's non-empty at this point, it's weak matches
 if ($matches_info) {
-  print "\n--- WEAK matches -----------------------\n";
+  print "--- WEAK matches -----------------------\n";
   print $matches_info;
   print "--------------------------------------\n";
 }
@@ -140,6 +140,8 @@ MDEV-18020: ctx->prebuilt->trx->check_foreigns
 MDEV-18020: m_prebuilt->trx->check_foreigns
 MDEV-18018: TABLE_LIST::reinit_before_use
 MDEV-18017: index->to_be_dropped
+MDEV-18016: storage/innobase/dict/dict0dict.cc line 6199
+MDEV-18016: storage/innobase/dict/dict0dict.cc line 6346
 MDEV-18003: grantee->counter > 0
 MDEV-17977: Count >= rest_length
 MDEV-17976: lock->magic_n == 22643
