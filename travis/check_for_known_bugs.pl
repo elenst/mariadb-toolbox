@@ -207,6 +207,9 @@ MDEV-654:   share->now_transactional
 # Weak matches
 
 MDEV-18162: dict_index_t::reconstruct_fields
+MDEV-18047: dict_foreign_qualify_index
+MDEV-18047: InnoDB indexes are inconsistent with what defined
+MDEV-18047: cmp_cols_are_equal
 
 MDEV-5628:  Diagnostics_area::set_ok_status
 MDEV-5791:  in Field::is_real_null
