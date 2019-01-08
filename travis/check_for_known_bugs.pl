@@ -132,6 +132,7 @@ MDEV-18067: ticket->m_duration == MDL_EXPLICIT
 MDEV-18057: node->state == 5
 MDEV-18054: ret > 0
 MDEV-18047: index->magic_n == 76789786
+MDEV-18047: pos < index->n_def
 MDEV-18046: var_header_len >= 2
 MDEV-18039: index->table->name.m_name
 MDEV-18033: n < update->n_fields
@@ -178,6 +179,7 @@ MDEV-16940: unsafe_key_update
 MDEV-16903: auto_increment_field_not_null
 MDEV-16788: ls->length < 0xFFFFFFFFL
 MDEV-16659: anc_page->org_size == anc_page->size
+MDEV-16654: returned 38 for ALTER TABLE
 MDEV-16523: level_and_file.second->being_compacted
 MDEV-16500: user_table->n_def > table->s->fields
 MDEV-16154: in myrocks::ha_rocksdb::load_auto_incr_value_from_index
