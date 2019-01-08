@@ -111,6 +111,7 @@ __DATA__
 
 # Strong matches
 
+MDEV-18171: _ma_write_blob_record
 MDEV-18170: pcur.old_rec_buf
 MDEV-18169: n_fields <= ulint
 MDEV-18168: general_log_write
