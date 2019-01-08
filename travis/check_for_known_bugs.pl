@@ -94,13 +94,13 @@ while (<DATA>) {
 
 # If it's non-empty at this point, it's weak matches
 if ($matches_info) {
-  print "--- WEAK matches -----------------------\n";
+  print "--- WEAK matches ---------------------\n";
   print $matches_info;
   print "--------------------------------------\n";
 }
 
 if (keys %fixed_mdevs) {
-  print "--- \nATTENTION! FOUND FIXED MDEVs: ---\n";
+  print "\n--- ATTENTION! FOUND FIXED MDEVs: ----\n";
   foreach my $m (sort keys %fixed_mdevs) {
     print "\t$m: $fixed_mdevs{$m}\n";
   }
@@ -111,6 +111,10 @@ __DATA__
 
 # Strong matches
 
+MDEV-18170: pcur.old_rec_buf
+MDEV-18169: n_fields <= ulint
+MDEV-18168: general_log_write
+MDEV-18167: table->s->reclength
 MDEV-18166: table->s->reclength
 MDEV-18160: index->n_fields >= n_core
 MDEV-18157: Explain_node::print_explain_for_children
@@ -148,6 +152,7 @@ MDEV-18003: grantee->counter > 0
 MDEV-17977: Count >= rest_length
 MDEV-17976: lock->magic_n == 22643
 MDEV-17969: THD::push_warning_truncated_value_for_field
+MDEV-17964: status == 0
 MDEV-17959: thd->lex->select_stack_top == 0
 MDEV-17939: ++loop_count < 2
 MDEV-17938: block->magic_n == MEM_BLOCK_MAGIC_N
@@ -172,6 +177,7 @@ MDEV-17223: thd->killed != 0
 MDEV-17199: pos < table->n_v_def
 MDEV-17091: part_id == m_last_part
 MDEV-17091: old_part_id == m_last_part
+MDEV-17054: InnoDB needs charset 0 for doing a comparison, but MySQL cannot find that charset
 MDEV-17015: m_year <= 9999
 MDEV-16994: Alloced_length >=
 MDEV-16958: field_length < 5
@@ -353,7 +359,6 @@ MDEV-17027: in add_key_field
 MDEV-17051: sec_mtr->has_committed
 MDEV-17053: sync_check_iterate
 MDEV-17054: in innobase_get_fts_charset
-MDEV-17054: InnoDB needs charset 0 for doing a comparison
 MDEV-17055: find_order_in_list
 MDEV-17107: table_list->table
 MDEV-17120: base_list::push_back
@@ -432,7 +437,6 @@ MDEV-17936: Field::is_null
 MDEV-17937: pfs_lock::allocated_to_free
 MDEV-17938: dict_mem_table_free
 MDEV-17962: setup_jtbm_semi_joins
-MDEV-17964: status == 0
 MDEV-17971: Field_iterator_table::set
 MDEV-17971: Field_iterator_table_ref::set_field_iterator
 MDEV-17972: is_valid_value_slow
