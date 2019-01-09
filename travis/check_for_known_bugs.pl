@@ -111,6 +111,9 @@ __DATA__
 
 # Strong matches
 
+MDEV-18187: error 192 when executing record redo_index_new_page
+MDEV-18183: id != LATCH_ID_NONE
+MDEV-18173: o->ind == vers_end
 MDEV-18171: _ma_write_blob_record
 MDEV-18170: pcur.old_rec_buf
 MDEV-18169: n_fields <= ulint
@@ -181,6 +184,7 @@ MDEV-17091: old_part_id == m_last_part
 MDEV-17054: InnoDB needs charset 0 for doing a comparison, but MySQL cannot find that charset
 MDEV-17015: m_year <= 9999
 MDEV-16994: Alloced_length >=
+MDEV-16962: ot_ctx.can_recover_from_failed_open
 MDEV-16958: field_length < 5
 MDEV-16940: unsafe_key_update
 MDEV-16903: auto_increment_field_not_null
@@ -213,6 +217,9 @@ MDEV-654:   share->now_transactional
 
 # Weak matches
 
+MDEV-18195: Item::eq
+MDEV-18195: lex_string_cmp
+MDEV-18185: rename_table_in_prepare
 MDEV-18162: dict_index_t::reconstruct_fields
 MDEV-18047: dict_foreign_qualify_index
 MDEV-18047: InnoDB indexes are inconsistent with what defined
@@ -296,7 +303,6 @@ MDEV-15572: ha_maria::end_bulk_insert
 MDEV-15576: item->null_value
 MDEV-15657: file->inited == handler::NONE
 MDEV-15658: expl_lock->trx == arg->impl_trx
-MDEV-15738: in my_strcasecmp_utf8
 MDEV-15744: derived->table
 MDEV-15742: m_lock_type == 1
 MDEV-15753: thd->is_error
@@ -338,10 +344,12 @@ MDEV-16745: thd->transaction.stmt.is_empty
 MDEV-16789: in insert_fields
 MDEV-16792: in Diagnostics_area::sql_errno
 MDEV-16794: thd->transaction.stmt.is_empty
+MDEV-16905: TABLE::verify_constraints
 MDEV-16929: thd->transaction.stmt.is_empty
 MDEV-16932: Well_formed_prefix_status::Well_formed_prefix_status
+MDEV-16932: lex_string_cmp
+MDEV-16932: my_strcasecmp_utf8
 MDEV-16957: Field_iterator_natural_join::next
-MDEV-16962: ot_ctx.can_recover_from_failed_open
 MDEV-16971: adjust_time_range_or_invalidate
 MDEV-16980: == table_name_arg->length
 MDEV-16982: in mem_heap_dup
@@ -467,6 +475,7 @@ MDEV-18082: Diagnostics_area::disable_status
 MDEV-18083: in intern_close_table
 MDEV-18083: tc_purge
 MDEV-18083: tc_remove_all_unused_tables
+MDEV-18083: make_truncated_value_warning
 MDEV-18084: row_upd_changes_some_index_ord_field_binary
 MDEV-18086: rec_get_converted_size_comp_prefix_low
 MDEV-18087: mach_read_from_n_little_endian
@@ -515,6 +524,7 @@ MDEV-18158: Can't find record in
 # MDEV-15729: in Field::make_field
 # MDEV-15729: Field::make_send_field
 # MDEV-15729: send_result_set_metadata
+# MDEV-15738: in my_strcasecmp_utf8
 # MDEV-15797: thd->killed != 0
 # MDEV-15380: is corrupt; try to repair it
 # MDEV-15828: num_fts_index <= 1
