@@ -104,7 +104,7 @@ if (keys %fixed_mdevs) {
   foreach my $m (sort keys %fixed_mdevs) {
     print "\t$m: $fixed_mdevs{$m}\n";
   }
-  print "---------------------------------------\n";
+  print "--------------------------------------\n";
 }
 
 __DATA__
@@ -362,9 +362,6 @@ MDEV-17005: innobase_get_computed_value
 MDEV-17016: auto_increment_safe_stmt_log_lock
 MDEV-17019: multi_delete::~multi_delete
 MDEV-17020: length > 0
-MDEV-17027: table_list->table
-MDEV-17027: Field_iterator_table_ref::set_field_iterator
-MDEV-17027: in add_key_field
 MDEV-17051: sec_mtr->has_committed
 MDEV-17053: sync_check_iterate
 MDEV-17054: in innobase_get_fts_charset
@@ -379,14 +376,11 @@ MDEV-17275: Diagnostics_area::set_ok_status
 MDEV-17307: Incorrect key file for table
 MDEV-17319: int Field_temporal::store_invalid_with_warning
 MDEV_17344: Prepared_statement::~Prepared_statement
-MDEV-17354: in add_key_field
 MDEV-17356: table->read_set, field_index
 MDEV-17361: in Query_arena::set_query_arena
 MDEV-17361: THD::set_n_backup_active_arena
 MDEV-17464: Operating system error number 2
 MDEV-17466: dfield2->type.mtypex
-MDEV-17470: Operating system error number 17 in a file operation
-MDEV-17470: returned OS error 71. Cannot continue operation
 MDEV-17485: Operating system error number 80 in a file operation
 MDEV-17538: == UNALLOCATED_PAGE
 MDEV-17539: Protocol::end_statement
@@ -548,13 +542,19 @@ MDEV-18158: Can't find record in
 # MDEV-16961: table->read_set, field_index
 # MDEV-17021: length <= column->length
 # MDEV-17021: in write_block_record
+# MDEV-17027: table_list->table
+# MDEV-17027: Field_iterator_table_ref::set_field_iterator
+# MDEV-17027: in add_key_field
 # MDEV-17167: table->get_ref_count
 # MDEV-17215: in row_purge_remove_clust_if_poss_low
 # MDEV-17215: in row_purge_upd_exist_or_extern_func
 # MDEV-17219: !dt->fraction_remainder
 # MDEV-17314: thd->transaction.stmt.is_empty
 # MDEV-17349: table->read_set, field_index
+# MDEV-17354: in add_key_field
 # MDEV-17432: lock_trx_has_sys_table_locks
+# MDEV-17470: Operating system error number 17 in a file operation
+# MDEV-17470: returned OS error 71. Cannot continue operation
 # MDEV-17755: table->s->reclength
 # MDEV-17901: row_parse_int
 # MDEV-18072: == item->null_value
