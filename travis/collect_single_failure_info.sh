@@ -151,7 +151,7 @@ if [ "$res" == "0" ] ; then
     for dname in ${VARDIR}*
     do
       # Quoting bootstrap log all existing error logs
-      for fname in $dname/mysql.err* $dname/boot.log
+      for fname in $dname/mysql.err* $dname/boot.log ${VARDIR}*/mbackup_*.log
       do
         if [ -e $fname ] ; then
           echo "------------------- $fname ------"
