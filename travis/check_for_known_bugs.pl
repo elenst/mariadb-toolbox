@@ -111,6 +111,10 @@ __DATA__
 
 # Strong matches
 
+MDEV-18205: str_length < len
+MDEV-18204: RocksDB: Problems validating data dictionary against .frm files, exiting
+MDEV-18203: error 126 when executing undo undo_key_insert
+MDEV-18200: InnoDB: Failing assertion: success
 MDEV-18187: error 192 when executing record redo_index_new_page
 MDEV-18183: id != LATCH_ID_NONE
 MDEV-18173: o->ind == vers_end
@@ -164,6 +168,7 @@ MDEV-17912: Aria engine: Redo phase failed
 MDEV-17895: trx->dict_operation != TRX_DICT_OP_NONE
 MDEV-17893: nulls < null_mask
 MDEV-17892: index->was_not_null
+MDEV-17891: thd->transaction.stmt.modified_non_trans_table
 MDEV-17854: decimals <= 6
 MDEV-17843: page_rec_is_leaf
 MDEV-17821: page_rec_is_supremum
@@ -217,9 +222,12 @@ MDEV-654:   share->now_transactional
 
 # Weak matches
 
+MDEV-18207: _ma_get_status
 MDEV-18195: Item::eq
 MDEV-18195: lex_string_cmp
+MDEV-18194: which is outside the tablespace bounds
 MDEV-18185: rename_table_in_prepare
+MDEV-18183: OSMutex::enter
 MDEV-18162: dict_index_t::reconstruct_fields
 MDEV-18047: dict_foreign_qualify_index
 MDEV-18047: InnoDB indexes are inconsistent with what defined
@@ -430,7 +438,6 @@ MDEV-17884: is marked as crashed and should be repaired
 MDEV-17885: Could not remove temporary table
 MDEV-17890: row_upd_sec_index_entry
 MDEV-17890: row_upd_build_difference_binary
-MDEV-17891: thd->transaction.stmt.modified_non_trans_table
 MDEV-17896: pfs->get_refcount
 MDEV-17897: block->frame
 MDEV-17904: fts_is_sync_needed
