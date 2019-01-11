@@ -4,4 +4,5 @@ $rules = {
   'mdev17610_1' => sub { $_ =~ m{CREATE.*PROCEDURE.*SHOW.*_STATISTICS}s },
   'mdev18151_1' => sub { $_ =~ m{GRANT.*IDENTIFIED\s+(?:VIA|WITH)}s },
   'mdev17974_1' => sub { $_ =~ m{(?:CREATE\s+.*PROCEDURE|PREPARE).*CREATE\s+.*ROLE.*WITH\s+ADMIN}s },
+  'mdev18003_1' => sub { $_ =~ m{CREATE\s+(?:OR\s+REPLACE|IF\s+NOT\s+EXISTS)\s*ROLE.*WITH\s+ADMIN}s },
 }
