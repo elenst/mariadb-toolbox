@@ -168,7 +168,7 @@ if [ "$res" == "0" ] ; then
         if [ -e $fname ] ; then
           echo "------------------- $fname ------"
           if ! grep 'completed OK' $fname ; then
-            cat $fname | grep -v -f ${SCRIPT_DIR}/server_warnings.supp | grep -v "\[Note\]" | grep -v "^$" | grep -v "DDL tracking" | grep -v Copying | grep -v "...done" | grep -v "^Renaming" | grep -v "^Removing" | grep -v "^Applying" | grep -v "mariabackup: page size for" | cut -c 1-4096
+            cat $fname | grep -v "\[Note\]" | grep -v "^$" | grep -v "DDL tracking" | grep -v Copying | grep -v "...done" | grep -v "^Renaming" | grep -v "^Removing" | grep -v "^Applying" | grep -v "mariabackup: page size for" | cut -c 1-4096
             echo "-------------------"
           fi
         fi
