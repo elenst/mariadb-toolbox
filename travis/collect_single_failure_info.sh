@@ -150,8 +150,8 @@ if [ "$res" == "0" ] ; then
 
     for dname in ${VARDIR}*
     do
-      # Quoting bootstrap log all existing error logs
-      for fname in $dname/mysql.err* $dname/boot.log ${VARDIR}*/mbackup_*.log
+      # Quoting bootstrap log and all existing error logs
+      for fname in $dname/mysql.err* $dname/boot.log
       do
         if [ -e $fname ] ; then
           echo "------------------- $fname ------"
@@ -160,6 +160,20 @@ if [ "$res" == "0" ] ; then
           mkdir -p ${LOGDIR}/${ARCHDIR}/logs/${dname}
           cp $fname ${LOGDIR}/${ARCHDIR}/logs/${dname}/
         fi
+      done
+
+      # Quoting mariabackup logs *if* they don't have a line which reports success
+      for fname in ${VARDIR}*/mbackup_*.log
+      do
+        if [ -e $fname ] ; then
+          echo "------------------- $fname ------"
+          if ! grep 'completed OK' $fname ; then
+            cat $fname | grep -v -f ${SCRIPT_DIR}/server_warnings.supp | grep -v "\[Note\]" | grep -v "^$" | grep -v "DDL tracking" | grep -v Copying | grep -v "...done" | grep -v "^Renaming" | grep -v "^Removing" | grep -v "^Applying" | grep -v "mariabackup: page size for" | cut -c 1-4096
+            echo "-------------------"
+          fi
+        fi
+        mkdir -p ${LOGDIR}/${ARCHDIR}/logs/${dname}
+        cp $fname ${LOGDIR}/${ARCHDIR}/logs/${dname}/
       done
 
       # Storing general logs
