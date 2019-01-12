@@ -3,7 +3,6 @@ use Getopt::Long;
 use strict;
 
 
-my $opt_load_dir;
 my $opt_tables;
 my $opt_sleep= 1;
 my $opt_threads= '';
@@ -14,13 +13,12 @@ my $opt_skip_log_rotate= 1;
 my $enable_result_log= 0;
 
 GetOptions (
-  "load-dir=s"       => \$opt_load_dir,
   "tables=s"         => \$opt_tables,
   "sleep!"           => \$opt_sleep,
   "timestamps!"      => \$opt_timestamps,
   "threads=s"        => \$opt_threads,
   "connections=s"    => \$opt_threads,
-  "convert-to-execute-immediate|convert_to_execute_immediate" => \$opt_convert_to_ei,
+  "convert-to-execute-immediate|convert_to_execute_immediate|convert-to-ei|convert_to_ei" => \$opt_convert_to_ei,
   "convert-to-ps|convert_to_ps" => \$opt_convert_to_ps,
   "enable_result_log|enable-result-log" => \$enable_result_log,
   "skip_log_rotate|skip-log-rotate" => \$opt_skip_log_rotate,
@@ -29,8 +27,6 @@ GetOptions (
 my %interesting_connections= map { $_ => 1 } split /,/, $opt_threads;
 
 my @files= @ARGV;
-
-$opt_load_dir =~ s/[\\\/]$//;
 
 my $cur_test_con= 0;
 
@@ -286,7 +282,6 @@ print "--exit\n";
 sub system_test_hacks
 {
   my $log_record_ref= shift;
-  my $needs_eval= 0;
 
   if ( $$log_record_ref =~ s/^\s*(kill(?:\s+query)?)\s+(\d+)/eval $1 \$con${2}_id/is ) {
     return 0;
@@ -294,34 +289,6 @@ sub system_test_hacks
   if ( $$log_record_ref =~ s/^\s*(show\s+explain\s+for)\s+(\d+)/eval $1 \$con${2}_id/is ) {
     return 0;
   }
-  if ( $$log_record_ref =~ /^\s*(?:insert(?: DELAYED)? into table_logs.tb\d_logs|insert into tbnum0_log|insert into tbnum0pk_eng\d_child|insert into tbstr\d_log|INSERT INTO celosia_features.t_celosia_log)/ ) {
-    $$log_record_ref= '';
-    return 0;
-  }
-  if ( $$log_record_ref =~ s/\'[-\w\/\\]+(\/|\\)master-data-partitions/\'\$MYSQLTEST_VARDIR/sg ) {
-    unless ( $systest_partition_folders_created )
-    {
-      print "--mkdir \$MYSQLTEST_VARDIR/master-data-partitions\n";
-      print "--mkdir \$MYSQLTEST_VARDIR/master-data-partitions/tmpdata\n";
-      print "--mkdir \$MYSQLTEST_VARDIR/master-data-partitions/tmpindex\n";
-      $systest_partition_folders_created= 1;
-    }
-    $needs_eval= 1; # hacks applied, "eval needed"
-  }
-
-  if ( $opt_load_dir )
-  {
-    # In regexp:
-    # a) First () is LOAD DATA [LOCAL] INFILE [commas or whatever] '
-    # b) Next []+ is the file location (without the file name)
-    # c) Next () is a path separator, either \ or /
-    # d) Next () is the file name
-    # e) Everything ends with '
-    # We want to replace (b) with the opt_load_dir value without changing the rest
-    $$log_record_ref =~ s/(LOAD\s+DATA\s+(?:LOCAL)?\s+INFILE\W*\')[-\w\/\\]+(\\|\/)([^\\\/\']+)\'/${1}${opt_load_dir}${2}${3}\'/igs;
-  }
-
-  return $needs_eval;
 }
 
 sub time_to_sec
@@ -378,10 +345,7 @@ sub print_current_record
       $test_connections{$cur_log_con}= 0;
     }
     chomp $cur_log_record;
-    if ( system_test_hacks(\$cur_log_record) )
-    {
-      print "eval ";
-    }
+    system_test_hacks(\$cur_log_record);
     if ( $cur_log_record )
     {
       my $delimiter= ( $cur_log_record =~ /;/ ? '|||' : ';' );
