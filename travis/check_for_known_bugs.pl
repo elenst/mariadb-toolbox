@@ -111,6 +111,8 @@ __DATA__
 
 # Strong matches
 
+MDEV-18216: Query_arena::set_query_arena
+MDEV-18209: Enabling keys got errno 0 on
 MDEV-18205: str_length < len
 MDEV-18204: RocksDB: Problems validating data dictionary against .frm files, exiting
 MDEV-18203: error 126 when executing undo undo_key_insert
@@ -202,6 +204,7 @@ MDEV-16154: in myrocks::ha_rocksdb::load_auto_incr_value_from_index
 MDEV-15912: purge_sys.tail.commit <= purge_sys.rseg->last_commi
 MDEV-15878: table->file->stats.records > 0
 MDEV-15800: next_insert_id >= auto_inc_interval_for_cur_row.minimum
+MDEV-15744: derived->table
 MDEV-15656: is_last_prefix <= 0
 MDEV-15653: lock_word <= 0x20000000
 MDEV-15481: I_P_List_null_counter, I_P_List_fast_push_back
@@ -214,6 +217,7 @@ MDEV-14711: fix_block->page.file_page_was_freed
 MDEV-14642: table->s->db_create_options == part_table->s->db_create_options
 MDEV-14557: m_sp == __null
 MDEV-14410: table->pos_in_locked_tables->table == table
+MDEV-14126: page_get_page_no
 MDEV-13644: prev != 0 && next != 0
 MDEV-13202: ltime->neg == 0
 MDEV-12329: 1024U, trx, rec, block
@@ -222,6 +226,8 @@ MDEV-654:   share->now_transactional
 
 # Weak matches
 
+MDEV-18217: InnoDB: Summed data size
+MDEV-18217: row_sel_field_store_in_mysql_format_func
 MDEV-18207: _ma_get_status
 MDEV-18195: Item::eq
 MDEV-18195: lex_string_cmp
@@ -250,7 +256,6 @@ MDEV-13699: == new_field->field_name.length
 MDEV-13828: in handler::ha_index_or_rnd_end
 MDEV-14040: in Field::is_real_null
 MDEV-14041: in String::length
-MDEV-14126: page_get_page_no
 MDEV-14264: binlog_cache_data::reset
 MDEV-14407: trx_undo_rec_copy
 MDEV-14440: inited==RND
@@ -311,7 +316,6 @@ MDEV-15572: ha_maria::end_bulk_insert
 MDEV-15576: item->null_value
 MDEV-15657: file->inited == handler::NONE
 MDEV-15658: expl_lock->trx == arg->impl_trx
-MDEV-15744: derived->table
 MDEV-15742: m_lock_type == 1
 MDEV-15753: thd->is_error
 MDEV-15776: commit_try_rebuild
