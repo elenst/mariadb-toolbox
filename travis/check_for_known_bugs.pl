@@ -111,6 +111,8 @@ __DATA__
 
 # Strong matches
 
+MDEV-18220: fts_get_table_name_prefix
+MDEV-18219: index->n_core_null_bytes <=
 MDEV-18216: Query_arena::set_query_arena
 MDEV-18209: Enabling keys got errno 0 on
 MDEV-18205: str_length < len
@@ -120,10 +122,10 @@ MDEV-18200: InnoDB: Failing assertion: success
 MDEV-18187: error 192 when executing record redo_index_new_page
 MDEV-18183: id != LATCH_ID_NONE
 MDEV-18173: o->ind == vers_end
+MDEV-18173: o->ind == vers_start
 MDEV-18171: _ma_write_blob_record
 MDEV-18170: pcur.old_rec_buf
 MDEV-18169: n_fields <= ulint
-MDEV-18168: general_log_write
 MDEV-18167: table->s->reclength
 MDEV-18166: table->s->reclength
 MDEV-18160: index->n_fields >= n_core
@@ -178,7 +180,6 @@ MDEV-17816: trx->dict_operation_lock_mode == RW_X_LATCH
 MDEV-17815: index->table->name.m_name
 MDEV-17763: len == 20U
 MDEV-17759: precision > 0
-MDEV-17697: col.vers_sys_end
 MDEV-17596: block->page.flush_observer == __null
 MDEV-17576: share->reopen == 1
 MDEV-17479: mysql_socket.fd != -1
@@ -186,6 +187,7 @@ MDEV-17333: next_insert_id >= auto_inc_interval_for_cur_row.minimum
 MDEV-17319: ts_type != MYSQL_TIMESTAMP_TIME
 MDEV-17223: thd->killed != 0
 MDEV-17199: pos < table->n_v_def
+MDEV-17187: failed, the table has missing foreign key indexes
 MDEV-17091: part_id == m_last_part
 MDEV-17091: old_part_id == m_last_part
 MDEV-17054: InnoDB needs charset 0 for doing a comparison, but MySQL cannot find that charset
@@ -226,6 +228,7 @@ MDEV-654:   share->now_transactional
 
 # Weak matches
 
+MDEV-18218: btr_page_reorganize_low
 MDEV-18217: InnoDB: Summed data size
 MDEV-18217: row_sel_field_store_in_mysql_format_func
 MDEV-18207: _ma_get_status
@@ -234,6 +237,7 @@ MDEV-18195: lex_string_cmp
 MDEV-18194: which is outside the tablespace bounds
 MDEV-18185: rename_table_in_prepare
 MDEV-18183: OSMutex::enter
+MDEV-18168: general_log_write
 MDEV-18162: dict_index_t::reconstruct_fields
 MDEV-18047: dict_foreign_qualify_index
 MDEV-18047: InnoDB indexes are inconsistent with what defined
@@ -439,7 +443,6 @@ MDEV-17843: lock_rec_queue_validate
 MDEV-17844: rec_offs_validate
 MDEV-17857: TIME_from_longlong_datetime_packed
 MDEV-17884: is marked as crashed and should be repaired
-MDEV-17885: Could not remove temporary table
 MDEV-17890: row_upd_sec_index_entry
 MDEV-17890: row_upd_build_difference_binary
 MDEV-17896: pfs->get_refcount
@@ -455,7 +458,6 @@ MDEV-17971: Field_iterator_table::set
 MDEV-17971: Field_iterator_table_ref::set_field_iterator
 MDEV-17972: is_valid_value_slow
 MDEV-17974: sp_process_definer
-MDEV-17975: m_status == DA_OK_BULK
 MDEV-17978: mysqld_show_create_get_fields
 MDEV-17979: Item::val_native
 MDEV-17998: table->pos_in_locked_tables
@@ -490,7 +492,7 @@ MDEV-18145: Item_singlerow_subselect::val_native
 MDEV-18146: btr_page_reorganize_low
 MDEV-18146: merge_page, index
 MDEV-18148: ha_maria::end_bulk_insert
-MDEV-18149: in row_parse_int
+MDEV-18149: row_parse_int
 MDEV-18151: Protocol::end_statement
 MDEV-18153: is corrupt; try to repair it
 MDEV-18153: was not found on update: TUPLE
@@ -566,7 +568,10 @@ MDEV-18158: Can't find record in
 # MDEV-17432: lock_trx_has_sys_table_locks
 # MDEV-17470: Operating system error number 17 in a file operation
 # MDEV-17470: returned OS error 71. Cannot continue operation
+# MDEV-17697: col.vers_sys_end
 # MDEV-17755: table->s->reclength
+# MDEV-17885: Could not remove temporary table
 # MDEV-17901: row_parse_int
+# MDEV-17975: m_status == DA_OK_BULK
 # MDEV-18072: == item->null_value
 # MDEV-18076: in row_parse_int
