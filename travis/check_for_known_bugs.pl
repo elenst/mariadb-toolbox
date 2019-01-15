@@ -111,6 +111,8 @@ __DATA__
 
 # Strong matches
 
+MDEV-18239: mark_unsupported_function
+MDEV-18222: dict_foreign_remove_from_cache
 MDEV-18220: fts_get_table_name_prefix
 MDEV-18219: index->n_core_null_bytes <=
 MDEV-18216: Query_arena::set_query_arena
@@ -121,6 +123,7 @@ MDEV-18203: error 126 when executing undo undo_key_insert
 MDEV-18200: InnoDB: Failing assertion: success
 MDEV-18187: error 192 when executing record redo_index_new_page
 MDEV-18183: id != LATCH_ID_NONE
+MDEV-18173: col.vers_sys_end
 MDEV-18173: o->ind == vers_end
 MDEV-18173: o->ind == vers_start
 MDEV-18171: _ma_write_blob_record
@@ -167,7 +170,6 @@ MDEV-17969: THD::push_warning_truncated_value_for_field
 MDEV-17964: status == 0
 MDEV-17959: thd->lex->select_stack_top == 0
 MDEV-17939: ++loop_count < 2
-MDEV-17938: block->magic_n == MEM_BLOCK_MAGIC_N
 MDEV-17912: Aria engine: Redo phase failed
 MDEV-17895: trx->dict_operation != TRX_DICT_OP_NONE
 MDEV-17893: nulls < null_mask
@@ -175,6 +177,7 @@ MDEV-17892: index->was_not_null
 MDEV-17891: thd->transaction.stmt.modified_non_trans_table
 MDEV-17854: decimals <= 6
 MDEV-17843: page_rec_is_leaf
+MDEV-17838: in Item_field::rename_fields_processor
 MDEV-17821: page_rec_is_supremum
 MDEV-17816: trx->dict_operation_lock_mode == RW_X_LATCH
 MDEV-17815: index->table->name.m_name
@@ -451,8 +454,6 @@ MDEV-17904: fts_is_sync_needed
 MDEV-17923: trx_undo_page_report_modify
 MDEV-17932: get_username
 MDEV-17936: Field::is_null
-MDEV-17937: pfs_lock::allocated_to_free
-MDEV-17938: dict_mem_table_free
 MDEV-17962: setup_jtbm_semi_joins
 MDEV-17971: Field_iterator_table::set
 MDEV-17971: Field_iterator_table_ref::set_field_iterator
@@ -572,6 +573,8 @@ MDEV-18158: Can't find record in
 # MDEV-17755: table->s->reclength
 # MDEV-17885: Could not remove temporary table
 # MDEV-17901: row_parse_int
+# MDEV-17938: block->magic_n == MEM_BLOCK_MAGIC_N
+# MDEV-17938: dict_mem_table_free
 # MDEV-17975: m_status == DA_OK_BULK
 # MDEV-18072: == item->null_value
 # MDEV-18076: in row_parse_int
