@@ -6,3 +6,4 @@ Unsafe statement written to the binary log
 Aborted connection
 Invalid roles_mapping table entry user
 was not locked with LOCK TABLES
+mysqld: Incorrect information in file
