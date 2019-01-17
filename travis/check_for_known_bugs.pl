@@ -111,6 +111,13 @@ __DATA__
 
 # Strong matches
 
+MDEV-18274: new_clustered ==
+MDEV-18272: cursor->index->is_committed
+MDEV-18260: pagecache_unlock_by_link
+MDEV-18259: get_foreign_key_info
+MDEV-18258: append_identifier
+MDEV-18256: heap->magic_n == MEM_BLOCK_MAGIC_N
+MDEV-18244: ha_partition::update_next_auto_inc_val
 MDEV-18239: mark_unsupported_function
 MDEV-18222: dict_foreign_remove_from_cache
 MDEV-18220: fts_get_table_name_prefix
@@ -163,6 +170,7 @@ MDEV-18018: TABLE_LIST::reinit_before_use
 MDEV-18017: index->to_be_dropped
 MDEV-18016: storage/innobase/dict/dict0dict.cc line 6199
 MDEV-18016: storage/innobase/dict/dict0dict.cc line 6346
+MDEV-18016: storage/innobase/dict/dict0dict.cc line 6181
 MDEV-18003: grantee->counter > 0
 MDEV-17977: Count >= rest_length
 MDEV-17976: lock->magic_n == 22643
@@ -190,7 +198,6 @@ MDEV-17333: next_insert_id >= auto_inc_interval_for_cur_row.minimum
 MDEV-17319: ts_type != MYSQL_TIMESTAMP_TIME
 MDEV-17223: thd->killed != 0
 MDEV-17199: pos < table->n_v_def
-MDEV-17187: failed, the table has missing foreign key indexes
 MDEV-17091: part_id == m_last_part
 MDEV-17091: old_part_id == m_last_part
 MDEV-17054: InnoDB needs charset 0 for doing a comparison, but MySQL cannot find that charset
@@ -219,6 +226,7 @@ MDEV-15115: dict_tf2_is_valid
 MDEV-15130: table->s->null_bytes == 0
 MDEV-14906: index->is_instant
 MDEV-14711: fix_block->page.file_page_was_freed
+MDEV-14643: cursor->index->is_committed
 MDEV-14642: table->s->db_create_options == part_table->s->db_create_options
 MDEV-14557: m_sp == __null
 MDEV-14410: table->pos_in_locked_tables->table == table
@@ -231,6 +239,7 @@ MDEV-654:   share->now_transactional
 
 # Weak matches
 
+MDEV-18272: InnoDB: tried to purge non-delete-marked record in index
 MDEV-18218: btr_page_reorganize_low
 MDEV-18217: InnoDB: Summed data size
 MDEV-18217: row_sel_field_store_in_mysql_format_func
@@ -245,6 +254,8 @@ MDEV-18162: dict_index_t::reconstruct_fields
 MDEV-18047: dict_foreign_qualify_index
 MDEV-18047: InnoDB indexes are inconsistent with what defined
 MDEV-18047: cmp_cols_are_equal
+MDEV-17187: failed, the table has missing foreign key indexes
+MDEV-16222: InnoDB: tried to purge non-delete-marked record in index
 
 MDEV-5628:  Diagnostics_area::set_ok_status
 MDEV-5791:  in Field::is_real_null
@@ -344,7 +355,6 @@ MDEV-16170: Item_null_result::type_handler
 MDEV-16171: in setup_table_map
 MDEV-16184: nest->counter > 0
 MDEV-16190: in Item_null_result::field_type
-MDEV-16222: InnoDB: tried to purge non-delete-marked record in index
 MDEV-16240: row_sel_convert_mysql_key_to_innobase
 MDEV-16242: Slave worker thread retried transaction
 MDEV-16242: Can't find record
