@@ -33,7 +33,7 @@ if [ -n "$OLD" ] ; then
       elif [[ $ver =~ ^[0-9]\.[0-9]$ ]] ; then
         major_ver=$ver
         wget https://dev.mysql.com/doc/relnotes/mysql/$major_ver/en/
-        ver=`grep 'General Availability' index.html  | grep -v 'Not yet released' | grep section | head -1 | sed -e 's/.*Changes in MySQL \([0-9]*\.[0-9]*\.[0-9]*\).*/\1/'`
+        ver=`grep -i 'General Availability' index.html  | grep -v 'Not yet released' | grep section | head -1 | sed -e 's/.*Changes in MySQL \([0-9]*\.[0-9]*\.[0-9]*\).*/\1/'`
       fi
       echo "MySQL version $ver"
       fname=mysql-${ver}-linux-glibc2.12-x86_64
