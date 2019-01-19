@@ -9,7 +9,7 @@ my $opt_threads= '';
 my $opt_timestamps= 0;
 my $opt_convert_to_ei= 0;
 my $opt_convert_to_ps= 0;
-my $opt_skip_log_rotate= 1;
+my $opt_sigkill= 0;
 my $enable_result_log= 0;
 
 GetOptions (
@@ -21,7 +21,7 @@ GetOptions (
   "convert-to-execute-immediate|convert_to_execute_immediate|convert-to-ei|convert_to_ei" => \$opt_convert_to_ei,
   "convert-to-ps|convert_to_ps" => \$opt_convert_to_ps,
   "enable_result_log|enable-result-log" => \$enable_result_log,
-  "skip_log_rotate|skip-log-rotate" => \$opt_skip_log_rotate,
+  "sigkill!"         => \$opt_sigkill,
   );
 
 my %interesting_connections= map { $_ => 1 } split /,/, $opt_threads;
@@ -42,6 +42,12 @@ my $cur_log_con= 0;
 my $cur_log_record= '';
 my $timestamp= 0;
 my $server_restarts= 0;
+
+# Maximum connection ID used in the current server run.
+# The value is changed to 0 when the server is restarted.
+# It is used to determine whether log rotation lines represent server restart
+# or FLUSH LOGS result.
+my $max_used_connection_id= 0;
 
 # TODO: how to handle KILL <con num>?
 # TODO: MYSQLTEST_VARDIR
@@ -74,10 +80,6 @@ if ( $opt_tables )
   @ARGV= @files;
 }
 
-
-# TODO: By default there will be some special hacks for system tests. Add an option to switch them off
-my $systest_partition_folders_created= 0;
-
 print "--source include/have_innodb.inc\n";
 print "--enable_connect_log\n";
 unless ($enable_result_log) {
@@ -94,21 +96,53 @@ print "GRANT ALL ON *.* TO rqg\@localhost;\n";
 
 # The flag will be used if we are only interested in certain connections
 my $ignore;
+# The flag indicates that Shutdown command appeared in the log (it might be not the latest command
+# before actual restart, so we need to keep track of it
 my $normal_shutdown= 0;
-my $no_shutdown= 0;
+my $log_rotation_happened= 0;
 
 LOGLINE:
 while(<>)
 {
-  # Log rotation looks like this (and should be
+  # Log rotation looks like this:
   # /home/elenst/bzr/10.0/sql/mysqld, Version: 10.0.14-MariaDB-debug-log (Source distribution). started with:
   # Tcp port: 19300  Unix socket: /home/elenst/test_results/analyze4/mysql.sock
   # Time                 Id Command    Argument
 
-  # We should only ignore 'started with' here if it's the first line in the log.
-  # Otherwise it will be caught later in the code and handled separately
+  # When we see the log rotation records, it means that either
+  # - the server was restarted,
+  # - or that FLUSH LOGS was executed.
+  # To distinguish server restart and FLUSH LOGS, we'll see what happens next.
+  # If the next record is Connect with a connection ID which was ever connected before,
+  # it means the server was restarted. Otherwise, it means FLUSH LOGS was run.
+  # We'll ignore log rotation if we decide it's FLUSH LOGS, because the command itself
+  # was somewhere there before, and we've already put it into the test.
+  # Server restart is more tricky. It can be either graceful shutdown
+  # through Shutdown command (either from the client or from mysqladmin),
+  # or SIGTERM (which also causes a graceful shutdown,
+  # but without Shutdown command in the log, or SIGKILL.
+  # We don't have a way to distinguish SIGTERM from SIGKILL through the general log.
+  # For now we'll assume that the SIGx approach is universal through the test --
+  # it's either always SIGTERM (e.g. Restart scenario) or always SIGKILL (CrashRestart).
+  # We'll use command-line option sigkill to choose. It defaults to 0,
+  # which means graceful restart.
 
-  next LOGLINE if ($. == 1 and /started with:\s*$/) or /^\s*Tcp port:/ or /^\s*Time\s+Id\s+Command\s+Argument/;
+  if ( /Version:\s+.*\.\s+started with:\s*$/ ) {
+    my $l=<>;
+    unless ($l =~ /^Tcp\s+port:\s+\d+,?\s+(?:Unix\s+socket|Named\s+Pipe):\s+/si) {
+      print STDERR "ERROR: Unexpected line upon log rotation:\n$l";
+      exit 1;
+    }
+    $l=<>;
+    unless ($l =~ /^Time\s+Id\s+Command\s+Argument\s*$/s) {
+      print STDERR "ERROR: Unexpected line upon log rotation:\n$l";
+      exit 1;
+    }
+
+    $log_rotation_happened= 1;
+    next;
+  }
+
 
   my $new_log_con;
   my $new_log_timestamp;
@@ -128,19 +162,20 @@ while(<>)
     $new_log_con= $1;
     $new_log_record_type= $2;
 
-    if ( $new_log_record_type =~ /Shutdown/ )
-    {
-      $normal_shutdown= 1;
-      next LOGLINE;
-    }
-
     # If we have built a previous record (possibly from several lines),
     # now it's time to print it. We'll take into account the $ignore flag there
 
     print_current_record( $new_log_con );
 
+    if ( $new_log_record_type =~ /Shutdown/ )
+    {
+      # The actual shutdown/restart will be performed after we see log rotation lines,
+      # here we will just keep the marker that it was a normal shutdown through a command
+      $normal_shutdown= 1;
+      next LOGLINE;
+    }
 
-    # If the record was produced by one of connections we are not interested in,
+    # If the new record was produced by one of connections we are not interested in,
     # set the flag, but proceed parsing, in case the connection does something
     # important on the system level (like server shutdown)
 
@@ -163,8 +198,51 @@ while(<>)
     # We ignore Prepare, Execute, Statistics and Binlog lines
     next LOGLINE if ( $new_log_record_type =~ /(?:Execute|Binlog|Field|Statistics|Close|Reset)/ );
 
+      # Now we finally process the preserved information about log rotation and possible shutdowns,
+      # if there were any, which is indicated by $log_rotation_happened.
+      # Further options:
+      # - If log_rotation_happened is true, but the next record is NOT Connect, it's a strong indication
+      #   (for now) that there was no restart, only FLUSH LOGS. Then we'll just unset the flag and forget about it.
+      # - If the next record is Connect, it is a weak indication that the restart might have happened.
+      #   Then we will check which connection number tries to connect. If it is greater than everything
+      #   that was previously used in the current server session, then it's a good enough indication
+      #   that it's still the same server, so again, we'll unset the flag and forget about it.
+      # - If the connection number is back to smaller values, it means that the server has restarted.
+      #   Then we will add include/restart_mysqld.inc.
+      #   We still need to determine whether to set a shutdown_timeout or not.
+      #   = if normal_shutdown is true, we will set shutdown_timeout.
+      #   = otherwise, if opt_sigkill if false, we will still set shutdown timeout.
+      #   = otherwise we will set it to 0, which should mean sigkill.
+
+    if ($log_rotation_happened) {
+      if ($new_log_record_type eq 'Connect') {
+        if ($new_log_con > $max_used_connection_id) {
+          # The server session continues, so log rotation must be due to FLUSH LOGS
+        }
+        else {
+          # Connection IDs are back to smaller numbers, must be due to server restart
+          if ($normal_shutdown or !$opt_sigkill) {
+            print "--let \$shutdown_timeout= 30\n";
+            $normal_shutdown= 0;
+          } else {
+            print "--let \$shutdown_timeout= 0\n";
+          }
+          print "--connection default\n";
+          print "--source include/restart_mysqld.inc\n";
+          $server_restarts++;
+          %test_connections= ();
+        }
+      }
+      else {
+        # Next command is not Connect, so log rotation must be due to FLUSH LOGS
+      }
+      $log_rotation_happened= 0;
+    }
+
     if ( $new_log_record_type eq 'Connect' )
     {
+      $max_used_connection_id= $new_log_con;
+
       next if $_ =~ /Access denied for/;
 
       # Log record 'Connect' translates into --connect
@@ -243,16 +321,6 @@ while(<>)
       exit 1;
     }
   } # end if <new record>
-  elsif ( /started with:\s*$/ and not $opt_skip_log_rotate ) {
-    print_current_record($cur_log_con);
-    if ($normal_shutdown or not $no_shutdown) {
-      print "\n".'--let $shutdown_timeout= '.($normal_shutdown ? 10 : 0)."\n";
-      print "--source include/restart_mysqld.inc\n\n";
-      $server_restarts++;
-    }
-    $normal_shutdown= 0;
-    $no_shutdown= 0;
-  }
   elsif ( $ignore ) {
     # This is a continuation of a line we decided to ignore
     next LOGLINE;
@@ -314,11 +382,6 @@ sub print_current_record
       $cur_log_record= '';
       $cur_log_con= 0;
       return;
-    }
-    # FLUSH LOGS will produce lines similar to server restart.
-    # Recognize it and do not restart
-    if ( $cur_log_record =~ /flush.*logs/i ) {
-      $no_shutdown= 1;
     }
     if ($ignore) {
       $ignore= 0;
