@@ -111,12 +111,12 @@ __DATA__
 
 # Strong matches
 
+MDEV-18310: Got error 121 when executing undo undo_key_delete
 MDEV-18300: Field_blob::get_key_image
-MDEV-18291: ha_innobase_inplace_ctx
+MDEV-18291: dict_mem_table_free
 MDEV-18286: pagecache->cnt_for_resize_op == 0
 MDEV-18274: new_clustered ==
 MDEV-18272: cursor->index->is_committed
-MDEV-18260: pagecache_unlock_by_link
 MDEV-18259: get_foreign_key_info
 MDEV-18258: append_identifier
 MDEV-18244: ha_partition::update_next_auto_inc_val
@@ -218,6 +218,7 @@ MDEV-16154: in myrocks::ha_rocksdb::load_auto_incr_value_from_index
 MDEV-15912: purge_sys.tail.commit <= purge_sys.rseg->last_commi
 MDEV-15878: table->file->stats.records > 0
 MDEV-15800: next_insert_id >= auto_inc_interval_for_cur_row.minimum
+MDEV-15776: user_table->get_ref_count
 MDEV-15744: derived->table
 MDEV-15656: is_last_prefix <= 0
 MDEV-15653: lock_word <= 0x20000000
@@ -244,6 +245,7 @@ MDEV-654:   share->now_transactional
 MDEV-18309: InnoDB: Cannot open datafile for read-only:
 MDEV-18285: Diagnostics_area::disable_status
 MDEV-18272: InnoDB: tried to purge non-delete-marked record in index
+MDEV-18260: pagecache_unlock_by_link
 MDEV-18256: heap->magic_n == MEM_BLOCK_MAGIC_N
 MDEV-18256: dict_foreign_remove_from_cache
 MDEV-18222: heap->magic_n == MEM_BLOCK_MAGIC_N
@@ -344,7 +346,6 @@ MDEV-15658: expl_lock->trx == arg->impl_trx
 MDEV-15742: m_lock_type == 1
 MDEV-15753: thd->is_error
 MDEV-15776: commit_try_rebuild
-MDEV-15776: user_table->get_ref_count
 MDEV-15802: Item::delete_self
 MDEV-15812: virtual handler::~handler
 MDEV-15816: m_lock_rows == RDB_LOCK_WRITE
