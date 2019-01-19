@@ -124,6 +124,7 @@ MDEV-18239: mark_unsupported_function
 MDEV-18220: fts_get_table_name_prefix
 MDEV-18219: index->n_core_null_bytes <=
 MDEV-18216: Query_arena::set_query_arena
+MDEV-18213: Error: failed to execute query BACKUP STAGE BLOCK_COMMIT: Deadlock found when trying to get lock
 MDEV-18209: Enabling keys got errno 0 on
 MDEV-18205: str_length < len
 MDEV-18204: RocksDB: Problems validating data dictionary against .frm files, exiting
