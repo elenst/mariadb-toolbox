@@ -69,7 +69,21 @@ LINE:
 do
 {
     debug "LINE: $ln" if $ln;
-    if ( $ln =~ /^\s*\-\-connection\s+(\w+)/ or $ln =~ /^\s*\-\-connect\s*\((\w+)/ )
+
+    if ( $ln =~ /^\s*$/ ) {
+      print $ln;
+    }
+    # Some commands shouldn't anyhow change the logic of sends/reaps,
+    # just keep them as is and in further consideration
+    # TODO: the list is to be extended
+    elsif ( $ln =~ /^\s*\-\-\s*delimiter|sleep|let/ ) {
+      if ($pending_query) {
+        $pending_query .= $ln;
+      } else {
+        print $ln;
+      }
+    }
+    elsif ( $ln =~ /^\s*\-\-connection\s+(\w+)/ or $ln =~ /^\s*\-\-connect\s*\((\w+)/ )
     {
         debug "   line is a connection or connect\n";
         my $new_con = $1;
@@ -189,4 +203,7 @@ do
     }
 }
 while ($ln = <>);
+if ($pending_query) {
+  print "--send\n$pending_query";
+}
 
