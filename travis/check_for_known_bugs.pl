@@ -111,15 +111,16 @@ __DATA__
 
 # Strong matches
 
+MDEV-18300: Field_blob::get_key_image
+MDEV-18291: ha_innobase_inplace_ctx
+MDEV-18286: pagecache->cnt_for_resize_op == 0
 MDEV-18274: new_clustered ==
 MDEV-18272: cursor->index->is_committed
 MDEV-18260: pagecache_unlock_by_link
 MDEV-18259: get_foreign_key_info
 MDEV-18258: append_identifier
-MDEV-18256: heap->magic_n == MEM_BLOCK_MAGIC_N
 MDEV-18244: ha_partition::update_next_auto_inc_val
 MDEV-18239: mark_unsupported_function
-MDEV-18222: dict_foreign_remove_from_cache
 MDEV-18220: fts_get_table_name_prefix
 MDEV-18219: index->n_core_null_bytes <=
 MDEV-18216: Query_arena::set_query_arena
@@ -129,7 +130,6 @@ MDEV-18204: RocksDB: Problems validating data dictionary against .frm files, exi
 MDEV-18203: error 126 when executing undo undo_key_insert
 MDEV-18200: InnoDB: Failing assertion: success
 MDEV-18187: error 192 when executing record redo_index_new_page
-MDEV-18183: id != LATCH_ID_NONE
 MDEV-18173: col.vers_sys_end
 MDEV-18173: o->ind == vers_end
 MDEV-18173: o->ind == vers_start
@@ -152,6 +152,7 @@ MDEV-18085: len >= col->mbminlen
 MDEV-18084: pos < index->n_def
 MDEV-18084: pos < table->n_v_def
 MDEV-18083: Field::set_warning_truncated_wrong_value
+MDEV-18082: Diagnostics_area::disable_status
 MDEV-18077: n < tuple->n_fields
 MDEV-18070: nanoseconds <= 1000000000
 MDEV-18068: this == ticket->get_ctx
@@ -239,7 +240,13 @@ MDEV-654:   share->now_transactional
 
 # Weak matches
 
+MDEV-18309: InnoDB: Cannot open datafile for read-only:
+MDEV-18285: Diagnostics_area::disable_status
 MDEV-18272: InnoDB: tried to purge non-delete-marked record in index
+MDEV-18256: heap->magic_n == MEM_BLOCK_MAGIC_N
+MDEV-18256: dict_foreign_remove_from_cache
+MDEV-18222: heap->magic_n == MEM_BLOCK_MAGIC_N
+MDEV-18222: innobase_rename_column_try
 MDEV-18218: btr_page_reorganize_low
 MDEV-18217: InnoDB: Summed data size
 MDEV-18217: row_sel_field_store_in_mysql_format_func
@@ -248,7 +255,6 @@ MDEV-18195: Item::eq
 MDEV-18195: lex_string_cmp
 MDEV-18194: which is outside the tablespace bounds
 MDEV-18185: rename_table_in_prepare
-MDEV-18183: OSMutex::enter
 MDEV-18168: general_log_write
 MDEV-18162: dict_index_t::reconstruct_fields
 MDEV-18047: dict_foreign_qualify_index
@@ -489,7 +495,6 @@ MDEV-18067: backup_end
 MDEV-18069: MDL_lock::incompatible_granted_types_bitmap
 MDEV-18069: MDL_ticket::has_stronger_or_equal_type
 MDEV-18078: trnman_has_locked_tables
-MDEV-18082: Diagnostics_area::disable_status
 MDEV-18083: in intern_close_table
 MDEV-18083: tc_purge
 MDEV-18083: tc_remove_all_unused_tables
@@ -588,3 +593,5 @@ MDEV-18158: Can't find record in
 # MDEV-17975: m_status == DA_OK_BULK
 # MDEV-18072: == item->null_value
 # MDEV-18076: in row_parse_int
+# MDEV-18183: id != LATCH_ID_NONE
+# MDEV-18183: OSMutex::enter
