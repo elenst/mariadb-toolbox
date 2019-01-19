@@ -26,6 +26,8 @@ my %preserve_connections;
 
 my @modes;
 
+$|= 1;
+
 if ($^O eq 'MSWin32' or $^O eq 'MSWin64') {
   require Win32::API;
   my $errfunc = Win32::API->new('kernel32', 'SetErrorMode', 'I', 'I');
@@ -300,6 +302,7 @@ sub run_test
     my $start = time();
     print sprintf("Trial $i out if $trials started at %02d:%02d:%02d\n",(localtime($start))[2],(localtime($start))[1],(localtime($start))[0]);
 
+    my $test_result= 0;
     my $pid= fork();
 
     if ($pid) {
@@ -315,58 +318,56 @@ sub run_test
       unless (defined $result) {
         print "The trial timed out\n";
         kill '-KILL', $pid;
-        $result= 0;
+        $result= 1;
       }
     }
     elsif (defined $pid) {
-      my $result= 0;
-      my $out = readpipe( "perl mysql-test-run.pl $options --suite=$suitename $test_basename" );
-      my $test_result= $?;
-
-      my $errlog = ( $ENV{MTR_VERSION} eq "1" ? 'var/log/master.err' : 'var/log/mysqld.1.err');
-
-      my $separ= $/;
-      $/= undef;
-      open(ERRLOG, "$errlog") || print "Cannot open $errlog\n" && exit 0;
-      $out.= <ERRLOG>;
-      close(ERRLOG);
-      if (-e 'var/log/mysqld.2.err') {
-        open(ERRLOG, "var/log/mysqld.2.err") || print "Cannot open var/log/mysqld.2.err\n" && exit 0;
-        $out.= <ERRLOG>;
-        close(ERRLOG);
-      }
-      $/= $separ;
-
-      # Refined diagnostics
-      if ($output) {
-        $result= ( $out =~ /$output/ );
-        if ($result) {
-          print "Reproduced (no: $reproducible_counter) - output matched the pattern\n";
-        } elsif ($test_result) {
-          print "Could not reproduce - test failed, but output didn't match the pattern\n";
-        } else {
-          print "Could not reproduce - test passed, and output didn't match the pattern\n";
-        }
-      }
-      elsif ($test_result) {
-        $result= $test_result;
-        print "Reproduced (no: $reproducible_counter) - test failed, and there was no pattern to match\n";
-      }
-      else {
-        print "Could not reproduce - test passed, and there was no pattern to match\n";
-      }
-
-      my $outfile = ($result ? "$testcase.output/$testcase.out.reproducible.$reproducible_counter" : "$testcase.output/$testcase.out.not_reproducible.$not_reproducible_counter");
-      open( OUT, ">>$outfile" ) || die "Could not open $outfile for writing: $!";
-      print OUT "\nTrial $i\n\n";
-      print OUT $out;
-      close( OUT );
-      exit $result;
-
+      system( "perl mysql-test-run.pl $options --suite=$suitename $test_basename > $testcase.output/$testcase.out.last 2>&1" );
+      exit $?;
     } else {
       print "ERROR: Could not fork for running the test\n";
       exit 1;
     }
+
+    my $out= readpipe("cat $testcase.output/$testcase.out.last");
+    my $errlog = ( $ENV{MTR_VERSION} eq "1" ? 'var/log/master.err' : 'var/log/mysqld.1.err');
+
+    my $separ= $/;
+    $/= undef;
+    open(ERRLOG, "$errlog") || print "Cannot open $errlog\n" && exit 0;
+    $out.= <ERRLOG>;
+    close(ERRLOG);
+    if (-e 'var/log/mysqld.2.err') {
+      open(ERRLOG, "var/log/mysqld.2.err") || print "Cannot open var/log/mysqld.2.err\n" && exit 0;
+      $out.= <ERRLOG>;
+      close(ERRLOG);
+    }
+    $/= $separ;
+
+    # Refined diagnostics
+    if ($output) {
+      $result= ( $out =~ /$output/ );
+      if ($result) {
+        print "Reproduced (no: $reproducible_counter) - output matched the pattern\n";
+      } elsif ($test_result) {
+        print "Could not reproduce - trial $i failed, but output didn't match the pattern\n";
+      } else {
+        print "Could not reproduce - trial $i passed, and output didn't match the pattern\n";
+      }
+    }
+    elsif ($test_result) {
+      $result= $test_result;
+      print "Reproduced (no: $reproducible_counter) - test failed, and there was no pattern to match\n";
+    }
+    else {
+      print "Could not reproduce - test passed, and there was no pattern to match\n";
+    }
+
+    my $outfile = ($result ? "$testcase.output/$testcase.out.reproducible.$reproducible_counter" : "$testcase.output/$testcase.out.not_reproducible.$not_reproducible_counter");
+    open( OUT, ">>$outfile" ) || die "Could not open $outfile for writing: $!";
+    print OUT "\nTrial $i\n\n";
+    print OUT $out;
+    close( OUT );
 
     print "Trial $i time: " . ( time() - $start ) . "\n";
 
