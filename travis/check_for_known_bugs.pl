@@ -111,6 +111,8 @@ __DATA__
 
 # Strong matches
 
+MDEV-18316: dict_col_t::instant_value
+MDEV-18315: col->same_format
 MDEV-18310: Got error 121 when executing undo undo_key_delete
 MDEV-18300: Field_blob::get_key_image
 MDEV-18291: dict_mem_table_free
@@ -154,6 +156,7 @@ MDEV-18084: pos < index->n_def
 MDEV-18084: pos < table->n_v_def
 MDEV-18083: Field::set_warning_truncated_wrong_value
 MDEV-18082: Diagnostics_area::disable_status
+MDEV-18078: trnman_has_locked_tables
 MDEV-18077: n < tuple->n_fields
 MDEV-18070: nanoseconds <= 1000000000
 MDEV-18068: this == ticket->get_ctx
@@ -237,6 +240,7 @@ MDEV-14126: page_get_page_no
 MDEV-13644: prev != 0 && next != 0
 MDEV-13202: ltime->neg == 0
 MDEV-12329: 1024U, trx, rec, block
+MDEV-11783: checksum_length == f->ptr
 MDEV-11080: table->n_waiting_or_granted_auto_inc_locks > 0
 MDEV-654:   share->now_transactional
 
@@ -496,7 +500,6 @@ MDEV-18065: Fatal error: Can't open and lock privilege tables
 MDEV-18067: backup_end
 MDEV-18069: MDL_lock::incompatible_granted_types_bitmap
 MDEV-18069: MDL_ticket::has_stronger_or_equal_type
-MDEV-18078: trnman_has_locked_tables
 MDEV-18083: in intern_close_table
 MDEV-18083: tc_purge
 MDEV-18083: tc_remove_all_unused_tables
