@@ -198,9 +198,11 @@ MDEV-17763: len == 20U
 MDEV-17759: precision > 0
 MDEV-17596: block->page.flush_observer == __null
 MDEV-17576: share->reopen == 1
+MDEV-17551: _ma_state_info_write
 MDEV-17479: mysql_socket.fd != -1
 MDEV-17333: next_insert_id >= auto_inc_interval_for_cur_row.minimum
 MDEV-17319: ts_type != MYSQL_TIMESTAMP_TIME
+MDEV-17225: log_descriptor.bc.buffer->prev_last_lsn
 MDEV-17223: thd->killed != 0
 MDEV-17199: pos < table->n_v_def
 MDEV-17091: part_id == m_last_part
@@ -215,6 +217,7 @@ MDEV-16903: auto_increment_field_not_null
 MDEV-16788: ls->length < 0xFFFFFFFFL
 MDEV-16659: anc_page->org_size == anc_page->size
 MDEV-16654: returned 38 for ALTER TABLE
+MDEV-16654: ha_innodb::commit_inplace_alter_table
 MDEV-16523: level_and_file.second->being_compacted
 MDEV-16500: user_table->n_def > table->s->fields
 MDEV-16154: in myrocks::ha_rocksdb::load_auto_incr_value_from_index
@@ -246,6 +249,9 @@ MDEV-654:   share->now_transactional
 
 # Weak matches
 
+MDEV-18322: wrong page type
+MDEV-18321: ha_innodb::commit_inplace_alter_table
+MDEV-18321: ha_innobase::commit_inplace_alter_table
 MDEV-18309: InnoDB: Cannot open datafile for read-only:
 MDEV-18285: Diagnostics_area::disable_status
 MDEV-18272: InnoDB: tried to purge non-delete-marked record in index
