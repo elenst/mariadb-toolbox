@@ -111,6 +111,9 @@ __DATA__
 
 # Strong matches
 
+MDEV-18371: ha_innobase::cmp_ref
+MDEV-18369: wsrep_handle_SR_rollback
+MDEV-18339: Item_exists_subselect::is_top_level_item
 MDEV-18316: dict_col_t::instant_value
 MDEV-18315: col->same_format
 MDEV-18310: Got error 121 when executing undo undo_key_delete
@@ -218,6 +221,7 @@ MDEV-16788: ls->length < 0xFFFFFFFFL
 MDEV-16659: anc_page->org_size == anc_page->size
 MDEV-16654: returned 38 for ALTER TABLE
 MDEV-16654: ha_innodb::commit_inplace_alter_table
+MDEV-16539: THD::mark_tmp_table_as_free_for_reuse
 MDEV-16523: level_and_file.second->being_compacted
 MDEV-16500: user_table->n_def > table->s->fields
 MDEV-16154: in myrocks::ha_rocksdb::load_auto_incr_value_from_index
@@ -260,6 +264,7 @@ MDEV-18256: heap->magic_n == MEM_BLOCK_MAGIC_N
 MDEV-18256: dict_foreign_remove_from_cache
 MDEV-18222: heap->magic_n == MEM_BLOCK_MAGIC_N
 MDEV-18222: innobase_rename_column_try
+MDEV-18222: dict_foreign_remove_from_cache
 MDEV-18218: btr_page_reorganize_low
 MDEV-18217: InnoDB: Summed data size
 MDEV-18217: row_sel_field_store_in_mysql_format_func
