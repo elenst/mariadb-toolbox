@@ -121,6 +121,7 @@ MDEV-18315: col->same_format
 MDEV-18310: Got error 121 when executing undo undo_key_delete
 MDEV-18300: Field_blob::get_key_image
 MDEV-18291: dict_mem_table_free
+MDEV-18291: ha_innobase_inplace_ctx::
 MDEV-18286: pagecache->cnt_for_resize_op == 0
 MDEV-18274: new_clustered ==
 MDEV-18272: cursor->index->is_committed
@@ -248,6 +249,7 @@ MDEV-14410: table->pos_in_locked_tables->table == table
 MDEV-14126: page_get_page_no
 MDEV-13644: prev != 0 && next != 0
 MDEV-13202: ltime->neg == 0
+MDEV-12978: log_calc_max_ages
 MDEV-12329: 1024U, trx, rec, block
 MDEV-11783: checksum_length == f->ptr
 MDEV-11080: table->n_waiting_or_granted_auto_inc_locks > 0
@@ -255,6 +257,7 @@ MDEV-654:   share->now_transactional
 
 # Weak matches
 
+MDEV-18325: is in the future
 MDEV-18322: wrong page type
 MDEV-18321: ha_innodb::commit_inplace_alter_table
 MDEV-18321: ha_innobase::commit_inplace_alter_table
