@@ -111,6 +111,8 @@ __DATA__
 
 # Strong matches
 
+MDEV-18381: ha_innobase::store_lock
+MDEV-18377: recv_sys->mlog_checkpoint_lsn
 MDEV-18371: ha_innobase::cmp_ref
 MDEV-18369: wsrep_handle_SR_rollback
 MDEV-18339: Item_exists_subselect::is_top_level_item
@@ -280,6 +282,8 @@ MDEV-18047: InnoDB indexes are inconsistent with what defined
 MDEV-18047: cmp_cols_are_equal
 MDEV-17187: failed, the table has missing foreign key indexes
 MDEV-16222: InnoDB: tried to purge non-delete-marked record in index
+MDEV-15776: commit_try_rebuild
+MDEV-15776: table->get_ref_count
 
 MDEV-5628:  Diagnostics_area::set_ok_status
 MDEV-5791:  in Field::is_real_null
@@ -300,8 +304,6 @@ MDEV-14040: in Field::is_real_null
 MDEV-14041: in String::length
 MDEV-14264: binlog_cache_data::reset
 MDEV-14407: trx_undo_rec_copy
-MDEV-14440: inited==RND
-MDEV-14440: in ha_partition::external_lock
 MDEV-14472: is_current_stmt_binlog_format_row
 MDEV-14693: clust_index->online_log
 MDEV-14697: in TABLE::mark_default_fields_for_write
@@ -360,7 +362,6 @@ MDEV-15657: file->inited == handler::NONE
 MDEV-15658: expl_lock->trx == arg->impl_trx
 MDEV-15742: m_lock_type == 1
 MDEV-15753: thd->is_error
-MDEV-15776: commit_try_rebuild
 MDEV-15802: Item::delete_self
 MDEV-15812: virtual handler::~handler
 MDEV-15816: m_lock_rows == RDB_LOCK_WRITE
@@ -549,6 +550,8 @@ MDEV-18158: Can't find record in
 # MDEV-14100: dict_index_get_n_unique_in_tree_nonleaf
 # MDEV-14134: dberr_t row_upd_sec_index_entry
 # MDEV-14409: page_rec_is_leaf
+# MDEV-14440: inited==RND
+# MDEV-14440: in ha_partition::external_lock
 # MDEV-14695: n < m_size
 # MDEV-14743: Item_func_match::init_search
 # MDEV-14829: protocol.cc:588: void Protocol::end_statement
