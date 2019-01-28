@@ -141,9 +141,8 @@ if [ "$res" == "0" ] ; then
 
     echo
     echo '#' ${TRAVIS_BUILD_NUMBER} ${TRAVIS_JOB} ${TRIAL}
-    echo Server: $SERVER_BRANCH $SERVER_REVISION
-    echo Tests: $RQG_BRANCH $RQG_REVISION
-    echo Toolbox: $TOOLBOX_BRANCH $TOOLBOX_REVISION
+    echo Server: $SERVER_BRANCH `echo $SERVER_REVISION | cut -c 1-7`
+    echo Tests: $RQG_BRANCH `echo $RQG_REVISION | cut -c 1-7` Toolbox: $TOOLBOX_BRANCH `echo $TOOLBOX_REVISION | cut -c 1-7`
     echo
     echo $TRIAL_CMD
     echo
