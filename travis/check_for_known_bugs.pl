@@ -111,10 +111,15 @@ __DATA__
 
 # Strong matches
 
+MDEV-18441: tables_opened == 1
+MDEV-18421: foreign->foreign_table
+MDEV-18418: mdl_ticket->m_type == MDL_SHARED_UPGRADABLE
+MDEV-18414: Value_source::Converter_strntod::Converter_strntod
 MDEV-18381: ha_innobase::store_lock
 MDEV-18377: recv_sys->mlog_checkpoint_lsn
 MDEV-18371: ha_innobase::cmp_ref
 MDEV-18369: wsrep_handle_SR_rollback
+MDEV-18343: Mutex RW_LOCK_LIST created sync0debug.cc
 MDEV-18339: Item_exists_subselect::is_top_level_item
 MDEV-18316: dict_col_t::instant_value
 MDEV-18315: col->same_format
@@ -253,6 +258,7 @@ MDEV-12978: log_calc_max_ages
 MDEV-12329: 1024U, trx, rec, block
 MDEV-11783: checksum_length == f->ptr
 MDEV-11080: table->n_waiting_or_granted_auto_inc_locks > 0
+MDEV-10748: ha_maria::implicit_commit
 MDEV-654:   share->now_transactional
 
 # Weak matches
@@ -280,11 +286,22 @@ MDEV-18194: which is outside the tablespace bounds
 MDEV-18185: rename_table_in_prepare
 MDEV-18168: general_log_write
 MDEV-18162: dict_index_t::reconstruct_fields
+MDEV-18084: dict_index_get_nth_field
+MDEV-18084: row_upd_changes_some_index_ord_field_binary
+MDEV-18083: in intern_close_table
+MDEV-18083: tc_purge
+MDEV-18083: tc_remove_all_unused_tables
+MDEV-18083: make_truncated_value_warning
+MDEV-18083: Column_definition::Column_definition
 MDEV-18047: dict_foreign_qualify_index
 MDEV-18047: InnoDB indexes are inconsistent with what defined
 MDEV-18047: cmp_cols_are_equal
+MDEV-17678: in Field::is_null
+MDEV-17678: in print_keydup_error
 MDEV-17187: failed, the table has missing foreign key indexes
 MDEV-16222: InnoDB: tried to purge non-delete-marked record in index
+MDEV-15947: Error: Freeing overrun buffer
+MDEV-15947: in find_field_in_tables
 MDEV-15776: commit_try_rebuild
 MDEV-15776: table->get_ref_count
 
@@ -370,7 +387,6 @@ MDEV-15812: virtual handler::~handler
 MDEV-15816: m_lock_rows == RDB_LOCK_WRITE
 MDEV-15873: precision > 0
 MDEV-15907: in fill_effective_table_privileges
-MDEV-15947: Error: Freeing overrun buffer
 MDEV-15949: space->n_pending_ops == 0
 MDEV-15950: find_dup_table
 MDEV-15950: find_table_in_list
@@ -515,11 +531,6 @@ MDEV-18065: Fatal error: Can't open and lock privilege tables
 MDEV-18067: backup_end
 MDEV-18069: MDL_lock::incompatible_granted_types_bitmap
 MDEV-18069: MDL_ticket::has_stronger_or_equal_type
-MDEV-18083: in intern_close_table
-MDEV-18083: tc_purge
-MDEV-18083: tc_remove_all_unused_tables
-MDEV-18083: make_truncated_value_warning
-MDEV-18084: row_upd_changes_some_index_ord_field_binary
 MDEV-18086: rec_get_converted_size_comp_prefix_low
 MDEV-18087: mach_read_from_n_little_endian
 MDEV-18139: Table rename would cause two FOREIGN KEY constraints
