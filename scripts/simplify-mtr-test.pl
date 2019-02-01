@@ -302,15 +302,14 @@ sub run_test
     my $start = time();
     print sprintf("Trial $i out if $trials started at %02d:%02d:%02d\n",(localtime($start))[2],(localtime($start))[1],(localtime($start))[0]);
 
-    my $test_result= 0;
+    my $test_result;
     my $pid= fork();
 
     if ($pid) {
-      $result= undef;
       foreach (1..$timeout) {
         waitpid($pid, WNOHANG);
         if ($? > -1) {
-          $result= $?;
+          $test_result= $?;
           last;
         }
         sleep 1;
@@ -323,7 +322,7 @@ sub run_test
     }
     elsif (defined $pid) {
       system( "perl mysql-test-run.pl $options --suite=$suitename $test_basename > $testcase.output/$testcase.out.last 2>&1" );
-      exit $?;
+      exit $? >> 8;
     } else {
       print "ERROR: Could not fork for running the test\n";
       exit 1;
