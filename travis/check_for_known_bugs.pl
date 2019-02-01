@@ -111,6 +111,10 @@ __DATA__
 
 # Strong matches
 
+MDEV-18452: Field::set_default
+MDEV-18451: maria_create_trn_for_mysql
+MDEV-18449: my_strnncollsp_simple
+MDEV-18447: Timestamp_or_zero_datetime::tv
 MDEV-18441: tables_opened == 1
 MDEV-18421: foreign->foreign_table
 MDEV-18418: mdl_ticket->m_type == MDL_SHARED_UPGRADABLE
