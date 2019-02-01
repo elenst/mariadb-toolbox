@@ -104,11 +104,16 @@ my ($test, $big_connections, $small_connections) = read_testfile("$suitedir/$tes
 
 print "\nRunning initial test\n";
 
+my $trials_save= $trials;
+# The intial test run is most important, we'll try it more before giving up
+$trials*= 3;
+
 unless (run_test($test))
 {
   print "The initial test didn't fail!\n\n";
   exit;
 }
+$trials= $trials_save;
 
 my @last_failed_test= @$test;
 
