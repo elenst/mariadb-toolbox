@@ -267,6 +267,7 @@ MDEV-654:   share->now_transactional
 
 # Weak matches
 
+MDEV-18453: rec_get_deleted_flag
 MDEV-18325: is in the future
 MDEV-18322: wrong page type
 MDEV-18321: ha_innodb::commit_inplace_alter_table
