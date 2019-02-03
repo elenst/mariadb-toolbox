@@ -20,6 +20,7 @@ my $rpl= 0;
 my $max_chunk= 0;
 my $trials= 1;
 my $timeout= 86400;
+my $simplification_timeout= 0;
 
 my @preserve_connections;
 my %preserve_connections;
@@ -46,8 +47,12 @@ GetOptions (
   "preserve-connections|preserve_connections=s" => \$opt_preserve_connections,
   "max-chunk-size|max_chunk_size=i" => \$max_chunk,
   "trials=i"    => \$trials,
-  "timeout=i"   => \$timeout,
+  "test-timeout|test_timeout=i"   => \$timeout,
+  "simplification-timeout|simplification_timeout=i"   => \$simplification_timeout,
 );
+
+my $endtime= ($simplification_timeout ? time() + $simplification_timeout : 0);
+my $max_trial_duration= 0;
 
 if (!$testcase) {
   print "ERROR: testcase is not defined\n";
@@ -296,6 +301,11 @@ print "\nLast reproducible testcase: $suitedir/$testcase.test.reproducible.".($r
 sub run_test
 {
   my $testref = shift;
+  
+  if ($endtime and ( time() + $max_trial_duration > $endtime )) {
+    print "Only " . ($endtime - time()) . " seconds left till simplification timeout, while the longest trial took $max_trial_duration seconds. Quitting with what we have\n";
+    exit;
+  }
 
   print "\nSize of the test to run: " . scalar(@$testref) . "\n";
 
@@ -373,7 +383,9 @@ sub run_test
     print OUT $out;
     close( OUT );
 
-    print "Trial $i time: " . ( time() - $start ) . "\n";
+    my $trial_duration= time() - $start;
+    print "Trial $i time: $trial_duration\n";
+    $max_trial_duration= $trial_duration if $trial_duration > $max_trial_duration;
 
     if ($result)
     {
