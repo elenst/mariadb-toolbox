@@ -59,7 +59,6 @@ while (<DATA>) {
     # Skip comments and whatever else
     next;
   }
-  print "Running grep -h -E -e \"$pattern\"\n";
   system("grep -h -E -e \"$pattern\" @files > /dev/null 2>&1");
   if ($?) {
     $signature_does_not_match= 1
