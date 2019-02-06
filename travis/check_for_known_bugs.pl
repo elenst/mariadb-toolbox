@@ -111,6 +111,15 @@ __DATA__
 
 # Strong matches
 
+MDEV-18467: fix_semijoin_strategies_for_picked_join_order
+MDEV-18461: sure_page <= last_page
+MDEV-18461: head_length == row_pos->length
+MDEV-18460: THD::create_tmp_table_def_key
+MDEV-18459: fil_op_write_log
+MDEV-18458: EVP_MD_CTX_cleanup
+MDEV-18457: bitmap->full_head_size
+MDEV-18456: item->maybe_null
+MDEV-18454: ReadView::check_trx_id_sanity
 MDEV-18452: Field::set_default
 MDEV-18451: maria_create_trn_for_mysql
 MDEV-18449: my_strnncollsp_simple
@@ -119,6 +128,7 @@ MDEV-18441: tables_opened == 1
 MDEV-18421: foreign->foreign_table
 MDEV-18418: mdl_ticket->m_type == MDL_SHARED_UPGRADABLE
 MDEV-18414: Value_source::Converter_strntod::Converter_strntod
+MDEV-18388: thd->spcont
 MDEV-18381: ha_innobase::store_lock
 MDEV-18377: recv_sys->mlog_checkpoint_lsn
 MDEV-18371: ha_innobase::cmp_ref
@@ -235,6 +245,7 @@ MDEV-16654: returned 38 for ALTER TABLE
 MDEV-16654: ha_innodb::commit_inplace_alter_table
 MDEV-16539: THD::mark_tmp_table_as_free_for_reuse
 MDEV-16523: level_and_file.second->being_compacted
+MDEV-16501: ->coll->strcasecmp
 MDEV-16500: user_table->n_def > table->s->fields
 MDEV-16154: in myrocks::ha_rocksdb::load_auto_incr_value_from_index
 MDEV-15912: purge_sys.tail.commit <= purge_sys.rseg->last_commi
@@ -267,6 +278,9 @@ MDEV-654:   share->now_transactional
 
 # Weak matches
 
+MDEV-18485: in create_tmp_table
+MDEV-18485: in Field::is_null
+MDEV-18485: in Field::is_null_in_record
 MDEV-18453: rec_get_deleted_flag
 MDEV-18325: is in the future
 MDEV-18322: wrong page type
@@ -278,10 +292,10 @@ MDEV-18272: InnoDB: tried to purge non-delete-marked record in index
 MDEV-18260: pagecache_unlock_by_link
 MDEV-18256: heap->magic_n == MEM_BLOCK_MAGIC_N
 MDEV-18256: dict_foreign_remove_from_cache
+MDEV-18255: Item_field::update_table_bitmaps
 MDEV-18222: heap->magic_n == MEM_BLOCK_MAGIC_N
 MDEV-18222: innobase_rename_column_try
 MDEV-18222: dict_foreign_remove_from_cache
-MDEV-18218: btr_page_reorganize_low
 MDEV-18217: InnoDB: Summed data size
 MDEV-18217: row_sel_field_store_in_mysql_format_func
 MDEV-18207: _ma_get_status
@@ -301,6 +315,7 @@ MDEV-18083: Column_definition::Column_definition
 MDEV-18047: dict_foreign_qualify_index
 MDEV-18047: InnoDB indexes are inconsistent with what defined
 MDEV-18047: cmp_cols_are_equal
+MDEV-17976: rec_get_offsets_func
 MDEV-17678: in Field::is_null
 MDEV-17678: in print_keydup_error
 MDEV-17187: failed, the table has missing foreign key indexes
@@ -309,6 +324,7 @@ MDEV-15947: Error: Freeing overrun buffer
 MDEV-15947: in find_field_in_tables
 MDEV-15776: commit_try_rebuild
 MDEV-15776: table->get_ref_count
+MDEV-14440: pure virtual method called
 
 MDEV-5628:  Diagnostics_area::set_ok_status
 MDEV-5791:  in Field::is_real_null
@@ -470,7 +486,6 @@ MDEV-17583: next_mrec == next_mrec_end
 MDEV-17595: copy_data_between_tables
 MDEV-17595: Open_tables_state::BACKUPS_AVAIL
 MDEV-17595: close_tables_for_reopen
-MDEV-17597: pure virtual method called
 MDEV-17619: Index file is crashed
 MDEV-17619: Table is crashed and last repair failed
 MDEV-17619: Incorrect key file for table
@@ -493,7 +508,6 @@ MDEV-17717: table->pos_in_locked_tables
 MDEV-17814: is_current_stmt_binlog_format_row
 MDEV-17818: parse_vcol_defs
 MDEV-17820: == BTR_NO_LOCKING_FLAG
-MDEV-17823: row_sel_sec_rec_is_for_clust_rec
 MDEV-17826: dfield_is_ext
 MDEV-17830: Item_null_result::field_type
 MDEV-17831: supports_instant
@@ -624,6 +638,7 @@ MDEV-18158: Can't find record in
 # MDEV-17470: returned OS error 71. Cannot continue operation
 # MDEV-17697: col.vers_sys_end
 # MDEV-17755: table->s->reclength
+# MDEV-17823: row_sel_sec_rec_is_for_clust_rec
 # MDEV-17885: Could not remove temporary table
 # MDEV-17901: row_parse_int
 # MDEV-17938: block->magic_n == MEM_BLOCK_MAGIC_N
@@ -633,3 +648,4 @@ MDEV-18158: Can't find record in
 # MDEV-18076: in row_parse_int
 # MDEV-18183: id != LATCH_ID_NONE
 # MDEV-18183: OSMutex::enter
+# MDEV-18218: btr_page_reorganize_low
