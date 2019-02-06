@@ -33,8 +33,11 @@ while (<>) {
     }
 }
 
-print "\n\tFound\tHit\tNumber of hits\n";
-print "line\t$lcount\t$lhits\t$ltotal_hits\n";
-print "branch\t$bcount\t$bhits\t$btotal_hits\n";
-print "func\t$fcount\t$fhits\t$ftotal_hits\n";
+print "-------------------------------------------------------\n";
+print sprintf("| %6s | %10s | %10s | %16s |\n",'','Found','Hit','Total hits');
+print "-------------------------------------------------------\n";
+print sprintf("| %6s | %10s | %10s | %16s |\n",'line  ',$lcount,$lhits,$ltotal_hits);
+print sprintf("| %6s | %10s | %10s | %16s |\n",'branch',$bcount,$bhits,$btotal_hits);
+print sprintf("| %6s | %10s | %10s | %16s |\n",'func  ',$fcount,$fhits,$ftotal_hits);
+print "-------------------------------------------------------\n";
 print "\n";
