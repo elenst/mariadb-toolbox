@@ -148,12 +148,19 @@ __DATA__
 # Strong matches
 
 MDEV-18496:
-=~ ma_crypt_post_write_hook
 =~ mysqld: Unknown key id 1. Can't continue
+=~ ma_crypt_post_write_hook
+=~ _ma_flush_pending_blocks
 MDEV-18496:
+=~ mysqld: Unknown key id 1. Can't continue
 =~ Diagnostics_area::set_ok_status
 =~ Assertion \`! is_set()' failed
+=~ simple_rename_or_index_change
 =~ Server version: 10.1
+MDEV-18496:
+=~ mysqld: Unknown key id 1. Can't continue
+=~ Assertion \`!is_set() || (m_status == DA_OK_BULK && is_bulk_op())'
+=~ simple_rename_or_index_change
 MDEV-18467:
 =~ fix_semijoin_strategies_for_picked_join_order
 MDEV-18461:
@@ -478,6 +485,10 @@ MDEV-11783:
 =~ checksum_length == f->ptr
 MDEV-11080:
 =~ table->n_waiting_or_granted_auto_inc_locks > 0
+MDEV-10945:
+=~ Diagnostics_area::set_ok_status
+=~ Status: KILL_BAD_DATA
+=~ Server version: 10.1|Server version: 10.0|Server version: 5.5
 MDEV-10748:
 =~ ha_maria::implicit_commit
 MDEV-654:
@@ -592,8 +603,6 @@ MDEV-8203:
 =~  rgi->tables_to_lock
 MDEV-9137:
 =~  in _ma_ck_real_write_btree
-MDEV-10945:
-=~ Diagnostics_area::set_ok_status
 MDEV-11015:
 =~ precision > 0
 MDEV-11539:
