@@ -259,6 +259,7 @@ MDEV-18244:
 MDEV-18239:
 =~ mark_unsupported_function
 MDEV-18220:
+=~ AddressSanitizer: heap-use-after-free
 =~ fts_get_table_name_prefix
 MDEV-18219:
 =~ index->n_core_null_bytes <=
@@ -458,6 +459,11 @@ MDEV-16958:
 =~ field_length < 5
 MDEV-16940:
 =~ unsafe_key_update
+MDEV-16932:
+=~ AddressSanitizer: heap-use-after-free
+=~ my_well_formed_char_length_utf8|lex_string_cmp
+=~ mysql_prepare_create_table
+=~ sp_head::execute
 MDEV-16918:
 =~ find_field_in_tables
 =~ setup_windows
@@ -507,7 +513,7 @@ MDEV-15653:
 MDEV-15481:
 =~ I_P_List_null_counter, I_P_List_fast_push_back
 MDEV-15401:
-=~ Item_direct_view_ref::used_tables() const: Assertion `fixed' failed
+=~ Item_direct_view_ref::used_tables() const: Assertion \`fixed' failed
 =~ Item_func_nullif::update_used_tables
 =~ Prepared_statement::execute
 MDEV-15308:
@@ -554,6 +560,16 @@ MDEV-10945:
 =~ Server version: 10.1|Server version: 10.0|Server version: 5.5
 MDEV-10748:
 =~ ha_maria::implicit_commit
+MDEV-5628:
+=~ Server version: 10.1|Server version: 10.0|Server version: 5.5
+=~ Assertion \`! is_set()'
+=~ Diagnostics_area::set_ok_status
+=~ mysql_update
+=~ ( SELECT 
+MDEV-5628:
+=~ Assertion \`!is_set() || (m_status == DA_OK_BULK && is_bulk_op())' failed
+=~ mysql_update
+=~ ( SELECT 
 MDEV-654:
 =~ share->now_transactional
 
@@ -651,8 +667,6 @@ MDEV-15776:
 MDEV-14440:
 =~ pure virtual method called
 
-MDEV-5628:
-=~  Diagnostics_area::set_ok_status
 MDEV-5791:
 =~  in Field::is_real_null
 MDEV-5924:
@@ -872,12 +886,6 @@ MDEV-16905:
 =~ TABLE::verify_constraints
 MDEV-16929:
 =~ thd->transaction.stmt.is_empty
-MDEV-16932:
-=~ Well_formed_prefix_status::Well_formed_prefix_status
-MDEV-16932:
-=~ lex_string_cmp
-MDEV-16932:
-=~ my_strcasecmp_utf8
 MDEV-16957:
 =~ Field_iterator_natural_join::next
 MDEV-16971:
