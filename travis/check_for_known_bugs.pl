@@ -147,6 +147,14 @@ __DATA__
 
 # Strong matches
 
+MDEV-18502:
+=~ find_field_in_tables
+=~ setup_without_group
+=~ mysql_select
+=~ sp_head::execute_procedure
+MDEV-18500:
+=~ (block)->n_pointers == 0
+=~ btr_search_build_page_hash_index
 MDEV-18496:
 =~ mysqld: Unknown key id 1. Can't continue
 =~ ma_crypt_post_write_hook
@@ -435,6 +443,10 @@ MDEV-16500:
 =~ user_table->n_def > table->s->fields
 MDEV-16154:
 =~ in myrocks::ha_rocksdb::load_auto_incr_value_from_index
+MDEV-16128:
+=~ Item_func::print_op
+=~ mysql_select
+=~ Prepared_statement::execute
 MDEV-15912:
 =~ purge_sys.tail.commit <= purge_sys.rseg->last_commi
 MDEV-15878:
@@ -451,6 +463,10 @@ MDEV-15653:
 =~ lock_word <= 0x20000000
 MDEV-15481:
 =~ I_P_List_null_counter, I_P_List_fast_push_back
+MDEV-15401:
+=~ Item_direct_view_ref::used_tables() const: Assertion `fixed' failed
+=~ Item_func_nullif::update_used_tables
+=~ Prepared_statement::execute
 MDEV-15308:
 =~ ha_alter_info->alter_info->drop_list.elements > 0
 MDEV-15164:
@@ -702,8 +718,6 @@ MDEV-15374:
 =~ trx_undo_rec_copy
 MDEV-15391:
 =~ join->best_read < double
-MDEV-15401:
-=~ Item_direct_view_ref::used_tables
 MDEV-15458:
 =~ in heap_scan
 MDEV-15464:
