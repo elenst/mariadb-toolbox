@@ -145,8 +145,16 @@ sub process_found_mdev
 
 __DATA__
 
+##############################################################################
 # Strong matches
+##############################################################################
 
+MDEV-18505:
+=~ InnoDB: Failing assertion: pos != ULINT_UNDEFINED
+=~ row_build_row_ref_in_tuple
+MDEV-18503:
+=~ Assertion \`native.length() == binlen'
+=~ Type_handler_timestamp_common::make_sort_key
 MDEV-18502:
 =~ find_field_in_tables
 =~ setup_without_group
@@ -203,6 +211,11 @@ MDEV-18418:
 =~ mdl_ticket->m_type == MDL_SHARED_UPGRADABLE
 MDEV-18414:
 =~ Value_source::Converter_strntod::Converter_strntod
+MDEV-18389:
+=~ Cannot find index .* in InnoDB index dictionary
+=~ InnoDB indexes are inconsistent with what defined in .frm for table
+=~ ha_innobase::index_type
+=~ fill_schema_table_by_open
 MDEV-18388:
 =~ thd->spcont
 MDEV-18381:
@@ -226,7 +239,9 @@ MDEV-18310:
 MDEV-18300:
 =~ Field_blob::get_key_image
 MDEV-18291:
-=~ dict_mem_table_free
+=~ std::__cxx11::_List_base|std::_List_base
+=~ dict_table_remove_from_cache
+=~ ha_delete_table|ha_innobase_inplace_ctx::~ha_innobase_inplace_ctx
 MDEV-18291:
 =~ ha_innobase_inplace_ctx::
 MDEV-18286:
@@ -324,9 +339,17 @@ MDEV-18057:
 MDEV-18054:
 =~ ret > 0
 MDEV-18047:
-=~ index->magic_n == 76789786
+=~ index->magic_n == 76789786|Assertion \`pos < index->n_def'
+=~ dict_index_get_nth_field
+=~ innobase_update_foreign_try
 MDEV-18047:
-=~ pos < index->n_def
+=~ got signal 11
+=~ dict_foreign_qualify_index
+=~ innobase_update_foreign_try
+MDEV-18047:
+=~ AddressSanitizer: heap-use-after-free
+=~ dict_index_get_nth_field
+=~ innobase_update_foreign_try
 MDEV-18046:
 =~ var_header_len >= 2
 MDEV-18039:
@@ -351,6 +374,10 @@ MDEV-18016:
 =~ storage/innobase/dict/dict0dict.cc line 6181
 MDEV-18003:
 =~ grantee->counter > 0
+MDEV-17991:
+=~ Out of memory
+=~ Lex_input_stream::body_utf8_start
+=~ MYSQLparse
 MDEV-17977:
 =~ Count >= rest_length
 MDEV-17976:
@@ -391,6 +418,14 @@ MDEV-17759:
 =~ precision > 0
 MDEV-17596:
 =~ block->page.flush_observer == __null
+MDEV-17595:
+=~ got signal 11
+=~ copy_data_between_tables
+=~ mysql_alter_table
+MDEV-17595:
+=~ Assertion \`thd->transaction.stmt.is_empty() || (thd->state_flags & Open_tables_state::BACKUPS_AVAIL)' failed
+=~ close_tables_for_reopen
+=~ mysql_alter_table
 MDEV-17576:
 =~ share->reopen == 1
 MDEV-17551:
@@ -423,6 +458,10 @@ MDEV-16958:
 =~ field_length < 5
 MDEV-16940:
 =~ unsafe_key_update
+MDEV-16918:
+=~ find_field_in_tables
+=~ setup_windows
+=~ Prepared_statement::execute
 MDEV-16903:
 =~ auto_increment_field_not_null
 MDEV-16788:
@@ -433,6 +472,10 @@ MDEV-16654:
 =~ returned 38 for ALTER TABLE
 MDEV-16654:
 =~ ha_innodb::commit_inplace_alter_table
+MDEV-16549:
+=~ Assertion \`context' failed|signal 11
+=~ Item_direct_view_ref::fix_fields
+=~ mysql_handle_single_derived
 MDEV-16539:
 =~ THD::mark_tmp_table_as_free_for_reuse
 MDEV-16523:
@@ -499,6 +542,10 @@ MDEV-12329:
 =~ 1024U, trx, rec, block
 MDEV-11783:
 =~ checksum_length == f->ptr
+MDEV-11566:
+=~ get_store_key
+=~ get_best_combination
+=~ Server version: 10.2|Server version: 10.1|Server version: 10.0|Server version: 5.5
 MDEV-11080:
 =~ table->n_waiting_or_granted_auto_inc_locks > 0
 MDEV-10945:
@@ -510,7 +557,9 @@ MDEV-10748:
 MDEV-654:
 =~ share->now_transactional
 
+##############################################################################
 # Weak matches
+##############################################################################
 
 MDEV-18485:
 =~ in create_tmp_table
@@ -581,11 +630,10 @@ MDEV-18083:
 MDEV-18083:
 =~ Column_definition::Column_definition
 MDEV-18047:
-=~ dict_foreign_qualify_index
-MDEV-18047:
+=~ Cannot find index .* in InnoDB index dictionary
 =~ InnoDB indexes are inconsistent with what defined
-MDEV-18047:
-=~ cmp_cols_are_equal
+=~ InnoDB could not find key no .* with name .* from dict cache for table
+=~ contains .* indexes inside InnoDB, which is different from the number of indexes .* defined in the MariaDB
 MDEV-17976:
 =~ rec_get_offsets_func
 MDEV-17678:
@@ -596,10 +644,6 @@ MDEV-17187:
 =~ failed, the table has missing foreign key indexes
 MDEV-16222:
 =~ InnoDB: tried to purge non-delete-marked record in index
-MDEV-15947:
-=~ Error: Freeing overrun buffer
-MDEV-15947:
-=~ in find_field_in_tables
 MDEV-15776:
 =~ commit_try_rebuild
 MDEV-15776:
@@ -812,8 +856,6 @@ MDEV-16501:
 =~ in dict_mem_table_col_rename
 MDEV-16635:
 =~ sequence_insert
-MDEV-16549:
-=~ Item_direct_view_ref::fix_fields
 MDEV-16699:
 =~ my_strnncollsp_binary
 MDEV-16738:
@@ -918,12 +960,6 @@ MDEV-17582:
 =~ status_var.local_memory_used == 0
 MDEV-17583:
 =~ next_mrec == next_mrec_end
-MDEV-17595:
-=~ copy_data_between_tables
-MDEV-17595:
-=~ Open_tables_state::BACKUPS_AVAIL
-MDEV-17595:
-=~ close_tables_for_reopen
 MDEV-17619:
 =~ Index file is crashed
 MDEV-17619:
@@ -1126,6 +1162,11 @@ MDEV-18158:
 # MDEV-15855: innobase_allocate_row_for_vcol
 # MDEV-15872: row_log_table_get_pk_col
 # MDEV-15872: in mem_heap_dup
+# Not closed, but probably by mistake
+# MDEV-15947:
+# =~ Error: Freeing overrun buffer
+# MDEV-15947:
+# =~ in find_field_in_tables
 # MDEV-16043: st_select_lex::fix_prepare_information
 # MDEV-16043: thd->Item_change_list::is_empty
 # MDEV-16153: Apc_target::disable
