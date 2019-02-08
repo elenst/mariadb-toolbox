@@ -41,7 +41,7 @@ while (<DATA>) {
     next if $found_mdevs{$mdev};
     $pattern= $1;
     chomp $pattern;
-    $pattern=~ s/(\"|\?|\!|\.|\|\(|\))/\\$1/g;
+    $pattern=~ s/(\"|\?|\!|\.|\(|\))/\\$1/g;
   }
   # MDEV line starts a new signature
   elsif(/^\s*(MDEV-\d+):\s*(.*)/) {
@@ -175,7 +175,7 @@ MDEV-18496:
 =~ Server version: 10.1
 MDEV-18496:
 =~ mysqld: Unknown key id 1. Can't continue
-=~ Assertion \`!is_set() || (m_status == DA_OK_BULK && is_bulk_op())'
+=~ Assertion \`!is_set() \|\| (m_status == DA_OK_BULK && is_bulk_op())'
 =~ simple_rename_or_index_change
 MDEV-18467:
 =~ fix_semijoin_strategies_for_picked_join_order
@@ -422,7 +422,7 @@ MDEV-17763:
 MDEV-17759:
 =~ precision > 0
 MDEV-17725:
-=~ Diagnostics_area::set_ok_status.*Assertion \`!is_set() || (m_status == DA_OK_BULK && is_bulk_op())'
+=~ Diagnostics_area::set_ok_status.*Assertion \`!is_set() \|\| (m_status == DA_OK_BULK && is_bulk_op())'
 =~ mysql_alter_table
 =~ ALTER .* ORDER BY
 MDEV-17596:
@@ -432,7 +432,7 @@ MDEV-17595:
 =~ copy_data_between_tables
 =~ mysql_alter_table
 MDEV-17595:
-=~ Assertion \`thd->transaction.stmt.is_empty() || (thd->state_flags & Open_tables_state::BACKUPS_AVAIL)' failed
+=~ Assertion \`thd->transaction.stmt.is_empty() \|\| (thd->state_flags & Open_tables_state::BACKUPS_AVAIL)' failed
 =~ close_tables_for_reopen
 =~ mysql_alter_table
 MDEV-17580:
@@ -584,7 +584,7 @@ MDEV-5628:
 =~ mysql_update
 =~ ( SELECT 
 MDEV-5628:
-=~ Assertion \`!is_set() || (m_status == DA_OK_BULK && is_bulk_op())' failed
+=~ Assertion \`!is_set() \|\ (m_status == DA_OK_BULK && is_bulk_op())' failed
 =~ mysql_update
 =~ ( SELECT 
 MDEV-654:
@@ -1122,7 +1122,9 @@ MDEV-18146:
 MDEV-18146:
 =~ merge_page, index
 MDEV-18148:
+=~ signal 11|AddressSanitizer: SEGV
 =~ ha_maria::end_bulk_insert
+=~ select_insert::abort_result_set
 MDEV-18149:
 =~ row_parse_int
 MDEV-18151:
