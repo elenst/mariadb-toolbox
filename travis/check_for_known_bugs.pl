@@ -41,7 +41,7 @@ while (<DATA>) {
     next if $found_mdevs{$mdev};
     $pattern= $1;
     chomp $pattern;
-    $pattern=~ s/(\"|\?|\!|\.|\(|\))/\\$1/g;
+    $pattern=~ s/(\"|\?|\!|\.|\|\(|\))/\\$1/g;
   }
   # MDEV line starts a new signature
   elsif(/^\s*(MDEV-\d+):\s*(.*)/) {
@@ -61,7 +61,7 @@ while (<DATA>) {
   }
   system("grep -h -E -e \"$pattern\" @files > /dev/null 2>&1");
   if ($?) {
-    $signature_does_not_match= 1
+    $signature_does_not_match= 1;
   } else {
     $signature_lines_found++;
   }
@@ -393,6 +393,10 @@ MDEV-17939:
 =~ ++loop_count < 2
 MDEV-17912:
 =~ Aria engine: Redo phase failed
+MDEV-17896:
+=~ Assertion \`pfs->get_refcount() > 0'
+=~ release_table_share
+=~ tc_remove_table
 MDEV-17895:
 =~ trx->dict_operation != TRX_DICT_OP_NONE
 MDEV-17893:
@@ -417,6 +421,10 @@ MDEV-17763:
 =~ len == 20U
 MDEV-17759:
 =~ precision > 0
+MDEV-17725:
+=~ Diagnostics_area::set_ok_status.*Assertion \`!is_set() || (m_status == DA_OK_BULK && is_bulk_op())'
+=~ mysql_alter_table
+=~ ALTER .* ORDER BY
 MDEV-17596:
 =~ block->page.flush_observer == __null
 MDEV-17595:
@@ -427,6 +435,11 @@ MDEV-17595:
 =~ Assertion \`thd->transaction.stmt.is_empty() || (thd->state_flags & Open_tables_state::BACKUPS_AVAIL)' failed
 =~ close_tables_for_reopen
 =~ mysql_alter_table
+MDEV-17580:
+=~ Server version: 10.1|Server version: 10.0
+=~ Diagnostics_area::set_ok_status.*Assertion \`! is_set()'
+=~ mysql_alter_table
+=~ ADD CHECK
 MDEV-17576:
 =~ share->reopen == 1
 MDEV-17551:
@@ -451,6 +464,10 @@ MDEV-17054:
 =~ InnoDB needs charset 0 for doing a comparison, but MySQL cannot find that charset
 MDEV-17015:
 =~ m_year <= 9999
+MDEV-17005:
+=~ AddressSanitizer: heap-use-after-free
+=~ innobase_get_computed_value
+=~ row_upd_del_mark_clust_rec
 MDEV-16994:
 =~ Alloced_length >=
 MDEV-16962:
@@ -652,6 +669,8 @@ MDEV-18047:
 =~ contains .* indexes inside InnoDB, which is different from the number of indexes .* defined in the MariaDB
 MDEV-17976:
 =~ rec_get_offsets_func
+MDEV-17725:
+=~ ORDER BY ignored as there is a user-defined clustered index in the table
 MDEV-17678:
 =~ in Field::is_null
 MDEV-17678:
@@ -904,8 +923,6 @@ MDEV-16994:
 =~ partition_info::prune_partition_bitmaps
 MDEV-17004:
 =~ in innobase_get_fts_charset
-MDEV-17005:
-=~ innobase_get_computed_value
 MDEV-17016:
 =~ auto_increment_safe_stmt_log_lock
 MDEV-17019:
@@ -962,8 +979,6 @@ MDEV-17556:
 =~ bitmap_is_set_all
 MDEV-17556:
 =~ table->s->all_set
-MDEV-17580:
-=~ Diagnostics_area::set_ok_status
 MDEV-17582:
 =~ status_var.local_memory_used == 0
 MDEV-17583:
@@ -990,8 +1005,6 @@ MDEV-17665:
 =~ share->page_type == PAGECACHE_LSN_PAGE
 MDEV-17711:
 =~ arena_for_set_stmt== 0
-MDEV-17725:
-=~ m_status == DA_OK_BULK
 MDEV-17738:
 =~ Item::delete_self
 MDEV-17738:
@@ -1036,8 +1049,6 @@ MDEV-17890:
 =~ row_upd_sec_index_entry
 MDEV-17890:
 =~ row_upd_build_difference_binary
-MDEV-17896:
-=~ pfs->get_refcount
 MDEV-17897:
 =~ block->frame
 MDEV-17904:
@@ -1088,8 +1099,8 @@ MDEV-18062:
 =~ ha_innobase::innobase_get_index
 MDEV-18063:
 =~ is corrupt; try to repair it
-MDEV-18065:
-=~ Fatal error: Can't open and lock privilege tables
+# MDEV-18065:
+# =~ Fatal error: Can't open and lock privilege tables
 MDEV-18067:
 =~ backup_end
 MDEV-18069:
