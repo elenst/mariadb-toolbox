@@ -149,6 +149,10 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-18524:
+=~ Assertion \`!"invalid table name"' failed
+=~ innodb_find_table_for_vc
+=~ row_ins_check_foreign_constraint
 MDEV-18505:
 =~ InnoDB: Failing assertion: pos != ULINT_UNDEFINED
 =~ row_build_row_ref_in_tuple
@@ -250,6 +254,9 @@ MDEV-18274:
 =~ new_clustered ==
 MDEV-18272:
 =~ cursor->index->is_committed
+MDEV-18260:
+=~ Assertion \`!was_changed \|\| (block->status & 64) \|\| (block->status & 32)'
+=~ pagecache_unlock_by_link
 MDEV-18259:
 =~ get_foreign_key_info
 MDEV-18258:
@@ -425,6 +432,9 @@ MDEV-17725:
 =~ Diagnostics_area::set_ok_status.*Assertion \`!is_set() \|\| (m_status == DA_OK_BULK && is_bulk_op())'
 =~ mysql_alter_table
 =~ ALTER .* ORDER BY
+MDEV-17627:
+=~ Assertion \`inited==RND' failed
+=~ handler::ha_rnd_init_with_error
 MDEV-17596:
 =~ block->page.flush_observer == __null
 MDEV-17595:
@@ -513,6 +523,10 @@ MDEV-16128:
 =~ Item_func::print_op
 =~ mysql_select
 =~ Prepared_statement::execute
+MDEV-15977:
+=~ Assertion \`! thd->in_sub_stmt' failed
+=~ SEQUENCE::read_initial_values
+=~ open_table_from_share
 MDEV-15912:
 =~ purge_sys.tail.commit <= purge_sys.rseg->last_commi
 MDEV-15878:
@@ -616,8 +630,6 @@ MDEV-18285:
 =~ Diagnostics_area::disable_status
 MDEV-18272:
 =~ InnoDB: tried to purge non-delete-marked record in index
-MDEV-18260:
-=~ pagecache_unlock_by_link
 MDEV-18256:
 =~ heap->magic_n == MEM_BLOCK_MAGIC_N
 MDEV-18256:
@@ -851,8 +863,6 @@ MDEV-15950:
 =~ find_dup_table
 MDEV-15950:
 =~ find_table_in_list
-MDEV-15977:
-=~ thd->in_sub_stmt
 MDEV-16060:
 =~ Failing assertion: ut_strcmp
 MDEV-16131:
@@ -995,8 +1005,6 @@ MDEV-17619:
 =~ Couldn't repair table
 MDEV-17622:
 =~ type == PAGECACHE_LSN_PAGE
-MDEV-17627:
-=~ handler::ha_rnd_end
 MDEV-17636:
 =~ pagecache->block_root
 MDEV-17659:
