@@ -149,6 +149,17 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-18596:
+=~ AddressSanitizer: unknown-crash
+=~ row_mysql_store_col_in_innobase_format
+=~ ha_innobase::prepare_inplace_alter_table
+MDEV-18595:
+=~ Assertion \`0' failed
+=~ Item_cache_timestamp::val_datetime_packed
+=~ Predicant_to_list_comparator::cmp_arg
+MDEV-18589:
+=~ Assertion \`fil_space_t::physical_size(flags) == info.page_size' failed
+=~ xb_delta_open_matching_space
 MDEV-18524:
 =~ Assertion \`!"invalid table name"' failed
 =~ innodb_find_table_for_vc
@@ -234,12 +245,24 @@ MDEV-18343:
 =~ Mutex RW_LOCK_LIST created sync0debug.cc
 MDEV-18339:
 =~ Item_exists_subselect::is_top_level_item
+MDEV-18334:
+=~ Assertion \`len <= col->len || ((col->mtype) == 5 || (col->mtype) == 14) || (col->len == 0 && col->mtype == 1)'
+=~ rec_get_converted_size_comp_prefix_low
+=~ row_undo_step
+MDEV-18334:
+=~ Assertion \`len <= field->col->len || ((field->col->mtype) == 5 || (field->col->mtype) == 14) || (field->col->len == 0 && field->col->mtype == 1)' failed
+=~ rec_get_converted_size_comp_prefix_low
+=~ row_upd_step
 MDEV-18316:
 =~ dict_col_t::instant_value
 MDEV-18315:
 =~ col->same_format
 MDEV-18310:
 =~ Got error 121 when executing undo undo_key_delete
+MDEV-18309:
+=~ InnoDB: Operating system error number 2 in a file operation
+=~ InnoDB: Cannot open datafile for read-only:
+=~ OS error: 71
 MDEV-18300:
 =~ Field_blob::get_key_image
 MDEV-18291:
@@ -263,6 +286,10 @@ MDEV-18258:
 =~ append_identifier
 MDEV-18244:
 =~ ha_partition::update_next_auto_inc_val
+MDEV-18240:
+=~ Assertion \`0' failed
+=~ Item_cache_timestamp::val_datetime_packed
+=~ Arg_comparator::compare_datetime
 MDEV-18239:
 =~ mark_unsupported_function
 MDEV-18220:
@@ -322,6 +349,10 @@ MDEV-18090:
 =~ table->s->fields + 3
 MDEV-18088:
 =~ share->in_trans == 0
+MDEV-18086:
+=~ Assertion \`len <= col->len || ((col->mtype) == 5 || (col->mtype) == 14) || (col->len == 0 && col->mtype == 1)'
+=~ rec_get_converted_size_comp_prefix_low
+=~ btr_cur_optimistic_update
 MDEV-18085:
 =~ len >= col->mbminlen
 MDEV-18084:
@@ -529,6 +560,10 @@ MDEV-15977:
 =~ open_table_from_share
 MDEV-15912:
 =~ purge_sys.tail.commit <= purge_sys.rseg->last_commi
+MDEV-15907:
+=~ AddressSanitizer: heap-use-after-free
+=~ strnmov
+=~ fill_effective_table_privileges
 MDEV-15878:
 =~ table->file->stats.records > 0
 MDEV-15800:
@@ -624,8 +659,6 @@ MDEV-18321:
 =~ ha_innodb::commit_inplace_alter_table
 MDEV-18321:
 =~ ha_innobase::commit_inplace_alter_table
-MDEV-18309:
-=~ InnoDB: Cannot open datafile for read-only:
 MDEV-18285:
 =~ Diagnostics_area::disable_status
 MDEV-18272:
@@ -855,8 +888,6 @@ MDEV-15816:
 =~ m_lock_rows == RDB_LOCK_WRITE
 MDEV-15873:
 =~ precision > 0
-MDEV-15907:
-=~ in fill_effective_table_privileges
 MDEV-15949:
 =~ space->n_pending_ops == 0
 MDEV-15950:
@@ -1115,8 +1146,6 @@ MDEV-18069:
 =~ MDL_lock::incompatible_granted_types_bitmap
 MDEV-18069:
 =~ MDL_ticket::has_stronger_or_equal_type
-MDEV-18086:
-=~ rec_get_converted_size_comp_prefix_low
 MDEV-18087:
 =~ mach_read_from_n_little_endian
 MDEV-18139:
