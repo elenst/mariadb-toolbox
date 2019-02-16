@@ -1,3 +1,5 @@
+# Returns 0 if known bugs have been found, and 1 otherwise
+
 #!/usr/bin/perl
 
 use strict;
@@ -18,6 +20,8 @@ my $pattern;
 my $signature_does_not_match= 0;
 my $signature_lines_found= 0;
 
+my $res= 1;
+
 while (<DATA>) {
 
   if (/^\# Weak matches/) {
@@ -26,6 +30,7 @@ while (<DATA>) {
       print "--- STRONG matches -----------------------\n";
       print $matches_info;
       $matches_info= '';
+      $res= 0;
       last;
     }
     $mdev= undef;
@@ -72,6 +77,7 @@ if ($matches_info) {
   print "--- WEAK matches ---------------------\n";
   print $matches_info;
   print "--------------------------------------\n";
+  $res= 0;
 }
 
 if (keys %fixed_mdevs) {
@@ -81,6 +87,8 @@ if (keys %fixed_mdevs) {
   }
   print "--------------------------------------\n";
 }
+
+exit $res;
 
 sub process_found_mdev
 {
@@ -149,6 +157,10 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-18602:
+=~ InnoDB: Failing assertion: !recv_no_log_write
+=~ mtr_commit
+=~ xtrabackup_prepare_func
 MDEV-18598:
 =~ Assertion \`is_string == dtype_is_string_type(mtype)' failed
 =~ innobase_rename_or_enlarge_columns_cache
@@ -259,6 +271,10 @@ MDEV-18334:
 =~ Assertion \`len <= field->col->len || ((field->col->mtype) == 5 || (field->col->mtype) == 14) || (field->col->len == 0 && field->col->mtype == 1)' failed
 =~ rec_get_converted_size_comp_prefix_low
 =~ row_upd_step
+MDEV-18325:
+=~ InnoDB: Error: page
+=~ InnoDB: is in the future! Current system log sequence number
+=~ Version: '10.1
 MDEV-18316:
 =~ dict_col_t::instant_value
 MDEV-18315:
@@ -279,6 +295,11 @@ MDEV-18291:
 =~ ha_innobase_inplace_ctx::
 MDEV-18286:
 =~ pagecache->cnt_for_resize_op == 0
+MDEV-18285:
+=~ Assertion \`! is_set()' failed
+=~ Diagnostics_area::disable_status
+=~ Prepared_statement::prepare
+=~ DROP
 MDEV-18274:
 =~ new_clustered ==
 MDEV-18272:
@@ -368,7 +389,10 @@ MDEV-18084:
 MDEV-18083:
 =~ Field::set_warning_truncated_wrong_value
 MDEV-18082:
+=~ Assertion \`! is_set()' failed
 =~ Diagnostics_area::disable_status
+=~ Prepared_statement::prepare
+=~ EXPLAIN
 MDEV-18078:
 =~ trnman_has_locked_tables
 MDEV-18077:
@@ -657,16 +681,12 @@ MDEV-18485:
 =~ in Field::is_null_in_record
 MDEV-18453:
 =~ rec_get_deleted_flag
-MDEV-18325:
-=~ is in the future
 MDEV-18322:
 =~ wrong page type
 MDEV-18321:
 =~ ha_innodb::commit_inplace_alter_table
 MDEV-18321:
 =~ ha_innobase::commit_inplace_alter_table
-MDEV-18285:
-=~ Diagnostics_area::disable_status
 MDEV-18272:
 =~ InnoDB: tried to purge non-delete-marked record in index
 MDEV-18256:
