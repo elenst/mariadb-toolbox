@@ -463,7 +463,7 @@ MDEV-17912:
 =~ Aria engine: Redo phase failed
 MDEV-17896:
 =~ Assertion \`pfs->get_refcount() > 0'
-=~ release_table_share
+=~ release_table_share|tdc_delete_share_from_hash
 =~ tc_remove_table
 MDEV-17895:
 =~ trx->dict_operation != TRX_DICT_OP_NONE
