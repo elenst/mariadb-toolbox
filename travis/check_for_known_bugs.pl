@@ -157,6 +157,14 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-18632:
+=~ Conditional jump or move depends on uninitialised value
+=~ wsrep_is_wsrep_xid
+=~ innobase_rollback
+MDEV-18630:
+=~ Conditional jump or move depends on uninitialised value
+=~ ib_push_warning
+=~ dict_create_foreign_constraints_low
 MDEV-18609:
 =~ Assertion \`!is_string || (\*af)->charset() == cf->charset' failed
 =~ innobase_rename_or_enlarge_columns_cache
@@ -459,7 +467,9 @@ MDEV-17977:
 MDEV-17976:
 =~ lock->magic_n == 22643
 MDEV-17969:
+=~ Assertion \`name' failed
 =~ THD::push_warning_truncated_value_for_field
+=~ Field::set_datetime_warning
 MDEV-17964:
 =~ status == 0
 MDEV-17959:
