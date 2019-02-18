@@ -46,7 +46,7 @@ while (<DATA>) {
     next if $found_mdevs{$mdev};
     $pattern= $1;
     chomp $pattern;
-    $pattern=~ s/(\"|\?|\!|\.|\(|\)|\[|\]|\*)/\\$1/g;
+    $pattern=~ s/(\"|\?|\!|\.|\(|\)|\[|\])/\\$1/g;
   }
   # MDEV line starts a new signature
   elsif(/^\s*(MDEV-\d+):\s*(.*)/) {
@@ -165,7 +165,7 @@ MDEV-18598:
 =~ Assertion \`is_string == dtype_is_string_type(mtype)' failed
 =~ innobase_rename_or_enlarge_columns_cache
 MDEV-18598:
-=~ Assertion \`index.fields[i].col->same_format( *oindex.fields[i].col, true)' failed
+=~ Assertion \`index.fields[i].col->same_format( \*oindex.fields[i].col, true)' failed
 =~ dict_table_t::prepare_instant
 MDEV-18596:
 =~ AddressSanitizer: unknown-crash
