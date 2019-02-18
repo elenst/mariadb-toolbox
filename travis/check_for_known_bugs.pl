@@ -46,7 +46,7 @@ while (<DATA>) {
     next if $found_mdevs{$mdev};
     $pattern= $1;
     chomp $pattern;
-    $pattern=~ s/(\"|\?|\!|\.|\(|\)|\[|\])/\\$1/g;
+    $pattern=~ s/(\"|\?|\!|\.|\(|\)|\[|\]|\&|\^|\~)/\\$1/g;
   }
   # MDEV line starts a new signature
   elsif(/^\s*(MDEV-\d+):\s*(.*)/) {
@@ -157,6 +157,9 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-18609:
+=~ Assertion \`!is_string || (\*af)->charset() == cf->charset' failed
+=~ innobase_rename_or_enlarge_columns_cache
 MDEV-18602:
 =~ InnoDB: Failing assertion: !recv_no_log_write
 =~ mtr_commit
@@ -285,6 +288,10 @@ MDEV-18309:
 =~ InnoDB: Operating system error number 2 in a file operation
 =~ InnoDB: Cannot open datafile for read-only:
 =~ OS error: 71
+MDEV-18302:
+=~ Assertion \`!((new_col->prtype ^ col->prtype) & ~256U)' failed
+=~ row_log_table_apply_convert_mrec
+=~ ha_innobase::inplace_alter_table
 MDEV-18300:
 =~ Field_blob::get_key_image
 MDEV-18291:
