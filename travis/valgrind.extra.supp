@@ -1,5 +1,5 @@
 {
-  MDEV-18630: wsrep_is_wsrep_xid
+  MDEV-18632: wsrep_is_wsrep_xid
   Memcheck:Cond
   fun:wsrep_is_wsrep_xid
 }
