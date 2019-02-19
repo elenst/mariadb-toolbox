@@ -674,6 +674,10 @@ MDEV-12329:
 =~ 1024U, trx, rec, block
 MDEV-11783:
 =~ checksum_length == f->ptr
+MDEV-11740:
+=~ Assertion \`pos != (~(my_off_t) 0)' failed
+=~ my_seek
+=~ _mi_get_block_info
 MDEV-11566:
 =~ get_store_key
 =~ get_best_combination
