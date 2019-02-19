@@ -165,6 +165,10 @@ MDEV-18630:
 =~ Conditional jump or move depends on uninitialised value
 =~ ib_push_warning
 =~ dict_create_foreign_constraints_low
+MDEV-18626:
+=~ AddressSanitizer: stack-buffer-overflow
+=~ int10_to_str
+=~ make_date_time
 MDEV-18609:
 =~ Assertion \`!is_string || (\*af)->charset() == cf->charset' failed
 =~ innobase_rename_or_enlarge_columns_cache
@@ -548,6 +552,11 @@ MDEV-17091:
 =~ part_id == m_last_part
 MDEV-17091:
 =~ old_part_id == m_last_part
+MDEV-17055:
+=~ got signal 11
+=~ find_order_in_list
+=~ mysql_prepare_update
+=~ sp_head::execute_procedure
 MDEV-17054:
 =~ InnoDB needs charset 0 for doing a comparison, but MySQL cannot find that charset
 MDEV-17015:
@@ -637,6 +646,10 @@ MDEV-15115:
 =~ dict_tf2_is_valid
 MDEV-15130:
 =~ table->s->null_bytes == 0
+MDEV-14926:
+=~ AddressSanitizer: heap-use-after-free
+=~ make_date_time
+=~ Protocol::send_result_set_row
 MDEV-14906:
 =~ index->is_instant
 MDEV-14711:
@@ -1019,8 +1032,6 @@ MDEV-17053:
 =~ sync_check_iterate
 MDEV-17054:
 =~ in innobase_get_fts_charset
-MDEV-17055:
-=~ find_order_in_list
 MDEV-17107:
 =~ table_list->table
 MDEV-17120:
