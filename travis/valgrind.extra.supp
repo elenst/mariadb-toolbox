@@ -1,6 +1,30 @@
 {
-   MDEV-18630: wsrep_is_wsrep_xid
-   Memcheck:Cond
-   fun:wsrep_is_wsrep_xid
+  MDEV-18630: wsrep_is_wsrep_xid
+  Memcheck:Cond
+  fun:wsrep_is_wsrep_xid
 }
 
+{
+  MDEV-18630: dict_create_foreign_constraints_low
+  Memcheck:Cond
+  ...
+  fun:_Z15ib_push_warningP5trx_t7dberr_tPKcz
+  fun:_ZL35dict_create_foreign_constraints_lowP5trx_tP16mem_block_info_tPK15charset_info_stPKcS7_m
+}
+
+{
+  MDEV-18630: dict_create_foreign_constraints_low
+  Memcheck:Cond
+  ...
+  fun:_ZL35dict_create_foreign_constraints_lowP5trx_tP16mem_block_info_tPK15charset_info_stPKcS7_m
+  fun:_Z31dict_create_foreign_constraintsP5trx_tPKcmS2_m
+}
+
+{
+  MDEV-18630: dict_create_foreign_constraints_low
+  Memcheck:Param
+  write(buf)
+  ...
+  fun:_Z10dict_closev
+  fun:_Z15innodb_shutdownv
+}
