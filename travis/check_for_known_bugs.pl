@@ -157,6 +157,11 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-18667:
+=~ AddressSanitizer: heap-use-after-free
+=~ make_date_time
+=~ Arg_comparator::compare_string
+=~ Item_func_nullif::compare
 MDEV-18632:
 =~ Conditional jump or move depends on uninitialised value
 =~ wsrep_is_wsrep_xid
@@ -641,8 +646,18 @@ MDEV-15656:
 =~ is_last_prefix <= 0
 MDEV-15653:
 =~ lock_word <= 0x20000000
+MDEV-15572:
+=~ signal 11|AddressSanitizer: SEGV
+=~ ha_maria::end_bulk_insert
+=~ select_insert::abort_result_set
 MDEV-15481:
 =~ I_P_List_null_counter, I_P_List_fast_push_back
+MDEV-15458:
+=~ AddressSanitizer: heap-buffer-overflow|signal 11
+=~ heap_scan
+=~ handler::ha_rnd_next
+=~ rr_sequential
+=~ mysql_update
 MDEV-15401:
 =~ Item_direct_view_ref::used_tables() const: Assertion \`fixed' failed
 =~ Item_func_nullif::update_used_tables
@@ -909,8 +924,6 @@ MDEV-15374:
 =~ trx_undo_rec_copy
 MDEV-15391:
 =~ join->best_read < double
-MDEV-15458:
-=~ in heap_scan
 MDEV-15464:
 =~ in TrxUndoRsegsIterator::set_next
 MDEV-15464:
@@ -1223,10 +1236,6 @@ MDEV-18146:
 =~ btr_page_reorganize_low
 MDEV-18146:
 =~ merge_page, index
-MDEV-18148:
-=~ signal 11|AddressSanitizer: SEGV
-=~ ha_maria::end_bulk_insert
-=~ select_insert::abort_result_set
 MDEV-18149:
 =~ row_parse_int
 MDEV-18151:
