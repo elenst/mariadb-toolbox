@@ -406,7 +406,12 @@ MDEV-18084:
 MDEV-18084:
 =~ pos < table->n_v_def
 MDEV-18083:
+=~ AddressSanitizer: heap-use-after-free
+=~ push_warning_printf
 =~ Field::set_warning_truncated_wrong_value
+MDEV-18083:
+=~ AddressSanitizer: heap-use-after-free
+=~ THD::push_warning_truncated_value_for_field
 MDEV-18082:
 =~ Assertion \`! is_set()' failed
 =~ Diagnostics_area::disable_status
@@ -620,6 +625,10 @@ MDEV-15907:
 =~ AddressSanitizer: heap-use-after-free
 =~ strnmov
 =~ fill_effective_table_privileges
+MDEV-15881:
+=~ Assertion \`is_valid_value_slow()' failed
+=~ Datetime::Datetime
+=~ Arg_comparator::compare
 MDEV-15878:
 =~ table->file->stats.records > 0
 MDEV-15800:
@@ -1162,8 +1171,6 @@ MDEV-17971:
 =~ Field_iterator_table::set
 MDEV-17971:
 =~ Field_iterator_table_ref::set_field_iterator
-MDEV-17972:
-=~ is_valid_value_slow
 MDEV-17974:
 =~ sp_process_definer
 MDEV-17978:
@@ -1319,6 +1326,8 @@ MDEV-18158:
 # MDEV-17901: row_parse_int
 # MDEV-17938: block->magic_n == MEM_BLOCK_MAGIC_N
 # MDEV-17938: dict_mem_table_free
+# MDEV-17972:
+# =~ is_valid_value_slow
 # MDEV-17975: m_status == DA_OK_BULK
 # MDEV-18072: == item->null_value
 # MDEV-18076: in row_parse_int
