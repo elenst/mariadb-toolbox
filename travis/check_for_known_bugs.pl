@@ -283,6 +283,14 @@ MDEV-18343:
 =~ Mutex RW_LOCK_LIST created sync0debug.cc
 MDEV-18339:
 =~ Item_exists_subselect::is_top_level_item
+MDEV-18335:
+=~ Assertion \`!error \|\| error == 137' failed
+=~ subselect_rowid_merge_engine::init
+=~ Item_func_not::val_int
+MDEV-18335:
+=~ AddressSanitizer: heap-buffer-overflow
+=~ subselect_rowid_merge_engine::init
+=~ Item_func_not::val_int
 MDEV-18334:
 =~ Assertion \`len <= col->len || ((col->mtype) == 5 || (col->mtype) == 14) || (col->len == 0 && col->mtype == 1)'
 =~ rec_get_converted_size_comp_prefix_low
@@ -411,7 +419,7 @@ MDEV-18084:
 MDEV-18084:
 =~ pos < table->n_v_def
 MDEV-18083:
-=~ AddressSanitizer: heap-use-after-free
+=~ heap-use-after-free|heap-buffer-overflow
 =~ push_warning_printf
 =~ Field::set_warning_truncated_wrong_value
 MDEV-18083:
@@ -465,11 +473,9 @@ MDEV-18018:
 MDEV-18017:
 =~ index->to_be_dropped
 MDEV-18016:
-=~ storage/innobase/dict/dict0dict.cc line 6199
-MDEV-18016:
-=~ storage/innobase/dict/dict0dict.cc line 6346
-MDEV-18016:
-=~ storage/innobase/dict/dict0dict.cc line 6181
+=~ storage/innobase/dict/dict0dict.cc line 6199|storage/innobase/dict/dict0dict.cc line 6346|storage/innobase/dict/dict0dict.cc line 6181
+=~ dict_table_check_for_dup_indexes
+=~ mysql_inplace_alter_table
 MDEV-18003:
 =~ grantee->counter > 0
 MDEV-17991:
