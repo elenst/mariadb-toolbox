@@ -157,6 +157,11 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-18693:
+=~ AddressSanitizer: heap-use-after-free|signal 11
+=~ _ma_remove_table_from_trnman
+=~ wait_while_table_is_used
+=~ reload_acl_and_cache
 MDEV-18690:
 =~ signal 11
 =~ Item_equal_iterator<List_iterator_fast, Item>::Item_equal_iterator
