@@ -620,6 +620,11 @@ MDEV-17070:
 =~ Assertion \`!is_set() \|\| (m_status == DA_OK_BULK && is_bulk_op())'
 =~ mysql_load
 MDEV-17070:
+=~ Assertion \`!is_set() \|\| (m_status == DA_OK_BULK && is_bulk_op())'
+=~ mysql_alter_table
+=~ is marked as crashed and should be repaired
+=~ #sql.*is marked as crashed and should be repaired
+MDEV-17070:
 =~ \`table->file->stats.records > 0 \|\| error'
 =~ join_read_const_table
 =~ make_join_statistics
