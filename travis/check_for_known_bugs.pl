@@ -157,6 +157,10 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-18696:
+=~ Assertion \`newtrn->used_instances != (void\*) tbl' failed
+=~ _ma_set_trn_for_table
+=~ thr_multi_lock
 MDEV-18694:
 =~ mysql_socket.fd != -1
 =~ Protocol::send_error
@@ -544,7 +548,7 @@ MDEV-17912:
 MDEV-17896:
 =~ Assertion \`pfs->get_refcount() > 0'
 =~ release_table_share|tdc_delete_share_from_hash
-=~ tc_remove_table
+=~ purge_tables
 MDEV-17895:
 =~ trx->dict_operation != TRX_DICT_OP_NONE
 MDEV-17893:
@@ -553,6 +557,10 @@ MDEV-17892:
 =~ index->was_not_null
 MDEV-17891:
 =~ thd->transaction.stmt.modified_non_trans_table
+MDEV-17869:
+=~ AddressSanitizer: use-after-poison
+=~ Item_change_list::rollback_item_tree_changes
+=~ Prepared_statement::cleanup_stmt
 MDEV-17857:
 =~ tmp != ((long long) 0x8000000000000000LL)
 =~ TIME_from_longlong_datetime_packed
@@ -600,8 +608,6 @@ MDEV-17576:
 =~ share->reopen == 1
 MDEV-17551:
 =~ _ma_state_info_write
-MDEV-17479:
-=~ mysql_socket.fd != -1
 MDEV-17333:
 =~ next_insert_id >= auto_inc_interval_for_cur_row.minimum
 MDEV-17319:
@@ -642,7 +648,7 @@ MDEV-17015:
 MDEV-17005:
 =~ AddressSanitizer: heap-use-after-free
 =~ innobase_get_computed_value
-=~ row_upd_del_mark_clust_rec
+=~ row_upd_clust_step
 MDEV-16994:
 =~ Alloced_length >=
 MDEV-16962:
@@ -742,6 +748,16 @@ MDEV-14926:
 =~ AddressSanitizer: heap-use-after-free
 =~ make_date_time
 =~ Protocol::send_result_set_row
+MDEV-14926:
+=~ AddressSanitizer: heap-use-after-free
+=~ make_date_time
+=~ Item_func_octet_length::val_int
+=~ AGGR_OP::put_record|end_send_group
+MDEV-14926:
+=~ AddressSanitizer: heap-use-after-free
+=~ Item_func_date_format::val_str
+=~ copy_fields
+=~ end_send_group
 MDEV-14906:
 =~ index->is_instant
 MDEV-14711:
@@ -1392,6 +1408,8 @@ MDEV-18158:
 # MDEV-17432: lock_trx_has_sys_table_locks
 # MDEV-17470: Operating system error number 17 in a file operation
 # MDEV-17470: returned OS error 71. Cannot continue operation
+# MDEV-17479:
+# =~ mysql_socket.fd != -1
 # MDEV-17697: col.vers_sys_end
 # MDEV-17755: table->s->reclength
 # MDEV-17823: row_sel_sec_rec_is_for_clust_rec
