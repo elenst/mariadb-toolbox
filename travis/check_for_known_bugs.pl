@@ -157,6 +157,37 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-18690:
+=~ signal 11
+=~ Item_equal_iterator<List_iterator_fast, Item>::Item_equal_iterator
+=~ Item_field::find_item_equal
+=~ eliminate_item_equal
+=~ substitute_for_best_equal_field
+=~ JOIN::optimize_unflattened_subqueries
+MDEV-18690:
+=~ AddressSanitizer: use-after-poison
+=~ base_list::head
+=~ substitute_for_best_equal_field
+=~ JOIN::optimize_unflattened_subqueries
+MDEV-18681:
+=~ AddressSanitizer: SEGV
+=~ embedding_sjm
+=~ substitute_for_best_equal_field
+=~ JOIN::optimize_stage2
+MDEV-18679:
+=~ signal 11|AddressSanitizer: SEGV
+=~ JOIN::optimize
+=~ mysql_derived_optimize
+=~ st_select_lex::handle_derived
+MDEV-18675:
+=~ signal 11|AddressSanitizer: SEGV on unknown address
+=~ COND_EQUAL::copy
+=~ and_new_conditions_to_optimized_cond
+MDEV-18668:
+=~ AddressSanitizer: use-after-poison
+=~ base_list_iterator::next_fast
+=~ st_select_lex::collect_fields_equal_to_grouping
+=~ st_select_lex::pushdown_from_having_into_where
 MDEV-18667:
 =~ AddressSanitizer: heap-use-after-free
 =~ make_date_time
@@ -276,7 +307,9 @@ MDEV-18381:
 MDEV-18377:
 =~ recv_sys->mlog_checkpoint_lsn
 MDEV-18371:
-=~ ha_innobase::cmp_ref
+=~ Conditional jump or move depends on uninitialised value|signal 11
+=~ cmp_key_rowid_part_id
+=~ QUICK_RANGE_SELECT::get_next
 MDEV-18369:
 =~ wsrep_handle_SR_rollback
 MDEV-18343:
@@ -362,6 +395,10 @@ MDEV-18213:
 =~ Error: failed to execute query BACKUP STAGE BLOCK_COMMIT: Deadlock found when trying to get lock
 MDEV-18209:
 =~ Enabling keys got errno 0 on
+MDEV-18207:
+=~ AddressSanitizer: heap-use-after-free
+=~ _ma_get_status
+=~ mysql_lock_tables
 MDEV-18205:
 =~ str_length < len
 MDEV-18204:
@@ -418,13 +455,6 @@ MDEV-18084:
 =~ pos < index->n_def
 MDEV-18084:
 =~ pos < table->n_v_def
-MDEV-18083:
-=~ heap-use-after-free|heap-buffer-overflow
-=~ push_warning_printf
-=~ Field::set_warning_truncated_wrong_value
-MDEV-18083:
-=~ AddressSanitizer: heap-use-after-free
-=~ THD::push_warning_truncated_value_for_field
 MDEV-18082:
 =~ Assertion \`! is_set()' failed
 =~ Diagnostics_area::disable_status
@@ -769,8 +799,6 @@ MDEV-18217:
 =~ InnoDB: Summed data size
 MDEV-18217:
 =~ row_sel_field_store_in_mysql_format_func
-MDEV-18207:
-=~ _ma_get_status
 MDEV-18195:
 =~ Item::eq
 MDEV-18195:
@@ -1346,6 +1374,13 @@ MDEV-18158:
 # MDEV-17975: m_status == DA_OK_BULK
 # MDEV-18072: == item->null_value
 # MDEV-18076: in row_parse_int
+# MDEV-18083:
+# =~ heap-use-after-free|heap-buffer-overflow
+# =~ push_warning_printf
+# =~ Field::set_warning_truncated_wrong_value
+# MDEV-18083:
+# =~ AddressSanitizer: heap-use-after-free
+# =~ THD::push_warning_truncated_value_for_field
 # MDEV-18183: id != LATCH_ID_NONE
 # MDEV-18183: OSMutex::enter
 # MDEV-18218: btr_page_reorganize_low
