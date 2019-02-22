@@ -27,7 +27,7 @@ while (<DATA>) {
   if (/^\# Weak matches/) {
     # Don't search for weak matches if strong ones have been found
     if ($matches_info) {
-      print "--- STRONG matches -----------------------\n";
+      print "--- STRONG matches ---------------------------------\n";
       print $matches_info;
       $matches_info= '';
       $res= 0;
@@ -74,7 +74,7 @@ while (<DATA>) {
 
 # If it's non-empty at this point, it's weak matches
 if ($matches_info) {
-  print "--- WEAK matches ---------------------\n";
+  print "--- WEAK matches -------------------------------\n";
   print $matches_info;
   print "--------------------------------------\n";
   $res= 0;
@@ -157,6 +157,10 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-18694:
+=~ mysql_socket.fd != -1
+=~ Protocol::send_error
+=~ KILL_SERVER
 MDEV-18693:
 =~ AddressSanitizer: heap-use-after-free|signal 11
 =~ _ma_remove_table_from_trnman
@@ -189,7 +193,7 @@ MDEV-18675:
 =~ COND_EQUAL::copy
 =~ and_new_conditions_to_optimized_cond
 MDEV-18668:
-=~ AddressSanitizer: use-after-poison
+=~ AddressSanitizer: use-after-poison|Invalid read of size
 =~ base_list_iterator::next_fast
 =~ st_select_lex::collect_fields_equal_to_grouping
 =~ st_select_lex::pushdown_from_having_into_where
@@ -198,6 +202,10 @@ MDEV-18667:
 =~ make_date_time
 =~ Arg_comparator::compare_string
 =~ Item_func_nullif::compare
+MDEV-18640:
+=~ Conditional jump or move depends on uninitialised value
+=~ TABLE::prune_range_rowid_filters
+=~ TABLE::init_cost_info_for_usable_range_rowid_filters
 MDEV-18632:
 =~ Conditional jump or move depends on uninitialised value
 =~ wsrep_is_wsrep_xid
@@ -545,6 +553,11 @@ MDEV-17892:
 =~ index->was_not_null
 MDEV-17891:
 =~ thd->transaction.stmt.modified_non_trans_table
+MDEV-17857:
+=~ tmp != ((long long) 0x8000000000000000LL)
+=~ TIME_from_longlong_datetime_packed
+=~ Item_sum_hybrid::min_max_update_str_field
+=~ update_tmptable_sum_func
 MDEV-17854:
 =~ decimals <= 6
 MDEV-17843:
@@ -603,6 +616,15 @@ MDEV-17091:
 =~ part_id == m_last_part
 MDEV-17091:
 =~ old_part_id == m_last_part
+MDEV-17070:
+=~ Assertion \`!is_set() \|\| (m_status == DA_OK_BULK && is_bulk_op())'
+=~ mysql_load
+MDEV-17070:
+=~ \`table->file->stats.records > 0 \|\| error'
+=~ join_read_const_table
+=~ make_join_statistics
+=~ mysql_select
+=~ mysql_load
 MDEV-17055:
 =~ got signal 11
 =~ find_order_in_list
@@ -694,7 +716,7 @@ MDEV-15572:
 MDEV-15481:
 =~ I_P_List_null_counter, I_P_List_fast_push_back
 MDEV-15458:
-=~ AddressSanitizer: heap-buffer-overflow|signal 11
+=~ AddressSanitizer: heap-buffer-overflow|signal 11|Conditional jump or move depends on uninitialised value|AddressSanitizer: heap-use-after-free
 =~ heap_scan
 =~ handler::ha_rnd_next
 =~ rr_sequential
@@ -1199,8 +1221,6 @@ MDEV-17843:
 =~ lock_rec_queue_validate
 MDEV-17844:
 =~ rec_offs_validate
-MDEV-17857:
-=~ TIME_from_longlong_datetime_packed
 MDEV-17884:
 =~ is marked as crashed and should be repaired
 MDEV-17890:
