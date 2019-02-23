@@ -23,7 +23,7 @@ set -x
 
 OLD=$1
 
-cd $HOME
+cd $HOME/server
 if [ -n "$OLD" ] ; then
   case $OLD in
     mysql-*)
@@ -37,24 +37,28 @@ if [ -n "$OLD" ] ; then
       fi
       echo "MySQL version $ver"
       fname=mysql-${ver}-linux-glibc2.12-x86_64
-      if ! wget -nv https://dev.mysql.com/get/Downloads/MySQL-${major_ver}/${fname}.tar.gz ; then
-        soft_exit 1
+      if [ ! -e ${fname}.tar.gz ] ; then
+        if ! wget -nv https://dev.mysql.com/get/Downloads/MySQL-${major_ver}/${fname}.tar.gz ; then
+          soft_exit 1
+        fi
       fi
     ;;
     10.*|5.*)
       wget https://downloads.mariadb.com/MariaDB/mariadb-${OLD}/bintar-linux-glibc_214-x86_64/
       fname=`grep "\"mariadb-.*tar.gz\"" index.html | sed -e 's/.*\(mariadb-.*\)\.tar\.gz.*/\1/'`
-      if ! wget -nv https://downloads.mariadb.com/MariaDB/mariadb-${OLD}/bintar-linux-glibc_214-x86_64/${fname}.tar.gz ; then
-        soft_exit 1
+      if [ ! -e ${fname}.tar.gz ] ; then
+        if ! wget -nv https://downloads.mariadb.com/MariaDB/mariadb-${OLD}/bintar-linux-glibc_214-x86_64/${fname}.tar.gz ; then
+          soft_exit 1
+        fi
       fi
     ;;
     *)
     ;;
   esac
-  rm -rf old
-  mkdir old
-  cd old
-  tar zxf ../${fname}.tar.gz
+  rm -rf $HOME/old
+  mkdir $HOME/old
+  cd $HOME/old
+  tar zxf $HOME/server/${fname}.tar.gz
   dname=`ls`
   mv $dname/* ./
   rmdir $dname
