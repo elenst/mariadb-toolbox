@@ -157,6 +157,16 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-18722:
+=~ Assertion \`templ->mysql_null_bit_mask'
+=~ row_sel_store_mysql_rec
+=~ check_duplicate_long_entry_key
+=~ mysql_alter_table
+MDEV-18720:
+=~ Assertion \`inited==NONE'
+=~ handler::ha_index_init
+=~ check_duplicate_long_entry_key
+=~ vers_insert_history_row
 MDEV-18719:
 =~ (c.prtype ^ o->prtype) & ~(256U \| (16384U|32768U))
 =~ dict_table_t::instant_column
