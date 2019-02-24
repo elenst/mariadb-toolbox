@@ -157,11 +157,33 @@ __DATA__
 # Strong matches
 ##############################################################################
 
-MDEV-18707:
+MDEV-18711:
+=~ Assertion \`key_info->key_part->field->flags & (1<< 30)'
+=~ setup_keyinfo_hash
+=~ mysql_prepare_alter_table
+MDEV-18710:
+=~ Expression for field \`DB_ROW_HASH_1\` is refering to uninitialized field \`DB_ROW_HASH_1\`
+MDEV-18709:
+=~ signal 11|AddressSanitizer: heap-buffer-overflow
+=~ create_index
+=~ create_table_info_t::create_table
+=~ mysql_alter_table
+MDEV-18708:
 =~ AddressSanitizer: SEGV|signal 11
 =~ Item_field::register_field_in_read_map
 =~ Item_args::walk_args
 =~ prepare_vcol_for_base_setup
+MDEV-18707:
+=~ AddressSanitizer: heap-use-after-free
+=~ Field::is_null
+=~ Type_handler_int_result::Item_save_in_field
+=~ TABLE::update_virtual_fields
+=~ mysql_delete
+MDEV-18707:
+=~ signal 11
+=~ my_hash_sort_bin
+=~ calc_hash_for_unique
+=~ TABLE::update_virtual_fields
 MDEV-18706:
 =~ mysql_ha_read: Got error 149 when reading table
 MDEV-18696:
@@ -840,6 +862,9 @@ MDEV-654:
 # Weak matches
 ##############################################################################
 
+MDEV-18712:
+=~ Found index .* whose column info does not match that of MariaDB
+=~ InnoDB indexes are inconsistent with what defined in .frm for table
 MDEV-18453:
 =~ rec_get_deleted_flag
 MDEV-18322:
