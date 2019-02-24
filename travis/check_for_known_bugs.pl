@@ -157,6 +157,14 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-18719:
+=~ (c.prtype ^ o->prtype) & ~(256U \| (16384U|32768U))
+=~ dict_table_t::instant_column
+=~ ha_innobase::commit_inplace_alter_table
+MDEV-18713:
+=~ Assertion \`strcmp(share->unique_file_name,filename) \|\| share->last_version'
+=~ test_if_reopen
+=~ mysql_insert
 MDEV-18711:
 =~ Assertion \`key_info->key_part->field->flags & (1<< 30)'
 =~ setup_keyinfo_hash
@@ -866,10 +874,9 @@ MDEV-654:
 # Weak matches
 ##############################################################################
 
-MDEV-18713:
-=~ Assertion \`strcmp(share->unique_file_name,filename) \|\| share->last_version'
-=~ test_if_reopen
-=~ mysql_insert
+MDEV-18719:
+=~ old \|\| col->same_format(\*old)
+=~ mysql_inplace_alter_table
 MDEV-18712:
 =~ Found index .* whose column info does not match that of MariaDB
 =~ InnoDB indexes are inconsistent with what defined in .frm for table
