@@ -157,6 +157,13 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-18707:
+=~ AddressSanitizer: SEGV|signal 11
+=~ Item_field::register_field_in_read_map
+=~ Item_args::walk_args
+=~ prepare_vcol_for_base_setup
+MDEV-18706:
+=~ mysql_ha_read: Got error 149 when reading table
 MDEV-18696:
 =~ Assertion \`newtrn->used_instances != (void\*) tbl' failed
 =~ _ma_set_trn_for_table
@@ -183,7 +190,7 @@ MDEV-18690:
 =~ substitute_for_best_equal_field
 =~ JOIN::optimize_unflattened_subqueries
 MDEV-18681:
-=~ AddressSanitizer: SEGV
+=~ AddressSanitizer: SEGV|signal 11
 =~ embedding_sjm
 =~ substitute_for_best_equal_field
 =~ JOIN::optimize_stage2
@@ -278,6 +285,24 @@ MDEV-18496:
 =~ mysqld: Unknown key id 1. Can't continue
 =~ Assertion \`!is_set() \|\| (m_status == DA_OK_BULK && is_bulk_op())'
 =~ simple_rename_or_index_change
+MDEV-18485:
+=~ signal 11|AddressSanitizer: heap-use-after-free
+=~ my_timestamp_from_binary
+=~ Column_definition::Column_definition
+=~ mysql_alter_table
+MDEV-18485:
+=~ signal 11|AddressSanitizer: heap-use-after-free|AddressSanitizer: heap-buffer-overflow
+=~ create_tmp_table
+=~ select_unit::create_result_table|select_union::create_result_table
+=~ TABLE_LIST::handle_derived
+MDEV-18485:
+=~ AddressSanitizer: heap-use-after-free
+=~ Field::is_null
+=~ Item_direct_view_ref::send
+MDEV-18485:
+=~ Field::is_null_in_record
+=~ Column_definition::Column_definition
+=~ mysql_alter_table
 MDEV-18467:
 =~ fix_semijoin_strategies_for_picked_join_order
 MDEV-18461:
@@ -815,12 +840,6 @@ MDEV-654:
 # Weak matches
 ##############################################################################
 
-MDEV-18485:
-=~ in create_tmp_table
-MDEV-18485:
-=~ in Field::is_null
-MDEV-18485:
-=~ in Field::is_null_in_record
 MDEV-18453:
 =~ rec_get_deleted_flag
 MDEV-18322:
@@ -909,9 +928,6 @@ MDEV-9137:
 =~  in _ma_ck_real_write_btree
 MDEV-11015:
 =~ precision > 0
-MDEV-11539:
-=~ mi_open.c:67:
-=~ test_if_reopen
 MDEV-12059:
 =~ precision > 0
 MDEV-13024:
@@ -1030,8 +1046,6 @@ MDEV-15493:
 =~ lock_trx_table_locks_remove
 MDEV-15533:
 =~ log->blobs
-MDEV-15551:
-=~ share->last_version
 MDEV-15572:
 =~ ha_maria::end_bulk_insert
 MDEV-15576:
@@ -1342,6 +1356,9 @@ MDEV-18158:
 # MDEV-11071: thd->transaction.stmt.is_empty
 # MDEV-11071: in THD::mark_tmp_table_as_free_for_reuse
 # MDEV-11167: Can't find record
+# MDEV-11539:
+# =~ mi_open.c:67:
+# =~ test_if_reopen
 # MDEV-11741: table->s->all_set
 # MDEV-11741: in ha_heap::rnd_next
 # MDEV-11741: in handler::ha_reset
@@ -1362,6 +1379,8 @@ MDEV-18158:
 # MDEV-15243: in Field_blob::pack
 # MDEV-15475: table->read_set, field_index
 # MDEV-15537: in mysql_prepare_alter_table
+# MDEV-15551:
+# =~ share->last_version
 # MDEV-15626: old_part_id == m_last_part
 # MDEV-15729: in Field::make_field
 # MDEV-15729: Field::make_send_field
