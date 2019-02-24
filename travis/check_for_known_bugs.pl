@@ -226,8 +226,7 @@ MDEV-18675:
 =~ COND_EQUAL::copy
 =~ and_new_conditions_to_optimized_cond
 MDEV-18668:
-=~ AddressSanitizer: use-after-poison|Invalid read of size
-=~ base_list_iterator::next_fast
+=~ AddressSanitizer: use-after-poison|Invalid read of size|signal 11
 =~ st_select_lex::collect_fields_equal_to_grouping
 =~ st_select_lex::pushdown_from_having_into_where
 MDEV-18667:
@@ -655,8 +654,6 @@ MDEV-17576:
 =~ share->reopen == 1
 MDEV-17551:
 =~ _ma_state_info_write
-MDEV-17333:
-=~ next_insert_id >= auto_inc_interval_for_cur_row.minimum
 MDEV-17319:
 =~ ts_type != MYSQL_TIMESTAMP_TIME
 MDEV-17225:
@@ -758,7 +755,10 @@ MDEV-15881:
 MDEV-15878:
 =~ table->file->stats.records > 0
 MDEV-15800:
-=~ next_insert_id >= auto_inc_interval_for_cur_row.minimum
+=~ Assertion \`next_insert_id >= auto_inc_interval_for_cur_row.minimum()'
+=~ handler::update_auto_increment
+=~ read_sep_field
+=~ mysql_load
 MDEV-15776:
 =~ user_table->get_ref_count
 MDEV-15744:
@@ -833,6 +833,10 @@ MDEV-11740:
 =~ Assertion \`pos != (~(my_off_t) 0)' failed
 =~ my_seek
 =~ _mi_get_block_info
+MDEV-11739:
+=~ Failing assertion: templ->mysql_null_bit_mask
+=~ row_sel_store_mysql_field_func
+=~ row_search_mvcc
 MDEV-11566:
 =~ get_store_key
 =~ get_best_combination
@@ -930,6 +934,8 @@ MDEV-17678:
 =~ in Field::is_null
 MDEV-17678:
 =~ in print_keydup_error
+MDEV-17333:
+=~ next_insert_id >= auto_inc_interval_for_cur_row.minimum
 MDEV-17187:
 =~ failed, the table has missing foreign key indexes
 MDEV-16222:
