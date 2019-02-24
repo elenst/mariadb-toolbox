@@ -866,6 +866,10 @@ MDEV-654:
 # Weak matches
 ##############################################################################
 
+MDEV-18713:
+=~ Assertion \`strcmp(share->unique_file_name,filename) \|\| share->last_version'
+=~ test_if_reopen
+=~ mysql_insert
 MDEV-18712:
 =~ Found index .* whose column info does not match that of MariaDB
 =~ InnoDB indexes are inconsistent with what defined in .frm for table
