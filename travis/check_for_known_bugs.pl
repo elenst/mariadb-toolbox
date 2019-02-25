@@ -157,6 +157,10 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-18734:
+=~ AddressSanitizer: heap-use-after-free|Invalid read of size
+=~ my_strnxfrm_simple_internal
+=~ Field_blob::sort_string
 MDEV-18731:
 =~ Assertion \`!trx->n_mysql_tables_in_use'
 =~ trx_free
@@ -665,6 +669,12 @@ MDEV-17725:
 =~ Diagnostics_area::set_ok_status.*Assertion \`!is_set() \|\| (m_status == DA_OK_BULK && is_bulk_op())'
 =~ mysql_alter_table
 =~ ALTER .* ORDER BY
+MDEV-17678:
+=~ AddressSanitizer: heap-use-after-free
+=~ Field::val_str|Field::is_null
+=~ field_unpack
+=~ print_keydup_error
+=~ ha_myisam::enable_indexes
 MDEV-17627:
 =~ Assertion \`inited==RND' failed
 =~ handler::ha_rnd_init_with_error
@@ -894,6 +904,12 @@ MDEV-5628:
 =~ ( SELECT 
 MDEV-654:
 =~ share->now_transactional
+# Bugs which are supposedly fixed by latest fixes for MDEV-371
+MDEV-371:
+=~ AddressSanitizer: use-after-poison
+=~ innobase_indexed_virtual_exist
+=~ ha_innobase::check_if_supported_inplace_alter
+=~ Sql_cmd_alter_table::execute
 
 ##############################################################################
 # Weak matches
@@ -956,10 +972,6 @@ MDEV-17976:
 =~ rec_get_offsets_func
 MDEV-17725:
 =~ ORDER BY ignored as there is a user-defined clustered index in the table
-MDEV-17678:
-=~ in Field::is_null
-MDEV-17678:
-=~ in print_keydup_error
 MDEV-17333:
 =~ next_insert_id >= auto_inc_interval_for_cur_row.minimum
 MDEV-17187:
