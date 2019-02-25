@@ -157,11 +157,19 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-18731:
+=~ Assertion \`!trx->n_mysql_tables_in_use'
+=~ trx_free
+=~ innobase_close_connection
+MDEV-18725:
+=~ Assertion failure in file .*innobase/fts/fts0fts.cc
+=~ fts_get_charset
+=~ row_create_index_for_mysql
 MDEV-18722:
 =~ Assertion \`templ->mysql_null_bit_mask'
 =~ row_sel_store_mysql_rec
 =~ check_duplicate_long_entry_key
-=~ mysql_alter_table
+=~ Sql_cmd_alter_table::execute
 MDEV-18720:
 =~ Assertion \`inited==NONE'
 =~ handler::ha_index_init
@@ -174,11 +182,11 @@ MDEV-18719:
 MDEV-18713:
 =~ Assertion \`strcmp(share->unique_file_name,filename) \|\| share->last_version'
 =~ test_if_reopen
-=~ mysql_insert
+=~ mysql_insert|mysql_update
 MDEV-18711:
 =~ Assertion \`key_info->key_part->field->flags & (1<< 30)'
 =~ setup_keyinfo_hash
-=~ mysql_prepare_alter_table
+=~ Sql_cmd_alter_table::execute
 MDEV-18710:
 =~ Expression for field \`DB_ROW_HASH_1\` is refering to uninitialized field \`DB_ROW_HASH_1\`
 MDEV-18709:
@@ -325,7 +333,7 @@ MDEV-18496:
 =~ Assertion \`!is_set() \|\| (m_status == DA_OK_BULK && is_bulk_op())'
 =~ simple_rename_or_index_change
 MDEV-18485:
-=~ signal 11|AddressSanitizer: heap-use-after-free
+=~ signal 11|AddressSanitizer: heap-use-after-free|AddressSanitizer: SEGV on unknown address
 =~ my_timestamp_from_binary
 =~ Column_definition::Column_definition
 =~ mysql_alter_table
@@ -396,7 +404,14 @@ MDEV-18369:
 MDEV-18343:
 =~ Mutex RW_LOCK_LIST created sync0debug.cc
 MDEV-18339:
+=~ AddressSanitizer: heap-buffer-overflow
 =~ Item_exists_subselect::is_top_level_item
+=~ Item_in_optimizer::eval_not_null_tables
+=~ st_select_lex::optimize_unflattened_subqueries
+MDEV-18339:
+=~ Conditional jump or move depends on uninitialised value
+=~ Item_in_optimizer::eval_not_null_tables
+=~ st_select_lex::optimize_unflattened_subqueries
 MDEV-18335:
 =~ Assertion \`!error \|\| error == 137' failed
 =~ subselect_rowid_merge_engine::init
@@ -932,16 +947,6 @@ MDEV-18084:
 =~ dict_index_get_nth_field
 MDEV-18084:
 =~ row_upd_changes_some_index_ord_field_binary
-MDEV-18083:
-=~ in intern_close_table
-MDEV-18083:
-=~ tc_purge
-MDEV-18083:
-=~ tc_remove_all_unused_tables
-MDEV-18083:
-=~ make_truncated_value_warning
-MDEV-18083:
-=~ Column_definition::Column_definition
 MDEV-18047:
 =~ Cannot find index .* in InnoDB index dictionary
 =~ InnoDB indexes are inconsistent with what defined
@@ -1500,6 +1505,16 @@ MDEV-18158:
 # MDEV-18083:
 # =~ AddressSanitizer: heap-use-after-free
 # =~ THD::push_warning_truncated_value_for_field
+# MDEV-18083:
+# =~ in intern_close_table
+# MDEV-18083:
+# =~ tc_purge
+# MDEV-18083:
+# =~ tc_remove_all_unused_tables
+# MDEV-18083:
+# =~ make_truncated_value_warning
+# MDEV-18083:
+# =~ Column_definition::Column_definition
 # MDEV-18183: id != LATCH_ID_NONE
 # MDEV-18183: OSMutex::enter
 # MDEV-18218: btr_page_reorganize_low
