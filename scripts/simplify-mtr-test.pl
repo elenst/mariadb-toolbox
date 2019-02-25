@@ -116,7 +116,7 @@ $trials*= 3;
 unless (run_test($test))
 {
   print "The initial test didn't fail!\n\n";
-  exit;
+  exit 1;
 }
 $trials= $trials_save;
 
@@ -304,7 +304,7 @@ sub run_test
   
   if ($endtime and ( time() + $max_trial_duration > $endtime )) {
     print "Only " . ($endtime - time()) . " seconds left till simplification timeout, while the longest trial took $max_trial_duration seconds. Quitting with what we have\n";
-    exit;
+    exit 2;
   }
 
   print "\nSize of the test to run: " . scalar(@$testref) . "\n";
