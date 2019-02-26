@@ -157,6 +157,15 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-18738:
+=~ AddressSanitizer: heap-use-after-free
+=~ copy_if_not_alloced
+=~ Item_copy_string::copy
+=~ end_send_group
+MDEV-18735:
+=~ Conditional jump or move depends on uninitialised value
+=~ promote_first_timestamp_column
+=~ Sql_cmd_alter_table::execute
 MDEV-18734:
 =~ AddressSanitizer: heap-use-after-free|Invalid read of size
 =~ my_strnxfrm_simple_internal
@@ -188,7 +197,7 @@ MDEV-18713:
 =~ test_if_reopen
 =~ mysql_insert|mysql_update
 MDEV-18711:
-=~ Assertion \`key_info->key_part->field->flags & (1<< 30)'
+=~ Assertion \`key_info->key_part->field->flags & (1<< 30)'|fields_in_hash_keyinfo
 =~ setup_keyinfo_hash
 =~ Sql_cmd_alter_table::execute
 MDEV-18710:
@@ -756,7 +765,9 @@ MDEV-16918:
 MDEV-16903:
 =~ auto_increment_field_not_null
 MDEV-16788:
-=~ ls->length < 0xFFFFFFFFL
+=~ Assertion \`ls->length < 0xFFFFFFFFL && ((ls->length == 0 && !ls->str) \|\| ls->length == strlen(ls->str))'
+=~ String::q_append
+=~ pack_vcols
 MDEV-16659:
 =~ anc_page->org_size == anc_page->size
 MDEV-16654:
@@ -910,6 +921,10 @@ MDEV-371:
 =~ innobase_indexed_virtual_exist
 =~ ha_innobase::check_if_supported_inplace_alter
 =~ Sql_cmd_alter_table::execute
+MDEV-371:
+=~ Failing assertion: field->prefix_len > 0
+=~ row_sel_convert_mysql_key_to_innobase
+=~ check_duplicate_long_entry_key
 
 ##############################################################################
 # Weak matches
@@ -947,10 +962,6 @@ MDEV-18217:
 =~ InnoDB: Summed data size
 MDEV-18217:
 =~ row_sel_field_store_in_mysql_format_func
-MDEV-18195:
-=~ Item::eq
-MDEV-18195:
-=~ lex_string_cmp
 MDEV-18194:
 =~ which is outside the tablespace bounds
 MDEV-18185:
@@ -976,6 +987,11 @@ MDEV-17333:
 =~ next_insert_id >= auto_inc_interval_for_cur_row.minimum
 MDEV-17187:
 =~ failed, the table has missing foreign key indexes
+MDEV-16788:
+=~ AddressSanitizer: heap-use-after-free
+=~ my_strcasecmp_utf8
+=~ handle_if_exists_options
+=~ Sql_cmd_alter_table::execute
 MDEV-16222:
 =~ InnoDB: tried to purge non-delete-marked record in index
 MDEV-15776:
@@ -1417,6 +1433,9 @@ MDEV-18156:
 =~ row_upd_sec_index_entry
 MDEV-18158:
 =~ Can't find record in
+# Bugs which are supposedly fixed by latest fixes for MDEV-371
+MDEV-371:
+=~ Index .* of .* has .* columns unique inside InnoDB, but MySQL is asking statistics for
 
 # Fixed:
 # MDEV-4312: make_lock_and_pin
@@ -1529,4 +1548,8 @@ MDEV-18158:
 # =~ Column_definition::Column_definition
 # MDEV-18183: id != LATCH_ID_NONE
 # MDEV-18183: OSMutex::enter
+# MDEV-18195:
+# =~ Item::eq
+# MDEV-18195:
+# =~ lex_string_cmp
 # MDEV-18218: btr_page_reorganize_low
