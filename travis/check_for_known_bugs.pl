@@ -182,7 +182,7 @@ MDEV-18722:
 =~ Assertion \`templ->mysql_null_bit_mask'
 =~ row_sel_store_mysql_rec
 =~ check_duplicate_long_entry_key
-=~ Sql_cmd_alter_table::execute
+=~ handler::ha_write_row
 MDEV-18720:
 =~ Assertion \`inited==NONE'
 =~ handler::ha_index_init
@@ -195,7 +195,7 @@ MDEV-18719:
 MDEV-18713:
 =~ Assertion \`strcmp(share->unique_file_name,filename) \|\| share->last_version'
 =~ test_if_reopen
-=~ mysql_insert|mysql_update
+=~ mysql_insert|mysql_update|execute_sqlcom_select
 MDEV-18711:
 =~ Assertion \`key_info->key_part->field->flags & (1<< 30)'|fields_in_hash_keyinfo
 =~ setup_keyinfo_hash
@@ -660,6 +660,11 @@ MDEV-17857:
 =~ update_tmptable_sum_func
 MDEV-17854:
 =~ decimals <= 6
+MDEV-17844:
+=~ Assertion \`ulint(rec) == offsets[2]'
+=~ rec_offs_validate
+=~ page_zip_write_trx_id_and_roll_ptr
+=~ row_undo
 MDEV-17843:
 =~ page_rec_is_leaf
 MDEV-17838:
@@ -888,9 +893,10 @@ MDEV-11740:
 =~ my_seek
 =~ _mi_get_block_info
 MDEV-11739:
-=~ Failing assertion: templ->mysql_null_bit_mask
+=~ Failing assertion: templ->mysql_null_bit_mask|Assertion \`templ->mysql_null_bit_mask' failed
 =~ row_sel_store_mysql_field_func
 =~ row_search_mvcc
+=~ DsMrr_impl::dsmrr_next
 MDEV-11566:
 =~ get_store_key
 =~ get_best_combination
@@ -1339,8 +1345,6 @@ MDEV-17842:
 =~ pfs_lock::allocated_to_free
 MDEV-17843:
 =~ lock_rec_queue_validate
-MDEV-17844:
-=~ rec_offs_validate
 MDEV-17884:
 =~ is marked as crashed and should be repaired
 MDEV-17890:
