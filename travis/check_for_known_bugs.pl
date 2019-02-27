@@ -157,6 +157,29 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-18763:
+=~ Conditional jump or move depends on uninitialised value
+=~ mi_rrnd
+=~ ha_myisam::rnd_pos
+MDEV-18756:
+=~ Use of uninitialised value of size
+=~ DES_set_key_unchecked
+=~ Item_func_des_encrypt::val_str
+MDEV-18755:
+=~ Assertion \`inited==INDEX' failed
+=~ ha_index_read_map
+=~ join_read_always_key
+=~ mysql_union
+MDEV-18755:
+=~ AddressSanitizer: heap-buffer-overflow
+=~ calculate_key_len
+=~ handler::prepare_index_key_scan_map
+=~ join_read_always_key
+=~ mysql_union
+MDEV-18747:
+=~ InnoDB: Failing assertion: table->get_ref_count() == 0
+=~ dict_table_remove_from_cache
+=~ THD::rm_temporary_table
 MDEV-18738:
 =~ AddressSanitizer: heap-use-after-free
 =~ copy_if_not_alloced
@@ -207,6 +230,11 @@ MDEV-18709:
 =~ create_index
 =~ create_table_info_t::create_table
 =~ mysql_alter_table
+MDEV-18709:
+=~ signal 11|AddressSanitizer: global-buffer-overflow
+=~ get_innobase_type_from_mysql_type
+=~ create_index
+=~ Sql_cmd_alter_table::execute
 MDEV-18708:
 =~ AddressSanitizer: SEGV|signal 11
 =~ Item_field::register_field_in_read_map
@@ -351,7 +379,7 @@ MDEV-18485:
 =~ Column_definition::Column_definition
 =~ mysql_alter_table
 MDEV-18485:
-=~ signal 11|AddressSanitizer: heap-use-after-free|AddressSanitizer: heap-buffer-overflow
+=~ signal 11|AddressSanitizer: heap-use-after-free|AddressSanitizer: heap-buffer-overflow|AddressSanitizer: SEGV on unknown address
 =~ create_tmp_table
 =~ select_unit::create_result_table|select_union::create_result_table
 =~ TABLE_LIST::handle_derived
@@ -791,6 +819,10 @@ MDEV-16501:
 =~ ->coll->strcasecmp
 MDEV-16500:
 =~ user_table->n_def > table->s->fields
+MDEV-16240:
+=~ Last data field length .* bytes, key ptr now exceeds key end by .* bytes
+=~ Assertion \`0' failed
+=~ row_sel_convert_mysql_key_to_innobase
 MDEV-16154:
 =~ in myrocks::ha_rocksdb::load_auto_incr_value_from_index
 MDEV-16128:
@@ -819,7 +851,13 @@ MDEV-15800:
 =~ read_sep_field
 =~ mysql_load
 MDEV-15776:
-=~ user_table->get_ref_count
+=~ Failing assertion: table->get_ref_count() == 0
+=~ row_merge_drop_table
+=~ Sql_cmd_alter_table::execute
+MDEV-15776:
+=~ Assertion \`user_table->get_ref_count() == 1' failed
+=~ commit_try_rebuild
+=~ Sql_cmd_alter_table::execute
 MDEV-15744:
 =~ derived->table
 MDEV-15656:
@@ -921,7 +959,6 @@ MDEV-5628:
 =~ ( SELECT 
 MDEV-654:
 =~ share->now_transactional
-# Bugs which are supposedly fixed by latest fixes for MDEV-371
 MDEV-371:
 =~ AddressSanitizer: use-after-poison
 =~ innobase_indexed_virtual_exist
@@ -931,6 +968,18 @@ MDEV-371:
 =~ Failing assertion: field->prefix_len > 0
 =~ row_sel_convert_mysql_key_to_innobase
 =~ check_duplicate_long_entry_key
+MDEV-371:
+=~ Assertion \`m_part_spec.start_part >= m_part_spec.end_part'
+=~ ha_partition::index_read_idx_map
+=~ mysql_load
+MDEV-371:
+=~ AddressSanitizer: SEGV on unknown address
+=~ Field_varstring::get_length
+=~ Create_field::Create_field
+MDEV-371:
+=~ Invalid read of size
+=~ Field::set_notnull
+=~ Field::load_data_set_value
 
 ##############################################################################
 # Weak matches
@@ -1006,7 +1055,7 @@ MDEV-15776:
 =~ table->get_ref_count
 MDEV-14440:
 =~ pure virtual method called
-
+#####
 MDEV-5791:
 =~  in Field::is_real_null
 MDEV-5924:
@@ -1177,8 +1226,6 @@ MDEV-16184:
 =~ nest->counter > 0
 MDEV-16190:
 =~ in Item_null_result::field_type
-MDEV-16240:
-=~ row_sel_convert_mysql_key_to_innobase
 MDEV-16242:
 =~ Slave worker thread retried transaction
 MDEV-16242:
@@ -1399,8 +1446,8 @@ MDEV-18062:
 =~ ha_innobase::innobase_get_index
 MDEV-18063:
 =~ is corrupt; try to repair it
-# MDEV-18065:
-# =~ Fatal error: Can't open and lock privilege tables
+MDEV-18065:
+=~ Fatal error: Can't open and lock privilege tables
 MDEV-18067:
 =~ backup_end
 MDEV-18069:
@@ -1437,7 +1484,6 @@ MDEV-18156:
 =~ row_upd_sec_index_entry
 MDEV-18158:
 =~ Can't find record in
-# Bugs which are supposedly fixed by latest fixes for MDEV-371
 MDEV-371:
 =~ Index .* of .* has .* columns unique inside InnoDB, but MySQL is asking statistics for
 
