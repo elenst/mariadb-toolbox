@@ -82,7 +82,7 @@ if ($matches_info) {
 
 if (keys %fixed_mdevs) {
   foreach my $m (sort keys %fixed_mdevs) {
-    print "\n--- ATTENTION! FOUND FIXED MDEV: ----\n";
+    print "\n--- ATTENTION! FOUND FIXED MDEV: -----\n";
     print "\t$m: $fixed_mdevs{$m}\n";
   }
   print "--------------------------------------\n";
@@ -157,6 +157,11 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-18770:
+=~ AddressSanitizer: memcpy-param-overlap
+=~ my_strnxfrm_8bit_bin
+=~ make_sortkey
+=~ create_sort_index
 MDEV-18763:
 =~ Conditional jump or move depends on uninitialised value
 =~ mi_rrnd
@@ -169,7 +174,6 @@ MDEV-18755:
 =~ Assertion \`inited==INDEX' failed
 =~ ha_index_read_map
 =~ join_read_always_key
-=~ mysql_union
 MDEV-18755:
 =~ AddressSanitizer: heap-buffer-overflow
 =~ calculate_key_len
@@ -397,7 +401,7 @@ MDEV-18485:
 MDEV-18402:
 =~ Assertion \`sec.sec() <= 59'
 =~ Item_func_maketime::get_date
-=~ Time::make_from_item
+=~ Time::make_from_item|Item::get_time
 MDEV-18389:
 =~ Cannot find index .* in InnoDB index dictionary
 =~ InnoDB indexes are inconsistent with what defined in .frm for table
