@@ -157,6 +157,22 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-18780:
+=~  Assertion \`col->prtype == prtype'
+=~ innobase_rename_or_enlarge_column_try
+=~ commit_try_norebuild
+MDEV-18776:
+=~ Assertion \`0' failed
+=~ mysql_execute_command
+=~ SET STATEMENT
+MDEV-18775:
+=~ signal 11
+=~ dict_table_t::instant_column
+=~ commit_inplace_alter_table
+MDEV-18775:
+=~ Warning: assertion failed: f.col->is_virtual()
+=~ dict_table_t::instant_column
+=~ mysql_inplace_alter_table
 MDEV-18770:
 =~ AddressSanitizer: memcpy-param-overlap
 =~ my_strnxfrm_8bit_bin
@@ -412,7 +428,7 @@ MDEV-18371:
 =~ cmp_key_rowid_part_id
 =~ QUICK_RANGE_SELECT::get_next
 MDEV-18339:
-=~ AddressSanitizer: heap-buffer-overflow
+=~ AddressSanitizer: heap-buffer-overflow|AddressSanitizer: use-after-poison
 =~ Item_exists_subselect::is_top_level_item
 =~ Item_in_optimizer::eval_not_null_tables
 =~ st_select_lex::optimize_unflattened_subqueries
@@ -473,6 +489,11 @@ MDEV-18207:
 =~ AddressSanitizer: heap-use-after-free
 =~ _ma_get_status
 =~ mysql_lock_tables
+MDEV-18088:
+=~ Assertion \`share->in_trans == 0'
+=~ maria_close
+=~ tc_remove_table
+=~ Locked_tables_list::reopen_tables
 MDEV-18086:
 =~ Assertion \`len <= col->len || ((col->mtype) == 5 || (col->mtype) == 14) || (col->len == 0 && col->mtype == 1)'
 =~ rec_get_converted_size_comp_prefix_low
@@ -494,6 +515,10 @@ MDEV-18047:
 =~ AddressSanitizer: heap-use-after-free
 =~ dict_index_get_nth_field
 =~ innobase_update_foreign_try
+MDEV-18018:
+=~ signal 11
+=~ TABLE_LIST::reinit_before_use
+=~ sp_head::execute|Prepared_statement::execute
 MDEV-18016:
 =~ storage/innobase/dict/dict0dict.cc line 6199|storage/innobase/dict/dict0dict.cc line 6346|storage/innobase/dict/dict0dict.cc line 6181
 =~ dict_table_check_for_dup_indexes
@@ -551,6 +576,19 @@ MDEV-17580:
 =~ Diagnostics_area::set_ok_status.*Assertion \`! is_set()'
 =~ mysql_alter_table
 =~ ADD CHECK
+MDEV-17120:
+=~ signal 11
+=~ base_list::push_back
+=~ multi_update::prepare
+=~ sp_head::execute
+MDEV-17091:
+=~ Assertion \`part_id == m_last_part'
+=~ ha_partition::delete_row
+=~ mysql_delete
+MDEV-17091:
+=~ Assertion \`old_part_id == m_last_part'
+=~ ha_partition::update_row
+=~ mysql_update
 MDEV-17070:
 =~ Assertion \`!is_set() \|\| (m_status == DA_OK_BULK && is_bulk_op())'
 =~ mysql_load
@@ -574,6 +612,11 @@ MDEV-17005:
 =~ AddressSanitizer: heap-use-after-free
 =~ innobase_get_computed_value
 =~ row_upd_clust_step
+MDEV-16940:
+=~ signal 11|AddressSanitizer: SEGV on unknown address
+=~ unsafe_key_update
+=~ mysql_multi_update_prepare
+=~ sp_head::execute
 MDEV-16932:
 =~ AddressSanitizer: heap-use-after-free
 =~ my_well_formed_char_length_utf8|lex_string_cmp
@@ -652,6 +695,10 @@ MDEV-14926:
 =~ Item_func_date_format::val_str
 =~ copy_fields
 =~ end_send_group
+MDEV-14472:
+=~ Assertion \`is_current_stmt_binlog_format_row()'
+=~ THD::binlog_write_table_map
+=~ write_locked_table_maps
 MDEV-11740:
 =~ Assertion \`pos != (~(my_off_t) 0)' failed
 =~ my_seek
@@ -872,8 +919,6 @@ MDEV-18121:
 =~ type.vers_sys_end
 MDEV-18090:
 =~ table->s->fields + 3
-MDEV-18088:
-=~ share->in_trans == 0
 MDEV-18087:
 =~ mach_read_from_n_little_endian
 MDEV-18085:
@@ -945,8 +990,6 @@ MDEV-18020:
 =~ ctx->prebuilt->trx->check_foreigns
 MDEV-18020:
 =~ m_prebuilt->trx->check_foreigns
-MDEV-18018:
-=~ TABLE_LIST::reinit_before_use
 MDEV-18017:
 =~ index->to_be_dropped
 MDEV-18016:
@@ -1139,14 +1182,8 @@ MDEV-17199:
 =~ pos < table->n_v_def
 MDEV-17187:
 =~ failed, the table has missing foreign key indexes
-MDEV-17120:
-=~ base_list::push_back
 MDEV-17107:
 =~ table_list->table
-MDEV-17091:
-=~ part_id == m_last_part
-MDEV-17091:
-=~ old_part_id == m_last_part
 MDEV-17054:
 =~ InnoDB needs charset 0 for doing a comparison, but MySQL cannot find that charset
 MDEV-17054:
@@ -1187,8 +1224,6 @@ MDEV-16958:
 =~ field_length < 5
 MDEV-16957:
 =~ Field_iterator_natural_join::next
-MDEV-16940:
-=~ unsafe_key_update
 MDEV-16929:
 =~ thd->transaction.stmt.is_empty
 MDEV-16905:
@@ -1420,8 +1455,6 @@ MDEV-14642:
 =~ table->s->db_create_options == part_table->s->db_create_options
 MDEV-14557:
 =~ m_sp == __null
-MDEV-14472:
-=~ is_current_stmt_binlog_format_row
 MDEV-14440:
 =~ pure virtual method called
 MDEV-14410:
