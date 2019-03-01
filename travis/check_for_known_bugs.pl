@@ -157,6 +157,17 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-18784:
+=~ Enabling keys got errno 127
+=~ AddressSanitizer: heap-use-after-free
+=~ Field_long::reset
+=~ convert_null_to_field_value_or_error
+=~ Item_null::save_in_field
+MDEV-18784:
+=~ Enabling keys got errno 127
+=~ signal 11
+=~ l_find
+=~ initialize_bucket
 MDEV-18783:
 =~ AddressSanitizer: heap-use-after-free|signal 11
 =~ tree_search_next|hp_rb_make_key|tree_search_edge|check_one_key
