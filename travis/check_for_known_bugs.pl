@@ -414,6 +414,11 @@ MDEV-18485:
 =~ Field::is_null_in_record
 =~ Column_definition::Column_definition
 =~ mysql_alter_table
+MDEV-18452:
+=~ AddressSanitizer: use-after-poison|AddressSanitizer: unknown-crash|signal 11
+=~ Field::set_default
+=~ Field_bit::set_default
+=~ fill_record_n_invoke_before_triggers
 MDEV-18402:
 =~ Assertion \`sec.sec() <= 59'
 =~ Item_func_maketime::get_date
@@ -516,7 +521,7 @@ MDEV-18047:
 =~ dict_index_get_nth_field
 =~ innobase_update_foreign_try
 MDEV-18018:
-=~ signal 11
+=~ signal 11|AddressSanitizer: heap-use-after-free
 =~ TABLE_LIST::reinit_before_use
 =~ sp_head::execute|Prepared_statement::execute
 MDEV-18016:
@@ -553,6 +558,11 @@ MDEV-17725:
 =~ Diagnostics_area::set_ok_status.*Assertion \`!is_set() \|\| (m_status == DA_OK_BULK && is_bulk_op())'
 =~ mysql_alter_table
 =~ ALTER .* ORDER BY
+MDEV-17699:
+=~ AddressSanitizer: use-after-poison
+=~ base_list_iterator::next_fast
+=~ substitute_for_best_equal_field
+=~ JOIN::optimize_stage2
 MDEV-17678:
 =~ AddressSanitizer: heap-use-after-free
 =~ Field::val_str|Field::is_null
@@ -576,6 +586,10 @@ MDEV-17580:
 =~ Diagnostics_area::set_ok_status.*Assertion \`! is_set()'
 =~ mysql_alter_table
 =~ ADD CHECK
+MDEV-17223:
+=~ Assertion \`thd->killed != 0'
+=~ ha_maria::enable_indexes
+=~ handler::ha_end_bulk_insert
 MDEV-17120:
 =~ signal 11
 =~ base_list::push_back
@@ -604,7 +618,7 @@ MDEV-17070:
 =~ mysql_select
 =~ mysql_load
 MDEV-17055:
-=~ got signal 11
+=~ got signal 11|AddressSanitizer: heap-use-after-free
 =~ find_order_in_list
 =~ mysql_prepare_update
 =~ sp_head::execute_procedure
@@ -630,6 +644,11 @@ MDEV-16788:
 =~ Assertion \`ls->length < 0xFFFFFFFFL && ((ls->length == 0 && !ls->str) \|\| ls->length == strlen(ls->str))'
 =~ String::q_append
 =~ pack_vcols
+MDEV-16788:
+=~ AddressSanitizer: heap-use-after-free
+=~ my_strcasecmp_utf8
+=~ handle_if_exists_options
+=~ Sql_cmd_alter_table::execute
 MDEV-16549:
 =~ Assertion \`context' failed|signal 11
 =~ Item_direct_view_ref::fix_fields
@@ -759,8 +778,6 @@ MDEV-18454:
 =~ ReadView::check_trx_id_sanity
 MDEV-18453:
 =~ rec_get_deleted_flag
-MDEV-18452:
-=~ Field::set_default
 MDEV-18451:
 =~ maria_create_trn_for_mysql
 MDEV-18449:
@@ -1172,8 +1189,6 @@ MDEV-17257:
 =~ in Item::field_type_for_temporal_comparison
 MDEV-17225:
 =~ log_descriptor.bc.buffer->prev_last_lsn
-MDEV-17223:
-=~ thd->killed != 0
 MDEV-17217:
 =~ in make_sortkey
 MDEV-17216:
@@ -1236,11 +1251,6 @@ MDEV-16792:
 =~ in Diagnostics_area::sql_errno
 MDEV-16789:
 =~ in insert_fields
-MDEV-16788:
-=~ AddressSanitizer: heap-use-after-free
-=~ my_strcasecmp_utf8
-=~ handle_if_exists_options
-=~ Sql_cmd_alter_table::execute
 MDEV-16745:
 =~ thd->transaction.stmt.is_empty
 MDEV-16738:
