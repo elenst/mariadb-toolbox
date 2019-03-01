@@ -157,6 +157,11 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-18783:
+=~ AddressSanitizer: heap-use-after-free|signal 11
+=~ tree_search_next|hp_rb_make_key|tree_search_edge|check_one_key
+=~ tc_purge
+=~ run_backup_stage
 MDEV-18780:
 =~  Assertion \`col->prtype == prtype'
 =~ innobase_rename_or_enlarge_column_try
