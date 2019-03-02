@@ -46,7 +46,7 @@ while (<DATA>) {
     next if $found_mdevs{$mdev};
     $pattern= $1;
     chomp $pattern;
-    $pattern=~ s/(\"|\?|\!|\.|\(|\)|\[|\]|\&|\^|\~)/\\$1/g;
+    $pattern=~ s/(\"|\?|\!|\.|\(|\)|\[|\]|\&|\^|\~|\+)/\\$1/g;
   }
   # MDEV line starts a new signature
   elsif(/^\s*(MDEV-\d+):\s*(.*)/) {
@@ -157,6 +157,24 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-18793:
+=~ Using a partial-field key prefix in search, index
+=~ Assertion \`0'
+=~ row_sel_convert_mysql_key_to_innobase
+=~ get_key_scans_params
+MDEV-18793:
+=~ AddressSanitizer: unknown-crash
+=~ row_mysql_store_col_in_innobase_format
+=~ row_sel_convert_mysql_key_to_innobase
+=~ get_key_scans_params
+MDEV-18792:
+=~ AddressSanitizer: unknown-crash on address
+=~ _mi_pack_key
+=~ get_key_scans_params
+MDEV-18790:
+=~ signal 11|AddressSanitizer: SEGV on unknown address
+=~ fields_in_hash_keyinfo
+=~ check_duplicate_long_entries_update
 MDEV-18787:
 =~ Assertion \`! is_set()' failed
 =~ Diagnostics_area::set_eof_status
@@ -507,6 +525,11 @@ MDEV-18285:
 MDEV-18260:
 =~ Assertion \`!was_changed \|\| (block->status & 64) \|\| (block->status & 32)'
 =~ pagecache_unlock_by_link
+MDEV-18259:
+=~ signal 11|AddressSanitizer: heap-use-after-free
+=~ strlen|id_name_t::operator
+=~ get_foreign_key_info
+=~ ha_innobase::get_parent_foreign_key_list
 MDEV-18240:
 =~ Assertion \`0' failed
 =~ Item_cache_timestamp::val_datetime_packed
@@ -518,6 +541,13 @@ MDEV-18207:
 =~ AddressSanitizer: heap-use-after-free
 =~ _ma_get_status
 =~ mysql_lock_tables
+MDEV-18418:
+=~ Assertion \`mdl_ticket->m_type == MDL_SHARED_UPGRADABLE \|\| mdl_ticket->m_type == MDL_SHARED_NO_WRITE \|\| mdl_ticket->m_type == MDL_SHARED_NO_READ_WRITE'
+=~ Server version: 10.1
+=~ MDL_context::upgrade_shared_lock
+MDEV-18418:
+=~ Assertion \`mdl_ticket->m_type == MDL_SHARED_UPGRADABLE \|\| mdl_ticket->m_type == MDL_SHARED_NO_WRITE \|\| mdl_ticket->m_type == MDL_SHARED_NO_READ_WRITE \|\| mdl_ticket->m_type == MDL_SHARED_READ \|\| mdl_ticket->m_type == MDL_SHARED_WRITE'
+=~ MDL_context::upgrade_shared_lock
 MDEV-18088:
 =~ Assertion \`share->in_trans == 0'
 =~ maria_close
@@ -560,6 +590,11 @@ MDEV-17969:
 =~ Assertion \`name' failed
 =~ THD::push_warning_truncated_value_for_field
 =~ Field::set_datetime_warning
+MDEV-17939:
+=~ Assertion \`++loop_count < 2'
+=~ trx_undo_report_rename
+=~ fts_drop_table
+=~ mysql_alter_table
 MDEV-17896:
 =~ Assertion \`pfs->get_refcount() > 0'
 =~ release_table_share|tdc_delete_share_from_hash
@@ -610,6 +645,10 @@ MDEV-17580:
 =~ Diagnostics_area::set_ok_status.*Assertion \`! is_set()'
 =~ mysql_alter_table
 =~ ADD CHECK
+MDEV-17576:
+=~ Assertion `share->reopen == 1'
+=~ maria_extra
+=~ mysql_alter_table
 MDEV-17223:
 =~ Assertion \`thd->killed != 0'
 =~ ha_maria::enable_indexes
@@ -681,6 +720,7 @@ MDEV-16240:
 =~ Last data field length .* bytes, key ptr now exceeds key end by .* bytes
 =~ Assertion \`0' failed
 =~ row_sel_convert_mysql_key_to_innobase
+=~ multi_update::send_data
 MDEV-16128:
 =~ Item_func::print_op
 =~ mysql_select
@@ -814,8 +854,6 @@ MDEV-18441:
 =~ tables_opened == 1
 MDEV-18421:
 =~ foreign->foreign_table
-MDEV-18418:
-=~ mdl_ticket->m_type == MDL_SHARED_UPGRADABLE
 MDEV-18414:
 =~ Value_source::Converter_strntod::Converter_strntod
 MDEV-18388:
@@ -850,8 +888,6 @@ MDEV-18272:
 =~ cursor->index->is_committed
 MDEV-18272:
 =~ InnoDB: tried to purge non-delete-marked record in index
-MDEV-18259:
-=~ get_foreign_key_info
 MDEV-18258:
 =~ append_identifier
 MDEV-18256:
@@ -1065,8 +1101,6 @@ MDEV-17962:
 =~ setup_jtbm_semi_joins
 MDEV-17959:
 =~ thd->lex->select_stack_top == 0
-MDEV-17939:
-=~ ++loop_count < 2
 MDEV-17936:
 =~ Field::is_null
 MDEV-17932:
@@ -1171,8 +1205,6 @@ MDEV-17583:
 =~ next_mrec == next_mrec_end
 MDEV-17582:
 =~ status_var.local_memory_used == 0
-MDEV-17576:
-=~ share->reopen == 1
 MDEV-17556:
 =~ table->s->all_set
 MDEV-17556:
