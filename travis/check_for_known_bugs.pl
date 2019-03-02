@@ -157,6 +157,10 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-18787:
+=~ Assertion \`! is_set()' failed
+=~ Diagnostics_area::set_eof_status
+=~ mysqld_show_create
 MDEV-18784:
 =~ Enabling keys got errno 127
 =~ AddressSanitizer: heap-use-after-free
@@ -430,6 +434,10 @@ MDEV-18485:
 =~ Field::is_null_in_record
 =~ Column_definition::Column_definition
 =~ mysql_alter_table
+MDEV-18456:
+=~ Assertion \`item->maybe_null'
+=~ Type_handler_temporal_result::make_sort_key
+=~ create_sort_index
 MDEV-18452:
 =~ AddressSanitizer: use-after-poison|AddressSanitizer: unknown-crash|signal 11
 =~ Field::set_default
@@ -751,6 +759,10 @@ MDEV-10945:
 =~ Diagnostics_area::set_ok_status
 =~ Status: KILL_BAD_DATA
 =~ Server version: 10.1|Server version: 10.0|Server version: 5.5
+MDEV-10748:
+=~ AddressSanitizer: heap-use-after-free|signal 11
+=~ ha_maria::implicit_commit
+=~ trans_commit_implicit
 MDEV-5628:
 =~ Server version: 10.1|Server version: 10.0|Server version: 5.5
 =~ Assertion \`! is_set()'
@@ -788,8 +800,6 @@ MDEV-18458:
 =~ EVP_MD_CTX_cleanup
 MDEV-18457:
 =~ bitmap->full_head_size
-MDEV-18456:
-=~ item->maybe_null
 MDEV-18454:
 =~ ReadView::check_trx_id_sanity
 MDEV-18453:
@@ -1521,8 +1531,6 @@ MDEV-11080:
 =~ table->n_waiting_or_granted_auto_inc_locks > 0
 MDEV-11015:
 =~ precision > 0
-MDEV-10748:
-=~ ha_maria::implicit_commit
 MDEV-9137:
 =~  in _ma_ck_real_write_btree
 MDEV-8203:
