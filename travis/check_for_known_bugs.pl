@@ -157,6 +157,18 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-18798:
+=~ InnoDB: No matching column for \`DB_ROW_HASH_1\` in index
+=~ signal 11|AddressSanitizer: SEGV on unknown address
+=~ ha_innobase::commit_inplace_alter_table
+MDEV-18795:
+=~ Failing assertion: field->prefix_len > 0
+=~ row_sel_convert_mysql_key_to_innobase
+=~ get_key_scans_params
+MDEV-18794:
+=~ Assertion `\!m_innodb' failed
+=~ ha_partition::cmp_ref
+=~ read_keys_and_merge_scans
 MDEV-18793:
 =~ Using a partial-field key prefix in search, index
 =~ Assertion \`0'
