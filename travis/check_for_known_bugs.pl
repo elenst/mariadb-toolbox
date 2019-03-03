@@ -157,6 +157,10 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-18801:
+=~ InnoDB: Failing assertion: field->col->mtype == type
+=~ row_sel_convert_mysql_key_to_innobase
+=~ get_key_scans_params
 MDEV-18800:
 =~ Assertion \`!pk->has_virtual()'
 =~ instant_alter_column_possible
@@ -170,7 +174,7 @@ MDEV-18795:
 =~ row_sel_convert_mysql_key_to_innobase
 =~ get_key_scans_params
 MDEV-18794:
-=~ Assertion `\!m_innodb' failed
+=~ Assertion \`!m_innodb' failed
 =~ ha_partition::cmp_ref
 =~ read_keys_and_merge_scans
 MDEV-18793:
@@ -800,6 +804,23 @@ MDEV-15401:
 =~ Item_direct_view_ref::used_tables() const: Assertion \`fixed' failed
 =~ Item_func_nullif::update_used_tables
 =~ Prepared_statement::execute
+MDEV-15011:
+=~ Server version: 10.2|Server version: 10.1|Server version: 10.0|Server version: 5.5
+=~ AddressSanitizer: heap-buffer-overflow|signal 11
+=~ decimal2bin
+=~ my_decimal2binary
+=~ find_all_keys
+MDEV-15011:
+=~ Server version: 10.2|Server version: 10.1|Server version: 10.0|Server version: 5.5
+=~ signal 11
+=~ push_back
+=~ MDL_lock::Ticket_list::add_ticket
+=~ MDL_context::try_acquire_lock_impl
+MDEV-15011:
+=~ Server version: 10.2|Server version: 10.1|Server version: 10.0|Server version: 5.5
+=~ Error: Freeing overrun buffer
+=~ sysmalloc: Assertion \`(old_top == initial_top (av) && old_size == 0) \|\| ((unsigned long) (old_size) >= MINSIZE && prev_inuse (old_top) && ((unsigned long) old_end & (pagesize - 1)) == 0)'
+=~ ilink::operator new
 MDEV-14926:
 =~ AddressSanitizer: heap-use-after-free
 =~ make_date_time
@@ -854,6 +875,10 @@ MDEV-5628:
 # Weak matches
 ##############################################################################
 
+MDEV-18801:
+=~ AddressSanitizer: heap-buffer-overflow
+=~ row_sel_convert_mysql_key_to_innobase
+=~ get_key_scans_params
 MDEV-18800:
 =~ signal 11
 =~  ha_innobase::commit_inplace_alter_table
@@ -1513,7 +1538,39 @@ MDEV-15103:
 MDEV-15013:
 =~ trx->state == TRX_STATE_NOT_STARTED
 MDEV-15011:
-=~ decimal2bin
+=~ Server version: 10.2|Server version: 10.1|Server version: 10.0|Server version: 5.5
+=~ signal 11
+=~ _mi_read_rnd_static_record
+=~ mi_scan
+=~ find_all_keys
+MDEV-15011:
+=~ Server version: 10.2|Server version: 10.1|Server version: 10.0|Server version: 5.5
+=~ test_if_reopen
+=~ mi_create
+=~ ha_myisam::create
+MDEV-15011:
+=~ Server version: 10.2|Server version: 10.1|Server version: 10.0|Server version: 5.5
+=~ Freeing overrun buffer  sql/opt_range.cc:.*, sql/rpl_record.cc:.*
+=~ signal 11
+MDEV-15011:
+=~ Server version: 10.2|Server version: 10.1|Server version: 10.0|Server version: 5.5
+=~ signal 11
+=~ _db_enter_
+=~ handler::ha_rnd_next
+=~ find_all_keys
+MDEV-15011:
+=~ Server version: 10.2|Server version: 10.1|Server version: 10.0|Server version: 5.5
+=~ signal 11
+=~ JOIN::exec_inner
+=~ mysql_select
+MDEV-15011:
+=~ Server version: 10.2|Server version: 10.1|Server version: 10.0|Server version: 5.5
+=~ signal 11
+=~ test_if_reopen
+=~ mi_open
+MDEV-15011:
+=~ Server version: 10.2|Server version: 10.1|Server version: 10.0|Server version: 5.5
+=~ Error in \`.*/mysqld': malloc(): memory corruption:
 MDEV-14996:
 =~ int ha_maria::external_lock
 MDEV-14994:
