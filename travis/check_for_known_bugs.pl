@@ -157,6 +157,10 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-18800:
+=~ Assertion \`!pk->has_virtual()'
+=~ instant_alter_column_possible
+=~ ha_innobase::check_if_supported_inplace_alter
 MDEV-18798:
 =~ InnoDB: No matching column for \`DB_ROW_HASH_1\` in index
 =~ signal 11|AddressSanitizer: SEGV on unknown address
@@ -294,10 +298,6 @@ MDEV-18713:
 =~ Assertion \`strcmp(share->unique_file_name,filename) \|\| share->last_version'
 =~ test_if_reopen
 =~ mysql_insert|mysql_update|execute_sqlcom_select
-MDEV-18711:
-=~ Assertion \`key_info->key_part->field->flags & (1<< 30)'|fields_in_hash_keyinfo
-=~ setup_keyinfo_hash
-=~ Sql_cmd_alter_table::execute
 MDEV-18709:
 =~ signal 11|AddressSanitizer: heap-buffer-overflow
 =~ create_index
@@ -347,10 +347,10 @@ MDEV-18690:
 =~ substitute_for_best_equal_field
 =~ JOIN::optimize_unflattened_subqueries
 MDEV-18690:
-=~ AddressSanitizer: use-after-poison
+=~ AddressSanitizer: use-after-poison|signal 11
 =~ base_list::head
 =~ substitute_for_best_equal_field
-=~ JOIN::optimize_unflattened_subqueries
+=~ JOIN::optimize_stage2
 MDEV-18681:
 =~ AddressSanitizer: SEGV|signal 11
 =~ embedding_sjm
@@ -473,6 +473,10 @@ MDEV-18452:
 =~ Field::set_default
 =~ Field_bit::set_default
 =~ fill_record_n_invoke_before_triggers
+MDEV-18441:
+=~ Assertion \`tables_opened == 1'
+=~ Sql_cmd_alter_table::execute
+=~ ADD .*FOREIGN KEY
 MDEV-18402:
 =~ Assertion \`sec.sec() <= 59'
 =~ Item_func_maketime::get_date
@@ -529,6 +533,10 @@ MDEV-18291:
 =~ std::__cxx11::_List_base|std::_List_base
 =~ dict_table_remove_from_cache
 =~ ha_delete_table|ha_innobase_inplace_ctx::~ha_innobase_inplace_ctx
+MDEV-18286:
+=~ Assertion \`pagecache->cnt_for_resize_op == 0'
+=~ check_pagecache_is_cleaned_up
+=~ plugin_shutdown
 MDEV-18285:
 =~ Assertion \`! is_set()' failed
 =~ Diagnostics_area::disable_status
@@ -618,8 +626,6 @@ MDEV-17869:
 MDEV-17857:
 =~ tmp != ((long long) 0x8000000000000000LL)
 =~ TIME_from_longlong_datetime_packed
-=~ Item_sum_hybrid::min_max_update_str_field
-=~ update_tmptable_sum_func
 MDEV-17844:
 =~ Assertion \`ulint(rec) == offsets[2]'
 =~ rec_offs_validate
@@ -658,13 +664,18 @@ MDEV-17580:
 =~ mysql_alter_table
 =~ ADD CHECK
 MDEV-17576:
-=~ Assertion `share->reopen == 1'
+=~ Assertion \`share->reopen == 1'
 =~ maria_extra
 =~ mysql_alter_table
 MDEV-17223:
 =~ Assertion \`thd->killed != 0'
 =~ ha_maria::enable_indexes
 =~ handler::ha_end_bulk_insert
+MDEV-17166:
+=~ signal 11|AddressSanitizer: SEGV on unknown address
+=~ heap_check_heap
+=~ heap_close
+=~ tc_purge
 MDEV-17120:
 =~ signal 11
 =~ base_list::push_back
@@ -724,10 +735,19 @@ MDEV-16788:
 =~ my_strcasecmp_utf8
 =~ handle_if_exists_options
 =~ Sql_cmd_alter_table::execute
+MDEV-16664:
+=~ InnoDB: Failing assertion: !other_lock \|\| wsrep_thd_is_BF(lock->trx->mysql_thd, FALSE) \|\| wsrep_thd_is_BF(other_lock->trx->mysql_thd, FALSE)
+=~ lock_rec_queue_validate
+=~ row_search_mvcc
 MDEV-16549:
 =~ Assertion \`context' failed|signal 11
 =~ Item_direct_view_ref::fix_fields
 =~ mysql_handle_single_derived
+MDEV-16500:
+=~ Assertion \`user_table->n_def > table->s->fields'
+=~ Server version: 10.1
+=~ innobase_get_col_names
+=~ Sql_cmd_alter_table::execute
 MDEV-16240:
 =~ Last data field length .* bytes, key ptr now exceeds key end by .* bytes
 =~ Assertion \`0' failed
@@ -762,6 +782,10 @@ MDEV-15776:
 =~ Assertion \`user_table->get_ref_count() == 1' failed
 =~ commit_try_rebuild
 =~ Sql_cmd_alter_table::execute
+MDEV-15744:
+=~ Assertion \`derived->table'
+=~ mysql_derived_merge_for_insert
+=~ mysql_load
 MDEV-15572:
 =~ signal 11|AddressSanitizer: SEGV
 =~ ha_maria::end_bulk_insert
@@ -830,6 +854,10 @@ MDEV-5628:
 # Weak matches
 ##############################################################################
 
+MDEV-18800:
+=~ signal 11
+=~  ha_innobase::commit_inplace_alter_table
+=~ Sql_cmd_alter_table::execute
 MDEV-18719:
 =~ old \|\| col->same_format(\*old)
 =~ mysql_inplace_alter_table
@@ -838,6 +866,9 @@ MDEV-18712:
 =~ InnoDB indexes are inconsistent with what defined in .frm for table
 MDEV-18710:
 =~ Expression for field \`DB_ROW_HASH_1\` is refering to uninitialized field \`DB_ROW_HASH_1\`
+MDEV-18675:
+=~ AddressSanitizer: SEGV on unknown address
+=~ and_new_conditions_to_optimized_cond
 MDEV-18467:
 =~ fix_semijoin_strategies_for_picked_join_order
 MDEV-18461:
@@ -862,8 +893,6 @@ MDEV-18449:
 =~ my_strnncollsp_simple
 MDEV-18447:
 =~ Timestamp_or_zero_datetime::tv
-MDEV-18441:
-=~ tables_opened == 1
 MDEV-18421:
 =~ foreign->foreign_table
 MDEV-18414:
@@ -892,8 +921,6 @@ MDEV-18300:
 =~ Field_blob::get_key_image
 MDEV-18291:
 =~ ha_innobase_inplace_ctx::
-MDEV-18286:
-=~ pagecache->cnt_for_resize_op == 0
 MDEV-18274:
 =~ new_clustered ==
 MDEV-18272:
@@ -1343,8 +1370,6 @@ MDEV-16501:
 =~ ->coll->strcasecmp
 MDEV-16501:
 =~ in dict_mem_table_col_rename
-MDEV-16500:
-=~ user_table->n_def > table->s->fields
 MDEV-16499:
 =~ from the internal data dictionary of InnoDB though the .frm file for the table exists
 MDEV-16499:
@@ -1403,8 +1428,6 @@ MDEV-15776:
 =~ table->get_ref_count
 MDEV-15753:
 =~ thd->is_error
-MDEV-15744:
-=~ derived->table
 MDEV-15742:
 =~ m_lock_type == 1
 MDEV-15658:
@@ -1730,3 +1753,7 @@ MDEV-371:
 # MDEV-18195:
 # =~ lex_string_cmp
 # MDEV-18218: btr_page_reorganize_low
+# MDEV-18711:
+# =~ Assertion \`key_info->key_part->field->flags & (1<< 30)'|fields_in_hash_keyinfo
+# =~ setup_keyinfo_hash
+# =~ Sql_cmd_alter_table::execute
