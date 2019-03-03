@@ -157,6 +157,11 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-18802:
+=~ Assertion \`table->stat_initialized' failed
+=~ dict_stats_update_if_needed
+=~ row_update_cascade_for_mysql
+=~ row_upd_step
 MDEV-18801:
 =~ InnoDB: Failing assertion: field->col->mtype == type
 =~ row_sel_convert_mysql_key_to_innobase
@@ -739,6 +744,10 @@ MDEV-16788:
 =~ my_strcasecmp_utf8
 =~ handle_if_exists_options
 =~ Sql_cmd_alter_table::execute
+MDEV-16699:
+=~ AddressSanitizer: heap-use-after-free|signal 11
+=~ my_strnncoll_binary
+=~ Field_blob::cmp
 MDEV-16664:
 =~ InnoDB: Failing assertion: !other_lock \|\| wsrep_thd_is_BF(lock->trx->mysql_thd, FALSE) \|\| wsrep_thd_is_BF(other_lock->trx->mysql_thd, FALSE)
 =~ lock_rec_queue_validate
@@ -765,6 +774,11 @@ MDEV-15977:
 =~ Assertion \`! thd->in_sub_stmt' failed
 =~ SEQUENCE::read_initial_values
 =~ open_table_from_share
+MDEV-15955:
+=~ Assertion \`field_types == 0 \|\| field_types[field_pos] == MYSQL_TYPE_LONGLONG'
+=~ Server version: 10.1|Server version: 10.0|Server version: 5.5
+=~ Protocol_text::store_longlong
+=~ end_send_group
 MDEV-15907:
 =~ AddressSanitizer: heap-use-after-free
 =~ strnmov
@@ -1377,8 +1391,6 @@ MDEV-16745:
 =~ thd->transaction.stmt.is_empty
 MDEV-16738:
 =~ == Item_func::MULT_EQUAL_FUNC
-MDEV-16699:
-=~ my_strnncollsp_binary
 MDEV-16659:
 =~ anc_page->org_size == anc_page->size
 MDEV-16654:
