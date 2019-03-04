@@ -176,6 +176,16 @@ MDEV-18800:
 =~ Assertion \`!pk->has_virtual()'
 =~ instant_alter_column_possible
 =~ ha_innobase::check_if_supported_inplace_alter
+MDEV-18800:
+=~ InnoDB: Failing assertion: pos != ULINT_UNDEFINED
+=~ row_build_row_ref_in_tuple
+=~ fts_add_doc_by_id
+=~ innobase_commit
+MDEV-18800:
+=~ Assertion \`n < rec_offs_n_fields(offsets)'
+=~ rec_get_nth_field_offs
+=~ row_search_mvcc
+=~ check_duplicate_long_entry_key
 MDEV-18798:
 =~ InnoDB: No matching column for \`DB_ROW_HASH_1\` in index
 =~ signal 11|AddressSanitizer: SEGV on unknown address
