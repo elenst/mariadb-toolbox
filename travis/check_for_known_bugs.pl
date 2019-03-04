@@ -157,6 +157,12 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-18805:
+=~ Warning: Enabling keys got errno 127 on
+=~ AddressSanitizer: heap-buffer-overflow
+=~ strmake_root
+=~ Query_arena::strmake
+=~ Column_definition::Column_definition
 MDEV-18802:
 =~ Assertion \`table->stat_initialized' failed
 =~ dict_stats_update_if_needed
@@ -469,10 +475,6 @@ MDEV-18485:
 =~ AddressSanitizer: heap-use-after-free
 =~ Field::is_null
 =~ Item_direct_view_ref::send
-MDEV-18485:
-=~ Field::is_null_in_record
-=~ Column_definition::Column_definition
-=~ mysql_alter_table
 MDEV-18456:
 =~ Assertion \`item->maybe_null'
 =~ Type_handler_temporal_result::make_sort_key
@@ -889,6 +891,14 @@ MDEV-5628:
 # Weak matches
 ##############################################################################
 
+MDEV-18805:
+=~ Found too many records; Can't continue
+=~ Number of rows changed from
+MDEV-18805:
+=~ signal 11
+=~ Field::is_null_in_record
+=~ Column_definition::Column_definition
+=~ Create_field::Create_field
 MDEV-18801:
 =~ AddressSanitizer: heap-buffer-overflow
 =~ row_sel_convert_mysql_key_to_innobase
@@ -908,6 +918,10 @@ MDEV-18710:
 MDEV-18675:
 =~ AddressSanitizer: SEGV on unknown address
 =~ and_new_conditions_to_optimized_cond
+MDEV-18485:
+=~ Field::is_null_in_record
+=~ Column_definition::Column_definition
+=~ mysql_alter_table
 MDEV-18467:
 =~ fix_semijoin_strategies_for_picked_join_order
 MDEV-18461:
