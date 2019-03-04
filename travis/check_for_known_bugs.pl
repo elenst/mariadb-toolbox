@@ -221,6 +221,17 @@ MDEV-18784:
 =~ signal 11
 =~ l_find
 =~ initialize_bucket
+MDEV-18784:
+=~ signal 11
+=~ l_find
+=~ l_search
+=~ lf_hash_search_using_hash_value
+=~ find_or_create_digest
+MDEV-18784:
+=~ AddressSanitizer: heap-use-after-free
+=~ Field::set_null
+=~ set_field_to_null_with_conversions
+=~ Item_null::save_in_field
 MDEV-18783:
 =~ AddressSanitizer: heap-use-after-free|signal 11
 =~ tree_search_next|hp_rb_make_key|tree_search_edge|check_one_key
@@ -613,6 +624,10 @@ MDEV-18016:
 =~ storage/innobase/dict/dict0dict.cc line 6199|storage/innobase/dict/dict0dict.cc line 6346|storage/innobase/dict/dict0dict.cc line 6181
 =~ dict_table_check_for_dup_indexes
 =~ mysql_inplace_alter_table
+MDEV-18003:
+=~ Assertion \`grantee->counter > 0'
+=~ merge_role_privileges
+=~ traverse_role_graph_up
 MDEV-17991:
 =~ Out of memory
 =~ Lex_input_stream::body_utf8_start
@@ -621,6 +636,10 @@ MDEV-17969:
 =~ Assertion \`name' failed
 =~ THD::push_warning_truncated_value_for_field
 =~ Field::set_datetime_warning
+MDEV-17964:
+=~ Assertion \`status == 0'
+=~ add_role_user_mapping_action
+=~ rebuild_role_grants
 MDEV-17939:
 =~ Assertion \`++loop_count < 2'
 =~ trx_undo_report_rename
@@ -1169,8 +1188,6 @@ MDEV-18017:
 =~ index->to_be_dropped
 MDEV-18016:
 =~ dict_table_check_for_dup_indexes
-MDEV-18003:
-=~ grantee->counter > 0
 MDEV-17999:
 =~ Invalid roles_mapping table entry user
 MDEV-17998:
@@ -1191,8 +1208,6 @@ MDEV-17971:
 =~ Field_iterator_table::set
 MDEV-17971:
 =~ Field_iterator_table_ref::set_field_iterator
-MDEV-17964:
-=~ status == 0
 MDEV-17962:
 =~ setup_jtbm_semi_joins
 MDEV-17959:
