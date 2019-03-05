@@ -157,6 +157,10 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-18820:
+=~ Assertion \`lock_table_has(trx, index->table, LOCK_IX)'
+=~ lock_rec_insert_check_and_lock
+=~ btr_cur_optimistic_insert
 MDEV-18805:
 =~ Warning: Enabling keys got errno 127 on
 =~ AddressSanitizer: heap-buffer-overflow
@@ -242,6 +246,10 @@ MDEV-18784:
 =~ Field::set_null
 =~ set_field_to_null_with_conversions
 =~ Item_null::save_in_field
+MDEV-18784:
+=~ AddressSanitizer: heap-use-after-free
+=~ field_conv_memcpy
+=~ Item_field::save_in_field
 MDEV-18783:
 =~ AddressSanitizer: heap-use-after-free|signal 11
 =~ tree_search_next|hp_rb_make_key|tree_search_edge|check_one_key
