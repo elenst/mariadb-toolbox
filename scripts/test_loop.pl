@@ -127,6 +127,7 @@ sub run_tests {
   
   if ($branch=~ /([5|10]+\.[0-9]+)/) {
     $branch= $1;
+    print_log( "Major version: $branch" );
   } else {
     print_log( "ERROR: Server version was not recognized from the branch name $branch" );
     return 1;
