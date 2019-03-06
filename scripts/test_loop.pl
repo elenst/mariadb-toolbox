@@ -10,6 +10,7 @@ my $rqg= "/data/src/rqg-test_loop";
 my $test_list= 'combo,random-cnf';
 my $log_location= "$ENV{HOME}/test_loop_logs";
 my $trials= 0;
+my $rerun= 0;
 my $help= 0;
 
 my $opt_result= GetOptions(
@@ -18,6 +19,7 @@ my $opt_result= GetOptions(
   'help' => \$help,
   'logs=s' => \$log_location,
   'pausefile=s' => \$pausefile,
+  'rerun-old-builds|rerun_old_builds' => \$rerun,
   'rqg=s' => \$rqg,
   'sources=s' => \$src_location,
   'stopfile=s' => \$stopfile,
@@ -83,9 +85,13 @@ while (1) {
     my $prev_revision= $last_tried_revision{$branch} || 'N/A';
     
     if ( $revision eq $prev_revision ) {
-      print_log( "Revision $revision on branch $branch has been already tested or tried, skipping for now" );
-      $next_branch= $branch unless defined $next_branch;
-      next; # Next branch
+      if ($rerun) {
+        print_log( "Revision $revision on branch $branch has been already tested or tried, but re-run is requested" );
+      } else {
+        print_log( "Revision $revision on branch $branch has been already tested or tried, skipping for now" );
+        $next_branch= $branch unless defined $next_branch;
+        next; # Next branch
+      }
     }
     
     print_log( "##################################################################" );
