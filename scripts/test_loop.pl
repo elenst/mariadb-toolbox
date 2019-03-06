@@ -124,6 +124,13 @@ while (1) {
 sub run_tests {
   my $branch= shift;
   my $revision= shift;
+  
+  if ($branch=~ /([5|10]\.[0-9])/) {
+    $branch= $1;
+  } else {
+    print_log( "ERROR: Server version was not recognized from the branch name $branch" );
+    return 1;
+  }
 
   foreach my $test (@tests) {
 
