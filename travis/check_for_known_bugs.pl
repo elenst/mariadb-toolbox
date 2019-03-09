@@ -166,6 +166,10 @@ MDEV-18820:
 =~ Assertion \`lock_table_has(trx, index->table, LOCK_IX)'
 =~ lock_rec_insert_check_and_lock
 =~ btr_cur_optimistic_insert
+MDEV-18809:
+=~ Assertion \`key_info->key_part->field->flags & (1<< 30)'|signal 11
+=~ setup_keyinfo_hash
+=~ Sql_cmd_alter_table::execute
 MDEV-18805:
 =~ Warning: Enabling keys got errno 127 on
 =~ AddressSanitizer: heap-buffer-overflow
@@ -937,10 +941,6 @@ MDEV-5628:
 # Weak matches
 ##############################################################################
 
-MDEV-18809:
-=~ Assertion \`key_info->key_part->field->flags & (1<< 30)'|signal 11
-=~ setup_keyinfo_hash
-=~ Sql_cmd_alter_table::execute
 MDEV-18805:
 =~ Found too many records; Can't continue
 =~ Number of rows changed from
