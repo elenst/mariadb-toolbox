@@ -112,43 +112,47 @@ my %branches = ();
 
 open( PATCH, "<$diffile" ) || die "Could not open $diffile for reading\n";
 
+my $current_file;
+
 while ( my $line = <PATCH> )
 {
 	# Find the next modified or added file
 	if ( $line =~ /^===\s(?:added|modified)\sfile\s\'?([^']+)\'?/ 
 			or $line =~ /^diff\s--git\sa\/([^'\s]+)/ )
 	{
-		my $f = $1;
-		next if $f =~ /^mysql-test/ ; # No need to process MTR stuff
-		debug( "File: $f\n" );
-		do {
-			# index ... (for git)			
-			# --- <old file>
-			# +++ <new file>
-			# @@ -<old pos>,<old length> +<new pos>,<new length> @@
-			$line = <PATCH>;
-		} until ( $line =~ /^\@\@\s\-\d+,\d+\s\+(\d+),(\d+)/ );
+		$current_file = $1;
+    # No need to process MTR stuff
+		if ($current_file =~ /^mysql-test/ or $current_file =~ /^(?:storage|plugin)\/\w+\/mysql-test/) {
+      debug( "File: $current_file is ignored\n" );
+      $current_file= undef;
+      next;
+    } else {
+      debug( "File: $current_file\n" );
+    }
+  }
 
-		while ( $line =~ /^\@\@\s\-\d+,\d+\s\+(\d+),(\d+)/ )
-		{
-			my ( $start, $length ) = ( $1, $2 );
-			my $l = $start;
-			debug( "Start: $start Length: $length\n" );
-			while ($l < $start + $length)
-			{
-				$line = <PATCH>;
-				next if $line =~ /^-/;
-				chomp $line;
-				# We will only define those elements of @{$fragments{<filename>}} 
-				# which lines we are interested in. E.g. if our first fragment is 10,2
-				# then $fragments{$f}[10] and $fragments{$f}[11] will be defined, but previous 10 elements won't be
-				${$fragments{$f}}[$l] = $line;
-				$counts{"$f:$l"} = '';
-				$l++;
-			}
-			$line = <PATCH>;
-		}
-	}
+  # If the line is not a new file, don't process it unless
+  # the current file is defined -- that is, skip all processing for mysql-test etc.
+  next unless defined $current_file;
+
+  # Next chunk of the patch
+  if ( $line =~ /^\@\@\s\-\d+,\d+\s\+(\d+),(\d+)/ ) {
+    my ( $start, $length ) = ( $1, $2 );
+    my $l = $start;
+    debug( "Start: $start Length: $length\n" );
+    while ($l < $start + $length)
+    {
+      $line = <PATCH>;
+      next if $line =~ /^-/;
+      chomp $line;
+      # We will only define those elements of @{$fragments{<filename>}}
+      # which lines we are interested in. E.g. if our first fragment is 10,2
+      # then $fragments{$current_file}[10] and $fragments{$current_file}[11] will be defined, but previous 10 elements won't be
+      ${$fragments{$current_file}}[$l] = $line;
+      $counts{"$current_file:$l"} = '';
+      $l++;
+    }
+  }
 }
 
 close( PATCH );
