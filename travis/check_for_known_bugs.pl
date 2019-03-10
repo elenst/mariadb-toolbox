@@ -764,6 +764,14 @@ MDEV-17070:
 =~ make_join_statistics
 =~ mysql_select
 =~ mysql_load
+MDEV-17070:
+=~ Assertion \`!is_set() \|\| (m_status == DA_OK_BULK && is_bulk_op())'
+=~ my_ok
+=~ Sql_cmd_truncate_table::execute
+MDEV-17070:
+=~ Assertion \`! is_set()'
+=~ my_eof
+=~ mysqld_show_create
 MDEV-17055:
 =~ got signal 11|AddressSanitizer: heap-use-after-free
 =~ find_order_in_list
