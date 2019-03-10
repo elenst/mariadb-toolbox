@@ -157,6 +157,11 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-18852:
+=~ signal 11|AddressSanitizer: heap-use-after-free
+=~ Version: '10\.4
+=~ reinit_stmt_before_use
+=~ Prepared_statement::execute|sp_head::execute
 MDEV-18826:
 =~ signal 11
 =~ l_find
@@ -206,7 +211,7 @@ MDEV-18798:
 MDEV-18795:
 =~ Failing assertion: field->prefix_len > 0
 =~ row_sel_convert_mysql_key_to_innobase
-=~ get_key_scans_params
+=~ get_key_scans_params|check_duplicate_long_entry_key
 MDEV-18794:
 =~ Assertion \`!m_innodb' failed
 =~ ha_partition::cmp_ref
@@ -522,7 +527,7 @@ MDEV-18456:
 =~ Type_handler_temporal_result::make_sort_key
 =~ create_sort_index
 MDEV-18452:
-=~ AddressSanitizer: use-after-poison|AddressSanitizer: unknown-crash|signal 11
+=~ AddressSanitizer: use-after-poison|AddressSanitizer: unknown-crash|signal 11|Invalid read of size
 =~ Field::set_default
 =~ Field_bit::set_default
 =~ fill_record_n_invoke_before_triggers
@@ -635,6 +640,10 @@ MDEV-18082:
 =~ Diagnostics_area::disable_status
 =~ Prepared_statement::prepare
 =~ EXPLAIN
+MDEV-18078:
+=~ Assertion \`trnman_has_locked_tables(trn) > 0'
+=~ ha_maria::external_lock
+=~ mysql_unlock_tables
 MDEV-18047:
 =~ index->magic_n == 76789786|Assertion \`pos < index->n_def'
 =~ dict_index_get_nth_field
@@ -755,7 +764,7 @@ MDEV-17070:
 =~ mysql_load
 MDEV-17070:
 =~ Assertion \`!is_set() \|\| (m_status == DA_OK_BULK && is_bulk_op())'
-=~ mysql_alter_table
+=~ mysql_alter_table|Sql_cmd_truncate_table::execute|mysql_rm_table
 =~ is marked as crashed and should be repaired
 =~ #sql.*is marked as crashed and should be repaired
 MDEV-17070:
@@ -764,10 +773,6 @@ MDEV-17070:
 =~ make_join_statistics
 =~ mysql_select
 =~ mysql_load
-MDEV-17070:
-=~ Assertion \`!is_set() \|\| (m_status == DA_OK_BULK && is_bulk_op())'
-=~ my_ok
-=~ Sql_cmd_truncate_table::execute
 MDEV-17070:
 =~ Assertion \`! is_set()'
 =~ my_eof
@@ -968,9 +973,6 @@ MDEV-18800:
 MDEV-18719:
 =~ old \|\| col->same_format(\*old)
 =~ mysql_inplace_alter_table
-MDEV-18712:
-=~ Found index .* whose column info does not match that of MariaDB
-=~ InnoDB indexes are inconsistent with what defined in \.frm for table
 MDEV-18710:
 =~ Expression for field \`DB_ROW_HASH_1\` is refering to uninitialized field \`DB_ROW_HASH_1\`
 MDEV-18675:
@@ -1160,8 +1162,6 @@ MDEV-18084:
 =~ dict_index_get_nth_field
 MDEV-18084:
 =~ row_upd_changes_some_index_ord_field_binary
-MDEV-18078:
-=~ trnman_has_locked_tables
 MDEV-18077:
 =~ n < tuple->n_fields
 MDEV-18070:
@@ -1894,3 +1894,6 @@ MDEV-371:
 # =~ Assertion \`key_info->key_part->field->flags & (1<< 30)'|fields_in_hash_keyinfo
 # =~ setup_keyinfo_hash
 # =~ Sql_cmd_alter_table::execute
+# MDEV-18712:
+# =~ Found index .* whose column info does not match that of MariaDB
+# =~ InnoDB indexes are inconsistent with what defined in \.frm for table
