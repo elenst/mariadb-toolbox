@@ -157,6 +157,16 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-18876:
+=~ Assertion \`is_valid_time_slow()'
+=~ Time::valid_MYSQL_TIME_to_valid_value
+=~ Time::make_from_item
+=~ Item::print_value
+MDEV-18875:
+=~ Assertion \`thd->transaction.stmt.ha_list == __null \|\| trans == &thd->transaction.stmt'
+=~ ha_rollback_trans
+=~ mysql_trans_commit_alter_copy_data
+=~ ADD PERIOD|add period
 MDEV-18852:
 =~ signal 11|AddressSanitizer: heap-use-after-free
 =~ Version: '10\.4
@@ -476,6 +486,10 @@ MDEV-18595:
 MDEV-18589:
 =~ Assertion \`fil_space_t::physical_size(flags) == info\.page_size' failed
 =~ xb_delta_open_matching_space
+MDEV-18546:
+=~ AddressSanitizer: heap-use-after-free
+=~ innobase_get_computed_value
+=~ row_vers_build_clust_v_col
 MDEV-18524:
 =~ Assertion \`!"invalid table name"' failed
 =~ innodb_find_table_for_vc
@@ -587,6 +601,11 @@ MDEV-18302:
 =~ Assertion \`!((new_col->prtype ^ col->prtype) & ~256U)' failed
 =~ row_log_table_apply_convert_mrec
 =~ ha_innobase::inplace_alter_table
+MDEV-18300:
+=~ AddressSanitizer: use-after-poison|AddressSanitizer: unknown-crash
+=~ Field_blob::get_key_image
+=~ Field::stored_field_make_mm_leaf
+=~ calculate_cond_selectivity_for_table
 MDEV-18291:
 =~ std::__cxx11::_List_base|std::_List_base
 =~ dict_table_remove_from_cache
@@ -701,6 +720,10 @@ MDEV-17844:
 =~ rec_offs_validate
 =~ page_zip_write_trx_id_and_roll_ptr
 =~ row_undo
+MDEV-17843:
+=~ Assertion \`page_rec_is_leaf(rec)'
+=~ lock_rec_queue_validate
+=~ innodb_show_status
 MDEV-17725:
 =~ Diagnostics_area::set_ok_status.*Assertion \`!is_set() \|\| (m_status == DA_OK_BULK && is_bulk_op())'
 =~ mysql_alter_table
@@ -832,9 +855,15 @@ MDEV-16240:
 =~ row_sel_convert_mysql_key_to_innobase
 =~ multi_update::send_data
 MDEV-16128:
+=~ signal 11
 =~ Item_func::print_op
 =~ mysql_select
-=~ Prepared_statement::execute
+=~ Prepared_statement::execute|sp_instr_stmt::execute
+MDEV-16128:
+=~ pure virtual method called
+=~ Item_func::convert_const_compared_to_int_field|Item_func::check_argument_types_like_args0
+=~ setup_without_group
+=~ Prepared_statement::execute|sp_instr_stmt::execute
 MDEV-15977:
 =~ Assertion \`! thd->in_sub_stmt' failed
 =~ SEQUENCE::read_initial_values
@@ -900,6 +929,11 @@ MDEV-15011:
 =~ Error: Freeing overrun buffer
 =~ sysmalloc: Assertion \`(old_top == initial_top (av) && old_size == 0) \|\| ((unsigned long) (old_size) >= MINSIZE && prev_inuse (old_top) && ((unsigned long) old_end & (pagesize - 1)) == 0)'
 =~ ilink::operator new
+MDEV-14996:
+=~ Assertion \`!thd->get_stmt_da()->is_sent() \|\| thd->killed == KILL_CONNECTION'
+=~ int ha_maria::external_lock
+=~ THD::cleanup
+=~ Status: KILL_CONNECTION
 MDEV-14926:
 =~ AddressSanitizer: heap-use-after-free
 =~ make_date_time
@@ -1030,8 +1064,6 @@ MDEV-18316:
 =~ dict_col_t::instant_value
 MDEV-18315:
 =~ col->same_format
-MDEV-18300:
-=~ Field_blob::get_key_image
 MDEV-18291:
 =~ ha_innobase_inplace_ctx::
 MDEV-18274:
@@ -1275,10 +1307,6 @@ MDEV-17884:
 =~ is marked as crashed and should be repaired
 MDEV-17854:
 =~ decimals <= 6
-MDEV-17843:
-=~ page_rec_is_leaf
-MDEV-17843:
-=~ lock_rec_queue_validate
 MDEV-17842:
 =~ pfs_lock::allocated_to_free
 MDEV-17838:
@@ -1309,6 +1337,7 @@ MDEV-17763:
 =~ len == 20U
 MDEV-17760:
 =~ table->read_set, field_index
+=~ Server version: 10\.1|Server version: 10\.0|Server version: 5\.5
 MDEV-17759:
 =~ precision > 0
 MDEV-17741:
@@ -1651,8 +1680,6 @@ MDEV-15011:
 MDEV-15011:
 =~ Server version: 10\.2|Server version: 10\.1|Server version: 10\.0|Server version: 5\.5
 =~ Error in \`.*/mysqld': malloc(): memory corruption:
-MDEV-14996:
-=~ int ha_maria::external_lock
 MDEV-14994:
 =~ join->best_read < double
 MDEV-14906:
@@ -1695,8 +1722,6 @@ MDEV-14642:
 =~ table->s->db_create_options == part_table->s->db_create_options
 MDEV-14557:
 =~ m_sp == __null
-MDEV-14440:
-=~ pure virtual method called
 MDEV-14410:
 =~ table->pos_in_locked_tables->table == table
 MDEV-14407:
@@ -1794,6 +1819,8 @@ MDEV-371:
 # MDEV-14409: page_rec_is_leaf
 # MDEV-14440: inited==RND
 # MDEV-14440: in ha_partition::external_lock
+# MDEV-14440:
+# =~ pure virtual method called
 # MDEV-14695: n < m_size
 # MDEV-14743: Item_func_match::init_search
 # MDEV-14829: protocol.cc:588: void Protocol::end_statement
