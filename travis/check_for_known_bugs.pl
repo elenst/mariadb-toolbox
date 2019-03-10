@@ -708,6 +708,15 @@ MDEV-17896:
 =~ Assertion \`pfs->get_refcount() > 0'
 =~ release_table_share|tdc_delete_share_from_hash
 =~ purge_tables
+MDEV-17891:
+=~ Assertion \`transactional_table \|\| !changed \|\| thd->transaction.stmt.modified_non_trans_table'
+=~ select_insert::abort_result_set
+=~ Server version: 10\.3|Server version: 10\.4
+MDEV-17891:
+=~ The table .* is full|Warning: Enabling keys got errno 121
+=~ Assertion \`transactional_table \|\| !(info.copied \|\| info.deleted) \|\| thd->transaction.stmt.modified_non_trans_table'
+=~ mysql_load
+=~ Server version: 10\.3|Server version: 10\.4
 MDEV-17869:
 =~ AddressSanitizer: use-after-poison
 =~ Item_change_list::rollback_item_tree_changes
@@ -809,6 +818,11 @@ MDEV-17005:
 =~ AddressSanitizer: heap-use-after-free
 =~ innobase_get_computed_value
 =~ row_upd_clust_step
+MDEV-17004:
+=~ InnoDB: Assertion failure in thread .* in file ha_innodb.cc line
+=~ innobase_get_fts_charset
+=~ Server version: 10\.1|Server version: 10\.0
+=~ ADD FULLTEXT
 MDEV-16940:
 =~ signal 11|AddressSanitizer: SEGV on unknown address
 =~ unsafe_key_update
@@ -1297,8 +1311,6 @@ MDEV-17893:
 =~ nulls < null_mask
 MDEV-17892:
 =~ index->was_not_null
-MDEV-17891:
-=~ thd->transaction\.stmt\.modified_non_trans_table
 MDEV-17890:
 =~ row_upd_sec_index_entry
 MDEV-17890:
@@ -1448,8 +1460,6 @@ MDEV-17016:
 =~ auto_increment_safe_stmt_log_lock
 MDEV-17015:
 =~ m_year <= 9999
-MDEV-17004:
-=~ in innobase_get_fts_charset
 MDEV-16994:
 =~ Alloced_length >=
 MDEV-16994:
