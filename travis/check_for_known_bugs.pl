@@ -157,6 +157,11 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-18889:
+=~ my_strnncoll_binary
+=~ Field::cmp_offset
+=~ check_duplicate_long_entry_key
+=~ Version: '10\.4
 MDEV-18888:
 =~ signal 11|AddressSanitizer: SEGV on unknown address
 =~ Item_field::register_field_in_read_map
@@ -264,6 +269,9 @@ MDEV-18790:
 =~ signal 11|AddressSanitizer: SEGV on unknown address
 =~ fields_in_hash_keyinfo
 =~ check_duplicate_long_entries_update
+MDEV-18788:
+=~ at line 391: Event Scheduler: An error occurred when initializing system tables. Disabling the Event Scheduler
+=~ FATAL ERROR: Upgrade failed
 MDEV-18787:
 =~ Assertion \`! is_set()' failed
 =~ Diagnostics_area::set_eof_status
@@ -582,15 +590,6 @@ MDEV-18371:
 =~ Conditional jump or move depends on uninitialised value|signal 11
 =~ cmp_key_rowid_part_id
 =~ QUICK_RANGE_SELECT::get_next
-MDEV-18339:
-=~ AddressSanitizer: heap-buffer-overflow|AddressSanitizer: use-after-poison
-=~ Item_exists_subselect::is_top_level_item
-=~ Item_in_optimizer::eval_not_null_tables
-=~ st_select_lex::optimize_unflattened_subqueries
-MDEV-18339:
-=~ Conditional jump or move depends on uninitialised value
-=~ Item_in_optimizer::eval_not_null_tables
-=~ st_select_lex::optimize_unflattened_subqueries
 MDEV-18335:
 =~ Assertion \`!error \|\| error == 137' failed
 =~ subselect_rowid_merge_engine::init
@@ -772,6 +771,10 @@ MDEV-17678:
 =~ field_unpack
 =~ print_keydup_error
 =~ ha_myisam::enable_indexes
+MDEV-17643:
+=~ Assertion \`nr >= 0.0'
+=~ Item_sum_std::val_real
+=~ Protocol::send_result_set_row
 MDEV-17627:
 =~ Assertion \`inited==RND'
 =~ handler::ha_rnd_end
@@ -1128,8 +1131,6 @@ MDEV-18222:
 =~ innobase_rename_column_try
 MDEV-18222:
 =~ dict_foreign_remove_from_cache
-MDEV-18219:
-=~ index->n_core_null_bytes <=
 MDEV-18217:
 =~ InnoDB: Summed data size
 MDEV-18217:
@@ -1951,6 +1952,17 @@ MDEV-371:
 # MDEV-18195:
 # =~ lex_string_cmp
 # MDEV-18218: btr_page_reorganize_low
+# MDEV-18219:
+# =~ index->n_core_null_bytes <=
+# MDEV-18339:
+# =~ AddressSanitizer: heap-buffer-overflow|AddressSanitizer: use-after-poison
+# =~ Item_exists_subselect::is_top_level_item
+# =~ Item_in_optimizer::eval_not_null_tables
+# =~ st_select_lex::optimize_unflattened_subqueries
+# MDEV-18339:
+# =~ Conditional jump or move depends on uninitialised value
+# =~ Item_in_optimizer::eval_not_null_tables
+# =~ st_select_lex::optimize_unflattened_subqueries
 # MDEV-18711:
 # =~ Assertion \`key_info->key_part->field->flags & (1<< 30)'|fields_in_hash_keyinfo
 # =~ setup_keyinfo_hash
