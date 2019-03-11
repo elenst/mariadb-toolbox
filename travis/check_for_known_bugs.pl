@@ -157,6 +157,26 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-18888:
+=~ signal 11|AddressSanitizer: SEGV on unknown address
+=~ Item_field::register_field_in_read_map
+=~ prepare_vcol_for_base_setup
+=~ Version: '10\.4
+MDEV-18887:
+=~ Conditional jump or move depends on uninitialised value
+=~ ha_key_cmp
+=~ sort_key_cmp
+=~ ha_myisam::repair
+MDEV-18882:
+=~ AddressSanitizer: heap-use-after-free
+=~ Binary_string::copy|String::copy
+=~ Item_func_make_set::val_str
+=~ copy_fields
+MDEV-18881:
+=~ Assertion \`0'
+=~ make_sortkey
+=~ find_all_keys
+=~ create_sort_index
 MDEV-18876:
 =~ Assertion \`is_valid_time_slow()'
 =~ Time::valid_MYSQL_TIME_to_valid_value
@@ -606,6 +626,10 @@ MDEV-18300:
 =~ Field_blob::get_key_image
 =~ Field::stored_field_make_mm_leaf
 =~ calculate_cond_selectivity_for_table
+MDEV-18293:
+=~ signal 11|AddressSanitizer: SEGV
+=~ row_sel_sec_rec_is_for_clust_rec
+=~ ha_innobase::general_fetch
 MDEV-18291:
 =~ std::__cxx11::_List_base|std::_List_base
 =~ dict_table_remove_from_cache
