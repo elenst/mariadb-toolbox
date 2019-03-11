@@ -188,7 +188,7 @@ MDEV-18875:
 =~ mysql_trans_commit_alter_copy_data
 =~ ADD PERIOD|add period
 MDEV-18852:
-=~ signal 11|AddressSanitizer: heap-use-after-free
+=~ signal 11|AddressSanitizer: heap-use-after-free|AddressSanitizer: heap-buffer-overflow
 =~ Version: '10\.4
 =~ reinit_stmt_before_use
 =~ Prepared_statement::execute|sp_head::execute
