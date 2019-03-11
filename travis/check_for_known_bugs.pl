@@ -635,7 +635,7 @@ MDEV-18220:
 =~ AddressSanitizer: heap-use-after-free
 =~ fts_get_table_name_prefix
 MDEV-18207:
-=~ AddressSanitizer: heap-use-after-free
+=~ AddressSanitizer: heap-use-after-free|Invalid read of size
 =~ _ma_get_status
 =~ mysql_lock_tables
 MDEV-18418:
@@ -815,7 +815,7 @@ MDEV-17055:
 =~ mysql_prepare_update
 =~ sp_head::execute_procedure
 MDEV-17005:
-=~ AddressSanitizer: heap-use-after-free
+=~ AddressSanitizer: heap-use-after-free|AddressSanitizer: heap-buffer-overflow
 =~ innobase_get_computed_value
 =~ row_upd_clust_step
 MDEV-17004:
@@ -1011,7 +1011,7 @@ MDEV-18805:
 =~ Column_definition::Column_definition
 =~ Create_field::Create_field
 MDEV-18801:
-=~ AddressSanitizer: heap-buffer-overflow
+=~ AddressSanitizer: heap-buffer-overflow|AddressSanitizer: SEGV on unknown address
 =~ row_sel_convert_mysql_key_to_innobase
 =~ get_key_scans_params
 MDEV-18800:
