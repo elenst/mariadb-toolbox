@@ -157,6 +157,16 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-18900:
+=~ AddressSanitizer: heap-use-after-free
+=~ my_strnncoll_binary
+=~ Item_func_min_max::val_str
+=~ end_send_group
+MDEV-18899:
+=~ signal 11
+=~ Field::set_warning_truncated_wrong_value
+=~ Field_longstr::check_string_copy_error
+=~ Column_stat::get_stat_values
 MDEV-18889:
 =~ my_strnncoll_binary
 =~ Field::cmp_offset
