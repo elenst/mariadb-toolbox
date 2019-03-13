@@ -1048,6 +1048,10 @@ MDEV-10748:
 =~ AddressSanitizer: heap-use-after-free|signal 11
 =~ ha_maria::implicit_commit
 =~ trans_commit_implicit
+MDEV-8089:
+=~ Apc_target::make_apc_call
+=~ fill_show_explain
+=~ get_schema_tables_result
 MDEV-5628:
 =~ Server version: 10\.1|Server version: 10\.0|Server version: 5\.5
 =~ Assertion \`! is_set()'
