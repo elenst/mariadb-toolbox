@@ -19,6 +19,7 @@ my $opt_preserve_connections;
 my $rpl= 0;
 my $max_chunk= 0;
 my $trials= 1;
+my $initial_trials= undef;
 my $timeout= 86400;
 my $simplification_timeout= 0;
 
@@ -47,12 +48,14 @@ GetOptions (
   "preserve-connections|preserve_connections=s" => \$opt_preserve_connections,
   "max-chunk-size|max_chunk_size=i" => \$max_chunk,
   "trials=i"    => \$trials,
+  "initial-trials|initial_trials=i"    => \$initial_trials,
   "test-timeout|test_timeout=i"   => \$timeout,
   "simplification-timeout|simplification_timeout=i"   => \$simplification_timeout,
 );
 
 my $endtime= ($simplification_timeout ? time() + $simplification_timeout : 0);
 my $max_trial_duration= 0;
+$initial_trials = $trials * 3 unless defined $initial_trials;
 
 if (!$testcase) {
   print "ERROR: testcase is not defined\n";
@@ -111,7 +114,7 @@ print "\nRunning initial test\n";
 
 my $trials_save= $trials;
 # The intial test run is most important, we'll try it more before giving up
-$trials*= 3;
+$trials= $initial_trials;
 
 unless (run_test($test))
 {
@@ -141,7 +144,7 @@ foreach my $mode (@modes)
       my @new_test = ();
       my $skip= 0;
       foreach my $t (@last_failed_test) {
-        if ( $t =~ /^\s*\-\-(?:connect\s*\(\s*|disconnect\s+|connection\s+)([^\s\,]+)/s )
+        if ( $t =~ /^\s*\-\-(?:connect\s*\(\s*|disconnect\s+|connection|source\s+)([^\s\,]+)/s )
         {
           $skip = ( exists $cons{$1} );
           #print STDERR "COnnection $1 - in hash? $connections{$1}; ignore? $ignore\n";
