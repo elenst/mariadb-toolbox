@@ -49,7 +49,7 @@ while (<DATA>) {
     $pattern=~ s/(\"|\?|\!|\(|\)|\[|\]|\&|\^|\~|\+)/\\$1/g;
   }
   # MDEV line starts a new signature
-  elsif(/^\s*(MDEV-\d+):\s*(.*)/) {
+  elsif(/^\s*(MDEV-\d+|TODO-\d+):\s*(.*)/) {
     my $new_mdev= $1;
     # Process the previous result, if there was any
     if ($signature_lines_found and not $signature_does_not_match) {
@@ -157,6 +157,19 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+TODO-842:
+=~ AddressSanitizer: heap-buffer-overflow
+=~ Item_exists_subselect::is_top_level_item
+=~ st_select_lex::update_used_tables
+=~ JOIN::optimize
+MDEV-18911:
+=~ Assertion \`(templ->is_virtual && !field) \|\| (field && field->prefix_len ? field->prefix_len == len : templ->mysql_col_len == len)'
+=~ row_sel_field_store_in_mysql_format_func
+=~ row_search_idx_cond_check
+MDEV-18904:
+=~ Assertion \`m_part_spec.start_part >= m_part_spec.end_part'
+=~ ha_partition::index_read_idx_map
+=~ handler::ha_index_read_idx_map
 MDEV-18900:
 =~ AddressSanitizer: heap-use-after-free
 =~ my_strnncoll_binary
@@ -167,6 +180,11 @@ MDEV-18899:
 =~ Field::set_warning_truncated_wrong_value
 =~ Field_longstr::check_string_copy_error
 =~ Column_stat::get_stat_values
+MDEV-18891:
+=~  AddressSanitizer: heap-use-after-free
+=~ innobase_get_computed_value
+=~ row_upd_del_mark_clust_rec
+=~ Version: '10\.4
 MDEV-18889:
 =~ my_strnncoll_binary
 =~ Field::cmp_offset
@@ -891,6 +909,12 @@ MDEV-16664:
 =~ InnoDB: Failing assertion: !other_lock \|\| wsrep_thd_is_BF(lock->trx->mysql_thd, FALSE) \|\| wsrep_thd_is_BF(other_lock->trx->mysql_thd, FALSE)
 =~ lock_rec_queue_validate
 =~ row_search_mvcc
+MDEV-16635:
+=~ signal 11
+=~ open_table
+=~ open_and_lock_tables
+=~ sequence_insert
+=~ mysql_create_table_no_lock
 MDEV-16549:
 =~ Assertion \`context' failed|signal 11
 =~ Item_direct_view_ref::fix_fields
@@ -984,7 +1008,7 @@ MDEV-14996:
 =~ Assertion \`!thd->get_stmt_da()->is_sent() \|\| thd->killed == KILL_CONNECTION'
 =~ int ha_maria::external_lock
 =~ THD::cleanup
-=~ Status: KILL_CONNECTION
+=~ Status: KILL_CONNECTION|Status: KILL_SERVER
 MDEV-14926:
 =~ AddressSanitizer: heap-use-after-free
 =~ make_date_time
@@ -1539,8 +1563,6 @@ MDEV-16654:
 =~ returned 38 for ALTER TABLE
 MDEV-16654:
 =~ ha_innodb::commit_inplace_alter_table
-MDEV-16635:
-=~ sequence_insert
 MDEV-16539:
 =~ THD::mark_tmp_table_as_free_for_reuse
 MDEV-16523:
