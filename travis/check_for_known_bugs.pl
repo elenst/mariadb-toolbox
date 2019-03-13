@@ -343,14 +343,6 @@ MDEV-18776:
 =~ Assertion \`0' failed
 =~ mysql_execute_command
 =~ SET STATEMENT
-MDEV-18775:
-=~ signal 11
-=~ dict_table_t::instant_column
-=~ commit_inplace_alter_table
-MDEV-18775:
-=~ Warning: assertion failed: f\.col->is_virtual()
-=~ dict_table_t::instant_column
-=~ mysql_inplace_alter_table
 MDEV-18770:
 =~ AddressSanitizer: memcpy-param-overlap
 =~ my_strnxfrm_8bit_bin
@@ -360,33 +352,10 @@ MDEV-18769:
 =~ Assertion \`fixed == 1'
 =~ Item_cond_or::val_int|Item_cond_and::val_int
 =~ has_value
-MDEV-18763:
-=~ Conditional jump or move depends on uninitialised value
-=~ mi_rrnd
-=~ ha_myisam::rnd_pos
 MDEV-18756:
 =~ Use of uninitialised value of size
 =~ DES_set_key_unchecked
 =~ Item_func_des_encrypt::val_str
-MDEV-18755:
-=~ Assertion \`inited==INDEX' failed
-=~ ha_index_read_map
-=~ join_read_always_key
-MDEV-18755:
-=~ AddressSanitizer: heap-buffer-overflow
-=~ calculate_key_len
-=~ handler::prepare_index_key_scan_map
-=~ join_read_always_key
-=~ mysql_union
-MDEV-18749:
-=~ Conditional jump or move depends on uninitialised value
-=~ rec_get_converted_size_comp_prefix_low
-=~ row_merge_buf_write
-=~ fts_parallel_tokenization
-MDEV-18747:
-=~ InnoDB: Failing assertion: table->get_ref_count() == 0
-=~ dict_table_remove_from_cache
-=~ THD::rm_temporary_table
 MDEV-18738:
 =~ AddressSanitizer: heap-use-after-free
 =~ copy_if_not_alloced
@@ -400,58 +369,6 @@ MDEV-18734:
 =~ AddressSanitizer: heap-use-after-free|Invalid read of size
 =~ my_strnxfrm_simple_internal
 =~ Field_blob::sort_string
-MDEV-18731:
-=~ Assertion \`!trx->n_mysql_tables_in_use'
-=~ trx_free
-=~ innobase_close_connection
-MDEV-18725:
-=~ Assertion failure in file .*innobase/fts/fts0fts\.cc
-=~ fts_get_charset
-=~ row_create_index_for_mysql
-MDEV-18722:
-=~ Assertion \`templ->mysql_null_bit_mask'
-=~ row_sel_store_mysql_rec
-=~ check_duplicate_long_entry_key
-=~ handler::ha_write_row
-MDEV-18720:
-=~ Assertion \`inited==NONE'
-=~ handler::ha_index_init
-=~ check_duplicate_long_entry_key
-=~ vers_insert_history_row
-MDEV-18719:
-=~ (c\.prtype ^ o->prtype) & ~(256U \| (16384U|32768U))
-=~ dict_table_t::instant_column
-=~ ha_innobase::commit_inplace_alter_table
-MDEV-18713:
-=~ Assertion \`strcmp(share->unique_file_name,filename) \|\| share->last_version'
-=~ test_if_reopen
-=~ mysql_insert|mysql_update|execute_sqlcom_select
-MDEV-18709:
-=~ signal 11|AddressSanitizer: heap-buffer-overflow
-=~ create_index
-=~ create_table_info_t::create_table
-=~ mysql_alter_table
-MDEV-18709:
-=~ signal 11|AddressSanitizer: global-buffer-overflow
-=~ get_innobase_type_from_mysql_type
-=~ create_index
-=~ Sql_cmd_alter_table::execute
-MDEV-18708:
-=~ AddressSanitizer: SEGV|signal 11
-=~ Item_field::register_field_in_read_map
-=~ Item_args::walk_args
-=~ prepare_vcol_for_base_setup
-MDEV-18707:
-=~ AddressSanitizer: heap-use-after-free
-=~ Field::is_null
-=~ Type_handler_int_result::Item_save_in_field
-=~ TABLE::update_virtual_fields
-=~ mysql_delete
-MDEV-18707:
-=~ signal 11
-=~ my_hash_sort_bin
-=~ calc_hash_for_unique
-=~ TABLE::update_virtual_fields
 MDEV-18706:
 =~ mysql_ha_read: Got error 149 when reading table
 MDEV-18696:
@@ -479,11 +396,6 @@ MDEV-18690:
 =~ base_list::head
 =~ substitute_for_best_equal_field
 =~ JOIN::optimize_stage2
-MDEV-18681:
-=~ AddressSanitizer: SEGV|signal 11
-=~ embedding_sjm
-=~ substitute_for_best_equal_field
-=~ JOIN::optimize_stage2
 MDEV-18679:
 =~ signal 11|AddressSanitizer: SEGV
 =~ JOIN::optimize
@@ -493,10 +405,6 @@ MDEV-18675:
 =~ signal 11|AddressSanitizer: SEGV on unknown address
 =~ COND_EQUAL::copy
 =~ and_new_conditions_to_optimized_cond
-MDEV-18668:
-=~ AddressSanitizer: use-after-poison|Invalid read of size|signal 11
-=~ st_select_lex::collect_fields_equal_to_grouping
-=~ st_select_lex::pushdown_from_having_into_where
 MDEV-18667:
 =~ AddressSanitizer: heap-use-after-free
 =~ make_date_time
@@ -506,10 +414,6 @@ MDEV-18640:
 =~ Conditional jump or move depends on uninitialised value
 =~ TABLE::prune_range_rowid_filters
 =~ TABLE::init_cost_info_for_usable_range_rowid_filters
-MDEV-18632:
-=~ Conditional jump or move depends on uninitialised value
-=~ wsrep_is_wsrep_xid
-=~ innobase_rollback
 MDEV-18630:
 =~ Conditional jump or move depends on uninitialised value
 =~ ib_push_warning
@@ -518,23 +422,10 @@ MDEV-18626:
 =~ AddressSanitizer: stack-buffer-overflow
 =~ int10_to_str
 =~ make_date_time
-MDEV-18609:
-=~ Assertion \`!is_string || (\*af)->charset() == cf->charset' failed
-=~ innobase_rename_or_enlarge_columns_cache
 MDEV-18602:
 =~ InnoDB: Failing assertion: !recv_no_log_write
 =~ mtr_commit
 =~ xtrabackup_prepare_func
-MDEV-18598:
-=~ Assertion \`is_string == dtype_is_string_type(mtype)' failed
-=~ innobase_rename_or_enlarge_columns_cache
-MDEV-18598:
-=~ Assertion \`index\.fields[i]\.col->same_format( \*oindex\.fields[i]\.col, true)' failed
-=~ dict_table_t::prepare_instant
-MDEV-18596:
-=~ AddressSanitizer: unknown-crash
-=~ row_mysql_store_col_in_innobase_format
-=~ ha_innobase::prepare_inplace_alter_table
 MDEV-18595:
 =~ Assertion \`0' failed
 =~ Item_cache_timestamp::val_datetime_packed
@@ -730,10 +621,6 @@ MDEV-18018:
 =~ signal 11|AddressSanitizer: heap-use-after-free
 =~ TABLE_LIST::reinit_before_use
 =~ sp_head::execute|Prepared_statement::execute
-MDEV-18016:
-=~ storage/innobase/dict/dict0dict\.cc line 6199|storage/innobase/dict/dict0dict\.cc line 6346|storage/innobase/dict/dict0dict\.cc line 6181
-=~ dict_table_check_for_dup_indexes
-=~ mysql_inplace_alter_table
 MDEV-18003:
 =~ Assertion \`grantee->counter > 0'
 =~ merge_role_privileges
@@ -784,10 +671,6 @@ MDEV-17843:
 =~ Assertion \`page_rec_is_leaf(rec)'
 =~ lock_rec_queue_validate
 =~ innodb_show_status
-MDEV-17725:
-=~ Diagnostics_area::set_ok_status.*Assertion \`!is_set() \|\| (m_status == DA_OK_BULK && is_bulk_op())'
-=~ mysql_alter_table
-=~ ALTER .* ORDER BY
 MDEV-17699:
 =~ AddressSanitizer: use-after-poison
 =~ base_list_iterator::next_fast
@@ -807,14 +690,6 @@ MDEV-17627:
 =~ Assertion \`inited==RND'
 =~ handler::ha_rnd_end
 =~ handler::ha_rnd_init_with_error|handler::read_first_row
-MDEV-17595:
-=~ got signal 11
-=~ copy_data_between_tables
-=~ mysql_alter_table
-MDEV-17595:
-=~ Assertion \`thd->transaction\.stmt\.is_empty() \|\| (thd->state_flags & Open_tables_state::BACKUPS_AVAIL)' failed
-=~ close_tables_for_reopen
-=~ mysql_alter_table
 MDEV-17580:
 =~ Server version: 10\.1|Server version: 10\.0
 =~ Diagnostics_area::set_ok_status.*Assertion \`! is_set()'
@@ -846,29 +721,6 @@ MDEV-17091:
 =~ Assertion \`old_part_id == m_last_part'
 =~ ha_partition::update_row
 =~ mysql_update
-MDEV-17070:
-=~ Assertion \`!is_set() \|\| (m_status == DA_OK_BULK && is_bulk_op())'
-=~ mysql_load
-MDEV-17070:
-=~ Assertion \`!is_set() \|\| (m_status == DA_OK_BULK && is_bulk_op())'
-=~ mysql_alter_table|Sql_cmd_truncate_table::execute|mysql_rm_table
-=~ is marked as crashed and should be repaired
-=~ #sql.*is marked as crashed and should be repaired
-MDEV-17070:
-=~ \`table->file->stats\.records > 0 \|\| error'
-=~ join_read_const_table
-=~ make_join_statistics
-=~ mysql_select
-=~ mysql_load
-MDEV-17070:
-=~ Assertion \`! is_set()'
-=~ my_eof
-=~ mysqld_show_create
-MDEV-17055:
-=~ got signal 11|AddressSanitizer: heap-use-after-free
-=~ find_order_in_list
-=~ mysql_prepare_update
-=~ sp_head::execute_procedure
 MDEV-17005:
 =~ AddressSanitizer: heap-use-after-free|AddressSanitizer: heap-buffer-overflow
 =~ innobase_get_computed_value
@@ -888,10 +740,6 @@ MDEV-16932:
 =~ my_well_formed_char_length_utf8|lex_string_cmp
 =~ mysql_prepare_create_table
 =~ sp_head::execute
-MDEV-16918:
-=~ find_field_in_tables
-=~ setup_windows
-=~ Prepared_statement::execute
 MDEV-16788:
 =~ Assertion \`ls->length < 0xFFFFFFFFL && ((ls->length == 0 && !ls->str) \|\| ls->length == strlen(ls->str))'
 =~ String::q_append
@@ -969,10 +817,6 @@ MDEV-15776:
 =~ Assertion \`user_table->get_ref_count() == 1' failed
 =~ commit_try_rebuild
 =~ Sql_cmd_alter_table::execute
-MDEV-15744:
-=~ Assertion \`derived->table'
-=~ mysql_derived_merge_for_insert
-=~ mysql_load
 MDEV-15572:
 =~ signal 11|AddressSanitizer: SEGV
 =~ ha_maria::end_bulk_insert
@@ -1083,11 +927,6 @@ MDEV-18800:
 =~ signal 11
 =~  ha_innobase::commit_inplace_alter_table
 =~ Sql_cmd_alter_table::execute
-MDEV-18719:
-=~ old \|\| col->same_format(\*old)
-=~ mysql_inplace_alter_table
-MDEV-18710:
-=~ Expression for field \`DB_ROW_HASH_1\` is refering to uninitialized field \`DB_ROW_HASH_1\`
 MDEV-18675:
 =~ AddressSanitizer: SEGV on unknown address
 =~ and_new_conditions_to_optimized_cond
@@ -1117,8 +956,6 @@ MDEV-18451:
 =~ maria_create_trn_for_mysql
 MDEV-18449:
 =~ my_strnncollsp_simple
-MDEV-18447:
-=~ Timestamp_or_zero_datetime::tv
 MDEV-18421:
 =~ foreign->foreign_table
 MDEV-18414:
@@ -1127,10 +964,6 @@ MDEV-18388:
 =~ thd->spcont
 MDEV-18381:
 =~ ha_innobase::store_lock
-MDEV-18377:
-=~ recv_sys->mlog_checkpoint_lsn
-MDEV-18369:
-=~ wsrep_handle_SR_rollback
 MDEV-18343:
 =~ Mutex RW_LOCK_LIST created sync0debug\.cc
 MDEV-18322:
@@ -1139,36 +972,12 @@ MDEV-18321:
 =~ ha_innodb::commit_inplace_alter_table
 MDEV-18321:
 =~ ha_innobase::commit_inplace_alter_table
-MDEV-18316:
-=~ dict_col_t::instant_value
-MDEV-18315:
-=~ col->same_format
 MDEV-18291:
 =~ ha_innobase_inplace_ctx::
 MDEV-18274:
 =~ new_clustered ==
-MDEV-18272:
-=~ cursor->index->is_committed
-MDEV-18272:
-=~ InnoDB: tried to purge non-delete-marked record in index
-MDEV-18258:
-=~ append_identifier
-MDEV-18256:
-=~ heap->magic_n == MEM_BLOCK_MAGIC_N
-MDEV-18256:
-=~ dict_foreign_remove_from_cache
-MDEV-18255:
-=~ Item_field::update_table_bitmaps
 MDEV-18244:
 =~ ha_partition::update_next_auto_inc_val
-MDEV-18239:
-=~ mark_unsupported_function
-MDEV-18222:
-=~ heap->magic_n == MEM_BLOCK_MAGIC_N
-MDEV-18222:
-=~ innobase_rename_column_try
-MDEV-18222:
-=~ dict_foreign_remove_from_cache
 MDEV-18217:
 =~ InnoDB: Summed data size
 MDEV-18217:
@@ -1179,26 +988,12 @@ MDEV-18213:
 =~ Error: failed to execute query BACKUP STAGE BLOCK_COMMIT: Deadlock found when trying to get lock
 MDEV-18209:
 =~ Enabling keys got errno 0 on
-MDEV-18205:
-=~ str_length < len
-MDEV-18204:
-=~ RocksDB: Problems validating data dictionary against \.frm files, exiting
 MDEV-18203:
 =~ error 126 when executing undo undo_key_insert
 MDEV-18200:
 =~ InnoDB: Failing assertion: success
-MDEV-18194:
-=~ which is outside the tablespace bounds
 MDEV-18187:
 =~ error 192 when executing record redo_index_new_page
-MDEV-18185:
-=~ rename_table_in_prepare
-MDEV-18173:
-=~ col\.vers_sys_end
-MDEV-18173:
-=~ o->ind == vers_end
-MDEV-18173:
-=~ o->ind == vers_start
 MDEV-18171:
 =~ _ma_write_blob_record
 MDEV-18170:
@@ -1211,10 +1006,6 @@ MDEV-18167:
 =~ table->s->reclength
 MDEV-18166:
 =~ table->s->reclength
-MDEV-18162:
-=~ dict_index_t::reconstruct_fields
-MDEV-18160:
-=~ index->n_fields >= n_core
 MDEV-18158:
 =~ Can't find record in
 MDEV-18157:
@@ -1231,14 +1022,8 @@ MDEV-18153:
 =~ was not found on update: TUPLE
 MDEV-18153:
 =~ row_upd_sec_index_entry
-MDEV-18152:
-=~ num_fts_index <= 1
 MDEV-18151:
 =~ Protocol::end_statement
-MDEV-18150:
-=~ decimals_to_set <= 38
-MDEV-18149:
-=~ row_parse_int
 MDEV-18147:
 =~ templ->mysql_col_len >= len
 MDEV-18146:
@@ -1247,16 +1032,10 @@ MDEV-18146:
 =~ btr_page_reorganize_low
 MDEV-18146:
 =~ merge_page, index
-MDEV-18145:
-=~ Item_singlerow_subselect::val_native
 MDEV-18141:
 =~ Can't find record in
 MDEV-18139:
 =~ Table rename would cause two FOREIGN KEY constraints
-MDEV-18122:
-=~ == m_prebuilt->table->versioned
-MDEV-18121:
-=~ type\.vers_sys_end
 MDEV-18090:
 =~ table->s->fields + 3
 MDEV-18087:
@@ -1271,10 +1050,6 @@ MDEV-18084:
 =~ dict_index_get_nth_field
 MDEV-18084:
 =~ row_upd_changes_some_index_ord_field_binary
-MDEV-18077:
-=~ n < tuple->n_fields
-MDEV-18070:
-=~ nanoseconds <= 1000000000
 MDEV-18069:
 =~ MDL_lock::incompatible_granted_types_bitmap
 MDEV-18069:
@@ -1293,8 +1068,6 @@ MDEV-18062:
 =~ ha_innobase::innobase_get_index
 MDEV-18058:
 =~ trx0i_s\.cc line
-MDEV-18057:
-=~ node->state == 5
 MDEV-18054:
 =~ ret > 0
 MDEV-18054:
@@ -1318,10 +1091,6 @@ MDEV-18046:
 =~ Update_rows_log_event::~Update_rows_log_event
 MDEV-18042:
 =~ mysql_alter_table
-MDEV-18039:
-=~ index->table->name\.m_name
-MDEV-18033:
-=~ n < update->n_fields
 MDEV-18020:
 =~ prebuilt->trx->check_foreigns
 MDEV-18020:
@@ -1330,14 +1099,10 @@ MDEV-18020:
 =~ m_prebuilt->trx->check_foreigns
 MDEV-18017:
 =~ index->to_be_dropped
-MDEV-18016:
-=~ dict_table_check_for_dup_indexes
 MDEV-17999:
 =~ Invalid roles_mapping table entry user
 MDEV-17998:
 =~ table->pos_in_locked_tables
-MDEV-17979:
-=~ Item::val_native
 MDEV-17978:
 =~ mysqld_show_create_get_fields
 MDEV-17977:
@@ -1354,34 +1119,20 @@ MDEV-17971:
 =~ Field_iterator_table_ref::set_field_iterator
 MDEV-17962:
 =~ setup_jtbm_semi_joins
-MDEV-17959:
-=~ thd->lex->select_stack_top == 0
 MDEV-17936:
 =~ Field::is_null
-MDEV-17932:
-=~ get_username
-MDEV-17923:
-=~ trx_undo_page_report_modify
 MDEV-17912:
 =~ Aria engine: Redo phase failed
-MDEV-17904:
-=~ fts_is_sync_needed
 MDEV-17897:
 =~ block->frame
 MDEV-17895:
 =~ trx->dict_operation != TRX_DICT_OP_NONE
-MDEV-17893:
-=~ nulls < null_mask
-MDEV-17892:
-=~ index->was_not_null
 MDEV-17890:
 =~ row_upd_sec_index_entry
 MDEV-17890:
 =~ row_upd_build_difference_binary
 MDEV-17884:
 =~ is marked as crashed and should be repaired
-MDEV-17854:
-=~ decimals <= 6
 MDEV-17842:
 =~ pfs_lock::allocated_to_free
 MDEV-17838:
@@ -1390,43 +1141,15 @@ MDEV-17837:
 =~ m_status == DA_OK_BULK
 MDEV-17834:
 =~ row_upd_build_difference_binary
-MDEV-17831:
-=~ supports_instant
 MDEV-17830:
 =~ Item_null_result::field_type
-MDEV-17826:
-=~ dfield_is_ext
-MDEV-17821:
-=~ page_rec_is_supremum
-MDEV-17820:
-=~ == BTR_NO_LOCKING_FLAG
 MDEV-17818:
 =~ parse_vcol_defs
-MDEV-17816:
-=~ trx->dict_operation_lock_mode == RW_X_LATCH
-MDEV-17815:
-=~ index->table->name\.m_name
 MDEV-17814:
 =~ is_current_stmt_binlog_format_row
-MDEV-17763:
-=~ len == 20U
 MDEV-17760:
 =~ table->read_set, field_index
 =~ Server version: 10\.1|Server version: 10\.0|Server version: 5\.5
-MDEV-17759:
-=~ precision > 0
-MDEV-17741:
-=~ thd->Item_change_list::is_empty
-MDEV-17738:
-=~ Item::delete_self
-MDEV-17738:
-=~ st_select_lex::fix_prepare_information
-MDEV-17738:
-=~ TABLE_LIST::change_refs_to_fields
-MDEV-17738:
-=~ in change_group_ref
-MDEV-17725:
-=~ ORDER BY ignored as there is a user-defined clustered index in the table
 MDEV-17717:
 =~ table->pos_in_locked_tables
 MDEV-17711:
@@ -1483,84 +1206,42 @@ MDEV_17344:
 =~ Prepared_statement::~Prepared_statement
 MDEV-17333:
 =~ next_insert_id >= auto_inc_interval_for_cur_row\.minimum
-MDEV-17319:
-=~ ts_type != MYSQL_TIMESTAMP_TIME
-MDEV-17319:
-=~ int Field_temporal::store_invalid_with_warning
 MDEV-17307:
 =~ Incorrect key file for table
 MDEV-17275:
 =~ Diagnostics_area::set_ok_status
-MDEV-17257:
-=~ in get_datetime_value
-MDEV-17257:
-=~ in Item::field_type_for_temporal_comparison
 MDEV-17225:
 =~ log_descriptor\.bc\.buffer->prev_last_lsn
 MDEV-17217:
 =~ in make_sortkey
-MDEV-17216:
-=~ !dt->fraction_remainder
-MDEV-17199:
-=~ pos < table->n_v_def
 MDEV-17187:
 =~ failed, the table has missing foreign key indexes
-MDEV-17107:
-=~ table_list->table
 MDEV-17054:
 =~ InnoDB needs charset 0 for doing a comparison, but MySQL cannot find that charset
 MDEV-17054:
 =~ in innobase_get_fts_charset
 MDEV-17053:
 =~ sync_check_iterate
-MDEV-17051:
-=~ sec_mtr->has_committed
-MDEV-17020:
-=~ length > 0
 MDEV-17019:
 =~ multi_delete::~multi_delete
-MDEV-17016:
-=~ auto_increment_safe_stmt_log_lock
-MDEV-17015:
-=~ m_year <= 9999
 MDEV-16994:
 =~ Alloced_length >=
 MDEV-16994:
 =~ in base_list_iterator::next
 MDEV-16994:
 =~ partition_info::prune_partition_bitmaps
-MDEV-16992:
-=~ Field_iterator_table_ref::set_field_iterator
-MDEV-16982:
-=~ in mem_heap_dup
-MDEV-16982:
-=~ row_mysql_convert_row_to_innobase
-MDEV-16980:
-=~ == table_name_arg->length
-MDEV-16971:
-=~ adjust_time_range_or_invalidate
 MDEV-16962:
 =~ ot_ctx\.can_recover_from_failed_open
 MDEV-16958:
 =~ field_length < 5
-MDEV-16957:
-=~ Field_iterator_natural_join::next
 MDEV-16929:
 =~ thd->transaction\.stmt\.is_empty
-MDEV-16905:
-=~ TABLE::verify_constraints
-MDEV-16903:
-=~ auto_increment_field_not_null
 MDEV-16794:
 =~ thd->transaction\.stmt\.is_empty
-MDEV-16792:
-=~ in Diagnostics_area::sql_errno
 MDEV-16789:
 =~ in insert_fields
 MDEV-16745:
 =~ thd->transaction\.stmt\.is_empty
-MDEV-16738:
-=~ == Item_func::MULT_EQUAL_FUNC
 MDEV-16659:
 =~ anc_page->org_size == anc_page->size
 MDEV-16654:
@@ -1575,10 +1256,6 @@ MDEV-16501:
 =~ ->coll->strcasecmp
 MDEV-16501:
 =~ in dict_mem_table_col_rename
-MDEV-16499:
-=~ from the internal data dictionary of InnoDB though the \.frm file for the table exists
-MDEV-16499:
-=~ is corrupted\. Please drop the table and recreate
 MDEV-16407:
 =~ in MDL_key::mdl_key_init
 MDEV-16407:
@@ -1593,26 +1270,12 @@ MDEV-16242:
 =~ Can't find record
 MDEV-16222:
 =~ InnoDB: tried to purge non-delete-marked record in index
-MDEV-16190:
-=~ in Item_null_result::field_type
 MDEV-16184:
 =~ nest->counter > 0
 MDEV-16171:
 =~ in setup_table_map
-MDEV-16170:
-=~ Item_null_result::type_handler
-MDEV-16169:
-=~ space->referenced
-MDEV-16154:
-=~ in myrocks::ha_rocksdb::load_auto_incr_value_from_index
-MDEV-16131:
-=~ id == DICT_INDEXES_ID
 MDEV-16060:
 =~ Failing assertion: ut_strcmp
-MDEV-15950:
-=~ find_dup_table
-MDEV-15950:
-=~ find_table_in_list
 MDEV-15949:
 =~ space->n_pending_ops == 0
 MDEV-15912:
@@ -1621,10 +1284,6 @@ MDEV-15878:
 =~ table->file->stats\.records > 0
 MDEV-15873:
 =~ precision > 0
-MDEV-15816:
-=~ m_lock_rows == RDB_LOCK_WRITE
-MDEV-15812:
-=~ virtual handler::~handler
 MDEV-15802:
 =~ Item::delete_self
 MDEV-15776:
@@ -1633,8 +1292,6 @@ MDEV-15776:
 =~ table->get_ref_count
 MDEV-15753:
 =~ thd->is_error
-MDEV-15742:
-=~ m_lock_type == 1
 MDEV-15658:
 =~ expl_lock->trx == arg->impl_trx
 MDEV-15657:
@@ -1643,8 +1300,6 @@ MDEV-15656:
 =~ is_last_prefix <= 0
 MDEV-15653:
 =~ lock_word <= 0x20000000
-MDEV-15576:
-=~ item->null_value
 MDEV-15572:
 =~ ha_maria::end_bulk_insert
 MDEV-15533:
@@ -1667,54 +1322,24 @@ MDEV-15470:
 =~ TABLE::mark_columns_used_by_index_no_reset
 MDEV-15468:
 =~ table_events_waits_common::make_row
-MDEV-15465:
-=~ Item_func_match::cleanup
 MDEV-15464:
 =~ in TrxUndoRsegsIterator::set_next
 MDEV-15464:
 =~ purge_sys\.purge_queue\.top
-MDEV-15391:
-=~ join->best_read < double
-MDEV-15374:
-=~ trx_undo_rec_copy
-MDEV-15336:
-=~ ha_partition::print_error
-MDEV-15330:
-=~ table->insert_values
 MDEV-15329:
 =~ in dict_table_check_for_dup_indexes
-MDEV-15319:
-=~ myrocks::ha_rocksdb::convert_record_from_storage_format
-MDEV-15308:
-=~ ha_alter_info->alter_info->drop_list\.elements > 0
 MDEV-15257:
 =~ m_status == DA_OK_BULK
 MDEV-15255:
 =~ m_lock_type == 2
 MDEV-15255:
 =~ sequence_insert
-MDEV-15245:
-=~ myrocks::ha_rocksdb::position
 MDEV-15226:
 =~ Could not get index information for Index Number
-MDEV-15217:
-=~ transaction\.xid_state\.xid\.is_null
-MDEV-15216:
-=~ m_can_overwrite_status
-MDEV-15175:
-=~ Item_temporal_hybrid_func::val_str_ascii
 MDEV-15164:
 =~ ikey_\.type == kTypeValue
 MDEV-15161:
 =~ in get_addon_fields
-MDEV-15115:
-=~ dict_tf2_is_valid
-MDEV-15130:
-=~ table->s->null_bytes == 0
-MDEV-15130:
-=~ static void PFS_engine_table::set_field_char_utf8
-MDEV-15103:
-=~ virtual ha_rows ha_partition::part_records
 MDEV-15013:
 =~ trx->state == TRX_STATE_NOT_STARTED
 MDEV-15011:
@@ -1751,12 +1376,6 @@ MDEV-15011:
 MDEV-15011:
 =~ Server version: 10\.2|Server version: 10\.1|Server version: 10\.0|Server version: 5\.5
 =~ Error in \`.*/mysqld': malloc(): memory corruption:
-MDEV-14994:
-=~ join->best_read < double
-MDEV-14906:
-=~ index->is_instant
-MDEV-14905:
-=~ purge_sys->state == PURGE_STATE_INIT
 MDEV-14894:
 =~ tdc_remove_table
 MDEV-14894:
@@ -1765,8 +1384,6 @@ MDEV-14864:
 =~ in mysql_prepare_create_table
 MDEV-14864:
 =~ in mysql_prepare_alter_table
-MDEV-14862:
-=~ in add_key_equal_fields
 MDEV-14846:
 =~ prebuilt->trx, TRX_STATE_ACTIVE
 MDEV-14846:
@@ -1775,28 +1392,14 @@ MDEV-14836:
 =~ m_status == DA_ERROR
 MDEV-14833:
 =~ trx->error_state == DB_SUCCESS
-MDEV-14825:
-=~ col->ord_part
-MDEV-14815:
-=~ in has_old_lock
-MDEV-14762:
-=~ has_stronger_or_equal_type
 MDEV-14711:
 =~ fix_block->page\.file_page_was_freed
-MDEV-14697:
-=~ in TABLE::mark_default_fields_for_write
-MDEV-14693:
-=~ clust_index->online_log
 MDEV-14643:
 =~ cursor->index->is_committed
 MDEV-14642:
 =~ table->s->db_create_options == part_table->s->db_create_options
 MDEV-14557:
 =~ m_sp == __null
-MDEV-14410:
-=~ table->pos_in_locked_tables->table == table
-MDEV-14407:
-=~ trx_undo_rec_copy
 MDEV-14264:
 =~ binlog_cache_data::reset
 MDEV-14126:
@@ -1805,20 +1408,8 @@ MDEV-14041:
 =~ in String::length
 MDEV-14040:
 =~ in Field::is_real_null
-MDEV-13828:
-=~ in handler::ha_index_or_rnd_end
-MDEV-13699:
-=~ == new_field->field_name\.length
 MDEV-13644:
 =~ prev != 0 && next != 0
-MDEV-13231:
-=~ in _ma_unique_hash
-MDEV-13202:
-=~ ltime->neg == 0
-MDEV-13103:
-=~ fil0pagecompress\.cc:[0-9]+: void fil_decompress_page
-MDEV-13024:
-=~ in multi_delete::send_data
 MDEV-12978:
 =~ log_calc_max_ages
 MDEV-12329:
@@ -1827,22 +1418,14 @@ MDEV-12059:
 =~ precision > 0
 MDEV-11783:
 =~ checksum_length == f->ptr
-MDEV-11080:
-=~ table->n_waiting_or_granted_auto_inc_locks > 0
 MDEV-11015:
 =~ precision > 0
 MDEV-9137:
 =~  in _ma_ck_real_write_btree
 MDEV-8203:
 =~  rgi->tables_to_lock
-MDEV-6453:
-=~  int handler::ha_rnd_init
 MDEV-5924:
 =~  Query_cache::register_all_tables
-MDEV-5791:
-=~  in Field::is_real_null
-MDEV-654:
-=~ share->now_transactional
 MDEV-371:
 =~ AddressSanitizer: use-after-poison
 =~ innobase_indexed_virtual_exist
@@ -2006,3 +1589,420 @@ MDEV-371:
 # MDEV-18712:
 # =~ Found index .* whose column info does not match that of MariaDB
 # =~ InnoDB indexes are inconsistent with what defined in \.frm for table
+# MDEV-18720:
+# =~ Assertion \`inited==NONE'
+# =~ handler::ha_index_init
+# =~ check_duplicate_long_entry_key
+# =~ vers_insert_history_row
+# MDEV-18722:
+# =~ Assertion \`templ->mysql_null_bit_mask'
+# =~ row_sel_store_mysql_rec
+# =~ check_duplicate_long_entry_key
+# =~ handler::ha_write_row
+# MDEV-18725:
+# =~ Assertion failure in file .*innobase/fts/fts0fts\.cc
+# =~ fts_get_charset
+# =~ row_create_index_for_mysql
+# MDEV-18731:
+# =~ Assertion \`!trx->n_mysql_tables_in_use'
+# =~ trx_free
+# =~ innobase_close_connection
+# MDEV-18747:
+# =~ InnoDB: Failing assertion: table->get_ref_count() == 0
+# =~ dict_table_remove_from_cache
+# =~ THD::rm_temporary_table
+# MDEV-18749:
+# =~ Conditional jump or move depends on uninitialised value
+# =~ rec_get_converted_size_comp_prefix_low
+# =~ row_merge_buf_write
+# =~ fts_parallel_tokenization
+# MDEV-18755:
+# =~ Assertion \`inited==INDEX' failed
+# =~ ha_index_read_map
+# =~ join_read_always_key
+# MDEV-18755:
+# =~ AddressSanitizer: heap-buffer-overflow
+# =~ calculate_key_len
+# =~ handler::prepare_index_key_scan_map
+# =~ join_read_always_key
+# =~ mysql_union
+# MDEV-18763:
+# =~ Conditional jump or move depends on uninitialised value
+# =~ mi_rrnd
+# =~ ha_myisam::rnd_pos
+# MDEV-18775:
+# =~ signal 11
+# =~ dict_table_t::instant_column
+# =~ commit_inplace_alter_table
+# MDEV-18775:
+# =~ Warning: assertion failed: f\.col->is_virtual()
+# =~ dict_table_t::instant_column
+# =~ mysql_inplace_alter_table
+# MDEV-654:
+# =~ share->now_transactional
+# MDEV-5791:
+# =~  in Field::is_real_null
+# MDEV-6453:
+# =~  int handler::ha_rnd_init
+# MDEV-11080:
+# =~ table->n_waiting_or_granted_auto_inc_locks > 0
+# MDEV-13024:
+# =~ in multi_delete::send_data
+# MDEV-13103:
+# =~ fil0pagecompress\.cc:[0-9]+: void fil_decompress_page
+# MDEV-13202:
+# =~ ltime->neg == 0
+# MDEV-13231:
+# =~ in _ma_unique_hash
+# MDEV-13699:
+# =~ == new_field->field_name\.length
+# MDEV-13828:
+# =~ in handler::ha_index_or_rnd_end
+# MDEV-14407:
+# =~ trx_undo_rec_copy
+# MDEV-14410:
+# =~ table->pos_in_locked_tables->table == table
+# MDEV-14693:
+# =~ clust_index->online_log
+# MDEV-14697:
+# =~ in TABLE::mark_default_fields_for_write
+# MDEV-14762:
+# =~ has_stronger_or_equal_type
+# MDEV-14815:
+# =~ in has_old_lock
+# MDEV-14825:
+# =~ col->ord_part
+# MDEV-14862:
+# =~ in add_key_equal_fields
+# MDEV-14905:
+# =~ purge_sys->state == PURGE_STATE_INIT
+# MDEV-14906:
+# =~ index->is_instant
+# MDEV-14994:
+# =~ join->best_read < double
+# MDEV-15103:
+# =~ virtual ha_rows ha_partition::part_records
+# MDEV-15115:
+# =~ dict_tf2_is_valid
+# MDEV-15130:
+# =~ table->s->null_bytes == 0
+# MDEV-15130:
+# =~ static void PFS_engine_table::set_field_char_utf8
+# MDEV-15175:
+# =~ Item_temporal_hybrid_func::val_str_ascii
+# MDEV-15216:
+# =~ m_can_overwrite_status
+# MDEV-15217:
+# =~ transaction\.xid_state\.xid\.is_null
+# MDEV-15245:
+# =~ myrocks::ha_rocksdb::position
+# MDEV-15308:
+# =~ ha_alter_info->alter_info->drop_list\.elements > 0
+# MDEV-15319:
+# =~ myrocks::ha_rocksdb::convert_record_from_storage_format
+# MDEV-15330:
+# =~ table->insert_values
+# MDEV-15336:
+# =~ ha_partition::print_error
+# MDEV-15374:
+# =~ trx_undo_rec_copy
+# MDEV-15391:
+# =~ join->best_read < double
+# MDEV-15465:
+# =~ Item_func_match::cleanup
+# MDEV-15576:
+# =~ item->null_value
+# MDEV-15742:
+# =~ m_lock_type == 1
+# MDEV-15744:
+# =~ Assertion \`derived->table'
+# =~ mysql_derived_merge_for_insert
+# =~ mysql_load
+# MDEV-15812:
+# =~ virtual handler::~handler
+# MDEV-15816:
+# =~ m_lock_rows == RDB_LOCK_WRITE
+# MDEV-15950:
+# =~ find_dup_table
+# MDEV-15950:
+# =~ find_table_in_list
+# MDEV-16131:
+# =~ id == DICT_INDEXES_ID
+# MDEV-16154:
+# =~ in myrocks::ha_rocksdb::load_auto_incr_value_from_index
+# MDEV-16169:
+# =~ space->referenced
+# MDEV-16170:
+# =~ Item_null_result::type_handler
+# MDEV-16190:
+# =~ in Item_null_result::field_type
+# MDEV-16499:
+# =~ from the internal data dictionary of InnoDB though the \.frm file for the table exists
+# MDEV-16499:
+# =~ is corrupted\. Please drop the table and recreate
+# MDEV-16738:
+# =~ == Item_func::MULT_EQUAL_FUNC
+# MDEV-16792:
+# =~ in Diagnostics_area::sql_errno
+# MDEV-16903:
+# =~ auto_increment_field_not_null
+# MDEV-16905:
+# =~ TABLE::verify_constraints
+# MDEV-16918:
+# =~ find_field_in_tables
+# =~ setup_windows
+# =~ Prepared_statement::execute
+# MDEV-16957:
+# =~ Field_iterator_natural_join::next
+# MDEV-16971:
+# =~ adjust_time_range_or_invalidate
+# MDEV-16980:
+# =~ == table_name_arg->length
+# MDEV-16982:
+# =~ in mem_heap_dup
+# MDEV-16982:
+# =~ row_mysql_convert_row_to_innobase
+# MDEV-16992:
+# =~ Field_iterator_table_ref::set_field_iterator
+# MDEV-17015:
+# =~ m_year <= 9999
+# MDEV-17016:
+# =~ auto_increment_safe_stmt_log_lock
+# MDEV-17020:
+# =~ length > 0
+# MDEV-17051:
+# =~ sec_mtr->has_committed
+# MDEV-17055:
+# =~ got signal 11|AddressSanitizer: heap-use-after-free
+# =~ find_order_in_list
+# =~ mysql_prepare_update
+# =~ sp_head::execute_procedure
+# MDEV-17070:
+# =~ Assertion \`!is_set() \|\| (m_status == DA_OK_BULK && is_bulk_op())'
+# =~ mysql_load
+# MDEV-17070:
+# =~ Assertion \`!is_set() \|\| (m_status == DA_OK_BULK && is_bulk_op())'
+# =~ mysql_alter_table|Sql_cmd_truncate_table::execute|mysql_rm_table
+# =~ is marked as crashed and should be repaired
+# =~ #sql.*is marked as crashed and should be repaired
+# MDEV-17070:
+# =~ \`table->file->stats\.records > 0 \|\| error'
+# =~ join_read_const_table
+# =~ make_join_statistics
+# =~ mysql_select
+# =~ mysql_load
+# MDEV-17070:
+# =~ Assertion \`! is_set()'
+# =~ my_eof
+# =~ mysqld_show_create
+# MDEV-17107:
+# =~ table_list->table
+# MDEV-17199:
+# =~ pos < table->n_v_def
+# MDEV-17216:
+# =~ !dt->fraction_remainder
+# MDEV-17257:
+# =~ in get_datetime_value
+# MDEV-17257:
+# =~ in Item::field_type_for_temporal_comparison
+# MDEV-17319:
+# =~ ts_type != MYSQL_TIMESTAMP_TIME
+# MDEV-17319:
+# =~ int Field_temporal::store_invalid_with_warning
+# MDEV-17595:
+# =~ got signal 11
+# =~ copy_data_between_tables
+# =~ mysql_alter_table
+# MDEV-17595:
+# =~ Assertion \`thd->transaction\.stmt\.is_empty() \|\| (thd->state_flags & Open_tables_state::BACKUPS_AVAIL)' failed
+# =~ close_tables_for_reopen
+# =~ mysql_alter_table
+# MDEV-17725:
+# =~ Diagnostics_area::set_ok_status.*Assertion \`!is_set() \|\| (m_status == DA_OK_BULK && is_bulk_op())'
+# =~ mysql_alter_table
+# =~ ALTER .* ORDER BY
+# MDEV-17725:
+# =~ ORDER BY ignored as there is a user-defined clustered index in the table
+# MDEV-17738:
+# =~ Item::delete_self
+# MDEV-17738:
+# =~ st_select_lex::fix_prepare_information
+# MDEV-17738:
+# =~ TABLE_LIST::change_refs_to_fields
+# MDEV-17738:
+# =~ in change_group_ref
+# MDEV-17741:
+# =~ thd->Item_change_list::is_empty
+# MDEV-17759:
+# =~ precision > 0
+# MDEV-17763:
+# =~ len == 20U
+# MDEV-17815:
+# =~ index->table->name\.m_name
+# MDEV-17816:
+# =~ trx->dict_operation_lock_mode == RW_X_LATCH
+# MDEV-17820:
+# =~ == BTR_NO_LOCKING_FLAG
+# MDEV-17821:
+# =~ page_rec_is_supremum
+# MDEV-17826:
+# =~ dfield_is_ext
+# MDEV-17831:
+# =~ supports_instant
+# MDEV-17854:
+# =~ decimals <= 6
+# MDEV-17892:
+# =~ index->was_not_null
+# MDEV-17893:
+# =~ nulls < null_mask
+# MDEV-17904:
+# =~ fts_is_sync_needed
+# MDEV-17923:
+# =~ trx_undo_page_report_modify
+# MDEV-17932:
+# =~ get_username
+# MDEV-17959:
+# =~ thd->lex->select_stack_top == 0
+# MDEV-17979:
+# =~ Item::val_native
+# MDEV-18016:
+# =~ dict_table_check_for_dup_indexes
+# MDEV-18016:
+# =~ storage/innobase/dict/dict0dict\.cc line 6199|storage/innobase/dict/dict0dict\.cc line 6346|storage/innobase/dict/dict0dict\.cc line 6181
+# =~ dict_table_check_for_dup_indexes
+# =~ mysql_inplace_alter_table
+# MDEV-18033:
+# =~ n < update->n_fields
+# MDEV-18039:
+# =~ index->table->name\.m_name
+# MDEV-18057:
+# =~ node->state == 5
+# MDEV-18070:
+# =~ nanoseconds <= 1000000000
+# MDEV-18077:
+# =~ n < tuple->n_fields
+# MDEV-18121:
+# =~ type\.vers_sys_end
+# MDEV-18122:
+# =~ == m_prebuilt->table->versioned
+# MDEV-18145:
+# =~ Item_singlerow_subselect::val_native
+# MDEV-18149:
+# =~ row_parse_int
+# MDEV-18150:
+# =~ decimals_to_set <= 38
+# MDEV-18152:
+# =~ num_fts_index <= 1
+# MDEV-18160:
+# =~ index->n_fields >= n_core
+# MDEV-18162:
+# =~ dict_index_t::reconstruct_fields
+# MDEV-18173:
+# =~ col\.vers_sys_end
+# MDEV-18173:
+# =~ o->ind == vers_end
+# MDEV-18173:
+# =~ o->ind == vers_start
+# MDEV-18185:
+# =~ rename_table_in_prepare
+# MDEV-18194:
+# =~ which is outside the tablespace bounds
+# MDEV-18204:
+# =~ RocksDB: Problems validating data dictionary against \.frm files, exiting
+# MDEV-18205:
+# =~ str_length < len
+# MDEV-18222:
+# =~ heap->magic_n == MEM_BLOCK_MAGIC_N
+# MDEV-18222:
+# =~ innobase_rename_column_try
+# MDEV-18222:
+# =~ dict_foreign_remove_from_cache
+# MDEV-18239:
+# =~ mark_unsupported_function
+# MDEV-18256:
+# =~ heap->magic_n == MEM_BLOCK_MAGIC_N
+# MDEV-18255:
+# =~ Item_field::update_table_bitmaps
+# MDEV-18256:
+# =~ dict_foreign_remove_from_cache
+# MDEV-18258:
+# =~ append_identifier
+# MDEV-18272:
+# =~ cursor->index->is_committed
+# MDEV-18272:
+# =~ InnoDB: tried to purge non-delete-marked record in index
+# MDEV-18315:
+# =~ col->same_format
+# MDEV-18316:
+# =~ dict_col_t::instant_value
+# MDEV-18369:
+# =~ wsrep_handle_SR_rollback
+# MDEV-18377:
+# =~ recv_sys->mlog_checkpoint_lsn
+# MDEV-18447:
+# =~ Timestamp_or_zero_datetime::tv
+# MDEV-18596:
+# =~ AddressSanitizer: unknown-crash
+# =~ row_mysql_store_col_in_innobase_format
+# =~ ha_innobase::prepare_inplace_alter_table
+# MDEV-18598:
+# =~ Assertion \`is_string == dtype_is_string_type(mtype)' failed
+# =~ innobase_rename_or_enlarge_columns_cache
+# MDEV-18598:
+# =~ Assertion \`index\.fields[i]\.col->same_format( \*oindex\.fields[i]\.col, true)' failed
+# =~ dict_table_t::prepare_instant
+# MDEV-18609:
+# =~ Assertion \`!is_string || (\*af)->charset() == cf->charset' failed
+# =~ innobase_rename_or_enlarge_columns_cache
+# MDEV-18632:
+# =~ Conditional jump or move depends on uninitialised value
+# =~ wsrep_is_wsrep_xid
+# =~ innobase_rollback
+# MDEV-18668:
+# =~ AddressSanitizer: use-after-poison|Invalid read of size|signal 11
+# =~ st_select_lex::collect_fields_equal_to_grouping
+# =~ st_select_lex::pushdown_from_having_into_where
+# MDEV-18681:
+# =~ AddressSanitizer: SEGV|signal 11
+# =~ embedding_sjm
+# =~ substitute_for_best_equal_field
+# =~ JOIN::optimize_stage2
+# MDEV-18707:
+# =~ AddressSanitizer: heap-use-after-free
+# =~ Field::is_null
+# =~ Type_handler_int_result::Item_save_in_field
+# =~ TABLE::update_virtual_fields
+# =~ mysql_delete
+# MDEV-18707:
+# =~ signal 11
+# =~ my_hash_sort_bin
+# =~ calc_hash_for_unique
+# =~ TABLE::update_virtual_fields
+# MDEV-18708:
+# =~ AddressSanitizer: SEGV|signal 11
+# =~ Item_field::register_field_in_read_map
+# =~ Item_args::walk_args
+# =~ prepare_vcol_for_base_setup
+# MDEV-18709:
+# =~ signal 11|AddressSanitizer: heap-buffer-overflow
+# =~ create_index
+# =~ create_table_info_t::create_table
+# =~ mysql_alter_table
+# MDEV-18709:
+# =~ signal 11|AddressSanitizer: global-buffer-overflow
+# =~ get_innobase_type_from_mysql_type
+# =~ create_index
+# =~ Sql_cmd_alter_table::execute
+# MDEV-18710:
+# =~ Expression for field \`DB_ROW_HASH_1\` is refering to uninitialized field \`DB_ROW_HASH_1\`
+# MDEV-18713:
+# =~ Assertion \`strcmp(share->unique_file_name,filename) \|\| share->last_version'
+# =~ test_if_reopen
+# =~ mysql_insert|mysql_update|execute_sqlcom_select
+# MDEV-18719:
+# =~ (c\.prtype ^ o->prtype) & ~(256U \| (16384U|32768U))
+# =~ dict_table_t::instant_column
+# =~ ha_innobase::commit_inplace_alter_table
+# MDEV-18719:
+# =~ old \|\| col->same_format(\*old)
+# =~ mysql_inplace_alter_table
