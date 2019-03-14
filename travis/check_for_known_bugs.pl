@@ -162,6 +162,15 @@ TODO-842:
 =~ Item_exists_subselect::is_top_level_item
 =~ st_select_lex::update_used_tables
 =~ JOIN::optimize
+MDEV-18923:
+=~ Assertion \`!lex_string_cmp(system_charset_info, fk_info->referenced_table, &table->s->table_name)'
+=~ fk_truncate_illegal_if_parent
+=~ Sql_cmd_truncate_table::truncate_table
+MDEV-18921:
+=~ signal 11
+=~ bitmap_bits_set|bitmap_is_set
+=~ pack_row|max_row_length
+=~ THD::binlog_update_row
 MDEV-18911:
 =~ Assertion \`(templ->is_virtual && !field) \|\| (field && field->prefix_len ? field->prefix_len == len : templ->mysql_col_len == len)'
 =~ row_sel_field_store_in_mysql_format_func
@@ -605,6 +614,11 @@ MDEV-18078:
 =~ Assertion \`trnman_has_locked_tables(trn) > 0'
 =~ ha_maria::external_lock
 =~ mysql_unlock_tables
+MDEV-18068:
+=~ Assertion \`this == ticket->get_ctx()'
+=~ MDL_context::release_lock
+=~ backup_end
+=~ run_backup_stage
 MDEV-18047:
 =~ index->magic_n == 76789786|Assertion \`pos < index->n_def'
 =~ dict_index_get_nth_field
@@ -690,6 +704,10 @@ MDEV-17627:
 =~ Assertion \`inited==RND'
 =~ handler::ha_rnd_end
 =~ handler::ha_rnd_init_with_error|handler::read_first_row
+MDEV-17622:
+=~ Assertion \`block->type == PAGECACHE_EMPTY_PAGE \|\| block->type == type \|\| type == PAGECACHE_LSN_PAGE \|\| type == PAGECACHE_READ_UNKNOWN_PAGE \|\| block->type == PAGECACHE_READ_UNKNOWN_PAGE'
+=~ pagecache_read
+=~ _ma_scan_block_record
 MDEV-17580:
 =~ Server version: 10\.1|Server version: 10\.0
 =~ Diagnostics_area::set_ok_status.*Assertion \`! is_set()'
@@ -1054,8 +1072,6 @@ MDEV-18069:
 =~ MDL_lock::incompatible_granted_types_bitmap
 MDEV-18069:
 =~ MDL_ticket::has_stronger_or_equal_type
-MDEV-18068:
-=~ this == ticket->get_ctx
 MDEV-18067:
 =~ ticket->m_duration == MDL_EXPLICIT
 MDEV-18067:
@@ -1160,8 +1176,6 @@ MDEV-17659:
 =~ File too short; Expected more data in file
 MDEV-17636:
 =~ pagecache->block_root
-MDEV-17622:
-=~ type == PAGECACHE_LSN_PAGE
 MDEV-17619:
 =~ Index file is crashed
 MDEV-17619:
