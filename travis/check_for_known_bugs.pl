@@ -162,6 +162,10 @@ TODO-842:
 =~ Item_exists_subselect::is_top_level_item
 =~ st_select_lex::update_used_tables
 =~ JOIN::optimize
+MDEV-18933:
+=~ InnoDB: Failing assertion: share->idx_trans_tbl.index_count == mysql_num_index
+=~ innobase_build_index_translation
+=~ open_table_uncached
 MDEV-18923:
 =~ Assertion \`!lex_string_cmp(system_charset_info, fk_info->referenced_table, &table->s->table_name)'
 =~ fk_truncate_illegal_if_parent
@@ -929,6 +933,8 @@ MDEV-5628:
 # Weak matches
 ##############################################################################
 
+MDEV-18929:
+=~ Slave SQL: Error 'Table .* is not system-versioned' on query
 MDEV-18805:
 =~ Found too many records; Can't continue
 =~ Number of rows changed from
