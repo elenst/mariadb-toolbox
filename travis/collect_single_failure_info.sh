@@ -135,7 +135,11 @@ if [ "$res" == "0" ] ; then
 
   # Failure processing
   else
-    res=1
+    if [[ "$TRIAL_STATUS" == "CUSTOM_OUTCOME" ]] ; then
+      res=0
+    else
+      res=1
+    fi
 
     if ! perl $SCRIPT_DIR/check_for_known_bugs.pl ${VARDIR}*/mysql.err ; then
       # Check trial log as a last resort. It's likely to cause false positives
