@@ -231,8 +231,8 @@ MDEV-18876:
 MDEV-18875:
 =~ Assertion \`thd->transaction.stmt.ha_list == __null \|\| trans == &thd->transaction.stmt'
 =~ ha_rollback_trans
-=~ mysql_trans_commit_alter_copy_data
-=~ ADD PERIOD|add period
+=~ mysql_trans_commit_alter_copy_data|trans_commit_implicit
+=~ ADD PERIOD|add period|LOCK TABLE
 MDEV-18852:
 =~ signal 11|AddressSanitizer: heap-use-after-free|AddressSanitizer: heap-buffer-overflow
 =~ Version: '10\.4
@@ -564,7 +564,7 @@ MDEV-18293:
 MDEV-18291:
 =~ std::__cxx11::_List_base|std::_List_base
 =~ dict_table_remove_from_cache
-=~ ha_delete_table|ha_innobase_inplace_ctx::~ha_innobase_inplace_ctx
+=~ ha_delete_table|ha_innobase_inplace_ctx::~ha_innobase_inplace_ctx|Sql_cmd_truncate_table::handler_truncate
 MDEV-18286:
 =~ Assertion \`pagecache->cnt_for_resize_op == 0'
 =~ check_pagecache_is_cleaned_up
@@ -618,6 +618,16 @@ MDEV-18078:
 =~ Assertion \`trnman_has_locked_tables(trn) > 0'
 =~ ha_maria::external_lock
 =~ mysql_unlock_tables
+MDEV-18069:
+=~ signal 11
+=~ MDL_lock::incompatible_granted_types_bitmap
+=~ MDL_ticket::has_stronger_or_equal_type
+=~ run_backup_stage
+MDEV-18069:
+=~ AddressSanitizer: heap-use-after-free
+=~ MDL_ticket::has_stronger_or_equal_type
+=~ MDL_context::upgrade_shared_lock
+=~ run_backup_stage
 MDEV-18068:
 =~ Assertion \`this == ticket->get_ctx()'
 =~ MDL_context::release_lock
@@ -764,7 +774,7 @@ MDEV-16932:
 =~ sp_head::execute
 MDEV-16788:
 =~ Assertion \`ls->length < 0xFFFFFFFFL && ((ls->length == 0 && !ls->str) \|\| ls->length == strlen(ls->str))'
-=~ String::q_append
+=~ String::q_append|Static_binary_string::q_append
 =~ pack_vcols
 MDEV-16788:
 =~ AddressSanitizer: heap-use-after-free
@@ -779,6 +789,11 @@ MDEV-16664:
 =~ InnoDB: Failing assertion: !other_lock \|\| wsrep_thd_is_BF(lock->trx->mysql_thd, FALSE) \|\| wsrep_thd_is_BF(other_lock->trx->mysql_thd, FALSE)
 =~ lock_rec_queue_validate
 =~ row_search_mvcc
+MDEV-16659:
+=~ Assertion \`anc_page->org_size == anc_page->size'
+=~ d_search
+=~ _ma_ck_real_delete
+=~ ha_maria::delete_row
 MDEV-16635:
 =~ signal 11
 =~ open_table
@@ -829,8 +844,7 @@ MDEV-15881:
 MDEV-15800:
 =~ Assertion \`next_insert_id >= auto_inc_interval_for_cur_row\.minimum()'
 =~ handler::update_auto_increment
-=~ read_sep_field
-=~ mysql_load
+=~ mysql_load|select_insert::send_data
 MDEV-15776:
 =~ Failing assertion: table->get_ref_count() == 0
 =~ row_merge_drop_table
@@ -844,7 +858,7 @@ MDEV-15572:
 =~ ha_maria::end_bulk_insert
 =~ select_insert::abort_result_set
 MDEV-15458:
-=~ AddressSanitizer: heap-buffer-overflow|signal 11|Conditional jump or move depends on uninitialised value|AddressSanitizer: heap-use-after-free
+=~ AddressSanitizer: heap-buffer-overflow|signal 11|Conditional jump or move depends on uninitialised value|AddressSanitizer: heap-use-after-free|AddressSanitizer: SEGV on unknown address
 =~ heap_scan
 =~ handler::ha_rnd_next
 =~ rr_sequential
@@ -889,10 +903,26 @@ MDEV-14926:
 =~ Item_func_date_format::val_str
 =~ copy_fields
 =~ end_send_group
+MDEV-14854:
+=~ Assertion \`trid >= info->s->state\.create_trid'
+=~ transid_store_packed
+=~ _ma_make_key
+=~ ha_maria::write_row
 MDEV-14472:
 =~ Assertion \`is_current_stmt_binlog_format_row()'
 =~ THD::binlog_write_table_map
 =~ write_locked_table_maps
+MDEV-14041:
+=~ signal 11
+=~ String::length
+=~ sortcmp
+=~ test_if_group_changed
+MDEV-14041:
+=~ AddressSanitizer: heap-use-after-free
+=~ my_scan_weight_utf8_general_ci|my_utf8_uni
+=~ my_strnncollsp_utf8_general_ci|my_strnncollsp_utf8
+=~ sortcmp
+=~ test_if_group_changed
 MDEV-11740:
 =~ Assertion \`pos != (~(my_off_t) 0)' failed
 =~ my_seek
@@ -1074,10 +1104,6 @@ MDEV-18084:
 =~ dict_index_get_nth_field
 MDEV-18084:
 =~ row_upd_changes_some_index_ord_field_binary
-MDEV-18069:
-=~ MDL_lock::incompatible_granted_types_bitmap
-MDEV-18069:
-=~ MDL_ticket::has_stronger_or_equal_type
 MDEV-18067:
 =~ ticket->m_duration == MDL_EXPLICIT
 MDEV-18067:
@@ -1262,8 +1288,6 @@ MDEV-16789:
 =~ in insert_fields
 MDEV-16745:
 =~ thd->transaction\.stmt\.is_empty
-MDEV-16659:
-=~ anc_page->org_size == anc_page->size
 MDEV-16654:
 =~ returned 38 for ALTER TABLE
 MDEV-16654:
@@ -1424,8 +1448,6 @@ MDEV-14264:
 =~ binlog_cache_data::reset
 MDEV-14126:
 =~ page_get_page_no
-MDEV-14041:
-=~ in String::length
 MDEV-14040:
 =~ in Field::is_real_null
 MDEV-13644:
