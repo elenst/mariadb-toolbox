@@ -162,6 +162,10 @@ TODO-842:
 =~ Item_exists_subselect::is_top_level_item
 =~ st_select_lex::update_used_tables
 =~ JOIN::optimize
+MDEV-18942:
+=~ Conditional jump or move depends on uninitialised value
+=~ Json_writer::add_bool
+=~ print_keyuse_array_for_trace
 MDEV-18933:
 =~ InnoDB: Failing assertion: share->idx_trans_tbl.index_count == mysql_num_index
 =~ innobase_build_index_translation
@@ -183,6 +187,17 @@ MDEV-18904:
 =~ Assertion \`m_part_spec.start_part >= m_part_spec.end_part'
 =~ ha_partition::index_read_idx_map
 =~ handler::ha_index_read_idx_map
+MDEV-18901:
+=~ InnoDB: Record in index .* of table .* was not found on update: TUPLE
+=~ Assertion \`0'
+=~ row_upd_sec_index_entry
+=~ mysql_load
+=~ Version: '10\.4
+MDEV-18901:
+=~ InnoDB: Failing assertion: !cursor->index->is_committed()
+=~ row_ins_sec_index_entry_by_modify
+=~ mysql_load
+=~ Version: '10\.4
 MDEV-18900:
 =~ AddressSanitizer: heap-use-after-free
 =~ my_strnncoll_binary
@@ -446,6 +461,11 @@ MDEV-18595:
 MDEV-18589:
 =~ Assertion \`fil_space_t::physical_size(flags) == info\.page_size' failed
 =~ xb_delta_open_matching_space
+MDEV-18581:
+=~ Assertion \`index->table == node->table'
+=~ row_purge_remove_sec_if_poss_leaf
+=~ row_purge_record_func
+=~ row_purge_step
 MDEV-18546:
 =~ AddressSanitizer: heap-use-after-free
 =~ innobase_get_computed_value
@@ -633,6 +653,15 @@ MDEV-18068:
 =~ MDL_context::release_lock
 =~ backup_end
 =~ run_backup_stage
+MDEV-18067:
+=~ Assertion \`ticket->m_duration == MDL_EXPLICIT'|AddressSanitizer: heap-use-after-free
+=~ MDL_context::release_lock
+=~ backup_end
+=~ run_backup_stage
+MDEV-18067:
+=~ signal 11
+=~ backup_end
+=~ run_backup_stage
 MDEV-18047:
 =~ index->magic_n == 76789786|Assertion \`pos < index->n_def'
 =~ dict_index_get_nth_field
@@ -714,6 +743,10 @@ MDEV-17643:
 =~ Assertion \`nr >= 0.0'
 =~ Item_sum_std::val_real
 =~ Protocol::send_result_set_row
+MDEV-17636:
+=~ Assertion \`pagecache->block_root[i]\.status == 0'
+=~ check_pagecache_is_cleaned_up
+=~ end_pagecache
 MDEV-17627:
 =~ Assertion \`inited==RND'
 =~ handler::ha_rnd_end
@@ -1104,10 +1137,6 @@ MDEV-18084:
 =~ dict_index_get_nth_field
 MDEV-18084:
 =~ row_upd_changes_some_index_ord_field_binary
-MDEV-18067:
-=~ ticket->m_duration == MDL_EXPLICIT
-MDEV-18067:
-=~ backup_end
 MDEV-18065:
 =~ Fatal error: Can't open and lock privilege tables
 MDEV-18063:
@@ -1206,8 +1235,6 @@ MDEV-17665:
 =~ share->page_type == PAGECACHE_LSN_PAGE
 MDEV-17659:
 =~ File too short; Expected more data in file
-MDEV-17636:
-=~ pagecache->block_root
 MDEV-17619:
 =~ Index file is crashed
 MDEV-17619:
