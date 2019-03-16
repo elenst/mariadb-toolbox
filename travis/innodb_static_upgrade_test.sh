@@ -23,6 +23,24 @@ PAGE_SIZEs=${PAGE_SIZEs:-default}
 COMPRESSIONs=${COMPRESSIONs:-default}
 ENCRYPTIONs=${ENCRYPTIONs:-off}
 
+echo "########################################################"
+echo "# TEST CONFIGURATION:"
+echo "#   HOME:              $HOME"
+echo "#   BASEDIR:           $BASEDIR"
+echo "#   SERVER_BRANCH:     $SERVER_BRANCH"
+echo "#   RQG_HOME:          $RQG_HOME"
+echo "#   LOGDIR:            $LOGDIR"
+echo "#   OLD_DATA_LOCATION: $OLD_DATA_LOCATION"
+echo "#   OLD [SERVER]:      $OLD"
+echo "#   [TEST] TYPEs:      $TYPEs"
+echo "#   FILE_FORMATs:      $FILE_FORMATs"
+echo "#   INNODBs:           $INNODBs"
+echo "#   PAGE_SIZEs:        $PAGE_SIZEs"
+echo "#   COMPRESSIONs:      $COMPRESSIONs"
+echo "#   ENCRYPTIONs:       $ENCRYPTIONs"
+echo "########################################################"
+
+
 pidfile=/tmp/upgrade.pid
 port=3308
 
@@ -75,7 +93,7 @@ shutdown_server() {
   cd -
 }
 
-check_tables {
+check_tables() {
   if [ ! -e $VARDIR/check.sql ] ; then
     $BASEDIR/bin/mysql -uroot --silent -e "select concat('CHECK TABLE ', table_schema, '.', table_name, ' EXTENDED;') FROM INFORMATION_SCHEMA.TABLES WHERE ENGINE='InnoDB'" > $VARDIR/check.sql
   fi
