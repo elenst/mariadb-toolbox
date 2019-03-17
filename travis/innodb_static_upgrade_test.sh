@@ -43,6 +43,7 @@ echo "########################################################"
 
 pidfile=/tmp/upgrade.pid
 port=3308
+socket=/tmp/upgrade.sock
 
 start_server() {
   cd $BASEDIR
@@ -68,14 +69,14 @@ start_server() {
 
   case $SERVER_BRANCH in
   *10.4*)
-    sudo $BASEDIR/bin/mysql -e "SET PASSWORD=''"
+    sudo $BASEDIR/bin/mysql --socket=$socket -e "SET PASSWORD=''"
     ;;
   esac
   cd -
 }
 
 shutdown_server() {
-  $BASEDIR/bin/mysql -uroot -e shutdown
+  $BASEDIR/bin/mysql --socket=$socket -uroot -e shutdown
 
   for s in 1 2 3 4 5 6 7 8 9 10 ; do
     if [ -e "$pidfile" ] ; then
@@ -95,9 +96,9 @@ shutdown_server() {
 
 check_tables() {
   if [ ! -e $VARDIR/check.sql ] ; then
-    $BASEDIR/bin/mysql -uroot --silent -e "select concat('CHECK TABLE ', table_schema, '.', table_name, ' EXTENDED;') FROM INFORMATION_SCHEMA.TABLES WHERE ENGINE='InnoDB'" > $VARDIR/check.sql
+    $BASEDIR/bin/mysql --socket=$socket -uroot --silent -e "select concat('CHECK TABLE ', table_schema, '.', table_name, ' EXTENDED;') FROM INFORMATION_SCHEMA.TABLES WHERE ENGINE='InnoDB'" > $VARDIR/check.sql
   fi
-  cat $VARDIR/check.sql | $BASEDIR/bin/mysql -uroot --silent >> $VARDIR/check.output
+  cat $VARDIR/check.sql | $BASEDIR/bin/mysql --socket=$socket -uroot --silent >> $VARDIR/check.output
   if grep -v "check.*status.*OK" $VARDIR/check.output ; then
     echo "ERROR: Not all tables are OK:"
     cat $VARDIR/check.output
@@ -154,7 +155,7 @@ for ff in $FILE_FORMATs ; do
               mv $datadir/mysql.err $datadir/mysql.err_orig
             fi
 
-            options="--datadir=$datadir --basedir=$BASEDIR --pid-file=$pidfile --port=$port --general-log --general-log-file=$VARDIR/mysql.log --log-error=$VARDIR/mysql.err"
+            options="--datadir=$datadir --basedir=$BASEDIR --pid-file=$pidfile --port=$port --socket=$socket --general-log --general-log-file=$VARDIR/mysql.log --log-error=$VARDIR/mysql.err"
             if [ "$ff" != "default" ] ; then
               options="$options --innodb-file-format=$ff"
             fi
@@ -174,7 +175,7 @@ for ff in $FILE_FORMATs ; do
             start_server
             check_tables
 
-            $BASEDIR/bin/mysql_upgrade -uroot
+            $BASEDIR/bin/mysql_upgrade -uroot --socket=$socket
             if [ "$?" != "0" ] ; then
               echo "ERROR: Upgrade returned error"
               res=1
