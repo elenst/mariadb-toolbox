@@ -165,7 +165,7 @@ for ff in $FILE_FORMATs ; do
               mv $datadir/mysql.err $datadir/mysql.err_orig
             fi
 
-            options="--datadir=$datadir --basedir=$BASEDIR --pid-file=$pidfile --port=$port --socket=$socket --general-log --general-log-file=$VARDIR/mysql.log --log-error=$VARDIR/mysql.err"
+            options="--datadir=$datadir --basedir=$BASEDIR --pid-file=$pidfile --port=$port --socket=$SOCKET --general-log --general-log-file=$VARDIR/mysql.log --log-error=$VARDIR/mysql.err"
             if [ "$ff" != "default" ] ; then
               options="$options --innodb-file-format=$ff"
             fi
@@ -185,7 +185,7 @@ for ff in $FILE_FORMATs ; do
             start_server
             check_tables
 
-            $BASEDIR/bin/mysql_upgrade -uroot --socket=$socket
+            $BASEDIR/bin/mysql_upgrade -uroot --socket=$SOCKET
             if [ "$?" != "0" ] ; then
               echo "ERROR: Upgrade returned error"
               res=1
