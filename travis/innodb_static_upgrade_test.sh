@@ -39,17 +39,18 @@ echo "#   PAGE_SIZEs:        $PAGE_SIZEs"
 echo "#   COMPRESSIONs:      $COMPRESSIONs"
 echo "#   ENCRYPTIONs:       $ENCRYPTIONs"
 echo "########################################################"
-
+echo ""
 
 pidfile=/tmp/upgrade.pid
 port=3308
 socket=/tmp/upgrade.sock
 
 start_server() {
+  echo "---------------"
+  echo "Starting server with options: $options $*"
   cd $BASEDIR
   rm -f $pidfile
   pid=
-  echo "Starting server with options: $options $*"
   $BASEDIR/bin/mysqld --no-defaults $options $* &
 
   for s in 1 2 3 4 5 6 7 8 9 10 ; do
@@ -76,7 +77,7 @@ start_server() {
 }
 
 shutdown_server() {
-  echo ""
+  echo "---------------"
   echo "Shutting down the server"
   $BASEDIR/bin/mysql --socket=$socket -uroot -e shutdown
 
@@ -97,7 +98,7 @@ shutdown_server() {
 }
 
 check_tables() {
-  echo ""
+  echo "---------------"
   echo "Checking tables"
   if [ ! -e $VARDIR/check.sql ] ; then
     $BASEDIR/bin/mysql --socket=$socket -uroot --silent -e "select concat('CHECK TABLE ', table_schema, '.', table_name, ' EXTENDED;') FROM INFORMATION_SCHEMA.TABLES WHERE ENGINE='InnoDB'" > $VARDIR/check.sql
@@ -136,6 +137,7 @@ for ff in $FILE_FORMATs ; do
             echo "#   Encryption:  $e"
             echo "########################################################"
             echo ""
+
             if [ -z "$e" ] || [ "$e" == "turn_on" ] ; then
               old_encryption=off
             else
@@ -144,7 +146,7 @@ for ff in $FILE_FORMATs ; do
             link=${OLD_DATA_LOCATION}/${OLD}/format-${ff}/innodb-${i}/${ps}/compression-${c}/encryption-${old_encryption}/${t}.tar.gz
             mkdir -p $VARDIR
             cd $VARDIR
-            echo ""
+            echo "---------------"
             echo "Gettting $link"
             wget --quiet $link
             if [ "$?" != "0" ] ; then
@@ -152,7 +154,7 @@ for ff in $FILE_FORMATs ; do
               continue
             fi
 
-            echo ""
+            echo "---------------"
             echo "Extracting data"
             tar zxf ${t}.tar.gz
             datadir=$VARDIR/data
@@ -199,7 +201,7 @@ for ff in $FILE_FORMATs ; do
 
             cd $RQG_HOME
             set -o pipefail
-            echo ""
+            echo "---------------"
             echo "Running post-upgrade DML/DDL"
             perl gentest.pl --dsn="dbi:mysql:host=127.0.0.1:port=$port:user=root:database=test" --grammar=conf/mariadb/generic-dml.yy --redefine=conf/mariadb/alter_table.yy --redefine=conf/mariadb/modules/admin.yy --redefine=conf/mariadb/instant_add.yy --threads=6 --queries=100M --duration=90 2>&1 | tee $TRIAL_LOG
 
@@ -208,7 +210,9 @@ for ff in $FILE_FORMATs ; do
               res=1
             fi
             shutdown_server
-            $SCRIPT_DIR/collect_single_failure_info.sh
+            echo "---------------"
+            echo "Collecting failure info"
+            . $SCRIPT_DIR/collect_single_failure_info.sh
           done
         done
       done
