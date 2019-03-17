@@ -45,6 +45,17 @@ pidfile=/tmp/upgrade.pid
 port=3308
 export SOCKET=/tmp/upgrade.sock
 
+terminate_if_error() {
+  if [ "$?" != 0 ] ; then
+    echo "FATAL ERROR: $1"
+    kill -9 `cat $pidfile`
+    . $SCRIPT_DIR/collect_single_failure_info.sh
+    res=1
+    total_res=1
+    continue
+  fi
+}
+
 start_server() {
   echo "---------------"
   echo "Starting server with options: $options $*"
@@ -63,9 +74,7 @@ start_server() {
   done
 
   if [ -z "$pid" ] ; then
-    echo "ERROR: Could not start the server"
-    cat $VARDIR/mysql.err
-    return 1
+    terminate_if_error "Could not start the server"
   fi
 
   case $SERVER_BRANCH in
@@ -81,6 +90,7 @@ shutdown_server() {
   echo "Shutting down the server"
   $BASEDIR/bin/mysql --socket=$SOCKET -uroot -e shutdown
 
+  pid=`cat $pidfile`
   for s in 1 2 3 4 5 6 7 8 9 10 ; do
     if [ -e "$pidfile" ] ; then
       sleep 3
@@ -93,6 +103,7 @@ shutdown_server() {
     echo "ERROR: Could not shut down the server"
     cat $VARDIR/mysql.err
     res=1
+    kill -9 $pid
   fi
   cd -
 }
@@ -104,16 +115,15 @@ check_tables() {
     $BASEDIR/bin/mysql --socket=$SOCKET -uroot --silent -e "select concat('CHECK TABLE ', table_schema, '.', table_name, ' EXTENDED;') FROM INFORMATION_SCHEMA.TABLES WHERE ENGINE='InnoDB'" > $VARDIR/check.sql
   fi
   cat $VARDIR/check.sql | $BASEDIR/bin/mysql --socket=$SOCKET -uroot --silent >> $VARDIR/check.output
+  cat $VARDIR/check.output
   if grep -v "check.*status.*OK" $VARDIR/check.output ; then
     echo "ERROR: Not all tables are OK:"
-    cat $VARDIR/check.output
     res=1
   fi
-  
 }
 
-
 TRIAL=0
+total_res=0
 for ff in $FILE_FORMATs ; do
   for i in $INNODBs ; do
     for ps in $PAGE_SIZEs ; do
@@ -121,10 +131,10 @@ for ff in $FILE_FORMATs ; do
         for e in $ENCRYPTIONs ; do
           for t in $TYPEs ; do
 
+            res=0
             export TRIAL=$((TRIAL+1))
             export VARDIR=$LOGDIR/vardir$TRIAL
             export TRIAL_LOG=$VARDIR/trial${TRIAL}.log
-            res=0
 
             echo ""
             echo "########################################################"
@@ -149,10 +159,8 @@ for ff in $FILE_FORMATs ; do
             echo "---------------"
             echo "Gettting $link"
             wget --quiet $link
-            if [ "$?" != "0" ] ; then
-              echo "ERROR: Failed to download the old data"
-              continue
-            fi
+
+            terminate_if_error "Failed to download the old data"
 
             echo "---------------"
             echo "Extracting data"
@@ -185,11 +193,10 @@ for ff in $FILE_FORMATs ; do
             start_server
             check_tables
 
+            echo "---------------"
+            echo "Running mysql_upgrade"
             $BASEDIR/bin/mysql_upgrade -uroot --socket=$SOCKET
-            if [ "$?" != "0" ] ; then
-              echo "ERROR: Upgrade returned error"
-              res=1
-            fi
+            terminate_if_error "Upgrade returned error"
 
             shutdown_server
             mv $VARDIR/mysql.err $VARDIR/mysql.err.1
@@ -202,6 +209,7 @@ for ff in $FILE_FORMATs ; do
             echo "---------------"
             echo "Checking if workarounds for known problems are needed"
             . $SCRIPT_DIR/innodb_static_upgrade_workarounds.sh
+            terminate_if_error "Problem occurred while applying workarounds"
 
             cd $RQG_HOME
             set -o pipefail
@@ -209,14 +217,15 @@ for ff in $FILE_FORMATs ; do
             echo "Running post-upgrade DML/DDL"
             perl gentest.pl --dsn="dbi:mysql:host=127.0.0.1:port=$port:user=root:database=test" --grammar=conf/mariadb/generic-dml.yy --redefine=conf/mariadb/alter_table.yy --redefine=conf/mariadb/modules/admin.yy --redefine=conf/mariadb/instant_add.yy --threads=6 --queries=100M --duration=90 2>&1 | tee $TRIAL_LOG
 
-            if [ "$?" != "0" ] ; then
-              echo "ERROR: Test run returned error"
-              res=1
-            fi
+            terminate_if_error "Post-upgrade DML/DDL failed"
+
             shutdown_server
             echo "---------------"
             echo "Collecting failure info"
             . $SCRIPT_DIR/collect_single_failure_info.sh
+            if [ "$res" != 0 ] ; then
+              total_res=$res
+            fi
           done
         done
       done
@@ -224,8 +233,7 @@ for ff in $FILE_FORMATs ; do
   done
 done
 
-
-
+exit $total_res
 
 
 

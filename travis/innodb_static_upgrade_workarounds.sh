@@ -19,7 +19,8 @@ case $SERVER_BRANCH in
     echo "Trying to remove all virtual columns before running test flow"
     echo ""
     $BASEDIR/bin/mysql -uroot --socket=$SOCKET --silent -e "SELECT CONCAT('ALTER TABLE ', table_schema, '.', table_name, ' DROP ', column_name, ';') FROM information_schema.columns WHERE IS_GENERATED = 'ALWAYS' AND table_schema NOT IN ('mysql','information_schema','performance_schema')" > /tmp/mdev18084.sql
-    cat /tmp/mdev18084.sql | $BASEDIR/bin/mysql -uroot --socket=$SOCKET
+    cat /tmp/mdev18084.sql
+    $BASEDIR/bin/mysql -uroot --socket=$SOCKET < /tmp/mdev18084.sql
     ;;
   esac
   ;;
