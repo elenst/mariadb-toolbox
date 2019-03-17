@@ -140,12 +140,12 @@ for ff in $FILE_FORMATs ; do
             cd $VARDIR
             echo "Gettting $link"
             wget --quiet $link
-            if [ ! -e ${t}.tar.gz ] ; then
+            if [ "$?" != "0" ] ; then
               echo "ERROR: Failed to download the old data"
               . $SCRIPT_DIR/soft_exit.sh 1
             fi
 
-            tar zxf ${TYPE}.tar.gz
+            tar zxf ${t}.tar.gz
             datadir=$VARDIR/data
             if [ -e $datadir/mysql.log ] ; then
               mv $datadir/mysql.log $datadir/mysql.log_orig
