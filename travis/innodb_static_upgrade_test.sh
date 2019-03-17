@@ -49,7 +49,7 @@ start_server() {
   rm -f $pidfile
   pid=
   echo "Starting server with options: $options $*"
-  $BASEDIR/bin/mysqld $options $* &
+  $BASEDIR/bin/mysqld --no-defaults $options $* &
 
   for s in 1 2 3 4 5 6 7 8 9 10 ; do
     if [ ! -e "$pidfile" ] ; then
@@ -134,70 +134,70 @@ for ff in $FILE_FORMATs ; do
               old_encryption=off
             else
               old_encryption=$e
-              link=${OLD_DATA_LOCATION}/${OLD}/format-${ff}/innodb-${i}/${ps}/compression-${c}/encryption-${old_encryption}/${t}.tar.gz
-              mkdir -p $VARDIR
-              cd $VARDIR
-              echo "Gettting $link"
-              wget --quiet $link
-              if [ ! -e ${t}.tar.gz ] ; then
-                echo "ERROR: Failed to download the old data"
-                . $SCRIPT_DIR/soft_exit.sh 1
-              fi
-
-              tar zxf ${TYPE}.tar.gz
-              datadir=$VARDIR/data
-              if [ -e $datadir/mysql.log ] ; then
-                mv $datadir/mysql.log $datadir/mysql.log_orig
-              fi
-              if [ -e $datadir/mysql.err ] ; then
-                mv $datadir/mysql.err $datadir/mysql.err_orig
-              fi
-
-              options="--datadir=$datadir --basedir=$BASEDIR --pid-file=$pidfile --port=$port --general-log --general-log-file=$VARDIR/mysql.log --log-error=$VARDIR/mysql.err"
-              if [ "$ff" != "default" ] ; then
-                options="$options --innodb-file-format=$ff"
-              fi
-              if [ "$i" == "plugin" ] ; then
-                options="$options --ignore-builtin-innodb --plugin-load-add=ha_innodb"
-              fi
-              if [ "$ps" != "default" ] ; then
-                options="$options --innodb-page-size=$ps"
-              fi
-              if [ "$c" != "default" ] ; then
-                options="$options --innodb-compression-algorithm=$c"
-              fi
-              if [ "$e" == "on" ] || [ "$e" == "turn_on" ] ; then
-                options="$options --plugin-load-add=file_key_management --file-key-management-filename=$TOOLBOX_DIR/data/keys.txt --innodb-encrypt-tables --innodb-encrypt-log"
-              fi
-              
-              start_server
-              check_tables
-              
-              $BASEDIR/bin/mysql_upgrade -uroot
-              if [ "$?" != "0" ] ; then
-                echo "ERROR: Upgrade returned error"
-                res=1
-              fi
-
-              shutdown_server
-              mv $VARDIR/mysql.err $VARDIR/mysql.err.1
-              
-              start_server --loose-max-statement-time=10 --lock-wait-timeout=5 --innodb-lock-wait-timeout=3
-              check_tables
-              # After the test, tables might be different
-              rm -f $VARDIR/check.sql
-
-              cd $RQG_HOME
-              set -o pipefail
-              perl gentest.pl --dsn="dbi:mysql:host=127.0.0.1:port=$port:user=root:database=test" --grammar=conf/mariadb/generic-dml.yy --redefine=conf/mariadb/alter_table.yy --redefine=conf/mariadb/modules/admin.yy --redefine=conf/mariadb/instant_add.yy --threads=6 --queries=100M --duration=90 2>&1 | tee $TRIAL_LOG
-              
-              if [ "$?" != "0" ] ; then
-                echo "ERROR: Test run returned error"
-                res=1
-              fi
-              shutdown_server
-              $ENV{SCRIPT_DIR}/collect_single_failure_info.sh
             fi
+            link=${OLD_DATA_LOCATION}/${OLD}/format-${ff}/innodb-${i}/${ps}/compression-${c}/encryption-${old_encryption}/${t}.tar.gz
+            mkdir -p $VARDIR
+            cd $VARDIR
+            echo "Gettting $link"
+            wget --quiet $link
+            if [ ! -e ${t}.tar.gz ] ; then
+              echo "ERROR: Failed to download the old data"
+              . $SCRIPT_DIR/soft_exit.sh 1
+            fi
+
+            tar zxf ${TYPE}.tar.gz
+            datadir=$VARDIR/data
+            if [ -e $datadir/mysql.log ] ; then
+              mv $datadir/mysql.log $datadir/mysql.log_orig
+            fi
+            if [ -e $datadir/mysql.err ] ; then
+              mv $datadir/mysql.err $datadir/mysql.err_orig
+            fi
+
+            options="--datadir=$datadir --basedir=$BASEDIR --pid-file=$pidfile --port=$port --general-log --general-log-file=$VARDIR/mysql.log --log-error=$VARDIR/mysql.err"
+            if [ "$ff" != "default" ] ; then
+              options="$options --innodb-file-format=$ff"
+            fi
+            if [ "$i" == "plugin" ] ; then
+              options="$options --ignore-builtin-innodb --plugin-load-add=ha_innodb"
+            fi
+            if [ "$ps" != "default" ] ; then
+              options="$options --innodb-page-size=$ps"
+            fi
+            if [ "$c" != "default" ] ; then
+              options="$options --innodb-compression-algorithm=$c"
+            fi
+            if [ "$e" == "on" ] || [ "$e" == "turn_on" ] ; then
+              options="$options --plugin-load-add=file_key_management --file-key-management-filename=$TOOLBOX_DIR/data/keys.txt --innodb-encrypt-tables --innodb-encrypt-log"
+            fi
+
+            start_server
+            check_tables
+
+            $BASEDIR/bin/mysql_upgrade -uroot
+            if [ "$?" != "0" ] ; then
+              echo "ERROR: Upgrade returned error"
+              res=1
+            fi
+
+            shutdown_server
+            mv $VARDIR/mysql.err $VARDIR/mysql.err.1
+
+            start_server --loose-max-statement-time=10 --lock-wait-timeout=5 --innodb-lock-wait-timeout=3
+            check_tables
+            # After the test, tables might be different
+            rm -f $VARDIR/check.sql
+
+            cd $RQG_HOME
+            set -o pipefail
+            perl gentest.pl --dsn="dbi:mysql:host=127.0.0.1:port=$port:user=root:database=test" --grammar=conf/mariadb/generic-dml.yy --redefine=conf/mariadb/alter_table.yy --redefine=conf/mariadb/modules/admin.yy --redefine=conf/mariadb/instant_add.yy --threads=6 --queries=100M --duration=90 2>&1 | tee $TRIAL_LOG
+
+            if [ "$?" != "0" ] ; then
+              echo "ERROR: Test run returned error"
+              res=1
+            fi
+            shutdown_server
+            $ENV{SCRIPT_DIR}/collect_single_failure_info.sh
           done
         done
       done
