@@ -194,6 +194,11 @@ for ff in $FILE_FORMATs ; do
             check_tables
 
             echo "---------------"
+            echo "Checking if workarounds for known problems are needed"
+            . $SCRIPT_DIR/innodb_static_upgrade_workarounds.sh
+            terminate_if_error "Problem occurred while applying workarounds"
+
+            echo "---------------"
             echo "Running mysql_upgrade"
             $BASEDIR/bin/mysql_upgrade -uroot --socket=$SOCKET
             terminate_if_error "Upgrade returned error"
@@ -205,11 +210,6 @@ for ff in $FILE_FORMATs ; do
             check_tables
             # After the test, tables might be different
             rm -f $VARDIR/check.sql
-
-            echo "---------------"
-            echo "Checking if workarounds for known problems are needed"
-            . $SCRIPT_DIR/innodb_static_upgrade_workarounds.sh
-            terminate_if_error "Problem occurred while applying workarounds"
 
             cd $RQG_HOME
             set -o pipefail
