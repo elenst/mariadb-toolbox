@@ -43,7 +43,7 @@ echo ""
 
 pidfile=/tmp/upgrade.pid
 port=3308
-socket=/tmp/upgrade.sock
+export SOCKET=/tmp/upgrade.sock
 
 start_server() {
   echo "---------------"
@@ -70,7 +70,7 @@ start_server() {
 
   case $SERVER_BRANCH in
   *10.4*)
-    sudo $BASEDIR/bin/mysql --socket=$socket -e "SET PASSWORD=''"
+    sudo $BASEDIR/bin/mysql --socket=$SOCKET -e "SET PASSWORD=''"
     ;;
   esac
   cd -
@@ -79,7 +79,7 @@ start_server() {
 shutdown_server() {
   echo "---------------"
   echo "Shutting down the server"
-  $BASEDIR/bin/mysql --socket=$socket -uroot -e shutdown
+  $BASEDIR/bin/mysql --socket=$SOCKET -uroot -e shutdown
 
   for s in 1 2 3 4 5 6 7 8 9 10 ; do
     if [ -e "$pidfile" ] ; then
@@ -101,9 +101,9 @@ check_tables() {
   echo "---------------"
   echo "Checking tables"
   if [ ! -e $VARDIR/check.sql ] ; then
-    $BASEDIR/bin/mysql --socket=$socket -uroot --silent -e "select concat('CHECK TABLE ', table_schema, '.', table_name, ' EXTENDED;') FROM INFORMATION_SCHEMA.TABLES WHERE ENGINE='InnoDB'" > $VARDIR/check.sql
+    $BASEDIR/bin/mysql --socket=$SOCKET -uroot --silent -e "select concat('CHECK TABLE ', table_schema, '.', table_name, ' EXTENDED;') FROM INFORMATION_SCHEMA.TABLES WHERE ENGINE='InnoDB'" > $VARDIR/check.sql
   fi
-  cat $VARDIR/check.sql | $BASEDIR/bin/mysql --socket=$socket -uroot --silent >> $VARDIR/check.output
+  cat $VARDIR/check.sql | $BASEDIR/bin/mysql --socket=$SOCKET -uroot --silent >> $VARDIR/check.output
   if grep -v "check.*status.*OK" $VARDIR/check.output ; then
     echo "ERROR: Not all tables are OK:"
     cat $VARDIR/check.output
@@ -198,6 +198,10 @@ for ff in $FILE_FORMATs ; do
             check_tables
             # After the test, tables might be different
             rm -f $VARDIR/check.sql
+
+            echo "---------------"
+            echo "Checking if workarounds for known problems are needed"
+            . $SCRIPT_DIR/innodb_static_upgrade_workarounds.sh
 
             cd $RQG_HOME
             set -o pipefail
