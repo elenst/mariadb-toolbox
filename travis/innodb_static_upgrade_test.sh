@@ -64,7 +64,7 @@ start_server() {
   if [ -z "$pid" ] ; then
     echo "ERROR: Could not start the server"
     cat $VARDIR/mysql.err
-    . $SCRIPT_DIR/soft_exit.sh 1
+    return 1
   fi
 
   case $SERVER_BRANCH in
@@ -76,6 +76,8 @@ start_server() {
 }
 
 shutdown_server() {
+  echo ""
+  echo "Shutting down the server"
   $BASEDIR/bin/mysql --socket=$socket -uroot -e shutdown
 
   for s in 1 2 3 4 5 6 7 8 9 10 ; do
@@ -95,6 +97,8 @@ shutdown_server() {
 }
 
 check_tables() {
+  echo ""
+  echo "Checking tables"
   if [ ! -e $VARDIR/check.sql ] ; then
     $BASEDIR/bin/mysql --socket=$socket -uroot --silent -e "select concat('CHECK TABLE ', table_schema, '.', table_name, ' EXTENDED;') FROM INFORMATION_SCHEMA.TABLES WHERE ENGINE='InnoDB'" > $VARDIR/check.sql
   fi
@@ -121,6 +125,7 @@ for ff in $FILE_FORMATs ; do
             export TRIAL_LOG=$VARDIR/trial${TRIAL}.log
             res=0
 
+            echo ""
             echo "########################################################"
             echo "# TRIAL $TRIAL CONFIGURATION:"
             echo "#   Test type:   $t"
@@ -139,13 +144,16 @@ for ff in $FILE_FORMATs ; do
             link=${OLD_DATA_LOCATION}/${OLD}/format-${ff}/innodb-${i}/${ps}/compression-${c}/encryption-${old_encryption}/${t}.tar.gz
             mkdir -p $VARDIR
             cd $VARDIR
+            echo ""
             echo "Gettting $link"
             wget --quiet $link
             if [ "$?" != "0" ] ; then
               echo "ERROR: Failed to download the old data"
-              . $SCRIPT_DIR/soft_exit.sh 1
+              continue
             fi
 
+            echo ""
+            echo "Extracting data"
             tar zxf ${t}.tar.gz
             datadir=$VARDIR/data
             if [ -e $datadir/mysql.log ] ; then
@@ -191,6 +199,8 @@ for ff in $FILE_FORMATs ; do
 
             cd $RQG_HOME
             set -o pipefail
+            echo ""
+            echo "Running post-upgrade DML/DDL"
             perl gentest.pl --dsn="dbi:mysql:host=127.0.0.1:port=$port:user=root:database=test" --grammar=conf/mariadb/generic-dml.yy --redefine=conf/mariadb/alter_table.yy --redefine=conf/mariadb/modules/admin.yy --redefine=conf/mariadb/instant_add.yy --threads=6 --queries=100M --duration=90 2>&1 | tee $TRIAL_LOG
 
             if [ "$?" != "0" ] ; then
@@ -198,7 +208,7 @@ for ff in $FILE_FORMATs ; do
               res=1
             fi
             shutdown_server
-            $ENV{SCRIPT_DIR}/collect_single_failure_info.sh
+            $SCRIPT_DIR/collect_single_failure_info.sh
           done
         done
       done
