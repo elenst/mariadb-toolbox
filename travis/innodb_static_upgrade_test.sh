@@ -112,15 +112,21 @@ pidfile=/tmp/upgrade.pid
 port=3308
 export SOCKET=/tmp/upgrade.sock
 
+add_result_to_summary() {
+  export OLD t ps old_i old_f old_e old_c new_i new_f new_e new_c res
+  perl -e 'print sprintf("| %2d | %12s | %6s | %7s | %7s | %9s | %7s | %8s | => | %7s | %9s | %7s | %8s | %4s |\n", $ENV{TRIAL}, $ENV{OLD}, $ENV{t}, $ENV{ps}, $ENV{old_i}, $ENV{old_f}, $ENV{old_e}, $ENV{old_c}, $ENV{new_i}, $ENV{new_f}, $ENV{new_e}, $ENV{new_c}, ($ENV{res}?"FAIL":"OK"))' >> $HOME/summary
+}
+
 terminate_if_error() {
-  if [ "$?" != 0 ] ; then
-    echo "FATAL ERROR: $1"
+  if [ "$1" != "0" ] ; then
+    echo "FATAL ERROR: $2"
     if [ -e $pidfile ] ; then
       kill -9 `cat $pidfile`
     fi
     . $SCRIPT_DIR/collect_single_failure_info.sh
     res=1
     total_res=1
+    add_result_to_summary
     continue
   fi
 }
@@ -143,7 +149,7 @@ start_server() {
   done
 
   if [ -z "$pid" ] ; then
-    terminate_if_error "Could not start the server"
+    terminate_if_error 1 "Could not start the server"
   fi
 
   case $SERVER_BRANCH in
@@ -196,6 +202,13 @@ check_tables() {
 
 TRIAL=0
 total_res=0
+
+echo Test date: `date '+%Y-%m-%d %H:%M:%S'` > $HOME/summary
+echo "------------------------------------------------------------------------------------------------------------------------------------------" >> $HOME/summary
+echo "| ## | OLD version  | type   | pg size | innodb  | file frmt | encrypt | compress |    |  innodb | file frmt | encrypt | compress |  res |" >> $HOME/summary
+echo "------------------------------------------------------------------------------------------------------------------------------------------" >> $HOME/summary
+
+
 for old_f in $OLD_FILE_FORMATs ; do
   for new_f in $NEW_FILE_FORMATs ; do
     if [ -n "$FILE_FORMATs" ] && [ "$old_f" != "$new_f" ] ; then
@@ -289,12 +302,13 @@ for old_f in $OLD_FILE_FORMATs ; do
                       done
                     fi
 
-                    ls -l $fname
-                    terminate_if_error "Failed to download the old data"
+                    if [ ! -s $fname ] ; then
+                      terminate_if_error 1 "Failed to download the old data"
+                    fi
 
                     echo "---------------"
                     echo "Extracting data"
-                    time tar zxf $fname
+                    tar zxf $fname
                     datadir=$VARDIR/data
                     if [ -e $datadir/mysql.log ] ; then
                       mv $datadir/mysql.log $datadir/mysql.log_orig
@@ -326,12 +340,17 @@ for old_f in $OLD_FILE_FORMATs ; do
 #                    echo "---------------"
 #                    echo "Checking if workarounds for known problems are needed"
 #                    . $SCRIPT_DIR/innodb_static_upgrade_workarounds.sh
-#                    terminate_if_error "Problem occurred while applying workarounds"
+#                    terminate_if_error $? "Problem occurred while applying workarounds"
 
                     echo "---------------"
                     echo "Running mysql_upgrade"
-                    $BASEDIR/bin/mysql_upgrade -uroot --socket=$SOCKET
-                    terminate_if_error "Upgrade returned error"
+                    $BASEDIR/bin/mysql_upgrade -uroot --socket=$SOCKET > /tmp/mysql_upgrade.log 2>&1
+                    if [ "$?" != "0" ] ; then
+                      cat /tmp/mysql_upgrade.log
+                      terminate_if_error 1 "mysql_upgrade returned error"
+                    else
+                      echo "mysql_upgrade apparently succeeded"
+                    fi
 
                     shutdown_server
                     mv $VARDIR/mysql.err $VARDIR/mysql.err.1
@@ -345,7 +364,7 @@ for old_f in $OLD_FILE_FORMATs ; do
                     set -o pipefail
                     echo "---------------"
                     echo "Running post-upgrade DML/DDL"
-                    time perl gentest.pl --dsn="dbi:mysql:host=127.0.0.1:port=$port:user=root:database=test" --grammar=conf/mariadb/generic-dml.yy --redefine=conf/mariadb/alter_table.yy --redefine=conf/mariadb/modules/admin.yy --redefine=conf/mariadb/instant_add.yy --threads=6 --queries=100M --duration=60 2>&1 > $TRIAL_LOG 2>&1
+                    time perl gentest.pl --dsn="dbi:mysql:host=127.0.0.1:port=$port:user=root:database=test" --grammar=conf/mariadb/generic-dml.yy --redefine=conf/mariadb/alter_table.yy --redefine=conf/mariadb/modules/admin.yy --redefine=conf/mariadb/instant_add.yy --threads=6 --queries=100M --duration=60 --seed=time 2>&1 > $TRIAL_LOG 2>&1
                     if [ "$?" != "0" ] ; then
                       echo "Post-upgrade DML/DDL failed:"
                       cat $TRIAL_LOG
@@ -364,8 +383,9 @@ for old_f in $OLD_FILE_FORMATs ; do
                     fi
 
                     echo "---------------"
-                    time . $SCRIPT_DIR/collect_single_failure_info.sh
+                    . $SCRIPT_DIR/collect_single_failure_info.sh
                     duration=$((`date "+%s"`-$start))
+                    add_result_to_summary
                     echo ""
                     echo "End of trial $TRIAL, duration $duration"
                     echo ""
@@ -379,7 +399,9 @@ for old_f in $OLD_FILE_FORMATs ; do
     done
   done
 done
+echo "------------------------------------------------------------------------------------------------------------------------------------------" >> $HOME/summary
 
+cat $HOME/summary
 exit $total_res
 
 
