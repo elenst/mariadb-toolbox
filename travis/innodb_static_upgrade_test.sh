@@ -282,9 +282,14 @@ for old_f in $OLD_FILE_FORMATs ; do
                       echo "File $fname already exists"
                     else
                       echo "Gettting $link"
-                      time wget --quiet $link -O $fname
+                      for i in 1 2 3 ; do
+                        if time wget --quiet $link -O $fname ; then
+                          break
+                        fi
+                      done
                     fi
 
+                    ls -l $fname
                     terminate_if_error "Failed to download the old data"
 
                     echo "---------------"
