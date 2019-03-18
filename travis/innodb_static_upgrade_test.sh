@@ -115,7 +115,9 @@ export SOCKET=/tmp/upgrade.sock
 terminate_if_error() {
   if [ "$?" != 0 ] ; then
     echo "FATAL ERROR: $1"
-    kill -9 `cat $pidfile`
+    if [ -e $pidfile ] ; then
+      kill -9 `cat $pidfile`
+    fi
     . $SCRIPT_DIR/collect_single_failure_info.sh
     res=1
     total_res=1
@@ -182,10 +184,13 @@ check_tables() {
     $BASEDIR/bin/mysql --socket=$SOCKET -uroot --silent -e "select concat('CHECK TABLE ', table_schema, '.', table_name, ' EXTENDED;') FROM INFORMATION_SCHEMA.TABLES WHERE ENGINE='InnoDB'" > $VARDIR/check.sql
   fi
   cat $VARDIR/check.sql | $BASEDIR/bin/mysql --socket=$SOCKET -uroot --silent >> $VARDIR/check.output
-  cat $VARDIR/check.output
+
   if grep -v "check.*status.*OK" $VARDIR/check.output ; then
     echo "ERROR: Not all tables are OK:"
+    cat $VARDIR/check.output
     res=1
+  else
+    echo "All tables are reported to be OK"
   fi
 }
 
@@ -194,24 +199,32 @@ total_res=0
 for old_f in $OLD_FILE_FORMATs ; do
   for new_f in $NEW_FILE_FORMATs ; do
     if [ -n "$FILE_FORMATs" ] && [ "$old_f" != "$new_f" ] ; then
+      echo ""
+      echo "########################################################"
       echo "File format was requested to stay unchanged, the combination with $old_f => $new_f is skipped"
       continue
     fi
     for old_i in $OLD_INNODBs ; do
       for new_i in $NEW_INNODBs ; do
         if [ -n "$INNODBs" ] && [ "$old_i" != "$new_i" ] ; then
+          echo ""
+          echo "########################################################"
           echo "InnoDB type was requested to stay unchanged, the combination with $old_i => $new_i is skipped"
           continue
         fi
         for old_c in $OLD_COMPRESSIONs ; do
           for new_c in $NEW_COMPRESSIONs ; do
             if [ -n "$COMPRESSIONs" ] && [ "$old_c" != "$new_c" ] ; then
+              echo ""
+              echo "########################################################"
               echo "Compression was requested to stay unchanged, the combination with $old_c => $new_c is skipped"
               continue
             fi
             for old_e in $OLD_ENCRYPTIONs ; do
               for new_e in $NEW_ENCRYPTIONs ; do
                 if [ -n "$ENCRYPTIONs" ] && [ "$old_e" != "$new_e" ] ; then
+                  echo ""
+                  echo "########################################################"
                   echo "Encryption was requested to stay unchanged, the combination with $old_e => $new_e is skipped"
                   continue
                 fi
@@ -237,35 +250,46 @@ for old_f in $OLD_FILE_FORMATs ; do
                     echo ""
 
                     link="${OLD_DATA_LOCATION}/${OLD}"
+                    fname=${HOME}/$t
                     if [ "$old_f" != "default" ] ; then
                       link=${link}/format-${old_f}
+                      fname=${fname}.format-${old_f}
                     fi
                     if [ "$old_i" != "default" ] ; then
                       link=${link}/innodb-${old_i}
+                      fname=${fname}.innodb-${old_i}
                     fi
                     if [ "$ps" != "default" ] ; then
                       link=${link}/${ps}
+                      fname=${fname}.${ps}
                     fi
                     if [ "$old_c" != "default" ] ; then
                       link=${link}/compression-${old_c}
+                      fname=${fname}.compression-${old_c}
                     fi
                     if [ "$old_e" != "default" ] ; then
                       link=${link}/encryption-${old_e}
+                      fname=${fname}.encryption-${old_e}
                     fi
                     link=${link}/${t}.tar.gz
+                    fname=${fname}.tar.gz
 
                     mkdir -p $VARDIR
                     cd $VARDIR
 
                     echo "---------------"
-                    echo "Gettting $link"
-                    time wget --quiet $link
+                    if [ -e $fname ] ; then
+                      echo "File $fname already exists"
+                    else
+                      echo "Gettting $link"
+                      time wget --quiet $link -O $fname
+                    fi
 
                     terminate_if_error "Failed to download the old data"
 
                     echo "---------------"
                     echo "Extracting data"
-                    tar zxf ${t}.tar.gz
+                    time tar zxf $fname
                     datadir=$VARDIR/data
                     if [ -e $datadir/mysql.log ] ; then
                       mv $datadir/mysql.log $datadir/mysql.log_orig
@@ -292,7 +316,7 @@ for old_f in $OLD_FILE_FORMATs ; do
                     fi
 
                     start_server
-                    time check_tables
+                    check_tables
 
 #                    echo "---------------"
 #                    echo "Checking if workarounds for known problems are needed"
@@ -308,7 +332,7 @@ for old_f in $OLD_FILE_FORMATs ; do
                     mv $VARDIR/mysql.err $VARDIR/mysql.err.1
 
                     start_server --loose-max-statement-time=10 --lock-wait-timeout=5 --innodb-lock-wait-timeout=3
-                    time check_tables
+                    check_tables
                     # After the test, tables might be different
                     rm -f $VARDIR/check.sql
 
@@ -318,7 +342,11 @@ for old_f in $OLD_FILE_FORMATs ; do
                     echo "Running post-upgrade DML/DDL"
                     time perl gentest.pl --dsn="dbi:mysql:host=127.0.0.1:port=$port:user=root:database=test" --grammar=conf/mariadb/generic-dml.yy --redefine=conf/mariadb/alter_table.yy --redefine=conf/mariadb/modules/admin.yy --redefine=conf/mariadb/instant_add.yy --threads=6 --queries=100M --duration=60 2>&1 > $TRIAL_LOG 2>&1
                     if [ "$?" != "0" ] ; then
+                      echo "Post-upgrade DML/DDL failed:"
+                      cat $TRIAL_LOG
                       res=1
+                    else
+                      echo "Post-upgrade DML/DDL succeeded"
                     fi
 
                     shutdown_server
@@ -331,10 +359,11 @@ for old_f in $OLD_FILE_FORMATs ; do
                     fi
 
                     echo "---------------"
-                    echo "Collecting failure info"
                     time . $SCRIPT_DIR/collect_single_failure_info.sh
                     duration=$((`date "+%s"`-$start))
+                    echo ""
                     echo "End of trial $TRIAL, duration $duration"
+                    echo ""
                   done
                 done
               done
