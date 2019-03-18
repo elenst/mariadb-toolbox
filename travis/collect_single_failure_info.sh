@@ -48,6 +48,8 @@ else
   res=1
 fi
 
+echo "Collecting single test result info for logdir $LOGDIR"
+
 ###### Functions
 
 function load_failure
@@ -123,10 +125,11 @@ if [ "$res" == "0" ] ; then
     TRIAL_CMD=`grep -A 1 'Final command line:' $TRIAL_LOG`
     mkdir -p ${LOGDIR}/${ARCHDIR}/logs
     cp $TRIAL_LOG ${LOGDIR}/${ARCHDIR}/logs/
-    echo "TEST RESULT: $TRIAL_STATUS"
   else
     echo "$TRIAL_LOG does not exist"
+    TRIAL_STATUS=UNKNOWN_FAILURE
   fi
+  echo "TEST RESULT: $TRIAL_STATUS"
   echo ""
   
   # Success processing
@@ -141,9 +144,13 @@ if [ "$res" == "0" ] ; then
       res=1
     fi
 
-    if ! perl $SCRIPT_DIR/check_for_known_bugs.pl ${VARDIR}*/mysql.err ; then
-      # Check trial log as a last resort. It's likely to cause false positives
-      perl $SCRIPT_DIR/check_for_known_bugs.pl $TRIAL_LOG
+    if [ -e  ${VARDIR}*/mysql.err ] ; then
+      if ! perl $SCRIPT_DIR/check_for_known_bugs.pl ${VARDIR}*/mysql.err ; then
+        # Check trial log as a last resort. It's likely to cause false positives
+        if [ -e $TRIAL_LOG ] ; then
+          perl $SCRIPT_DIR/check_for_known_bugs.pl $TRIAL_LOG
+        fi
+      fi
     fi
 
     echo
