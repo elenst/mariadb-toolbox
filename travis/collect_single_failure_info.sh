@@ -48,7 +48,7 @@ else
   res=1
 fi
 
-echo "Collecting single test result info for logdir $LOGDIR"
+echo "Collecting single result info for logdir $LOGDIR"
 
 ###### Functions
 
@@ -261,5 +261,4 @@ if [ "$res" == "0" ] ; then
   rm -rf ${LOGDIR}/${ARCHDIR}*
 fi
 
-cd $OLDDIR
 . $SCRIPT_DIR/soft_exit.sh $res
