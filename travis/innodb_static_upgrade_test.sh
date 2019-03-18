@@ -11,17 +11,80 @@
 
 # - TYPEs (optional, normal|crash|undo)
 # - FILE_FORMATs (optional, Antelope|Barracuda)
+# - OLD_FILE_FORMATs (optional, Antelope|Barracuda)
+# - NEW_FILE_FORMATs (optional, Antelope|Barracuda)
 # - INNODBs (optional, builtin|plugin)
+# - OLD_INNODBs (optional, builtin|plugin)
+# - NEW_INNODBs (optional, builtin|plugin)
 # - PAGE_SIZEs (optional, 4K|8K|16K|32K|64K)
+#   (page size must remain the same, so there is no old/new here)
 # - COMPRESSIONs (optional, on|off|<compression type>)
-# - ENCRYPTIONs (optional, on|turn_on|off)
+# - OLD_COMPRESSIONs (optional, on|off|<compression type>)
+# - NEW_COMPRESSIONs (optional, on|off|<compression type>)
+# - ENCRYPTIONs (optional, on|off)
+# - OLD_ENCRYPTIONs (optional, on|off)
+# - NEW_ENCRYPTIONs (optional, on|off)
+
+# Having OLD_XX and NEW_XX indicates all combinations, e.g.
+# OLD_COMPRESSIONS="none zlib" NEW_COMPRESSIONS="none zlib"
+# would end up in 4 tests: none=>none, none=>zlib, zlib=>none, zlib=>zlib
+# Having only XX indicates that the value remains intact, e.g.
+# COMPRESSIONS="none zlib" would end up in 2 tests: non=>none, zlib=>zlib
+#
+# OLD_XX/NEW_XX values take precedence, if at least one is defined,
+# then XX is ignored.
 
 TYPEs=${TYPEs:-normal}
-FILE_FORMATs=${FILE_FORMATs:-default}
-INNODBs=${INNODBs:-builtin}
 PAGE_SIZEs=${PAGE_SIZEs:-default}
-COMPRESSIONs=${COMPRESSIONs:-default}
-ENCRYPTIONs=${ENCRYPTIONs:-off}
+
+if [ -z "$OLD_FILE_FORMATs" ] && [ -z "$NEW_FILE_FORMATs" ] ; then
+  OLD_FILE_FORMATs=${FILE_FORMATs:-default}
+  NEW_FILE_FORMATs=${FILE_FORMATs:-default}
+else
+  OLD_FILE_FORMATs=${OLD_FILE_FORMATs:-default}
+  NEW_FILE_FORMATs=${NEW_FILE_FORMATs:-default}
+  if [ -n "$FILE_FORMATs" ] ; then
+    echo "WARNING: FILE_FORMATs=$FILE_FORMATs is ignored, because OLD and/or NEW values are specified"
+    FILE_FORMATs=
+  fi
+fi
+
+if [ -z "$OLD_INNODBs" ] && [ -z "$NEW_INNODBs" ] ; then
+  OLD_INNODBs=${INNODBs:-default}
+  NEW_INNODBs=${INNODBs:-default}
+else
+  OLD_INNODBs=${OLD_INNODBs:-default}
+  NEW_INNODBs=${NEW_INNODBs:-default}
+  if [ -n "$INNODBs" ] ; then
+    echo "WARNING: INNODBs=$INNODBs is ignored, because OLD and/or NEW values are specified"
+    INNODBs=
+  fi
+fi
+
+if [ -z "$OLD_COMPRESSIONs" ] && [ -z "$NEW_COMPRESSIONs" ] ; then
+  OLD_COMPRESSIONs=${COMPRESSIONs:-default}
+  NEW_COMPRESSIONs=${COMPRESSIONs:-default}
+else
+  OLD_COMPRESSIONs=${OLD_COMPRESSIONs:-default}
+  NEW_COMPRESSIONs=${NEW_COMPRESSIONs:-default}
+  if [ -n "$COMPRESSIONs" ] ; then
+    echo "WARNING: COMPRESSIONs=$COMPRESSIONs is ignored, because OLD and/or NEW values are specified"
+    COMPRESSIONs=
+  fi
+fi
+
+if [ -z "$OLD_ENCRYPTIONs" ] && [ -z "$NEW_ENCRYPTIONs" ] ; then
+  OLD_ENCRYPTIONs=${ENCRYPTIONs:-default}
+  NEW_ENCRYPTIONs=${ENCRYPTIONs:-default}
+else
+  OLD_ENCRYPTIONs=${OLD_ENCRYPTIONs:-default}
+  NEW_ENCRYPTIONs=${NEW_ENCRYPTIONs:-default}
+  if [ -n "$ENCRYPTIONs" ] ; then
+    echo "WARNING: ENCRYPTIONs=$ENCRYPTIONs is ignored, because OLD and/or NEW values are specified"
+    ENCRYPTIONs=
+  fi
+fi
+
 
 echo "########################################################"
 echo "# TEST CONFIGURATION:"
@@ -33,11 +96,15 @@ echo "#   LOGDIR:            $LOGDIR"
 echo "#   OLD_DATA_LOCATION: $OLD_DATA_LOCATION"
 echo "#   OLD [SERVER]:      $OLD"
 echo "#   [TEST] TYPEs:      $TYPEs"
-echo "#   FILE_FORMATs:      $FILE_FORMATs"
-echo "#   INNODBs:           $INNODBs"
+echo "#   OLD_FILE_FORMATs:  $OLD_FILE_FORMATs"
+echo "#   NEW_FILE_FORMATs:  $NEW_FILE_FORMATs"
+echo "#   OLD_INNODBs:       $OLD_INNODBs"
+echo "#   NEW_INNODBs:       $NEW_INNODBs"
 echo "#   PAGE_SIZEs:        $PAGE_SIZEs"
-echo "#   COMPRESSIONs:      $COMPRESSIONs"
-echo "#   ENCRYPTIONs:       $ENCRYPTIONs"
+echo "#   OLD_COMPRESSIONs:  $OLD_COMPRESSIONs"
+echo "#   NEW_COMPRESSIONs:  $NEW_COMPRESSIONs"
+echo "#   OLD_ENCRYPTIONs:   $OLD_ENCRYPTIONs"
+echo "#   NEW_ENCRYPTIONs:   $NEW_ENCRYPTIONs"
 echo "########################################################"
 echo ""
 
@@ -124,108 +191,145 @@ check_tables() {
 
 TRIAL=0
 total_res=0
-for ff in $FILE_FORMATs ; do
-  for i in $INNODBs ; do
-    for ps in $PAGE_SIZEs ; do
-      for c in $COMPRESSIONs ; do
-        for e in $ENCRYPTIONs ; do
-          for t in $TYPEs ; do
-
-            res=0
-            export TRIAL=$((TRIAL+1))
-            export VARDIR=$LOGDIR/vardir$TRIAL
-            export TRIAL_LOG=$VARDIR/trial${TRIAL}.log
-
-            echo ""
-            echo "########################################################"
-            echo "# TRIAL $TRIAL CONFIGURATION:"
-            echo "#   Test type:   $t"
-            echo "#   File format: $ff"
-            echo "#   InnoDB:      $i"
-            echo "#   Page size:   $ps"
-            echo "#   Compression: $c"
-            echo "#   Encryption:  $e"
-            echo "########################################################"
-            echo ""
-
-            if [ -z "$e" ] || [ "$e" == "turn_on" ] ; then
-              old_encryption=off
-            else
-              old_encryption=$e
+for old_f in $OLD_FILE_FORMATs ; do
+  for new_f in $NEW_FILE_FORMATs ; do
+    if [ -n "$FILE_FORMATs" ] && [ "$old_f" != "$new_f" ] ; then
+      echo "File format was requested to stay unchanged, the combination with $old_f => $new_f is skipped"
+      continue
+    fi
+    for old_i in $OLD_INNODBs ; do
+      for new_i in $NEW_INNODBs ; do
+        if [ -n "$INNODBs" ] && [ "$old_i" != "$new_i" ] ; then
+          echo "InnoDB type was requested to stay unchanged, the combination with $old_i => $new_i is skipped"
+          continue
+        fi
+        for old_c in $OLD_COMPRESSIONs ; do
+          for new_c in $NEW_COMPRESSIONs ; do
+            if [ -n "$COMPRESSIONs" ] && [ "$old_c" != "$new_c" ] ; then
+              echo "Compression was requested to stay unchanged, the combination with $old_c => $new_c is skipped"
+              continue
             fi
-            link=${OLD_DATA_LOCATION}/${OLD}/format-${ff}/innodb-${i}/${ps}/compression-${c}/encryption-${old_encryption}/${t}.tar.gz
-            mkdir -p $VARDIR
-            cd $VARDIR
-            echo "---------------"
-            echo "Gettting $link"
-            wget --quiet $link
+            for old_e in $OLD_ENCRYPTIONs ; do
+              for new_e in $NEW_ENCRYPTIONs ; do
+                if [ -n "$ENCRYPTIONs" ] && [ "$old_e" != "$new_e" ] ; then
+                  echo "Encryption was requested to stay unchanged, the combination with $old_e => $new_e is skipped"
+                  continue
+                fi
+                for ps in $PAGE_SIZEs ; do
+                  for t in $TYPEs ; do
 
-            terminate_if_error "Failed to download the old data"
+                    res=0
+                    export TRIAL=$((TRIAL+1))
+                    export VARDIR=$LOGDIR/vardir$TRIAL
+                    export TRIAL_LOG=$VARDIR/trial${TRIAL}.log
 
-            echo "---------------"
-            echo "Extracting data"
-            tar zxf ${t}.tar.gz
-            datadir=$VARDIR/data
-            if [ -e $datadir/mysql.log ] ; then
-              mv $datadir/mysql.log $datadir/mysql.log_orig
-            fi
-            if [ -e $datadir/mysql.err ] ; then
-              mv $datadir/mysql.err $datadir/mysql.err_orig
-            fi
+                    echo ""
+                    echo "########################################################"
+                    echo "# TRIAL $TRIAL CONFIGURATION:"
+                    echo "#   Test type:   $t"
+                    echo "#   File format: $old_f => $new_f"
+                    echo "#   InnoDB:      $old_i => $new_f"
+                    echo "#   Page size:   $ps"
+                    echo "#   Compression: $old_c => $new_c"
+                    echo "#   Encryption:  $old_e => $new_e"
+                    echo "########################################################"
+                    echo ""
 
-            options="--datadir=$datadir --basedir=$BASEDIR --pid-file=$pidfile --port=$port --socket=$SOCKET --general-log --general-log-file=$VARDIR/mysql.log --log-error=$VARDIR/mysql.err"
-            if [ "$ff" != "default" ] ; then
-              options="$options --innodb-file-format=$ff"
-            fi
-            if [ "$i" == "plugin" ] ; then
-              options="$options --ignore-builtin-innodb --plugin-load-add=ha_innodb"
-            fi
-            if [ "$ps" != "default" ] ; then
-              options="$options --innodb-page-size=$ps"
-            fi
-            if [ "$c" != "default" ] ; then
-              options="$options --innodb-compression-algorithm=$c"
-            fi
-            if [ "$e" == "on" ] || [ "$e" == "turn_on" ] ; then
-              options="$options --plugin-load-add=file_key_management --file-key-management-filename=$TOOLBOX_DIR/data/keys.txt --innodb-encrypt-tables --innodb-encrypt-log"
-            fi
+                    link="${OLD_DATA_LOCATION}/${OLD}"
+                    if [ "$old_f" != "default" ] ; then
+                      link=${link}/format-${old_f}
+                    fi
+                    if [ "$old_i" != "default" ] ; then
+                      link=${link}/innodb-${old_i}
+                    fi
+                    if [ "$ps" != "default" ] ; then
+                      link=${link}/${ps}
+                    fi
+                    if [ "$old_c" != "default" ] ; then
+                      link=${link}/compression-${old_c}
+                    fi
+                    if [ "$old_e" != "default" ] ; then
+                      link=${link}/encryption-${old_e}
+                    fi
+                    link=${link}/${t}.tar.gz
 
-            start_server
-            check_tables
+                    mkdir -p $VARDIR
+                    cd $VARDIR
 
-            echo "---------------"
-            echo "Checking if workarounds for known problems are needed"
-            . $SCRIPT_DIR/innodb_static_upgrade_workarounds.sh
-            terminate_if_error "Problem occurred while applying workarounds"
+                    echo "---------------"
+                    echo "Gettting $link"
+                    wget --quiet $link
 
-            echo "---------------"
-            echo "Running mysql_upgrade"
-            $BASEDIR/bin/mysql_upgrade -uroot --socket=$SOCKET
-            terminate_if_error "Upgrade returned error"
+                    terminate_if_error "Failed to download the old data"
 
-            shutdown_server
-            mv $VARDIR/mysql.err $VARDIR/mysql.err.1
+                    echo "---------------"
+                    echo "Extracting data"
+                    tar zxf ${t}.tar.gz
+                    datadir=$VARDIR/data
+                    if [ -e $datadir/mysql.log ] ; then
+                      mv $datadir/mysql.log $datadir/mysql.log_orig
+                    fi
+                    if [ -e $datadir/mysql.err ] ; then
+                      mv $datadir/mysql.err $datadir/mysql.err_orig
+                    fi
 
-            start_server --loose-max-statement-time=10 --lock-wait-timeout=5 --innodb-lock-wait-timeout=3
-            check_tables
-            # After the test, tables might be different
-            rm -f $VARDIR/check.sql
+                    options="--datadir=$datadir --basedir=$BASEDIR --pid-file=$pidfile --port=$port --socket=$SOCKET --general-log --general-log-file=$VARDIR/mysql.log --log-error=$VARDIR/mysql.err"
+                    if [ "$new_f" != "default" ] ; then
+                      options="$options --innodb-file-format=$new_f"
+                    fi
+                    if [ "$new_i" == "plugin" ] ; then
+                      options="$options --ignore-builtin-innodb --plugin-load-add=ha_innodb"
+                    fi
+                    if [ "$ps" != "default" ] ; then
+                      options="$options --innodb-page-size=$ps"
+                    fi
+                    if [ "$new_c" != "default" ] ; then
+                      options="$options --innodb-compression-algorithm=$new_c"
+                    fi
+                    if [ "$new_e" == "on" ] ; then
+                      options="$options --plugin-load-add=file_key_management --file-key-management-filename=$TOOLBOX_DIR/data/keys.txt --innodb-encrypt-tables --innodb-encrypt-log"
+                    fi
 
-            cd $RQG_HOME
-            set -o pipefail
-            echo "---------------"
-            echo "Running post-upgrade DML/DDL"
-            perl gentest.pl --dsn="dbi:mysql:host=127.0.0.1:port=$port:user=root:database=test" --grammar=conf/mariadb/generic-dml.yy --redefine=conf/mariadb/alter_table.yy --redefine=conf/mariadb/modules/admin.yy --redefine=conf/mariadb/instant_add.yy --threads=6 --queries=100M --duration=90 2>&1 | tee $TRIAL_LOG
+                    start_server
+                    check_tables
 
-            terminate_if_error "Post-upgrade DML/DDL failed"
+#                    echo "---------------"
+#                    echo "Checking if workarounds for known problems are needed"
+#                    . $SCRIPT_DIR/innodb_static_upgrade_workarounds.sh
+#                    terminate_if_error "Problem occurred while applying workarounds"
 
-            shutdown_server
-            echo "---------------"
-            echo "Collecting failure info"
-            . $SCRIPT_DIR/collect_single_failure_info.sh
-            if [ "$res" != 0 ] ; then
-              total_res=$res
-            fi
+                    echo "---------------"
+                    echo "Running mysql_upgrade"
+                    $BASEDIR/bin/mysql_upgrade -uroot --socket=$SOCKET
+                    terminate_if_error "Upgrade returned error"
+
+                    shutdown_server
+                    mv $VARDIR/mysql.err $VARDIR/mysql.err.1
+
+                    start_server --loose-max-statement-time=10 --lock-wait-timeout=5 --innodb-lock-wait-timeout=3
+                    check_tables
+                    # After the test, tables might be different
+                    rm -f $VARDIR/check.sql
+
+                    cd $RQG_HOME
+                    set -o pipefail
+                    echo "---------------"
+                    echo "Running post-upgrade DML/DDL"
+                    perl gentest.pl --dsn="dbi:mysql:host=127.0.0.1:port=$port:user=root:database=test" --grammar=conf/mariadb/generic-dml.yy --redefine=conf/mariadb/alter_table.yy --redefine=conf/mariadb/modules/admin.yy --redefine=conf/mariadb/instant_add.yy --threads=6 --queries=100M --duration=90 2>&1 | tee $TRIAL_LOG
+
+                    terminate_if_error "Post-upgrade DML/DDL failed"
+
+                    shutdown_server
+                    echo "---------------"
+                    echo "Collecting failure info"
+                    . $SCRIPT_DIR/collect_single_failure_info.sh
+                    if [ "$res" != 0 ] ; then
+                      total_res=$res
+                    fi
+                  done
+                done
+              done
+            done
           done
         done
       done
