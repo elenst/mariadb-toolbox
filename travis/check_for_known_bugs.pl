@@ -162,6 +162,11 @@ TODO-842:
 =~ Item_exists_subselect::is_top_level_item
 =~ st_select_lex::update_used_tables
 =~ JOIN::optimize
+MDEV-18947:
+=~ points to uninitialised byte
+=~ pagecache_fwrite
+=~ flush_cached_blocks
+=~ flush_pagecache_blocks_with_filter
 MDEV-18942:
 =~ Conditional jump or move depends on uninitialised value
 =~ Json_writer::add_bool
@@ -202,7 +207,7 @@ MDEV-18900:
 =~ AddressSanitizer: heap-use-after-free
 =~ my_strnncoll_binary
 =~ Item_func_min_max::val_str
-=~ end_send_group
+=~ end_send_group|AGGR_OP::put_record
 MDEV-18899:
 =~ signal 11
 =~ Field::set_warning_truncated_wrong_value
