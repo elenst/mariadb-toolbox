@@ -218,6 +218,7 @@ for old_f in $OLD_FILE_FORMATs ; do
                 for ps in $PAGE_SIZEs ; do
                   for t in $TYPEs ; do
 
+                    start=`date  "+%s"`
                     res=0
                     export TRIAL=$((TRIAL+1))
                     export VARDIR=$LOGDIR/vardir$TRIAL
@@ -258,7 +259,7 @@ for old_f in $OLD_FILE_FORMATs ; do
 
                     echo "---------------"
                     echo "Gettting $link"
-                    wget --quiet $link
+                    time wget --quiet $link
 
                     terminate_if_error "Failed to download the old data"
 
@@ -291,7 +292,7 @@ for old_f in $OLD_FILE_FORMATs ; do
                     fi
 
                     start_server
-                    check_tables
+                    time check_tables
 
 #                    echo "---------------"
 #                    echo "Checking if workarounds for known problems are needed"
@@ -307,7 +308,7 @@ for old_f in $OLD_FILE_FORMATs ; do
                     mv $VARDIR/mysql.err $VARDIR/mysql.err.1
 
                     start_server --loose-max-statement-time=10 --lock-wait-timeout=5 --innodb-lock-wait-timeout=3
-                    check_tables
+                    time check_tables
                     # After the test, tables might be different
                     rm -f $VARDIR/check.sql
 
@@ -315,17 +316,25 @@ for old_f in $OLD_FILE_FORMATs ; do
                     set -o pipefail
                     echo "---------------"
                     echo "Running post-upgrade DML/DDL"
-                    perl gentest.pl --dsn="dbi:mysql:host=127.0.0.1:port=$port:user=root:database=test" --grammar=conf/mariadb/generic-dml.yy --redefine=conf/mariadb/alter_table.yy --redefine=conf/mariadb/modules/admin.yy --redefine=conf/mariadb/instant_add.yy --threads=6 --queries=100M --duration=90 2>&1 | tee $TRIAL_LOG
-
-                    terminate_if_error "Post-upgrade DML/DDL failed"
+                    time perl gentest.pl --dsn="dbi:mysql:host=127.0.0.1:port=$port:user=root:database=test" --grammar=conf/mariadb/generic-dml.yy --redefine=conf/mariadb/alter_table.yy --redefine=conf/mariadb/modules/admin.yy --redefine=conf/mariadb/instant_add.yy --threads=6 --queries=100M --duration=60 2>&1 > $TRIAL_LOG 2>&1
+                    if [ "$?" != "0" ] ; then
+                      res=1
+                    fi
 
                     shutdown_server
-                    echo "---------------"
-                    echo "Collecting failure info"
-                    . $SCRIPT_DIR/collect_single_failure_info.sh
-                    if [ "$res" != 0 ] ; then
+
+                    if [ "$res" == "0" ] ; then
+                      echo "Upgrade test will exit with exit status STATUS_OK" >> $TRIAL_LOG
+                    else
+                      echo "Upgrade test will exit with exit status STATUS_UPGRADE_FAILURE" >> $TRIAL_LOG
                       total_res=$res
                     fi
+
+                    echo "---------------"
+                    echo "Collecting failure info"
+                    time . $SCRIPT_DIR/collect_single_failure_info.sh
+                    duration=$((`date "+%s"`-$start))
+                    echo "End of trial $TRIAL, duration $duration"
                   done
                 done
               done
