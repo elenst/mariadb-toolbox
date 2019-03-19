@@ -12,11 +12,11 @@ my $opt_mode = 'all';
 my $output;
 my $suitedir = 't';
 my $suitename;
-my $options = '';
+my @options = '';
 my $testcase;
 my $path = dirname(abs_path($0));
 my $opt_preserve_connections;
-my $rpl= 0;
+my $rpl= undef;
 my $max_chunk= 0;
 my $trials= 1;
 my $initial_trials= undef;
@@ -43,8 +43,8 @@ GetOptions (
   "output=s"    => \$output,
   "suitedir=s"  => \$suitedir,
   "suite=s"     => \$suitename,
-  "options=s"   => \$options,
-  "rpl"         => \$rpl,
+  "options=s@"   => \@options,
+  "rpl=s"       => \$rpl,
   "preserve-connections|preserve_connections=s" => \$opt_preserve_connections,
   "max-chunk-size|max_chunk_size=i" => \$max_chunk,
   "trials=i"    => \$trials,
@@ -339,7 +339,7 @@ sub run_test
       }
     }
     elsif (defined $pid) {
-      system( "perl mysql-test-run.pl $options --suite=$suitename $test_basename > $testcase.output/$testcase.out.last 2>&1" );
+      system( "perl mysql-test-run.pl @options --suite=$suitename $test_basename > $testcase.output/$testcase.out.last 2>&1" );
       exit $? >> 8;
     } else {
       print "ERROR: Could not fork for running the test\n";
@@ -408,7 +408,7 @@ sub write_testfile
   print TEST "--disable_abort_on_error\n";
   if ($rpl) {
     print TEST "--source include/master-slave.inc\n";
-#      print TEST "--source include/have_binlog_format_statement.inc\n";
+    print TEST "--source include/have_binlog_format_".$rpl.".inc\n";
   }
   print TEST @$testref;
   if ($rpl) {
