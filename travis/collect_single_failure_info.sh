@@ -261,4 +261,5 @@ if [ "$res" == "0" ] ; then
   rm -rf ${LOGDIR}/${ARCHDIR}*
 fi
 
+cd $OLDDIR
 . $SCRIPT_DIR/soft_exit.sh $res
