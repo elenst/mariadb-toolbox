@@ -162,6 +162,11 @@ TODO-842:
 =~ Item_exists_subselect::is_top_level_item
 =~ st_select_lex::update_used_tables
 =~ JOIN::optimize
+MDEV-18962:
+=~ AddressSanitizer: heap-buffer-overflow
+=~ Single_line_formatting_helper::on_add_str
+=~ Json_writer::add_str
+=~ TRP_ROR_INTERSECT::trace_basic_info
 MDEV-18947:
 =~ points to uninitialised byte
 =~ pagecache_fwrite
