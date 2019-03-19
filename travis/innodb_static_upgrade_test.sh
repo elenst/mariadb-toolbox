@@ -113,8 +113,13 @@ port=3308
 export SOCKET=/tmp/upgrade.sock
 
 add_result_to_summary() {
-  export OLD t ps old_i old_f old_e old_c new_i new_f new_e new_c res
-  perl -e 'print sprintf("| %2d | %12s | %6s | %7s | %7s | %9s | %7s | %8s | => | %7s | %9s | %7s | %8s | %4s |\n", $ENV{TRIAL}, $ENV{OLD}, $ENV{t}, $ENV{ps}, $ENV{old_i}, $ENV{old_f}, $ENV{old_e}, $ENV{old_c}, $ENV{new_i}, $ENV{new_f}, $ENV{new_e}, $ENV{new_c}, ($ENV{res}?"FAIL":"OK"))' >> $HOME/summary
+  export OLD t ps old_i old_f old_e old_c new_i new_f new_e new_c
+  if [ "$res" == "0" ] ; then
+    export status=OK
+  else
+    export status=FAIL
+  fi
+  perl -e 'print sprintf("| %2d | %12s | %6s | %7s | %7s | %9s | %7s | %8s | => | %7s | %9s | %7s | %8s | %4s |\n", $ENV{TRIAL}, $ENV{OLD}, $ENV{t}, $ENV{ps}, $ENV{old_i}, $ENV{old_f}, $ENV{old_e}, $ENV{old_c}, $ENV{new_i}, $ENV{new_f}, $ENV{new_e}, $ENV{new_c}, $ENV{status})' >> $HOME/summary
 }
 
 terminate_if_error() {
