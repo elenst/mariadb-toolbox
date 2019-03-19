@@ -258,8 +258,13 @@ MDEV-18875:
 =~ ha_rollback_trans
 =~ mysql_trans_commit_alter_copy_data|trans_commit_implicit
 =~ ADD PERIOD|add period|LOCK TABLE
+MDEV-18853:
+=~ Assertion \`0'
+=~ Version: '10\.4
+=~ Protocol::end_statement
+=~ DELETE .* FOR PORTION
 MDEV-18852:
-=~ signal 11|AddressSanitizer: heap-use-after-free|AddressSanitizer: heap-buffer-overflow
+=~ signal 11|AddressSanitizer: heap-use-after-free|AddressSanitizer: heap-buffer-overflow|AddressSanitizer: use-after-poison
 =~ Version: '10\.4
 =~ reinit_stmt_before_use
 =~ Prepared_statement::execute|sp_head::execute
@@ -788,6 +793,11 @@ MDEV-17120:
 =~ base_list::push_back
 =~ multi_update::prepare
 =~ sp_head::execute
+MDEV-17120:
+=~ AddressSanitizer: use-after-poison
+=~ multi_update::prepare
+=~ JOIN::prepare
+=~ sp_instr_stmt::execute
 MDEV-17091:
 =~ Assertion \`part_id == m_last_part'
 =~ ha_partition::delete_row
