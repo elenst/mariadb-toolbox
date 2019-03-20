@@ -9,4 +9,3 @@ was not locked with LOCK TABLES
 mysqld: Incorrect information in file
 Following users were specified in CREATE USER IF NOT EXISTS but they already exist. Corresponding entry in binary log used default authentication plugin
 into binary log while granting/revoking privileges in databases
-Fatal error: Can't open and lock privilege tables: Table 'db' was not locked with LOCK TABLES
