@@ -162,6 +162,30 @@ TODO-842:
 =~ Item_exists_subselect::is_top_level_item
 =~ st_select_lex::update_used_tables
 =~ JOIN::optimize
+TODO-842:
+=~ InnoDB: foreign constraints: secondary index is out of sync
+=~ Assertion \`!"secondary index is out of sync"'
+=~ dict_index_t::vers_history_row
+=~ row_upd_check_references_constraints
+TODO-842:
+=~ InnoDB: Failing assertion: s_latch == rw_lock_own(&index->lock, 352)
+=~ =~ Version: '10\.1
+=~ row_ins_scan_sec_index_for_duplicate
+=~ mysql_load
+TODO-842:
+=~ InnoDB: Failing assertion: sym_node->table != NULL
+=~ =~ Version: '10\.1
+=~ pars_retrieve_table_def
+=~ fts_sync_index
+MDEV-18977:
+=~ Conditional jump or move depends on uninitialised value
+=~ TABLE::prune_range_rowid_filters
+=~ TABLE::init_cost_info_for_usable_range_rowid_filters
+MDEV-18972:
+=~ InnoDB: Failing assertion: !cursor->index->is_committed()
+=~ row_ins_sec_index_entry_by_modify
+=~ row_update_vers_insert
+=~ row_upd_check_references_constraints
 MDEV-18962:
 =~ AddressSanitizer: heap-buffer-overflow
 =~ Single_line_formatting_helper::on_add_str
@@ -188,7 +212,7 @@ MDEV-18921:
 =~ signal 11
 =~ bitmap_bits_set|bitmap_is_set
 =~ pack_row|max_row_length
-=~ THD::binlog_update_row
+=~ THD::binlog_update_row|THD::binlog_write_row
 MDEV-18911:
 =~ Assertion \`(templ->is_virtual && !field) \|\| (field && field->prefix_len ? field->prefix_len == len : templ->mysql_col_len == len)'
 =~ row_sel_field_store_in_mysql_format_func
@@ -223,16 +247,6 @@ MDEV-18891:
 =~ innobase_get_computed_value
 =~ row_upd_del_mark_clust_rec
 =~ Version: '10\.4
-MDEV-18889:
-=~ my_strnncoll_binary
-=~ Field::cmp_offset
-=~ check_duplicate_long_entry_key
-=~ Version: '10\.4
-MDEV-18888:
-=~ signal 11|AddressSanitizer: SEGV on unknown address
-=~ Item_field::register_field_in_read_map
-=~ prepare_vcol_for_base_setup
-=~ Version: '10\.4
 MDEV-18887:
 =~ Conditional jump or move depends on uninitialised value
 =~ ha_key_cmp
@@ -248,11 +262,11 @@ MDEV-18881:
 =~ make_sortkey
 =~ find_all_keys
 =~ create_sort_index
-MDEV-18876:
-=~ Assertion \`is_valid_time_slow()'
-=~ Time::valid_MYSQL_TIME_to_valid_value
-=~ Time::make_from_item
-=~ Item::print_value
+MDEV-18879:
+=~ InnoDB: Apparent corruption in space .* page .* index .*
+=~ Assertion \`page_validate(buf_block_get_frame(left_block), cursor->index)'
+=~ btr_page_split_and_insert
+=~ row_update_cascade_for_mysql
 MDEV-18875:
 =~ Assertion \`thd->transaction.stmt.ha_list == __null \|\| trans == &thd->transaction.stmt'
 =~ ha_rollback_trans
@@ -277,10 +291,6 @@ MDEV-18820:
 =~ Assertion \`lock_table_has(trx, index->table, LOCK_IX)'
 =~ lock_rec_insert_check_and_lock
 =~ btr_cur_optimistic_insert
-MDEV-18809:
-=~ Assertion \`key_info->key_part->field->flags & (1<< 30)'|signal 11
-=~ setup_keyinfo_hash
-=~ Sql_cmd_alter_table::execute
 MDEV-18805:
 =~ Warning: Enabling keys got errno 127 on
 =~ AddressSanitizer: heap-buffer-overflow
@@ -292,54 +302,10 @@ MDEV-18802:
 =~ dict_stats_update_if_needed
 =~ row_update_cascade_for_mysql
 =~ row_upd_step
-MDEV-18801:
-=~ InnoDB: Failing assertion: field->col->mtype == type
-=~ row_sel_convert_mysql_key_to_innobase
-=~ get_key_scans_params
-MDEV-18800:
-=~ Assertion \`!pk->has_virtual()'
-=~ instant_alter_column_possible
-=~ ha_innobase::check_if_supported_inplace_alter
-MDEV-18800:
-=~ InnoDB: Failing assertion: pos != ULINT_UNDEFINED
-=~ row_build_row_ref_in_tuple
-=~ fts_add_doc_by_id
-=~ innobase_commit
-MDEV-18800:
-=~ Assertion \`n < rec_offs_n_fields(offsets)'
-=~ rec_get_nth_field_offs
-=~ row_search_mvcc
-=~ check_duplicate_long_entry_key
-MDEV-18798:
-=~ InnoDB: No matching column for \`DB_ROW_HASH_1\` in index
-=~ signal 11|AddressSanitizer: SEGV on unknown address
-=~ ha_innobase::commit_inplace_alter_table
-MDEV-18795:
-=~ Failing assertion: field->prefix_len > 0
-=~ row_sel_convert_mysql_key_to_innobase
-=~ get_key_scans_params|check_duplicate_long_entry_key
 MDEV-18794:
 =~ Assertion \`!m_innodb' failed
 =~ ha_partition::cmp_ref
 =~ read_keys_and_merge_scans
-MDEV-18793:
-=~ Using a partial-field key prefix in search, index
-=~ Assertion \`0'
-=~ row_sel_convert_mysql_key_to_innobase
-=~ get_key_scans_params
-MDEV-18793:
-=~ AddressSanitizer: unknown-crash
-=~ row_mysql_store_col_in_innobase_format
-=~ row_sel_convert_mysql_key_to_innobase
-=~ get_key_scans_params
-MDEV-18792:
-=~ AddressSanitizer: unknown-crash on address
-=~ _mi_pack_key
-=~ get_key_scans_params
-MDEV-18790:
-=~ signal 11|AddressSanitizer: SEGV on unknown address
-=~ fields_in_hash_keyinfo
-=~ check_duplicate_long_entries_update
 MDEV-18788:
 =~ at line 391: Event Scheduler: An error occurred when initializing system tables. Disabling the Event Scheduler
 =~ FATAL ERROR: Upgrade failed
@@ -347,32 +313,6 @@ MDEV-18787:
 =~ Assertion \`! is_set()' failed
 =~ Diagnostics_area::set_eof_status
 =~ mysqld_show_create
-MDEV-18784:
-=~ Enabling keys got errno 127
-=~ AddressSanitizer: heap-use-after-free
-=~ Field_long::reset
-=~ convert_null_to_field_value_or_error
-=~ Item_null::save_in_field
-MDEV-18784:
-=~ Enabling keys got errno 127
-=~ signal 11
-=~ l_find
-=~ initialize_bucket
-MDEV-18784:
-=~ signal 11
-=~ l_find
-=~ l_search
-=~ lf_hash_search_using_hash_value
-=~ find_or_create_digest
-MDEV-18784:
-=~ AddressSanitizer: heap-use-after-free
-=~ Field::set_null
-=~ set_field_to_null_with_conversions
-=~ Item_null::save_in_field
-MDEV-18784:
-=~ AddressSanitizer: heap-use-after-free
-=~ field_conv_memcpy
-=~ Item_field::save_in_field
 MDEV-18783:
 =~ AddressSanitizer: heap-use-after-free|signal 11
 =~ tree_search_next|hp_rb_make_key|tree_search_edge|check_one_key
@@ -418,6 +358,7 @@ MDEV-18696:
 =~ Assertion \`newtrn->used_instances != (void\*) tbl' failed
 =~ _ma_set_trn_for_table
 =~ thr_multi_lock
+# Only fixed in 10.4!
 MDEV-18694:
 =~ mysql_socket\.fd != -1
 =~ Protocol::send_error
@@ -439,11 +380,6 @@ MDEV-18690:
 =~ base_list::head
 =~ substitute_for_best_equal_field
 =~ JOIN::optimize_stage2
-MDEV-18679:
-=~ signal 11|AddressSanitizer: SEGV
-=~ JOIN::optimize
-=~ mysql_derived_optimize
-=~ st_select_lex::handle_derived
 MDEV-18675:
 =~ signal 11|AddressSanitizer: SEGV on unknown address
 =~ COND_EQUAL::copy
@@ -453,14 +389,6 @@ MDEV-18667:
 =~ make_date_time
 =~ Arg_comparator::compare_string
 =~ Item_func_nullif::compare
-MDEV-18640:
-=~ Conditional jump or move depends on uninitialised value
-=~ TABLE::prune_range_rowid_filters
-=~ TABLE::init_cost_info_for_usable_range_rowid_filters
-MDEV-18630:
-=~ Conditional jump or move depends on uninitialised value
-=~ ib_push_warning
-=~ dict_create_foreign_constraints_low
 MDEV-18626:
 =~ AddressSanitizer: stack-buffer-overflow
 =~ int10_to_str
@@ -540,6 +468,11 @@ MDEV-18452:
 =~ Field::set_default
 =~ Field_bit::set_default
 =~ fill_record_n_invoke_before_triggers
+MDEV-18451:
+=~ signal 11|AddressSanitizer: SEGV on unknown address
+=~ maria_create_trn_for_mysql
+=~ _ma_setup_live_state
+=~ trans_commit_implicit
 MDEV-18441:
 =~ Assertion \`tables_opened == 1'
 =~ Sql_cmd_alter_table::execute
@@ -779,6 +712,10 @@ MDEV-17576:
 =~ Assertion \`share->reopen == 1'
 =~ maria_extra
 =~ mysql_alter_table
+MDEV-17556:
+=~ Assertion \`bitmap_is_set_all(&table->s->all_set)'
+=~ handler::ha_reset
+=~ close_thread_tables
 MDEV-17223:
 =~ Assertion \`thd->killed != 0'
 =~ ha_maria::enable_indexes
@@ -1026,14 +963,6 @@ MDEV-18805:
 =~ Field::is_null_in_record
 =~ Column_definition::Column_definition
 =~ Create_field::Create_field
-MDEV-18801:
-=~ AddressSanitizer: heap-buffer-overflow|AddressSanitizer: SEGV on unknown address
-=~ row_sel_convert_mysql_key_to_innobase
-=~ get_key_scans_params
-MDEV-18800:
-=~ signal 11
-=~  ha_innobase::commit_inplace_alter_table
-=~ Sql_cmd_alter_table::execute
 MDEV-18675:
 =~ AddressSanitizer: SEGV on unknown address
 =~ and_new_conditions_to_optimized_cond
@@ -1041,8 +970,6 @@ MDEV-18485:
 =~ Field::is_null_in_record
 =~ Column_definition::Column_definition
 =~ mysql_alter_table
-MDEV-18467:
-=~ fix_semijoin_strategies_for_picked_join_order
 MDEV-18461:
 =~ sure_page <= last_page
 MDEV-18461:
@@ -1059,8 +986,6 @@ MDEV-18454:
 =~ ReadView::check_trx_id_sanity
 MDEV-18453:
 =~ rec_get_deleted_flag
-MDEV-18451:
-=~ maria_create_trn_for_mysql
 MDEV-18449:
 =~ my_strnncollsp_simple
 MDEV-18421:
@@ -1271,10 +1196,6 @@ MDEV-17583:
 =~ next_mrec == next_mrec_end
 MDEV-17582:
 =~ status_var\.local_memory_used == 0
-MDEV-17556:
-=~ table->s->all_set
-MDEV-17556:
-=~ bitmap_is_set_all
 MDEV-17551:
 =~ _ma_state_info_write
 MDEV-17540:
@@ -1515,29 +1436,6 @@ MDEV-8203:
 =~  rgi->tables_to_lock
 MDEV-5924:
 =~  Query_cache::register_all_tables
-MDEV-371:
-=~ AddressSanitizer: use-after-poison
-=~ innobase_indexed_virtual_exist
-=~ ha_innobase::check_if_supported_inplace_alter
-=~ Sql_cmd_alter_table::execute
-MDEV-371:
-=~ Failing assertion: field->prefix_len > 0
-=~ row_sel_convert_mysql_key_to_innobase
-=~ check_duplicate_long_entry_key
-MDEV-371:
-=~ Assertion \`m_part_spec\.start_part >= m_part_spec\.end_part'
-=~ ha_partition::index_read_idx_map
-=~ mysql_load
-MDEV-371:
-=~ AddressSanitizer: SEGV on unknown address
-=~ Field_varstring::get_length
-=~ Create_field::Create_field
-MDEV-371:
-=~ Invalid read of size
-=~ Field::set_notnull
-=~ Field::load_data_set_value
-MDEV-371:
-=~ Index .* of .* has .* columns unique inside InnoDB, but MySQL is asking statistics for
 
 ##############################################################################
 # Fixed:
@@ -2095,3 +1993,138 @@ MDEV-371:
 # MDEV-18719:
 # =~ old \|\| col->same_format(\*old)
 # =~ mysql_inplace_alter_table
+# MDEV-18889:
+# =~ my_strnncoll_binary
+# =~ Field::cmp_offset
+# =~ check_duplicate_long_entry_key
+# =~ Version: '10\.4
+# MDEV-18888:
+# =~ signal 11|AddressSanitizer: SEGV on unknown address
+# =~ Item_field::register_field_in_read_map
+# =~ prepare_vcol_for_base_setup
+# =~ Version: '10\.4
+# MDEV-18876:
+# =~ Assertion \`is_valid_time_slow()'
+# =~ Time::valid_MYSQL_TIME_to_valid_value
+# =~ Time::make_from_item
+# =~ Item::print_value
+# MDEV-18809:
+# =~ Assertion \`key_info->key_part->field->flags & (1<< 30)'|signal 11
+# =~ setup_keyinfo_hash
+# =~ Sql_cmd_alter_table::execute
+# MDEV-18801:
+# =~ InnoDB: Failing assertion: field->col->mtype == type
+# =~ row_sel_convert_mysql_key_to_innobase
+# =~ get_key_scans_params
+# MDEV-18801:
+# =~ AddressSanitizer: heap-buffer-overflow|AddressSanitizer: SEGV on unknown address
+# =~ row_sel_convert_mysql_key_to_innobase
+# =~ get_key_scans_params
+# MDEV-18800:
+# =~ Assertion \`!pk->has_virtual()'
+# =~ instant_alter_column_possible
+# =~ ha_innobase::check_if_supported_inplace_alter
+# MDEV-18800:
+# =~ InnoDB: Failing assertion: pos != ULINT_UNDEFINED
+# =~ row_build_row_ref_in_tuple
+# =~ fts_add_doc_by_id
+# =~ innobase_commit
+# MDEV-18800:
+# =~ Assertion \`n < rec_offs_n_fields(offsets)'
+# =~ rec_get_nth_field_offs
+# =~ row_search_mvcc
+# =~ check_duplicate_long_entry_key
+# MDEV-18798:
+# =~ InnoDB: No matching column for \`DB_ROW_HASH_1\` in index
+# =~ signal 11|AddressSanitizer: SEGV on unknown address
+# =~ ha_innobase::commit_inplace_alter_table
+# MDEV-18795:
+# =~ Failing assertion: field->prefix_len > 0
+# =~ row_sel_convert_mysql_key_to_innobase
+# =~ get_key_scans_params|check_duplicate_long_entry_key
+# MDEV-18793:
+# =~ Using a partial-field key prefix in search, index
+# =~ Assertion \`0'
+# =~ row_sel_convert_mysql_key_to_innobase
+# =~ get_key_scans_params
+# MDEV-18793:
+# =~ AddressSanitizer: unknown-crash
+# =~ row_mysql_store_col_in_innobase_format
+# =~ row_sel_convert_mysql_key_to_innobase
+# =~ get_key_scans_params
+# MDEV-18792:
+# =~ AddressSanitizer: unknown-crash on address
+# =~ _mi_pack_key
+# =~ get_key_scans_params
+# MDEV-18790:
+# =~ signal 11|AddressSanitizer: SEGV on unknown address
+# =~ fields_in_hash_keyinfo
+# =~ check_duplicate_long_entries_update
+# MDEV-18784:
+# =~ Enabling keys got errno 127
+# =~ AddressSanitizer: heap-use-after-free
+# =~ Field_long::reset
+# =~ convert_null_to_field_value_or_error
+# =~ Item_null::save_in_field
+# MDEV-18784:
+# =~ Enabling keys got errno 127
+# =~ signal 11
+# =~ l_find
+# =~ initialize_bucket
+# MDEV-18784:
+# =~ signal 11
+# =~ l_find
+# =~ l_search
+# =~ lf_hash_search_using_hash_value
+# =~ find_or_create_digest
+# MDEV-18784:
+# =~ AddressSanitizer: heap-use-after-free
+# =~ Field::set_null
+# =~ set_field_to_null_with_conversions
+# =~ Item_null::save_in_field
+# MDEV-18784:
+# =~ AddressSanitizer: heap-use-after-free
+# =~ field_conv_memcpy
+# =~ Item_field::save_in_field
+# MDEV-18679:
+# =~ signal 11|AddressSanitizer: SEGV
+# =~ JOIN::optimize
+# =~ mysql_derived_optimize
+# =~ st_select_lex::handle_derived
+# MDEV-18640:
+# =~ Conditional jump or move depends on uninitialised value
+# =~ TABLE::prune_range_rowid_filters
+# =~ TABLE::init_cost_info_for_usable_range_rowid_filters
+# MDEV-18630:
+# =~ Conditional jump or move depends on uninitialised value
+# =~ ib_push_warning
+# =~ dict_create_foreign_constraints_low
+# MDEV-18800:
+# =~ signal 11
+# =~  ha_innobase::commit_inplace_alter_table
+# =~ Sql_cmd_alter_table::execute
+# MDEV-18467:
+# =~ fix_semijoin_strategies_for_picked_join_order
+# MDEV-371:
+# =~ AddressSanitizer: use-after-poison
+# =~ innobase_indexed_virtual_exist
+# =~ ha_innobase::check_if_supported_inplace_alter
+# =~ Sql_cmd_alter_table::execute
+# MDEV-371:
+# =~ Failing assertion: field->prefix_len > 0
+# =~ row_sel_convert_mysql_key_to_innobase
+# =~ check_duplicate_long_entry_key
+# MDEV-371:
+# =~ Assertion \`m_part_spec\.start_part >= m_part_spec\.end_part'
+# =~ ha_partition::index_read_idx_map
+# =~ mysql_load
+# MDEV-371:
+# =~ AddressSanitizer: SEGV on unknown address
+# =~ Field_varstring::get_length
+# =~ Create_field::Create_field
+# MDEV-371:
+# =~ Invalid read of size
+# =~ Field::set_notnull
+# =~ Field::load_data_set_value
+# MDEV-371:
+# =~ Index .* of .* has .* columns unique inside InnoDB, but MySQL is asking statistics for
