@@ -406,7 +406,7 @@ MDEV-18589:
 =~ xb_delta_open_matching_space
 MDEV-18581:
 =~ Assertion \`index->table == node->table'
-=~ row_purge_remove_sec_if_poss_leaf
+=~ row_purge_remove_sec_if_poss_leaf|row_purge_upd_exist_or_extern_func
 =~ row_purge_record_func
 =~ row_purge_step
 MDEV-18546:
@@ -1082,8 +1082,9 @@ MDEV-18084:
 =~ dict_index_get_nth_field
 MDEV-18084:
 =~ row_upd_changes_some_index_ord_field_binary
-MDEV-18065:
-=~ Fatal error: Can't open and lock privilege tables
+# Not fixed, but I don't want it to match
+# MDEV-18065:
+# =~ Fatal error: Can't open and lock privilege tables
 MDEV-18063:
 =~ is corrupt; try to repair it
 MDEV-18062:
