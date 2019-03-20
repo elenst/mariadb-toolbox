@@ -405,9 +405,10 @@ for old_f in $OLD_FILE_FORMATs ; do
   done
 done
 echo "------------------------------------------------------------------------------------------------------------------------------------------" >> $HOME/summary
+echo "" >> $HOME/summary
 
 cat $HOME/summary
-exit $total_res
+. $SCRIPT_DIR/soft_exit.sh $total_res
 
 
 
