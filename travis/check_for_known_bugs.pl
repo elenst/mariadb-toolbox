@@ -158,6 +158,11 @@ __DATA__
 ##############################################################################
 
 TODO-842:
+=~ AddressSanitizer: heap-use-after-free
+=~ my_strcasecmp_utf8
+=~ make_unique_constraint_name
+=~ mysql_create_frm_image
+TODO-842:
 =~ signal 11
 =~ maria_status
 =~ ha_maria::info
@@ -183,6 +188,16 @@ TODO-842:
 =~ =~ Version: '10\.1
 =~ pars_retrieve_table_def
 =~ fts_sync_index
+MDEV-19014:
+=~ pure virtual method called|signal 11|AddressSanitizer: heap-use-after-free
+=~ Item_direct_view_ref::fix_fields
+=~ Table_triggers_list::process_triggers
+MDEV-19012:
+=~ signal 11
+=~ =~ Version: '10\.4
+=~ st_select_lex_unit::optimize
+=~ mysql_derived_optimize
+=~ TABLE_LIST::handle_derived
 MDEV-19011:
 =~ Assertion \`file->s->base.reclength < file->s->vreclength'
 =~ ha_myisam::setup_vcols_for_repair
@@ -727,6 +742,11 @@ MDEV-17556:
 =~ Assertion \`bitmap_is_set_all(&table->s->all_set)'
 =~ handler::ha_reset
 =~ close_thread_tables
+MDEV-17361:
+=~ signal 11|AddressSanitizer: SEGV on unknown address
+=~ in Query_arena::set_query_arena
+=~ THD::set_n_backup_active_arena
+=~ Field::set_default
 MDEV-17223:
 =~ Assertion \`thd->killed != 0'
 =~ ha_maria::enable_indexes
@@ -1224,10 +1244,6 @@ MDEV-17466:
 =~ dfield2->type\.mtypex
 MDEV-17464:
 =~ Operating system error number 2
-MDEV-17361:
-=~ in Query_arena::set_query_arena
-MDEV-17361:
-=~ THD::set_n_backup_active_arena
 MDEV-17356:
 =~ table->read_set, field_index
 MDEV_17344:
