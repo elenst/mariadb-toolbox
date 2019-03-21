@@ -158,6 +158,12 @@ __DATA__
 ##############################################################################
 
 TODO-842:
+=~ signal 11
+=~ maria_status
+=~ ha_maria::info
+=~ ha_partition::open
+=~ open_and_process_table
+TODO-842:
 =~ AddressSanitizer: heap-buffer-overflow
 =~ Item_exists_subselect::is_top_level_item
 =~ st_select_lex::update_used_tables
@@ -177,6 +183,11 @@ TODO-842:
 =~ =~ Version: '10\.1
 =~ pars_retrieve_table_def
 =~ fts_sync_index
+MDEV-19011:
+=~ Assertion \`file->s->base.reclength < file->s->vreclength'
+=~ ha_myisam::setup_vcols_for_repair
+=~ ha_myisam::enable_indexes
+=~ Sql_cmd_alter_table::execute
 MDEV-18977:
 =~ Conditional jump or move depends on uninitialised value
 =~ TABLE::prune_range_rowid_filters
@@ -1113,7 +1124,9 @@ MDEV-18046:
 MDEV-18046:
 =~ Update_rows_log_event::~Update_rows_log_event
 MDEV-18042:
+=~ signal 11
 =~ mysql_alter_table
+=~ Sql_cmd_alter_table::execute
 MDEV-18020:
 =~ prebuilt->trx->check_foreigns
 MDEV-18020:
