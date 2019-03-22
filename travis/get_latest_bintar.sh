@@ -22,8 +22,9 @@ done
 
 if [ -n "$tarball" ] ; then
 
+old_revno=
 # Before getting the tarball, check if we already had the same
-  if [ -e "server/revno" ] ; then
+  if [ -e "server/revno" ] && server/bin/mysqld --version ; then
     old_revno=`cat server/revno`
   fi
   wget -nv http://buildbot.askmonty.org/buildbot/builders/kvm-tarbake-jaunty-x86/builds/$b
