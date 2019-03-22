@@ -9,6 +9,7 @@
 # - OLD_DATA_LOCATION (mandatory, where to download the data from)
 # - OLD (mandatory, old version, major or minor)
 
+# - START_TIME (optional, seconds)
 # - TYPEs (optional, normal|crash|undo)
 # - FILE_FORMATs (optional, Antelope|Barracuda)
 # - OLD_FILE_FORMATs (optional, Antelope|Barracuda)
@@ -34,6 +35,7 @@
 # OLD_XX/NEW_XX values take precedence, if at least one is defined,
 # then XX is ignored.
 
+START_TIME=${START_TIME:-`date "+%s"`}
 TYPEs=${TYPEs:-normal}
 PAGE_SIZEs=${PAGE_SIZEs:-default}
 
@@ -114,12 +116,15 @@ export SOCKET=/tmp/upgrade.sock
 
 add_result_to_summary() {
   export OLD t ps old_i old_f old_e old_c new_i new_f new_e new_c
-  if [ "$res" == "0" ] ; then
+  export test_duration=$((`date "+%s"`-$test_start))
+  if [ -z "$res" ] ; then
+    export status="N/A"
+  elif [ "$res" == "0" ] ; then
     export status=OK
   else
     export status=FAIL
   fi
-  perl -e 'print sprintf("| %2d | %12s | %6s | %7s | %7s | %9s | %7s | %8s | => | %7s | %9s | %7s | %8s | %4s |\n", $ENV{TRIAL}, $ENV{OLD}, $ENV{t}, $ENV{ps}, $ENV{old_i}, $ENV{old_f}, $ENV{old_e}, $ENV{old_c}, $ENV{new_i}, $ENV{new_f}, $ENV{new_e}, $ENV{new_c}, $ENV{status})' >> $HOME/summary
+  perl -e 'print sprintf("| %2d | %12s | %6s | %7s | %7s | %9s | %7s | %8s | => | %7s | %9s | %7s | %8s | %4s | %4d |\n", $ENV{TRIAL}, $ENV{OLD}, $ENV{t}, $ENV{ps}, $ENV{old_i}, $ENV{old_f}, $ENV{old_e}, $ENV{old_c}, $ENV{new_i}, $ENV{new_f}, $ENV{new_e}, $ENV{new_c}, $ENV{status}, $ENV{test_duration})' >> $HOME/summary
 }
 
 terminate_if_error() {
@@ -209,9 +214,9 @@ TRIAL=0
 total_res=0
 
 echo Test date: `date '+%Y-%m-%d %H:%M:%S'` > $HOME/summary
-echo "------------------------------------------------------------------------------------------------------------------------------------------" >> $HOME/summary
-echo "| ## | OLD version  | type   | pg size | innodb  | file frmt | encrypt | compress |    |  innodb | file frmt | encrypt | compress |  res |" >> $HOME/summary
-echo "------------------------------------------------------------------------------------------------------------------------------------------" >> $HOME/summary
+echo "-------------------------------------------------------------------------------------------------------------------------------------------------" >> $HOME/summary
+echo "| ## | OLD version  | type   | pg size | innodb  | file frmt | encrypt | compress |    |  innodb | file frmt | encrypt | compress |  res | time |" >> $HOME/summary
+echo "-------------------------------------------------------------------------------------------------------------------------------------------------" >> $HOME/summary
 
 
 for old_f in $OLD_FILE_FORMATs ; do
@@ -249,8 +254,7 @@ for old_f in $OLD_FILE_FORMATs ; do
                 for ps in $PAGE_SIZEs ; do
                   for t in $TYPEs ; do
 
-                    start=`date  "+%s"`
-                    res=0
+                    res=""
                     export TRIAL=$((TRIAL+1))
                     export VARDIR=$LOGDIR/vardir$TRIAL
                     export TRIAL_LOG=$VARDIR/trial${TRIAL}.log
@@ -258,6 +262,7 @@ for old_f in $OLD_FILE_FORMATs ; do
                     echo ""
                     echo "########################################################"
                     echo "# TRIAL $TRIAL CONFIGURATION:"
+                    echo "#   Old version: $OLD"
                     echo "#   Test type:   $t"
                     echo "#   File format: $old_f => $new_f"
                     echo "#   InnoDB:      $old_i => $new_f"
@@ -266,6 +271,15 @@ for old_f in $OLD_FILE_FORMATs ; do
                     echo "#   Encryption:  $old_e => $new_e"
                     echo "########################################################"
                     echo ""
+
+                    test_start=`date "+%s"`
+
+                    # Don't run the test if we have less than 5 min left (more than 45 min has passed)
+                    if [ $((test_start-START_TIME)) -gt 2700 ] ; then
+                      echo "Too little time left, skipping the test"
+                      add_result_to_summary
+                      continue
+                    fi
 
                     link="${OLD_DATA_LOCATION}/${OLD}"
                     fname=${HOME}/$t
@@ -389,10 +403,9 @@ for old_f in $OLD_FILE_FORMATs ; do
 
                     echo "---------------"
                     . $SCRIPT_DIR/collect_single_failure_info.sh
-                    duration=$((`date "+%s"`-$start))
                     add_result_to_summary
                     echo ""
-                    echo "End of trial $TRIAL, duration $duration"
+                    echo "End of trial $TRIAL, duration $test_duration"
                     echo ""
                   done
                 done
@@ -404,7 +417,7 @@ for old_f in $OLD_FILE_FORMATs ; do
     done
   done
 done
-echo "------------------------------------------------------------------------------------------------------------------------------------------" >> $HOME/summary
+echo "-------------------------------------------------------------------------------------------------------------------------------------------------" >> $HOME/summary
 echo "" >> $HOME/summary
 
 cat $HOME/summary
