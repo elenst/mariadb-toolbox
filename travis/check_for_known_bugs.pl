@@ -192,6 +192,10 @@ TODO-842:
 =~ =~ Version: '10\.1
 =~ pars_retrieve_table_def
 =~ fts_sync_index
+MDEV-19020:
+=~ AddressSanitizer: heap-use-after-free
+=~ strxnmov
+=~ mysql_load
 MDEV-19014:
 =~ pure virtual method called|signal 11|AddressSanitizer: heap-use-after-free
 =~ Item_direct_view_ref::fix_fields
@@ -579,7 +583,7 @@ MDEV-18259:
 =~ signal 11|AddressSanitizer: heap-use-after-free
 =~ strlen|id_name_t::operator
 =~ get_foreign_key_info
-=~ ha_innobase::get_parent_foreign_key_list
+=~ ha_innobase::get_parent_foreign_key_list|ha_innobase::get_foreign_key_list
 MDEV-18240:
 =~ Assertion \`0' failed
 =~ Item_cache_timestamp::val_datetime_packed
@@ -598,6 +602,12 @@ MDEV-18418:
 MDEV-18418:
 =~ Assertion \`mdl_ticket->m_type == MDL_SHARED_UPGRADABLE \|\| mdl_ticket->m_type == MDL_SHARED_NO_WRITE \|\| mdl_ticket->m_type == MDL_SHARED_NO_READ_WRITE \|\| mdl_ticket->m_type == MDL_SHARED_READ \|\| mdl_ticket->m_type == MDL_SHARED_WRITE'
 =~ MDL_context::upgrade_shared_lock
+MDEV-18153:
+=~ Index for table .* is corrupt; try to repair it|InnoDB: Record in index .* of table .* was not found on update: TUPLE
+=~ Assertion \`0'
+=~ Server version: 10\.4
+=~ row_upd_sec_index_entry
+=~ row_update_for_mysql
 MDEV-18088:
 =~ Assertion \`share->in_trans == 0'
 =~ maria_close
@@ -1086,12 +1096,6 @@ MDEV-18156:
 MDEV-18156:
 =~ was not found on update: TUPLE
 MDEV-18156:
-=~ row_upd_sec_index_entry
-MDEV-18153:
-=~ is corrupt; try to repair it
-MDEV-18153:
-=~ was not found on update: TUPLE
-MDEV-18153:
 =~ row_upd_sec_index_entry
 MDEV-18151:
 =~ Protocol::end_statement
