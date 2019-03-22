@@ -158,6 +158,10 @@ __DATA__
 ##############################################################################
 
 TODO-842:
+=~ InnoDB: Failing assertion: err == DB_SUCCESS
+=~ JOIN_CACHE::join_records
+=~ rbt_eject_node
+TODO-842:
 =~ AddressSanitizer: heap-use-after-free
 =~ my_strcasecmp_utf8
 =~ make_unique_constraint_name
@@ -854,6 +858,10 @@ MDEV-15955:
 =~ Server version: 10\.1|Server version: 10\.0|Server version: 5\.5
 =~ Protocol_text::store_longlong
 =~ end_send_group
+MDEV-15912:
+=~ Failing assertion: purge_sys\.tail\.commit <= purge_sys\.rseg->last_commit
+=~ TrxUndoRsegsIterator::set_next
+=~ trx_purge_choose_next_log
 MDEV-15907:
 =~ AddressSanitizer: heap-use-after-free
 =~ strnmov
@@ -1320,8 +1328,6 @@ MDEV-16060:
 =~ Failing assertion: ut_strcmp
 MDEV-15949:
 =~ space->n_pending_ops == 0
-MDEV-15912:
-=~ purge_sys\.tail\.commit <= purge_sys\.rseg->last_commi
 MDEV-15878:
 =~ table->file->stats\.records > 0
 MDEV-15873:
