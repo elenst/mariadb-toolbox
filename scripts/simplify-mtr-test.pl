@@ -154,6 +154,8 @@ foreach my $mode (@modes)
       if (run_test(\@new_test)) {
         print "Small connections are not needed\n\n";
         @last_failed_test= @new_test;
+      } elsif (scalar(@$small_connections) == 1) {
+        print "There is only one small connection, and it's needed\n\n";
       } else {
         print "Some of small connections are needed, have to check them one by one\n\n";
         check_connections_one_by_one(@$small_connections);
