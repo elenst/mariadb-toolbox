@@ -158,6 +158,11 @@ __DATA__
 ##############################################################################
 
 TODO-842:
+=~ signal 11|AddressSanitizer: use-after-poison
+=~ mem_heap_dup
+=~ row_log_table_get_pk_col
+=~ row_upd_step
+TODO-842:
 =~ InnoDB: Failing assertion: err == DB_SUCCESS
 =~ JOIN_CACHE::join_records
 =~ rbt_eject_node
