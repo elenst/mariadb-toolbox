@@ -192,6 +192,17 @@ TODO-842:
 =~ =~ Version: '10\.1
 =~ pars_retrieve_table_def
 =~ fts_sync_index
+MDEV-19027:
+=~ Assertion \`table->n_def == (table->n_cols - 3)'
+=~ dict_table_add_system_columns
+=~ create_table_info_t::create_table_def
+=~ ha_innobase::truncate
+MDEV-19027:
+=~ signal 11
+=~ dict_index_add_col
+=~ dict_index_build_internal_clust
+=~ dict_index_add_to_cache_w_vcol
+=~ que_thr_step
 MDEV-19020:
 =~ AddressSanitizer: heap-use-after-free
 =~ strxnmov
@@ -608,6 +619,10 @@ MDEV-18153:
 =~ Server version: 10\.4
 =~ row_upd_sec_index_entry
 =~ row_update_for_mysql
+MDEV-18090:
+=~ Assertion \`dict_table_get_n_cols(old_table) + dict_table_get_n_v_cols(old_table) >= table->s->fields + 3'
+=~ innobase_build_col_map
+=~ prepare_inplace_alter_table_dict
 MDEV-18088:
 =~ Assertion \`share->in_trans == 0'
 =~ maria_close
@@ -617,6 +632,15 @@ MDEV-18086:
 =~ Assertion \`len <= col->len || ((col->mtype) == 5 || (col->mtype) == 14) || (col->len == 0 && col->mtype == 1)'
 =~ rec_get_converted_size_comp_prefix_low
 =~ btr_cur_optimistic_update
+MDEV-18084:
+=~ Assertion \`pos < table->n_v_def'
+=~ dict_table_get_nth_v_col
+=~ dict_index_contains_col_or_prefix
+=~ ha_innobase::change_active_index
+MDEV-18084:
+=~ signal 11
+=~ prepare_inplace_drop_virtual
+=~ ha_innobase::prepare_inplace_alter_table
 MDEV-18082:
 =~ Assertion \`! is_set()' failed
 =~ Diagnostics_area::disable_status
@@ -1111,20 +1135,10 @@ MDEV-18141:
 =~ Can't find record in
 MDEV-18139:
 =~ Table rename would cause two FOREIGN KEY constraints
-MDEV-18090:
-=~ table->s->fields + 3
 MDEV-18087:
 =~ mach_read_from_n_little_endian
 MDEV-18085:
 =~ len >= col->mbminlen
-MDEV-18084:
-=~ pos < index->n_def
-MDEV-18084:
-=~ pos < table->n_v_def
-MDEV-18084:
-=~ dict_index_get_nth_field
-MDEV-18084:
-=~ row_upd_changes_some_index_ord_field_binary
 # Not fixed, but I don't want it to match
 # MDEV-18065:
 # =~ Fatal error: Can't open and lock privilege tables
