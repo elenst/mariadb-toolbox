@@ -134,13 +134,13 @@ for v in $versions ; do
     page_size=${opt_page_size:-"16K 8K 4K 32K 64K"}
     compression=${opt_compression:-"none zlib"}
     encryption=${opt_encryption:-"off on"}
-    sql_files="innodb-no-page-compression.sql"
+    sql_files="innodb-all.sql"
 # Workaround for MDEV-18084
 #    sql_files="innodb-all-no-virtual-columns.sql"
 # Workaround for MDEV-18960
 #    sql_files="innodb-all-no-generated-columns.sql"
 # Workaround for MDEV-19016: enable instead of innodb-all for 32K-64K on Barracuda:
-#    sql_files="innodb-no-page-compression.sql"
+#    sql_files="innodb-no-format-compressed.sql"
     ;;
   10.2*)
     file_format=${opt_file_format:-"Antelope Barracuda"}
