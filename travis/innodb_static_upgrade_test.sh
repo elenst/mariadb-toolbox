@@ -137,6 +137,9 @@ terminate_if_error() {
     res=1
     total_res=1
     add_result_to_summary
+    if [ -e $VARDIR/failure_report ] ; then
+      cat $VARDIR/failure_report
+    fi
     continue
   fi
 }
@@ -167,7 +170,7 @@ start_server() {
     sudo $BASEDIR/bin/mysql --socket=$SOCKET -e "SET PASSWORD=''"
     ;;
   esac
-  cd -
+  cd - > /dev/null
 }
 
 shutdown_server() {
@@ -190,7 +193,7 @@ shutdown_server() {
     res=1
     kill -9 $pid
   fi
-  cd -
+  cd - > /dev/null
 }
 
 check_tables() {
@@ -202,8 +205,11 @@ check_tables() {
   cat $VARDIR/check.sql | $BASEDIR/bin/mysql --socket=$SOCKET -uroot --silent >> $VARDIR/check.output
 
   if grep -v "check.*status.*OK" $VARDIR/check.output ; then
-    echo "ERROR: Not all tables are OK:"
-    cat $VARDIR/check.output
+    echo "ERROR: Not all tables are OK, see failure report"
+    echo "-----------------------------------------" >> $VARDIR/failure_report
+    echo "TABLE CHECK:" >> $VARDIR/failure_report
+    cat $VARDIR/check.output >> $VARDIR/failure_report
+    echo "ERROR: Not all tables are OK, see failure report"
     res=1
   else
     echo "All tables are reported to be OK"
@@ -310,10 +316,11 @@ for old_f in $OLD_FILE_FORMATs ; do
                     cd $VARDIR
 
                     echo "---------------"
+                    echo "Link to download: $link"
                     if [ -e $fname ] ; then
                       echo "File $fname already exists"
                     else
-                      echo "Gettting $link"
+                      echo "Downloading the file"
                       for i in 1 2 3 ; do
                         if time wget --quiet $link -O $fname ; then
                           break
@@ -324,7 +331,6 @@ for old_f in $OLD_FILE_FORMATs ; do
                     if [ ! -s $fname ] ; then
                       terminate_if_error 1 "Failed to download the old data"
                     fi
-
                     echo "---------------"
                     echo "Extracting data"
                     tar zxf $fname
@@ -365,7 +371,11 @@ for old_f in $OLD_FILE_FORMATs ; do
                     echo "Running mysql_upgrade"
                     $BASEDIR/bin/mysql_upgrade -uroot --socket=$SOCKET > /tmp/mysql_upgrade.log 2>&1
                     if [ "$?" != "0" ] ; then
-                      cat /tmp/mysql_upgrade.log
+                      echo "ERROR: mysql_upgrade failed, see failure report"
+                      echo "-----------------------------------------" >> $VARDIR/failure_report
+                      echo "MySQL UPGRADE:" >> $VARDIR/failure_report
+                      cat /tmp/mysql_upgrade.log >> $VARDIR/failure_report
+                      echo "-----------------------------------------" >> $VARDIR/failure_report
                       terminate_if_error 1 "mysql_upgrade returned error"
                     else
                       echo "mysql_upgrade apparently succeeded"
@@ -385,8 +395,11 @@ for old_f in $OLD_FILE_FORMATs ; do
                     echo "Running post-upgrade DML/DDL"
                     time perl gentest.pl --dsn="dbi:mysql:host=127.0.0.1:port=$port:user=root:database=test" --grammar=conf/mariadb/generic-dml.yy --redefine=conf/mariadb/alter_table.yy --redefine=conf/mariadb/modules/admin.yy --redefine=conf/mariadb/instant_add.yy --threads=6 --queries=100M --duration=60 --seed=time 2>&1 > $TRIAL_LOG 2>&1
                     if [ "$?" != "0" ] ; then
-                      echo "Post-upgrade DML/DDL failed:"
-                      cat $TRIAL_LOG
+                      echo "Post-upgrade DML/DDL failed, see failure report"
+                      echo "-----------------------------------------" >> $VARDIR/failure_report
+                      echo "TRIAL LOG:" >> $VARDIR/failure_report
+                      cat $TRIAL_LOG >> $VARDIR/failure_report
+                      echo "-----------------------------------------" >> $VARDIR/failure_report
                       res=1
                     else
                       echo "Post-upgrade DML/DDL succeeded"
@@ -404,6 +417,9 @@ for old_f in $OLD_FILE_FORMATs ; do
                     echo "---------------"
                     . $SCRIPT_DIR/collect_single_failure_info.sh
                     add_result_to_summary
+                    if [ -e $VARDIR/failure_report ] ; then
+                      cat $VARDIR/failure_report
+                    fi
                     echo ""
                     echo "End of trial $TRIAL, duration $test_duration"
                     echo ""
