@@ -46,7 +46,7 @@ while (<DATA>) {
     next if $found_mdevs{$mdev};
     $pattern= $1;
     chomp $pattern;
-    $pattern=~ s/(\"|\?|\!|\(|\)|\[|\]|\&|\^|\~|\+)/\\$1/g;
+    $pattern=~ s/(\"|\?|\!|\(|\)|\[|\]|\&|\^|\~|\+|\/)/\\$1/g;
   }
   # MDEV line starts a new signature
   elsif(/^\s*(MDEV-\d+|TODO-\d+):\s*(.*)/) {
@@ -189,14 +189,19 @@ TODO-842:
 =~ row_upd_check_references_constraints
 TODO-842:
 =~ InnoDB: Failing assertion: s_latch == rw_lock_own(&index->lock, 352)
-=~ =~ Version: '10\.1
+=~ Version: '10\.1
 =~ row_ins_scan_sec_index_for_duplicate
 =~ mysql_load
 TODO-842:
 =~ InnoDB: Failing assertion: sym_node->table != NULL
-=~ =~ Version: '10\.1
+=~ Version: '10\.1
 =~ pars_retrieve_table_def
 =~ fts_sync_index
+MDEV-19030:
+=~ Assertion \`index->n_core_null_bytes <= (((index->n_nullable) + 7) / 8) \|\| (! leaf && index->n_core_fields != index->n_fields)'
+=~ Version: '10\.4
+=~ rec_init_offsets
+=~ row_purge_parse_undo_rec
 MDEV-19027:
 =~ Assertion \`table->n_def == (table->n_cols - 3)'
 =~ dict_table_add_system_columns
@@ -218,7 +223,7 @@ MDEV-19014:
 =~ Table_triggers_list::process_triggers
 MDEV-19012:
 =~ signal 11
-=~ =~ Version: '10\.4
+=~ Version: '10\.4
 =~ st_select_lex_unit::optimize
 =~ mysql_derived_optimize
 =~ TABLE_LIST::handle_derived
