@@ -514,6 +514,11 @@ MDEV-18485:
 =~ AddressSanitizer: heap-use-after-free
 =~ Field::is_null
 =~ Item_direct_view_ref::send
+MDEV-18457:
+=~ Assertion \`(bitmap->map + (bitmap->full_head_size/6\*6)) <= full_head_end'
+=~ _ma_check_bitmap
+=~ set_page_bits
+=~ _ma_write_init_block_record
 MDEV-18456:
 =~ Assertion \`item->maybe_null'
 =~ Type_handler_temporal_result::make_sort_key
@@ -605,6 +610,11 @@ MDEV-18259:
 =~ strlen|id_name_t::operator
 =~ get_foreign_key_info
 =~ ha_innobase::get_parent_foreign_key_list|ha_innobase::get_foreign_key_list
+MDEV-18244:
+=~ signal 11|AddressSanitizer: SEGV on unknown address
+=~ ha_innobase::update_thd
+=~ ha_innobase::info_low
+=~ ha_partition::update_next_auto_inc_val
 MDEV-18240:
 =~ Assertion \`0' failed
 =~ Item_cache_timestamp::val_datetime_packed
@@ -1063,8 +1073,6 @@ MDEV-18459:
 =~ fil_op_write_log
 MDEV-18458:
 =~ EVP_MD_CTX_cleanup
-MDEV-18457:
-=~ bitmap->full_head_size
 MDEV-18454:
 =~ ReadView::check_trx_id_sanity
 MDEV-18453:
@@ -1091,8 +1099,6 @@ MDEV-18291:
 =~ ha_innobase_inplace_ctx::
 MDEV-18274:
 =~ new_clustered ==
-MDEV-18244:
-=~ ha_partition::update_next_auto_inc_val
 MDEV-18217:
 =~ InnoDB: Summed data size
 MDEV-18217:
