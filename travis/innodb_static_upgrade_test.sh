@@ -157,6 +157,7 @@ start_server() {
       sleep 3
     else
       pid=`cat $pidfile`
+      echo "Pid: $pid"
       break
     fi
   done
@@ -183,6 +184,7 @@ shutdown_server() {
     if [ -e "$pidfile" ] ; then
       sleep 3
     else
+      echo "Pid file disappeared, apparently server got shut down"
       break
     fi
   done
@@ -260,7 +262,7 @@ for old_f in $OLD_FILE_FORMATs ; do
                 for ps in $PAGE_SIZEs ; do
                   for t in $TYPEs ; do
 
-                    res=""
+                    res=0
                     export TRIAL=$((TRIAL+1))
                     export VARDIR=$LOGDIR/vardir$TRIAL
                     export TRIAL_LOG=$VARDIR/trial${TRIAL}.log
@@ -281,10 +283,15 @@ for old_f in $OLD_FILE_FORMATs ; do
                     test_start=`date "+%s"`
 
                     # Don't run the test if we have less than 5 min left (more than 45 min has passed)
-                    if [ $((test_start-START_TIME)) -gt 2700 ] ; then
-                      echo "Too little time left, skipping the test"
+                    time_left=$((START_TIME+3000-test_start))
+                    if [ $time_left -lt 300 ] ; then
+                      echo "Too little time left ($time_left sec), skipping the test"
+                      res=""
+                      total_res=1
                       add_result_to_summary
                       continue
+                    else
+                      echo "$time_left sec left, running the test"
                     fi
 
                     link="${OLD_DATA_LOCATION}/${OLD}"
@@ -330,10 +337,17 @@ for old_f in $OLD_FILE_FORMATs ; do
 
                     if [ ! -s $fname ] ; then
                       terminate_if_error 1 "Failed to download the old data"
+                    else
+                      ls -l $fname
                     fi
                     echo "---------------"
                     echo "Extracting data"
                     tar zxf $fname
+                    if [ "$?" != "0" ] ; then
+                      terminate_if_error 1 "Failed to extract the old data"
+                    else
+                      du -sk data
+                    fi
                     datadir=$VARDIR/data
                     if [ -e $datadir/mysql.log ] ; then
                       mv $datadir/mysql.log $datadir/mysql.log_orig
@@ -422,7 +436,6 @@ for old_f in $OLD_FILE_FORMATs ; do
                     fi
                     echo ""
                     echo "End of trial $TRIAL, duration $test_duration"
-                    echo ""
                   done
                 done
               done
@@ -437,6 +450,7 @@ echo "--------------------------------------------------------------------------
 echo "" >> $HOME/summary
 
 cat $HOME/summary
+echo "TOTAL RESULT: $total_res"
 . $SCRIPT_DIR/soft_exit.sh $total_res
 
 
