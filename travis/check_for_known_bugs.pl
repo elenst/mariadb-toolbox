@@ -197,6 +197,11 @@ TODO-842:
 =~ Version: '10\.1
 =~ pars_retrieve_table_def
 =~ fts_sync_index
+MDEV-19034:
+=~ AddressSanitizer: unknown-crash
+=~ get_date_time_separator
+=~ str_to_datetime
+=~ Field_temporal_with_date::store
 MDEV-19030:
 =~ Assertion \`index->n_core_null_bytes <= (((index->n_nullable) + 7) / 8) \|\| (! leaf && index->n_core_fields != index->n_fields)'
 =~ Version: '10\.4
@@ -841,6 +846,11 @@ MDEV-17004:
 =~ innobase_get_fts_charset
 =~ Server version: 10\.1|Server version: 10\.0
 =~ ADD FULLTEXT
+MDEV-16962:
+=~ Assertion \`!error \|\| !ot_ctx.can_recover_from_failed_open()'
+=~ open_purge_table
+=~ innodb_acquire_mdl
+=~ innobase_allocate_row_for_vcol
 MDEV-16940:
 =~ signal 11|AddressSanitizer: SEGV on unknown address
 =~ unsafe_key_update
@@ -991,6 +1001,11 @@ MDEV-14854:
 =~ transid_store_packed
 =~ _ma_make_key
 =~ ha_maria::write_row
+MDEV-14557:
+=~ Assertion \`m_sp == __null'
+=~ Item_func_sp::init_result_field
+=~ find_field_in_view
+=~ sp_instr_stmt::exec_core
 MDEV-14472:
 =~ Assertion \`is_current_stmt_binlog_format_row()'
 =~ THD::binlog_write_table_map
@@ -1316,8 +1331,6 @@ MDEV-16994:
 =~ in base_list_iterator::next
 MDEV-16994:
 =~ partition_info::prune_partition_bitmaps
-MDEV-16962:
-=~ ot_ctx\.can_recover_from_failed_open
 MDEV-16958:
 =~ field_length < 5
 MDEV-16929:
@@ -1480,8 +1493,6 @@ MDEV-14643:
 =~ cursor->index->is_committed
 MDEV-14642:
 =~ table->s->db_create_options == part_table->s->db_create_options
-MDEV-14557:
-=~ m_sp == __null
 MDEV-14264:
 =~ binlog_cache_data::reset
 MDEV-14126:
