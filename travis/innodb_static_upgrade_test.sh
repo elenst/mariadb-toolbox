@@ -9,6 +9,7 @@
 # - OLD_DATA_LOCATION (mandatory, where to download the data from)
 # - OLD (mandatory, old version, major or minor)
 
+# - DATASET (optional, suffix for the datadir location)
 # - START_TIME (optional, seconds)
 # - TYPEs (optional, normal|crash|undo)
 # - FILE_FORMATs (optional, Antelope|Barracuda)
@@ -97,6 +98,7 @@ echo "#   RQG_HOME:          $RQG_HOME"
 echo "#   LOGDIR:            $LOGDIR"
 echo "#   OLD_DATA_LOCATION: $OLD_DATA_LOCATION"
 echo "#   OLD [SERVER]:      $OLD"
+echo "#   DATASET:           $DATASET"
 echo "#   [TEST] TYPEs:      $TYPEs"
 echo "#   OLD_FILE_FORMATs:  $OLD_FILE_FORMATs"
 echo "#   NEW_FILE_FORMATs:  $NEW_FILE_FORMATs"
@@ -294,8 +296,13 @@ for old_f in $OLD_FILE_FORMATs ; do
                       echo "$time_left sec left, running the test"
                     fi
 
-                    link="${OLD_DATA_LOCATION}/${OLD}"
-                    fname=${HOME}/$t
+                    if [ -z "$DATASET" ] ; then
+                      link="${OLD_DATA_LOCATION}/${OLD}"
+                      fname=${HOME}/$t
+                    else
+                      link="${OLD_DATA_LOCATION}/${OLD}-${DATASET}"
+                      fname=${HOME}/${t}-${DATASET}
+                    fi
                     if [ "$old_f" != "default" ] ; then
                       link=${link}/format-${old_f}
                       fname=${fname}.format-${old_f}
