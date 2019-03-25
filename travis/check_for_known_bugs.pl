@@ -197,6 +197,11 @@ TODO-842:
 =~ Version: '10\.1
 =~ pars_retrieve_table_def
 =~ fts_sync_index
+MDEV-19038:
+=~ signal 11|AddressSanitizer: SEGV on unknown address
+=~ calc_row_difference
+=~ ha_innobase::update_row
+=~ mysql_update
 MDEV-19034:
 =~ AddressSanitizer: unknown-crash
 =~ get_date_time_separator
