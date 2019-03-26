@@ -467,6 +467,11 @@ MDEV-18667:
 =~ make_date_time
 =~ Arg_comparator::compare_string
 =~ Item_func_nullif::compare
+MDEV-18656:
+=~ AddressSanitizer: unknown-crash
+=~ trx_undo_rec_get_pars
+=~ row_purge_parse_undo_rec
+=~ srv_task_execute
 MDEV-18626:
 =~ AddressSanitizer: stack-buffer-overflow
 =~ int10_to_str
@@ -560,6 +565,12 @@ MDEV-18441:
 =~ Assertion \`tables_opened == 1'
 =~ Sql_cmd_alter_table::execute
 =~ ADD .*FOREIGN KEY
+MDEV-18417:
+=~ AddressSanitizer: unknown-crash
+=~ mach_read_from_4
+=~ mach_read_compressed|mach_read_next_compressed
+=~ trx_undo_rec_get_col_val
+=~ trx_undo_rec_get_partial_row
 MDEV-18402:
 =~ Assertion \`sec\.sec() <= 59'
 =~ Item_func_maketime::get_date
