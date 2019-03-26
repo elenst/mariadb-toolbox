@@ -197,6 +197,19 @@ TODO-842:
 =~ Version: '10\.1
 =~ pars_retrieve_table_def
 =~ fts_sync_index
+MDEV-19049:
+=~ AddressSanitizer: stack-buffer-overflow
+=~ Field_blob::get_key_image
+=~ key_copy
+=~ check_duplicate_long_entry_key
+MDEV-19049:
+=~ stack smashing detected
+=~ __fortify_fail
+=~ check_duplicate_long_entry_key
+MDEV-19048:
+=~ Assertion \`ctx.compare_type_handler()->cmp_type() != STRING_RESULT'
+=~ Field_num::get_equal_zerofill_const_item
+=~ st_select_lex::build_pushable_cond_for_having_pushdown
 MDEV-19038:
 =~ signal 11|AddressSanitizer: SEGV on unknown address
 =~ calc_row_difference
