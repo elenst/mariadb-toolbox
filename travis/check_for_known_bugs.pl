@@ -729,8 +729,9 @@ MDEV-18067:
 =~ backup_end
 =~ run_backup_stage
 MDEV-18047:
-=~ index->magic_n == 76789786|Assertion \`pos < index->n_def'
+=~ index->magic_n == 76789786|Assertion \`pos < index->n_def'|AddressSanitizer: heap-use-after-free
 =~ dict_index_get_nth_field
+=~ dict_foreign_qualify_index
 =~ innobase_update_foreign_try
 MDEV-18047:
 =~ got signal 11
