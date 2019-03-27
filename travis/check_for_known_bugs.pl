@@ -197,6 +197,11 @@ TODO-842:
 =~ Version: '10\.1
 =~ pars_retrieve_table_def
 =~ fts_sync_index
+MDEV-19055:
+=~ Assertion \`(_my_thread_var())->thr_errno != 0'
+=~ pagecache_read
+=~ get_head_or_tail_page
+=~ allocate_and_write_block_record
 MDEV-19049:
 =~ AddressSanitizer: stack-buffer-overflow
 =~ Field_blob::get_key_image
@@ -452,7 +457,6 @@ MDEV-18690:
 =~ Item_field::find_item_equal
 =~ eliminate_item_equal
 =~ substitute_for_best_equal_field
-=~ JOIN::optimize_unflattened_subqueries
 MDEV-18690:
 =~ AddressSanitizer: use-after-poison|signal 11
 =~ base_list::head
