@@ -197,6 +197,11 @@ TODO-842:
 =~ Version: '10\.1
 =~ pars_retrieve_table_def
 =~ fts_sync_index
+MDEV-19066:
+=~ AddressSanitizer: use-after-poison
+=~ innobase_build_col_map
+=~ prepare_inplace_alter_table_dict
+=~ mysql_recreate_table
 MDEV-19055:
 =~ Assertion \`(_my_thread_var())->thr_errno != 0'
 =~ pagecache_read
@@ -753,6 +758,15 @@ MDEV-18003:
 =~ Assertion \`grantee->counter > 0'
 =~ merge_role_privileges
 =~ traverse_role_graph_up
+MDEV-17998:
+=~ Assertion \`!table->pos_in_locked_tables'
+=~ tc_release_table
+=~ Locked_tables_list::unlink_all_closed_tables
+MDEV-17998:
+=~ AddressSanitizer: heap-use-after-free
+=~ find_table_for_mdl_upgrade
+=~ open_tables_check_upgradable_mdl
+=~ mysql_alter_table
 MDEV-17991:
 =~ Out of memory
 =~ Lex_input_stream::body_utf8_start
@@ -1248,8 +1262,6 @@ MDEV-18017:
 =~ index->to_be_dropped
 MDEV-17999:
 =~ Invalid roles_mapping table entry user
-MDEV-17998:
-=~ table->pos_in_locked_tables
 MDEV-17978:
 =~ mysqld_show_create_get_fields
 MDEV-17977:
