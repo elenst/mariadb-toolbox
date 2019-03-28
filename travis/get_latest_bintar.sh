@@ -4,7 +4,7 @@ if [ -z "$1" ] ; then
 fi
 
 SERVER_BRANCH=$1
-BINTAR_TYPE=${2-"kvm-bintar-trusty-amd64"}
+BINTAR_TYPE=${2-"kvm-bintar-quantal-amd64"}
 
 wget -nv -O index1.html http://hasky.askmonty.org/archive/$SERVER_BRANCH/
 builds=`grep 'a href="build-' index1.html | sed -e 's/.*href="build-\([0-9]*\).*/\1/g' | sort -r | xargs`
