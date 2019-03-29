@@ -45,6 +45,7 @@ innodb=default
 page_size=default
 compression=default
 encryption=default
+file_per_table=default
 normal=""
 crash=""
 undo=""
@@ -65,6 +66,7 @@ for o in "$@" ; do
     --page[-_]size=*) opt_page_size=$val ;;
     --compression=*) opt_compression=$val ;;
     --encryption=*) opt_encryption=$val ;;
+    --file_per_table=*) opt_file_per_table=$val ;;
   esac
 done
 
@@ -114,9 +116,9 @@ for v in $versions ; do
   case $v in
   5.5*)
     file_format=${opt_file_format:-"Antelope Barracuda"}
+    file_per_table=${opt_file_per_table:-"off on"}
     innodb=${opt_innodb:-"builtin plugin"}
-    page_size=${opt_page_size:="16K"}
-    sql_files="innodb-no-page-compression.sql"
+    sql_files="innodb-no-page-compression-5.5.sql"
     ;;
   10.0*)
     file_format=${opt_file_format:-"Antelope Barracuda"}
@@ -159,105 +161,111 @@ for v in $versions ; do
 
   for f in $file_format ; do
     for i in $innodb ; do
-      for p in $page_size ; do
-        for c in $compression ; do
-          for e in $encryption ; do
-            basedir=$release_location/$v
-            options="--basedir=$basedir --pid-file=$pidfile --port=$port --general-log --general-log-file=mysql.log --log-error=mysql.err"
-            datapath="$logdir/${v}"
-            if [ "$f" != "default" ] ; then
-              datapath="$datapath/format-${f}"
-              options="$options --innodb-file-format=$f"
-            fi
-            if [ "$i" != "default" ] ; then
-              datapath="$datapath/innodb-${i}"
-              if [ "$i" == "plugin" ] ; then
-                options="$options --ignore-builtin-innodb --plugin-load-add=ha_innodb"
+      for ft in $file_per_table ; do
+        for p in $page_size ; do
+          for c in $compression ; do
+            for e in $encryption ; do
+              basedir=$release_location/$v
+              options="--basedir=$basedir --pid-file=$pidfile --port=$port --general-log --general-log-file=mysql.log --log-error=mysql.err"
+              datapath="$logdir/${v}"
+              if [ "$f" != "default" ] ; then
+                datapath="$datapath/format-${f}"
+                options="$options --innodb-file-format=$f"
               fi
-            fi
-            if [ "$p" != "default" ] ; then
-              datapath="$datapath/${p}"
-              options="$options --innodb-page-size=$p"
-            fi
-            if [ "$c" != "default" ] ; then
-              datapath="$datapath/compression-${c}"
-              options="$options --innodb-compression-algorithm=$c"
-            fi
-            if [ "$e" != "default" ] ; then
-              datapath="$datapath/encryption-${e}"
-              if [ "$e" == "on" ] ; then
-                options="$options --plugin-load-add=file_key_management --file-key-management-filename=$basedir/mysql-test/std_data/keys.txt --innodb-encrypt-tables --innodb-encrypt-log"
+              if [ "$i" != "default" ] ; then
+                datapath="$datapath/innodb-${i}"
+                if [ "$i" == "plugin" ] ; then
+                  options="$options --ignore-builtin-innodb --plugin-load=ha_innodb"
+                fi
               fi
-            fi
-            datadir=$datapath/data
-            options="--datadir=$datadir $options"
+              if [ "$ft" != "default" ] ; then
+                datapath="$datapath/file_per_table-${ft}"
+                options="$options --innodb-file-per-table=$ft"
+              fi
+              if [ "$p" != "default" ] ; then
+                datapath="$datapath/${p}"
+                options="$options --innodb-page-size=$p"
+              fi
+              if [ "$c" != "default" ] ; then
+                datapath="$datapath/compression-${c}"
+                options="$options --innodb-compression-algorithm=$c"
+              fi
+              if [ "$e" != "default" ] ; then
+                datapath="$datapath/encryption-${e}"
+                if [ "$e" == "on" ] ; then
+                  options="$options --plugin-load-add=file_key_management --file-key-management-filename=$basedir/mysql-test/std_data/keys.txt --innodb-encrypt-tables --innodb-encrypt-log"
+                fi
+              fi
+              datadir=$datapath/data
+              options="--datadir=$datadir $options"
 
-            echo ""
-            echo "-----------------------------------------------------"
-            echo "Combination: $datapath"
-            echo ""
-            echo "Options: $options"
-            rm -rf $datadir
-            rm -f $pidfile
-            mkdir -p $datadir
-            cd $basedir
-            echo ""
-            echo "Running bootstrap"
-            scripts/mysql_install_db $options > $datadir/boot.log 2>&1
-            echo "Result $?"
-            start_server
-            echo "Generating data for normal upgrade"
-            for s in $sql_files ; do
-              echo "Loading file $s"
-              cat $rqg_home/conf/mariadb/upgrade/$s | bin/mysql --force --show-warnings -uroot --protocol=tcp --port=$port test > /tmp/load.log 2>&1
-              # We allow certain warnings and errors, e.g. ROW_FORMAT=COMPRESSED cannot be used with 32K/64K page sizes,
-              # not all formats are supported with Antelope, etc.
-              # but we want to see the warnings, apart from the numerous obvious/useless ones
-              echo "--- Errors/warnings generated while loading the file"
-              grep -v 'The value specified for generated column' /tmp/load.log | grep -v 'The value specified for computed column' | grep -v 'ERROR 1146' | grep -v 'Got error 140'
-              echo "---"
-            done
-            sleep 3
-            kill_server $pid
-            if [ -n "$normal" ] ; then
-              cd $datapath
-              rm -f normal.tar.gz
-              echo "Generating normal data archive"
-              tar zcf normal.tar.gz data
-              cd - > /dev/null
-            fi
-            echo ""
-            if [ -n "$crash" ] || [ -n "$undo" ] ; then
+              echo ""
+              echo "-----------------------------------------------------"
+              echo "Combination: $datapath"
+              echo ""
+              echo "Options: $options"
+              rm -rf $datadir
+              rm -f $pidfile
+              mkdir -p $datadir
+              cd $basedir
+              echo ""
+              echo "Running bootstrap"
+              scripts/mysql_install_db $options > $datadir/boot.log 2>&1
+              echo "Result $?"
               start_server
-              echo "Generating workflow for crash/undo upgrade"
-              cd $rqg_home
-              perl gentest.pl --dsn="dbi:mysql:user=root:host=127.0.0.1:port=$port:database=test" --grammar=conf/mariadb/generic-dml.yy --threads=8 --duration=60 --queries=100M > $basedir/gentest.log 2>&1 &
-              sleep 40
-              kill_server $pid -9
-            fi
-            if [ -n "$crash" ] ; then
-              cd $datapath
-              rm -f crash.tar.gz
-              echo "Generating crash data archive"
-              tar zcf crash.tar.gz data
-              cd - > /dev/null
-            fi
-            echo ""
-            if [ -n "$undo" ] ; then
-              start_server --innodb-force-recovery=3
-              echo "Generating data for undo upgrade"
-              sleep 10
+              echo "Generating data for normal upgrade"
+              for s in $sql_files ; do
+                echo "Loading file $s"
+                cat $rqg_home/conf/mariadb/upgrade/$s | bin/mysql --force --show-warnings -uroot --protocol=tcp --port=$port test > /tmp/load.log 2>&1
+                # We allow certain warnings and errors, e.g. ROW_FORMAT=COMPRESSED cannot be used with 32K/64K page sizes,
+                # not all formats are supported with Antelope, etc.
+                # but we want to see the warnings, apart from the numerous obvious/useless ones
+                echo "--- Errors/warnings generated while loading the file"
+                grep -v 'The value specified for generated column' /tmp/load.log | grep -v 'The value specified for computed column' | grep -v 'ERROR 1146' | grep -v 'Got error 140'
+                echo "---"
+              done
+              sleep 3
               kill_server $pid
+              if [ -n "$normal" ] ; then
+                cd $datapath
+                rm -f normal.tar.gz
+                echo "Generating normal data archive"
+                tar zcf normal.tar.gz data
+                cd - > /dev/null
+              fi
+              echo ""
+              if [ -n "$crash" ] || [ -n "$undo" ] ; then
+                start_server
+                echo "Generating workflow for crash/undo upgrade"
+                cd $rqg_home
+                perl gentest.pl --dsn="dbi:mysql:user=root:host=127.0.0.1:port=$port:database=test" --grammar=conf/mariadb/generic-dml.yy --threads=8 --duration=60 --queries=100M > $basedir/gentest.log 2>&1 &
+                sleep 40
+                kill_server $pid -9
+              fi
+              if [ -n "$crash" ] ; then
+                cd $datapath
+                rm -f crash.tar.gz
+                echo "Generating crash data archive"
+                tar zcf crash.tar.gz data
+                cd - > /dev/null
+              fi
+              echo ""
+              if [ -n "$undo" ] ; then
+                start_server --innodb-force-recovery=3
+                echo "Generating data for undo upgrade"
+                sleep 10
+                kill_server $pid
+                cd $datapath
+                rm -f undo.tar.gz
+                echo "Generating undo data archive"
+                tar zcf undo.tar.gz data
+                cd - > /dev/null
+              fi
               cd $datapath
-              rm -f undo.tar.gz
-              echo "Generating undo data archive"
-              tar zcf undo.tar.gz data
+              echo "For $datapath the following files have been generated:"
+              ls *.tar.gz
               cd - > /dev/null
-            fi
-            cd $datapath
-            echo "For $datapath the following files have been generated:"
-            ls *.tar.gz
-            cd - > /dev/null
+            done
           done
         done
       done
