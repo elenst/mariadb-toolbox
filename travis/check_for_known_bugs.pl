@@ -197,6 +197,19 @@ TODO-842:
 =~ Version: '10\.1
 =~ pars_retrieve_table_def
 =~ fts_sync_index
+MDEV-19085:
+=~ Assertion \`row->fields[new_trx_id_col]\.type\.mtype == 8'
+=~ row_merge_read_clustered_index
+=~ ha_innobase::inplace_alter_table
+MDEV-19085:
+=~ Assertion \`!(col->prtype & 256U)'
+=~ row_merge_buf_add
+=~ ha_innobase::inplace_alter_table
+MDEV-19085:
+=~ Assertion \`n < tuple->n_fields'
+=~ dtuple_get_nth_field
+=~ row_merge_read_clustered_index
+=~ ha_innobase::inplace_alter_table
 MDEV-19067:
 =~ AddressSanitizer: heap-use-after-free
 =~ ha_maria::store_lock
