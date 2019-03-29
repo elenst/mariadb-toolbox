@@ -197,6 +197,11 @@ TODO-842:
 =~ Version: '10\.1
 =~ pars_retrieve_table_def
 =~ fts_sync_index
+MDEV-19067:
+=~ AddressSanitizer: heap-use-after-free
+=~ ha_maria::store_lock
+=~ get_lock_data
+=~ mysql_lock_tables
 MDEV-19066:
 =~ AddressSanitizer: use-after-poison
 =~ innobase_build_col_map
