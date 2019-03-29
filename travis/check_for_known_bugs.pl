@@ -570,6 +570,11 @@ MDEV-18452:
 =~ Field::set_default
 =~ Field_bit::set_default
 =~ fill_record_n_invoke_before_triggers
+MDEV-18452:
+=~ Version: '10.*-MariaDB-log'
+=~ AddressSanitizer: unknown-crash
+=~ Field::set_default
+=~ Item_default_value::save_in_field
 MDEV-18451:
 =~ signal 11|AddressSanitizer: SEGV on unknown address
 =~ maria_create_trn_for_mysql
