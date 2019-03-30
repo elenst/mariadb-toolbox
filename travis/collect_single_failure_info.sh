@@ -48,8 +48,6 @@ else
   res=1
 fi
 
-echo "Collecting single result info for logdir $LOGDIR"
-
 ###### Functions
 
 function load_failure
@@ -106,6 +104,8 @@ function process_coredump
 # Only do the job if initial checks passed
 
 if [ "$res" == "0" ] ; then
+
+  echo "Collecting single result info for logdir $LOGDIR"
 
   VARDIR="${VARDIR:-$LOGDIR/vardir}"
   TRIAL_LOG="${TRIAL_LOG:-$LOGDIR/trial.log}"
@@ -259,6 +259,8 @@ if [ "$res" == "0" ] ; then
   fi
 
   rm -rf ${LOGDIR}/${ARCHDIR}*
+else
+  echo "ERROR while processing logs"
 fi
 
 cd $OLDDIR
