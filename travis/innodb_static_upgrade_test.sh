@@ -443,10 +443,10 @@ for old_f in $OLD_FILE_FORMATs ; do
                         cd $RQG_HOME
                         set -o pipefail
                         echo "---------------"
-                        cmd="perl gentest.pl --dsn=\"dbi:mysql:host=127.0.0.1:port=$port:user=root:database=test\" --grammar=conf/mariadb/generic-dml.yy --redefine=conf/mariadb/alter_table.yy --redefine=conf/mariadb/modules/admin.yy --redefine=conf/mariadb/instant_add.yy --threads=6 --queries=100M --duration=60 --seed=$test_start"
+                        echo "perl gentest.pl --dsn=\"dbi:mysql:host=127.0.0.1:port=$port:user=root:database=test\" --grammar=conf/mariadb/generic-dml.yy --redefine=conf/mariadb/alter_table.yy --redefine=conf/mariadb/modules/admin.yy --redefine=conf/mariadb/instant_add.yy --threads=6 --queries=100M --duration=60 --seed=$test_start" > ./cmd
                         echo "Running post-upgrade DML/DDL"
-                        echo $cmd
-                        time $cmd 2>&1 > $TRIAL_LOG 2>&1
+                        cat ./cmd
+                        time . ./cmd > $TRIAL_LOG 2>&1
                         if [ "$?" != "0" ] ; then
                           echo "Post-upgrade DML/DDL failed, see failure report"
                           echo "-----------------------------------------" >> $VARDIR/failure_report
