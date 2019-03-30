@@ -273,7 +273,7 @@ MDEV-19014:
 =~ Item_direct_view_ref::fix_fields
 =~ Table_triggers_list::process_triggers
 MDEV-19012:
-=~ signal 11
+=~ signal 11|AddressSanitizer: SEGV on unknown address
 =~ Version: '10\.4
 =~ st_select_lex_unit::optimize
 =~ mysql_derived_optimize
@@ -932,6 +932,10 @@ MDEV-16932:
 =~ my_well_formed_char_length_utf8|lex_string_cmp
 =~ mysql_prepare_create_table
 =~ sp_head::execute
+MDEV-16887:
+=~ Assertion \`n_idx > 0'
+=~ trx_undo_log_v_idx
+=~ trx_undo_report_row_operation
 MDEV-16788:
 =~ Assertion \`ls->length < 0xFFFFFFFFL && ((ls->length == 0 && !ls->str) \|\| ls->length == strlen(ls->str))'
 =~ String::q_append|Static_binary_string::q_append
@@ -2135,7 +2139,6 @@ MDEV-5924:
 # MDEV-18713:
 # =~ Assertion \`strcmp(share->unique_file_name,filename) \|\| share->last_version'
 # =~ test_if_reopen
-# =~ mysql_insert|mysql_update|execute_sqlcom_select
 # MDEV-18719:
 # =~ (c\.prtype ^ o->prtype) & ~(256U \| (16384U|32768U))
 # =~ dict_table_t::instant_column
