@@ -259,222 +259,223 @@ for old_f in $OLD_FILE_FORMATs ; do
           echo "InnoDB type was requested to stay unchanged, the combination with $old_i => $new_i is skipped"
           continue
         fi
-      for old_fpt in $OLD_FILE_PER_TABLEs ; do
-        for new_fpt in $NEW_FILE_PER_TABLEs ; do
-          if [ -n "$FILE_PER_TABLEs" ] && [ "$old_fpt" != "$new_pt" ] ; then
-            echo ""
-            echo "########################################################"
-            echo "File-per-table was requested to stay unchanged, the combination with $old_fpt => $new_fpt is skipped"
-            continue
-          fi
-          for old_c in $OLD_COMPRESSIONs ; do
-            for new_c in $NEW_COMPRESSIONs ; do
-              if [ -n "$COMPRESSIONs" ] && [ "$old_c" != "$new_c" ] ; then
-                echo ""
-                echo "########################################################"
-                echo "Compression was requested to stay unchanged, the combination with $old_c => $new_c is skipped"
-                continue
-              fi
-              for old_e in $OLD_ENCRYPTIONs ; do
-                for new_e in $NEW_ENCRYPTIONs ; do
-                  if [ -n "$ENCRYPTIONs" ] && [ "$old_e" != "$new_e" ] ; then
-                    echo ""
-                    echo "########################################################"
-                    echo "Encryption was requested to stay unchanged, the combination with $old_e => $new_e is skipped"
-                    continue
-                  fi
-                  for ps in $PAGE_SIZEs ; do
-                    for t in $TYPEs ; do
-
-                      res=0
-                      export TRIAL=$((TRIAL+1))
-                      export VARDIR=$LOGDIR/vardir$TRIAL
-                      export TRIAL_LOG=$VARDIR/trial${TRIAL}.log
-
+        for old_fpt in $OLD_FILE_PER_TABLEs ; do
+          for new_fpt in $NEW_FILE_PER_TABLEs ; do
+            if [ -n "$FILE_PER_TABLEs" ] && [ "$old_fpt" != "$new_pt" ] ; then
+              echo ""
+              echo "########################################################"
+              echo "File-per-table was requested to stay unchanged, the combination with $old_fpt => $new_fpt is skipped"
+              continue
+            fi
+            for old_c in $OLD_COMPRESSIONs ; do
+              for new_c in $NEW_COMPRESSIONs ; do
+                if [ -n "$COMPRESSIONs" ] && [ "$old_c" != "$new_c" ] ; then
+                  echo ""
+                  echo "########################################################"
+                  echo "Compression was requested to stay unchanged, the combination with $old_c => $new_c is skipped"
+                  continue
+                fi
+                for old_e in $OLD_ENCRYPTIONs ; do
+                  for new_e in $NEW_ENCRYPTIONs ; do
+                    if [ -n "$ENCRYPTIONs" ] && [ "$old_e" != "$new_e" ] ; then
                       echo ""
                       echo "########################################################"
-                      echo "# TRIAL $TRIAL CONFIGURATION:"
-                      echo "#   Old version:    $OLD"
-                      echo "#   Test type:      $t"
-                      echo "#   File format:    $old_f => $new_f"
-                      echo "#   InnoDB:         $old_i => $new_f"
-                      echo "#   Page size:      $ps"
-                      echo "#   File-per-table: $old_fpt => $new_fpt"
-                      echo "#   Compression:    $old_c => $new_c"
-                      echo "#   Encryption:     $old_e => $new_e"
-                      echo "########################################################"
-                      echo ""
+                      echo "Encryption was requested to stay unchanged, the combination with $old_e => $new_e is skipped"
+                      continue
+                    fi
+                    for ps in $PAGE_SIZEs ; do
+                      for t in $TYPEs ; do
 
-                      test_start=`date "+%s"`
+                        res=0
+                        export TRIAL=$((TRIAL+1))
+                        export VARDIR=$LOGDIR/vardir$TRIAL
+                        export TRIAL_LOG=$VARDIR/trial${TRIAL}.log
 
-                      # Don't run the test if we have less than 5 min left (more than 45 min has passed)
-                      time_left=$((START_TIME+3000-test_start))
-                      if [ $time_left -lt 300 ] ; then
-                        echo "Too little time left ($time_left sec), skipping the test"
-                        res=""
-                        total_res=1
+                        echo ""
+                        echo "########################################################"
+                        echo "# TRIAL $TRIAL CONFIGURATION:"
+                        echo "#   Old version:    $OLD"
+                        echo "#   Test type:      $t"
+                        echo "#   File format:    $old_f => $new_f"
+                        echo "#   InnoDB:         $old_i => $new_f"
+                        echo "#   Page size:      $ps"
+                        echo "#   File-per-table: $old_fpt => $new_fpt"
+                        echo "#   Compression:    $old_c => $new_c"
+                        echo "#   Encryption:     $old_e => $new_e"
+                        echo "########################################################"
+                        echo ""
+
+                        test_start=`date "+%s"`
+
+                        # Don't run the test if we have less than 5 min left (more than 45 min has passed)
+                        time_left=$((START_TIME+3000-test_start))
+                        if [ $time_left -lt 300 ] ; then
+                          echo "Too little time left ($time_left sec), skipping the test"
+                          res=""
+                          total_res=1
+                          add_result_to_summary
+                          continue
+                        else
+                          echo "$time_left sec left, running the test"
+                        fi
+
+                        if [ -z "$DATASET" ] ; then
+                          link="${OLD_DATA_LOCATION}/${OLD}"
+                          fname=${HOME}/$t
+                        else
+                          link="${OLD_DATA_LOCATION}/${OLD}-${DATASET}"
+                          fname=${HOME}/${t}-${DATASET}
+                        fi
+                        if [ "$old_f" != "default" ] ; then
+                          link=${link}/format-${old_f}
+                          fname=${fname}.format-${old_f}
+                        fi
+                        if [ "$old_i" != "default" ] ; then
+                          link=${link}/innodb-${old_i}
+                          fname=${fname}.innodb-${old_i}
+                        fi
+                        if [ "$old_fpt" != "default" ] ; then
+                          link=${link}/file_per_table-${old_fpt}
+                          fname=${fname}.file_per_table-${old_fpt}
+                        fi
+                        if [ "$ps" != "default" ] ; then
+                          link=${link}/${ps}
+                          fname=${fname}.${ps}
+                        fi
+                        if [ "$old_c" != "default" ] ; then
+                          link=${link}/compression-${old_c}
+                          fname=${fname}.compression-${old_c}
+                        fi
+                        if [ "$old_e" != "default" ] ; then
+                          link=${link}/encryption-${old_e}
+                          fname=${fname}.encryption-${old_e}
+                        fi
+                        link=${link}/${t}.tar.gz
+                        fname=${fname}.tar.gz
+
+                        mkdir -p $VARDIR
+                        cd $VARDIR
+
+                        echo "---------------"
+                        echo "Link to download: $link"
+                        if [ -e $fname ] ; then
+                          echo "File $fname already exists"
+                        else
+                          echo "Downloading the file"
+                          for i in 1 2 3 ; do
+                            if time wget --quiet $link -O $fname ; then
+                              break
+                            fi
+                          done
+                        fi
+
+                        if [ ! -s $fname ] ; then
+                          terminate_if_error 1 "Failed to download the old data"
+                        else
+                          ls -l $fname
+                        fi
+                        echo "---------------"
+                        echo "Extracting data"
+                        tar zxf $fname
+                        if [ "$?" != "0" ] ; then
+                          terminate_if_error 1 "Failed to extract the old data"
+                        else
+                          du -sk data
+                        fi
+                        datadir=$VARDIR/data
+                        if [ -e $datadir/mysql.log ] ; then
+                          mv $datadir/mysql.log $datadir/mysql.log_orig
+                        fi
+                        if [ -e $datadir/mysql.err ] ; then
+                          mv $datadir/mysql.err $datadir/mysql.err_orig
+                        fi
+
+                        options="--datadir=$datadir --basedir=$BASEDIR --pid-file=$pidfile --port=$port --socket=$SOCKET --general-log --general-log-file=$VARDIR/mysql.log --log-error=$VARDIR/mysql.err"
+                        if [ "$new_f" != "default" ] ; then
+                          options="$options --innodb-file-format=$new_f"
+                        fi
+                        if [ "$new_fpt" != "default" ] ; then
+                          options="$options --innodb-file-per-table=$new_fpt"
+                        fi
+                        if [ "$new_i" == "plugin" ] ; then
+                          options="$options --ignore-builtin-innodb --plugin-load-add=ha_innodb"
+                        fi
+                        if [ "$ps" != "default" ] ; then
+                          options="$options --innodb-page-size=$ps"
+                        fi
+                        if [ "$new_c" != "default" ] ; then
+                          options="$options --innodb-compression-algorithm=$new_c"
+                        fi
+                        if [ "$new_e" == "on" ] ; then
+                          options="$options --plugin-load-add=file_key_management --file-key-management-filename=$TOOLBOX_DIR/data/keys.txt --innodb-encrypt-tables --innodb-encrypt-log"
+                        fi
+
+                        start_server
+                        check_tables
+
+    #                    echo "---------------"
+    #                    echo "Checking if workarounds for known problems are needed"
+    #                    . $SCRIPT_DIR/innodb_static_upgrade_workarounds.sh
+    #                    terminate_if_error $? "Problem occurred while applying workarounds"
+
+                        echo "---------------"
+                        echo "Running mysql_upgrade"
+                        $BASEDIR/bin/mysql_upgrade -uroot --socket=$SOCKET > /tmp/mysql_upgrade.log 2>&1
+                        if [ "$?" != "0" ] ; then
+                          echo "ERROR: mysql_upgrade failed, see failure report"
+                          echo "-----------------------------------------" >> $VARDIR/failure_report
+                          echo "MySQL UPGRADE:" >> $VARDIR/failure_report
+                          cat /tmp/mysql_upgrade.log >> $VARDIR/failure_report
+                          echo "-----------------------------------------" >> $VARDIR/failure_report
+                          terminate_if_error 1 "mysql_upgrade returned error"
+                        else
+                          echo "mysql_upgrade apparently succeeded"
+                        fi
+
+                        shutdown_server
+                        mv $VARDIR/mysql.err $VARDIR/mysql.err.1
+
+                        start_server --loose-max-statement-time=10 --lock-wait-timeout=5 --innodb-lock-wait-timeout=3
+                        check_tables
+                        # After the test, tables might be different
+                        rm -f $VARDIR/check.sql
+
+                        cd $RQG_HOME
+                        set -o pipefail
+                        echo "---------------"
+                        cmd="perl gentest.pl --dsn=\"dbi:mysql:host=127.0.0.1:port=$port:user=root:database=test\" --grammar=conf/mariadb/generic-dml.yy --redefine=conf/mariadb/alter_table.yy --redefine=conf/mariadb/modules/admin.yy --redefine=conf/mariadb/instant_add.yy --threads=6 --queries=100M --duration=60 --seed=$test_start"
+                        echo "Running post-upgrade DML/DDL"
+                        echo $cmd
+                        time $cmd 2>&1 > $TRIAL_LOG 2>&1
+                        if [ "$?" != "0" ] ; then
+                          echo "Post-upgrade DML/DDL failed, see failure report"
+                          echo "-----------------------------------------" >> $VARDIR/failure_report
+                          echo "TRIAL LOG:" >> $VARDIR/failure_report
+                          cat $TRIAL_LOG >> $VARDIR/failure_report
+                          echo "-----------------------------------------" >> $VARDIR/failure_report
+                          res=1
+                        else
+                          echo "Post-upgrade DML/DDL succeeded"
+                        fi
+
+                        shutdown_server
+
+                        if [ "$res" == "0" ] ; then
+                          echo "Upgrade test will exit with exit status STATUS_OK" >> $TRIAL_LOG
+                        else
+                          echo "Upgrade test will exit with exit status STATUS_UPGRADE_FAILURE" >> $TRIAL_LOG
+                          total_res=$res
+                        fi
+
+                        echo "---------------"
+                        . $SCRIPT_DIR/collect_single_failure_info.sh
                         add_result_to_summary
-                        continue
-                      else
-                        echo "$time_left sec left, running the test"
-                      fi
-
-                      if [ -z "$DATASET" ] ; then
-                        link="${OLD_DATA_LOCATION}/${OLD}"
-                        fname=${HOME}/$t
-                      else
-                        link="${OLD_DATA_LOCATION}/${OLD}-${DATASET}"
-                        fname=${HOME}/${t}-${DATASET}
-                      fi
-                      if [ "$old_f" != "default" ] ; then
-                        link=${link}/format-${old_f}
-                        fname=${fname}.format-${old_f}
-                      fi
-                      if [ "$old_i" != "default" ] ; then
-                        link=${link}/innodb-${old_i}
-                        fname=${fname}.innodb-${old_i}
-                      fi
-                      if [ "$old_fpt" != "default" ] ; then
-                        link=${link}/file_per_table-${old_fpt}
-                        fname=${fname}.file_per_table-${old_fpt}
-                      fi
-                      if [ "$ps" != "default" ] ; then
-                        link=${link}/${ps}
-                        fname=${fname}.${ps}
-                      fi
-                      if [ "$old_c" != "default" ] ; then
-                        link=${link}/compression-${old_c}
-                        fname=${fname}.compression-${old_c}
-                      fi
-                      if [ "$old_e" != "default" ] ; then
-                        link=${link}/encryption-${old_e}
-                        fname=${fname}.encryption-${old_e}
-                      fi
-                      link=${link}/${t}.tar.gz
-                      fname=${fname}.tar.gz
-
-                      mkdir -p $VARDIR
-                      cd $VARDIR
-
-                      echo "---------------"
-                      echo "Link to download: $link"
-                      if [ -e $fname ] ; then
-                        echo "File $fname already exists"
-                      else
-                        echo "Downloading the file"
-                        for i in 1 2 3 ; do
-                          if time wget --quiet $link -O $fname ; then
-                            break
-                          fi
-                        done
-                      fi
-
-                      if [ ! -s $fname ] ; then
-                        terminate_if_error 1 "Failed to download the old data"
-                      else
-                        ls -l $fname
-                      fi
-                      echo "---------------"
-                      echo "Extracting data"
-                      tar zxf $fname
-                      if [ "$?" != "0" ] ; then
-                        terminate_if_error 1 "Failed to extract the old data"
-                      else
-                        du -sk data
-                      fi
-                      datadir=$VARDIR/data
-                      if [ -e $datadir/mysql.log ] ; then
-                        mv $datadir/mysql.log $datadir/mysql.log_orig
-                      fi
-                      if [ -e $datadir/mysql.err ] ; then
-                        mv $datadir/mysql.err $datadir/mysql.err_orig
-                      fi
-
-                      options="--datadir=$datadir --basedir=$BASEDIR --pid-file=$pidfile --port=$port --socket=$SOCKET --general-log --general-log-file=$VARDIR/mysql.log --log-error=$VARDIR/mysql.err"
-                      if [ "$new_f" != "default" ] ; then
-                        options="$options --innodb-file-format=$new_f"
-                      fi
-                      if [ "$new_fpt" != "default" ] ; then
-                        options="$options --innodb-file-per-table=$new_fpt"
-                      fi
-                      if [ "$new_i" == "plugin" ] ; then
-                        options="$options --ignore-builtin-innodb --plugin-load-add=ha_innodb"
-                      fi
-                      if [ "$ps" != "default" ] ; then
-                        options="$options --innodb-page-size=$ps"
-                      fi
-                      if [ "$new_c" != "default" ] ; then
-                        options="$options --innodb-compression-algorithm=$new_c"
-                      fi
-                      if [ "$new_e" == "on" ] ; then
-                        options="$options --plugin-load-add=file_key_management --file-key-management-filename=$TOOLBOX_DIR/data/keys.txt --innodb-encrypt-tables --innodb-encrypt-log"
-                      fi
-
-                      start_server
-                      check_tables
-
-  #                    echo "---------------"
-  #                    echo "Checking if workarounds for known problems are needed"
-  #                    . $SCRIPT_DIR/innodb_static_upgrade_workarounds.sh
-  #                    terminate_if_error $? "Problem occurred while applying workarounds"
-
-                      echo "---------------"
-                      echo "Running mysql_upgrade"
-                      $BASEDIR/bin/mysql_upgrade -uroot --socket=$SOCKET > /tmp/mysql_upgrade.log 2>&1
-                      if [ "$?" != "0" ] ; then
-                        echo "ERROR: mysql_upgrade failed, see failure report"
-                        echo "-----------------------------------------" >> $VARDIR/failure_report
-                        echo "MySQL UPGRADE:" >> $VARDIR/failure_report
-                        cat /tmp/mysql_upgrade.log >> $VARDIR/failure_report
-                        echo "-----------------------------------------" >> $VARDIR/failure_report
-                        terminate_if_error 1 "mysql_upgrade returned error"
-                      else
-                        echo "mysql_upgrade apparently succeeded"
-                      fi
-
-                      shutdown_server
-                      mv $VARDIR/mysql.err $VARDIR/mysql.err.1
-
-                      start_server --loose-max-statement-time=10 --lock-wait-timeout=5 --innodb-lock-wait-timeout=3
-                      check_tables
-                      # After the test, tables might be different
-                      rm -f $VARDIR/check.sql
-
-                      cd $RQG_HOME
-                      set -o pipefail
-                      echo "---------------"
-                      cmd="perl gentest.pl --dsn=\"dbi:mysql:host=127.0.0.1:port=$port:user=root:database=test\" --grammar=conf/mariadb/generic-dml.yy --redefine=conf/mariadb/alter_table.yy --redefine=conf/mariadb/modules/admin.yy --redefine=conf/mariadb/instant_add.yy --threads=6 --queries=100M --duration=60 --seed=$test_start"
-                      echo "Running post-upgrade DML/DDL"
-                      echo $cmd
-                      time $cmd 2>&1 > $TRIAL_LOG 2>&1
-                      if [ "$?" != "0" ] ; then
-                        echo "Post-upgrade DML/DDL failed, see failure report"
-                        echo "-----------------------------------------" >> $VARDIR/failure_report
-                        echo "TRIAL LOG:" >> $VARDIR/failure_report
-                        cat $TRIAL_LOG >> $VARDIR/failure_report
-                        echo "-----------------------------------------" >> $VARDIR/failure_report
-                        res=1
-                      else
-                        echo "Post-upgrade DML/DDL succeeded"
-                      fi
-
-                      shutdown_server
-
-                      if [ "$res" == "0" ] ; then
-                        echo "Upgrade test will exit with exit status STATUS_OK" >> $TRIAL_LOG
-                      else
-                        echo "Upgrade test will exit with exit status STATUS_UPGRADE_FAILURE" >> $TRIAL_LOG
-                        total_res=$res
-                      fi
-
-                      echo "---------------"
-                      . $SCRIPT_DIR/collect_single_failure_info.sh
-                      add_result_to_summary
-                      if [ -e $VARDIR/failure_report ] ; then
-                        cat $VARDIR/failure_report
-                      fi
-                      echo ""
-                      echo "End of trial $TRIAL, duration $test_duration"
+                        if [ -e $VARDIR/failure_report ] ; then
+                          cat $VARDIR/failure_report
+                        fi
+                        echo ""
+                        echo "End of trial $TRIAL, duration $test_duration"
+                      done
                     done
                   done
                 done
