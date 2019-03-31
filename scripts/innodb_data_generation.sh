@@ -32,6 +32,8 @@
 # - Remove all 'data' folders from within <logdir>/<version> 
 # - Upload <logdir>/<version> to FTP
 #
+# Note differences in SQL files, e.g. innodb-no-page-compression-5.5.sql differs from innodb-no-page-compression.sql
+# by the syntax of CURRENT_TIMESTAMP (CURRENT_TIMESTAMP vs CURRENT_TIMESTAMP(6) etc.)
 
 curdir=`pwd`
 
@@ -113,49 +115,55 @@ kill_server() {
 }
 
 for v in $versions ; do
-  case $v in
-  5.5*)
+  # Major version
+  major_ver=`echo $v | sed -e 's/^\([0-9]*\.[0-9]*\).*/\1/'`
+  case $major_ver in
+  5.5)
     file_format=${opt_file_format:-"Antelope Barracuda"}
     file_per_table=${opt_file_per_table:-"off on"}
     innodb=${opt_innodb:-"builtin plugin"}
-    sql_files="innodb-no-page-compression-5.5.sql"
+    sql_files="innodb-no-page-compression-5.5"
     ;;
-  10.0*)
+  10.0)
     file_format=${opt_file_format:-"Antelope Barracuda"}
     innodb=${opt_innodb:-"builtin plugin"}
     page_size=${opt_page_size:-"16K 8K 4K"}
-    sql_files="innodb-no-page-compression.sql"
+    sql_files="innodb-no-page-compression"
 # Workaround for MDEV-18084
-#    sql_files="innodb-no-page-compression-no-virtual-columns.sql"
+#    sql_files="innodb-no-page-compression-no-virtual-columns"
 # Workaround for MDEV-18960
-#    sql_files="innodb-no-page-compression-no-generated-columns.sql"
+#    sql_files="innodb-no-page-compression-no-generated-columns"
     ;;
-  10.1*)
+  10.1)
     file_format=${opt_file_format:-"Antelope Barracuda"}
     innodb=${opt_innodb:-"builtin plugin"}
     page_size=${opt_page_size:-"16K 8K 4K 32K 64K"}
     compression=${opt_compression:-"none zlib"}
     encryption=${opt_encryption:-"off on"}
-    sql_files="innodb-all.sql"
+    sql_files="innodb-all"
 # Workaround for MDEV-18084
-#    sql_files="innodb-all-no-virtual-columns.sql"
+#    sql_files="innodb-all-no-virtual-columns"
 # Workaround for MDEV-18960
-#    sql_files="innodb-all-no-generated-columns.sql"
+#    sql_files="innodb-all-no-generated-columns"
 # Workaround for MDEV-19016: enable instead of innodb-all for 32K-64K on Barracuda:
-#    sql_files="innodb-no-format-compressed.sql"
+#    sql_files="innodb-no-format-compressed"
     ;;
-  10.2*)
+  10.2)
     file_format=${opt_file_format:-"Antelope Barracuda"}
     page_size=${opt_page_size:-"16K 8K 4K 32K 64K"}
     compression=${opt_compression:-"none zlib"}
     encryption=${opt_encryption:-"off on"}
-    sql_files="innodb-all.sql"
+    sql_files="innodb-all"
     ;;
-  10.[34]*)
+  10.[3-9])
     page_size=${opt_page_size:-"16K 8K 4K 32K 64K"}
     compression=${opt_compression:-"none zlib"}
     encryption=${opt_encryption:-"off on"}
-    sql_files="innodb-all.sql"
+    sql_files="innodb-all"
+    ;;
+  *)
+    echo "ERROR: could not recognize the major version: $major_ver"
+    continue
     ;;
   esac
 
@@ -215,14 +223,25 @@ for v in $versions ; do
               start_server
               echo "Generating data for normal upgrade"
               for s in $sql_files ; do
-                echo "Loading file $s"
-                cat $rqg_home/conf/mariadb/upgrade/$s | bin/mysql --force --show-warnings -uroot --protocol=tcp --port=$port test > /tmp/load.log 2>&1
+                # 5.5 InnoDB plugin does not support generated columns
+                if [ "$major_ver" == "5.5" ] && [ "$s" == "innodb-no-page-compression-5.5" ] && [ "$i" == "plugin" ] ; then
+                  s="innodb-no-page-compression-no-generated-columns-5.5"
+                fi
+                echo "Loading file ${s}.sql"
+                cat $rqg_home/conf/mariadb/upgrade/${s}.sql | bin/mysql --force --show-warnings -uroot --protocol=tcp --port=$port test > /tmp/load.log 2>&1
+                num_of_tables=`ls -l $datadir/test/*.frm | wc -l`
+                echo "$num_of_tables table(s) have been created"
                 # We allow certain warnings and errors, e.g. ROW_FORMAT=COMPRESSED cannot be used with 32K/64K page sizes,
                 # not all formats are supported with Antelope, etc.
                 # but we want to see the warnings, apart from the numerous obvious/useless ones
                 echo "--- Errors/warnings generated while loading the file"
                 grep -v 'The value specified for generated column' /tmp/load.log | grep -v 'The value specified for computed column' | grep -v 'ERROR 1146' | grep -v 'Got error 140'
                 echo "---"
+                if [ $num_of_tables -eq 0 ] ; then
+                  echo "ERROR: Failed to generate any data, skipping this combination"
+                  kill_server $pid -9
+                  continue
+                fi
               done
               sleep 3
               kill_server $pid
