@@ -197,6 +197,10 @@ TODO-842:
 =~ Version: '10\.1
 =~ pars_retrieve_table_def
 =~ fts_sync_index
+MDEV-19091:
+=~ Assertion \`args[0] == args[2] \|\| thd->stmt_arena->is_stmt_execute()'
+=~ Item_func_nullif::fix_length_and_dec
+=~ Item_func::fix_fields
 MDEV-19085:
 =~ Assertion \`row->fields[new_trx_id_col]\.type\.mtype == 8'
 =~ row_merge_read_clustered_index
@@ -216,10 +220,10 @@ MDEV-19067:
 =~ get_lock_data
 =~ mysql_lock_tables
 MDEV-19066:
-=~ AddressSanitizer: use-after-poison
+=~ AddressSanitizer: use-after-poison|AddressSanitizer: unknown-crash
 =~ innobase_build_col_map
 =~ prepare_inplace_alter_table_dict
-=~ mysql_recreate_table
+=~ mysql_recreate_table|mysql_alter_table
 MDEV-19055:
 =~ Assertion \`(_my_thread_var())->thr_errno != 0'
 =~ pagecache_read
@@ -287,11 +291,6 @@ MDEV-18977:
 =~ Conditional jump or move depends on uninitialised value
 =~ TABLE::prune_range_rowid_filters
 =~ TABLE::init_cost_info_for_usable_range_rowid_filters
-MDEV-18972:
-=~ InnoDB: Failing assertion: !cursor->index->is_committed()
-=~ row_ins_sec_index_entry_by_modify
-=~ row_update_vers_insert
-=~ row_upd_check_references_constraints
 MDEV-18962:
 =~ AddressSanitizer: heap-buffer-overflow
 =~ Single_line_formatting_helper::on_add_str
@@ -323,21 +322,6 @@ MDEV-18911:
 =~ Assertion \`(templ->is_virtual && !field) \|\| (field && field->prefix_len ? field->prefix_len == len : templ->mysql_col_len == len)'
 =~ row_sel_field_store_in_mysql_format_func
 =~ row_search_idx_cond_check
-MDEV-18904:
-=~ Assertion \`m_part_spec.start_part >= m_part_spec.end_part'
-=~ ha_partition::index_read_idx_map
-=~ handler::ha_index_read_idx_map
-MDEV-18901:
-=~ InnoDB: Record in index .* of table .* was not found on update: TUPLE
-=~ Assertion \`0'
-=~ row_upd_sec_index_entry
-=~ mysql_load
-=~ Version: '10\.4
-MDEV-18901:
-=~ InnoDB: Failing assertion: !cursor->index->is_committed()
-=~ row_ins_sec_index_entry_by_modify
-=~ mysql_load
-=~ Version: '10\.4
 MDEV-18900:
 =~ AddressSanitizer: heap-use-after-free
 =~ my_strnncoll_binary
@@ -353,26 +337,11 @@ MDEV-18891:
 =~ innobase_get_computed_value
 =~ row_upd_del_mark_clust_rec
 =~ Version: '10\.4
-MDEV-18887:
-=~ Conditional jump or move depends on uninitialised value
-=~ ha_key_cmp
-=~ sort_key_cmp
-=~ ha_myisam::repair
 MDEV-18882:
 =~ AddressSanitizer: heap-use-after-free
 =~ Binary_string::copy|String::copy
 =~ Item_func_make_set::val_str
 =~ copy_fields
-MDEV-18881:
-=~ Assertion \`0'
-=~ make_sortkey
-=~ find_all_keys
-=~ create_sort_index
-MDEV-18879:
-=~ InnoDB: Apparent corruption in space .* page .* index .*
-=~ Assertion \`page_validate(buf_block_get_frame(left_block), cursor->index)'
-=~ btr_page_split_and_insert
-=~ row_update_cascade_for_mysql
 MDEV-18875:
 =~ Assertion \`thd->transaction.stmt.ha_list == __null \|\| trans == &thd->transaction.stmt'
 =~ ha_rollback_trans
@@ -489,20 +458,11 @@ MDEV-18675:
 =~ signal 11|AddressSanitizer: SEGV on unknown address
 =~ COND_EQUAL::copy
 =~ and_new_conditions_to_optimized_cond
-MDEV-18667:
-=~ AddressSanitizer: heap-use-after-free
-=~ make_date_time
-=~ Arg_comparator::compare_string
-=~ Item_func_nullif::compare
 MDEV-18656:
 =~ AddressSanitizer: unknown-crash
 =~ trx_undo_rec_get_pars
 =~ row_purge_parse_undo_rec
 =~ srv_task_execute
-MDEV-18626:
-=~ AddressSanitizer: stack-buffer-overflow
-=~ int10_to_str
-=~ make_date_time
 MDEV-18602:
 =~ InnoDB: Failing assertion: !recv_no_log_write
 =~ mtr_commit
@@ -533,11 +493,6 @@ MDEV-18505:
 MDEV-18503:
 =~ Assertion \`native\.length() == binlen'
 =~ Type_handler_timestamp_common::make_sort_key
-MDEV-18502:
-=~ find_field_in_tables
-=~ setup_without_group
-=~ mysql_select
-=~ sp_head::execute_procedure
 MDEV-18500:
 =~ (block)->n_pointers == 0
 =~ btr_search_build_page_hash_index
@@ -555,20 +510,6 @@ MDEV-18496:
 =~ mysqld: Unknown key id 1\. Can't continue
 =~ Assertion \`!is_set() \|\| (m_status == DA_OK_BULK && is_bulk_op())'
 =~ simple_rename_or_index_change
-MDEV-18485:
-=~ signal 11|AddressSanitizer: heap-use-after-free|AddressSanitizer: SEGV on unknown address
-=~ my_timestamp_from_binary
-=~ Column_definition::Column_definition
-=~ mysql_alter_table
-MDEV-18485:
-=~ signal 11|AddressSanitizer: heap-use-after-free|AddressSanitizer: heap-buffer-overflow|AddressSanitizer: SEGV on unknown address
-=~ create_tmp_table
-=~ select_unit::create_result_table|select_union::create_result_table
-=~ TABLE_LIST::handle_derived
-MDEV-18485:
-=~ AddressSanitizer: heap-use-after-free
-=~ Field::is_null
-=~ Item_direct_view_ref::send
 MDEV-18457:
 =~ Assertion \`(bitmap->map + (bitmap->full_head_size/6\*6)) <= full_head_end'
 =~ _ma_check_bitmap
@@ -705,28 +646,11 @@ MDEV-18153:
 =~ Server version: 10\.4
 =~ row_upd_sec_index_entry
 =~ row_update_for_mysql
-MDEV-18090:
-=~ Assertion \`dict_table_get_n_cols(old_table) + dict_table_get_n_v_cols(old_table) >= table->s->fields + 3'
-=~ innobase_build_col_map
-=~ prepare_inplace_alter_table_dict
 MDEV-18088:
 =~ Assertion \`share->in_trans == 0'
 =~ maria_close
 =~ tc_remove_table
 =~ Locked_tables_list::reopen_tables
-MDEV-18086:
-=~ Assertion \`len <= col->len || ((col->mtype) == 5 || (col->mtype) == 14) || (col->len == 0 && col->mtype == 1)'
-=~ rec_get_converted_size_comp_prefix_low
-=~ btr_cur_optimistic_update
-MDEV-18084:
-=~ Assertion \`pos < table->n_v_def'
-=~ dict_table_get_nth_v_col
-=~ dict_index_contains_col_or_prefix
-=~ ha_innobase::change_active_index
-MDEV-18084:
-=~ signal 11
-=~ prepare_inplace_drop_virtual
-=~ ha_innobase::prepare_inplace_alter_table
 MDEV-18082:
 =~ Assertion \`! is_set()' failed
 =~ Diagnostics_area::disable_status
@@ -794,10 +718,6 @@ MDEV-17991:
 =~ Out of memory
 =~ Lex_input_stream::body_utf8_start
 =~ MYSQLparse
-MDEV-17969:
-=~ Assertion \`name' failed
-=~ THD::push_warning_truncated_value_for_field
-=~ Field::set_datetime_warning
 MDEV-17964:
 =~ Assertion \`status == 0'
 =~ add_role_user_mapping_action
@@ -847,10 +767,6 @@ MDEV-17678:
 =~ field_unpack
 =~ print_keydup_error
 =~ ha_myisam::enable_indexes
-MDEV-17643:
-=~ Assertion \`nr >= 0.0'
-=~ Item_sum_std::val_real
-=~ Protocol::send_result_set_row
 MDEV-17636:
 =~ Assertion \`pagecache->block_root[i]\.status == 0'
 =~ check_pagecache_is_cleaned_up
@@ -1057,20 +973,6 @@ MDEV-14996:
 =~ int ha_maria::external_lock
 =~ THD::cleanup
 =~ Status: KILL_CONNECTION|Status: KILL_SERVER
-MDEV-14926:
-=~ AddressSanitizer: heap-use-after-free
-=~ make_date_time
-=~ Protocol::send_result_set_row
-MDEV-14926:
-=~ AddressSanitizer: heap-use-after-free
-=~ make_date_time
-=~ Item_func_octet_length::val_int
-=~ AGGR_OP::put_record|end_send_group
-MDEV-14926:
-=~ AddressSanitizer: heap-use-after-free
-=~ Item_func_date_format::val_str
-=~ copy_fields
-=~ end_send_group
 MDEV-14854:
 =~ Assertion \`trid >= info->s->state\.create_trid'
 =~ transid_store_packed
@@ -1149,10 +1051,6 @@ MDEV-18805:
 MDEV-18675:
 =~ AddressSanitizer: SEGV on unknown address
 =~ and_new_conditions_to_optimized_cond
-MDEV-18485:
-=~ Field::is_null_in_record
-=~ Column_definition::Column_definition
-=~ mysql_alter_table
 MDEV-18461:
 =~ sure_page <= last_page
 MDEV-18461:
@@ -1241,10 +1139,6 @@ MDEV-18141:
 =~ Can't find record in
 MDEV-18139:
 =~ Table rename would cause two FOREIGN KEY constraints
-MDEV-18087:
-=~ mach_read_from_n_little_endian
-MDEV-18085:
-=~ len >= col->mbminlen
 # Not fixed, but I don't want it to match
 # MDEV-18065:
 # =~ Fatal error: Can't open and lock privilege tables
@@ -1404,8 +1298,6 @@ MDEV-16994:
 =~ in base_list_iterator::next
 MDEV-16994:
 =~ partition_info::prune_partition_bitmaps
-MDEV-16958:
-=~ field_length < 5
 MDEV-16929:
 =~ thd->transaction\.stmt\.is_empty
 MDEV-16794:
@@ -1568,8 +1460,6 @@ MDEV-14642:
 =~ table->s->db_create_options == part_table->s->db_create_options
 MDEV-14264:
 =~ binlog_cache_data::reset
-MDEV-14126:
-=~ page_get_page_no
 MDEV-14040:
 =~ in Field::is_real_null
 MDEV-13644:
@@ -2281,3 +2171,117 @@ MDEV-5924:
 # =~ Field::load_data_set_value
 # MDEV-371:
 # =~ Index .* of .* has .* columns unique inside InnoDB, but MySQL is asking statistics for
+# MDEV-18972:
+# =~ InnoDB: Failing assertion: !cursor->index->is_committed()
+# =~ row_ins_sec_index_entry_by_modify
+# =~ row_update_vers_insert
+# =~ row_upd_check_references_constraints
+# MDEV-18904:
+# =~ Assertion \`m_part_spec.start_part >= m_part_spec.end_part'
+# =~ ha_partition::index_read_idx_map
+# =~ handler::ha_index_read_idx_map
+# MDEV-18901:
+# =~ InnoDB: Record in index .* of table .* was not found on update: TUPLE
+# =~ Assertion \`0'
+# =~ row_upd_sec_index_entry
+# =~ mysql_load
+# =~ Version: '10\.4
+# MDEV-18901:
+# =~ InnoDB: Failing assertion: !cursor->index->is_committed()
+# =~ row_ins_sec_index_entry_by_modify
+# =~ mysql_load
+# =~ Version: '10\.4
+# MDEV-18887:
+# =~ Conditional jump or move depends on uninitialised value
+# =~ ha_key_cmp
+# =~ sort_key_cmp
+# =~ ha_myisam::repair
+# MDEV-18881:
+# =~ Assertion \`0'
+# =~ make_sortkey
+# =~ find_all_keys
+# =~ create_sort_index
+# MDEV-18879:
+# =~ InnoDB: Apparent corruption in space .* page .* index .*
+# =~ Assertion \`page_validate(buf_block_get_frame(left_block), cursor->index)'
+# =~ btr_page_split_and_insert
+# =~ row_update_cascade_for_mysql
+# MDEV-18667:
+# =~ AddressSanitizer: heap-use-after-free
+# =~ make_date_time
+# =~ Arg_comparator::compare_string
+# =~ Item_func_nullif::compare
+# MDEV-18626:
+# =~ AddressSanitizer: stack-buffer-overflow
+# =~ int10_to_str
+# =~ make_date_time
+# MDEV-18502:
+# =~ find_field_in_tables
+# =~ setup_without_group
+# =~ mysql_select
+# =~ sp_head::execute_procedure
+# MDEV-18485:
+# =~ signal 11|AddressSanitizer: heap-use-after-free|AddressSanitizer: SEGV on unknown address
+# =~ my_timestamp_from_binary
+# =~ Column_definition::Column_definition
+# =~ mysql_alter_table
+# MDEV-18485:
+# =~ signal 11|AddressSanitizer: heap-use-after-free|AddressSanitizer: heap-buffer-overflow|AddressSanitizer: SEGV on unknown address
+# =~ create_tmp_table
+# =~ select_unit::create_result_table|select_union::create_result_table
+# =~ TABLE_LIST::handle_derived
+# MDEV-18485:
+# =~ AddressSanitizer: heap-use-after-free
+# =~ Field::is_null
+# =~ Item_direct_view_ref::send
+# MDEV-18485:
+# =~ Field::is_null_in_record
+# =~ Column_definition::Column_definition
+# =~ mysql_alter_table
+# MDEV-18090:
+# =~ Assertion \`dict_table_get_n_cols(old_table) + dict_table_get_n_v_cols(old_table) >= table->s->fields + 3'
+# =~ innobase_build_col_map
+# =~ prepare_inplace_alter_table_dict
+# MDEV-18086:
+# =~ Assertion \`len <= col->len || ((col->mtype) == 5 || (col->mtype) == 14) || (col->len == 0 && col->mtype == 1)'
+# =~ rec_get_converted_size_comp_prefix_low
+# =~ btr_cur_optimistic_update
+# MDEV-18084:
+# =~ Assertion \`pos < table->n_v_def'
+# =~ dict_table_get_nth_v_col
+# =~ dict_index_contains_col_or_prefix
+# =~ ha_innobase::change_active_index
+# MDEV-18084:
+# =~ signal 11
+# =~ prepare_inplace_drop_virtual
+# =~ ha_innobase::prepare_inplace_alter_table
+# MDEV-17969:
+# =~ Assertion \`name' failed
+# =~ THD::push_warning_truncated_value_for_field
+# =~ Field::set_datetime_warning
+# MDEV-17643:
+# =~ Assertion \`nr >= 0.0'
+# =~ Item_sum_std::val_real
+# =~ Protocol::send_result_set_row
+# MDEV-14926:
+# =~ AddressSanitizer: heap-use-after-free
+# =~ make_date_time
+# =~ Protocol::send_result_set_row
+# MDEV-14926:
+# =~ AddressSanitizer: heap-use-after-free
+# =~ make_date_time
+# =~ Item_func_octet_length::val_int
+# =~ AGGR_OP::put_record|end_send_group
+# MDEV-14926:
+# =~ AddressSanitizer: heap-use-after-free
+# =~ Item_func_date_format::val_str
+# =~ copy_fields
+# =~ end_send_group
+# MDEV-18087:
+# =~ mach_read_from_n_little_endian
+# MDEV-18085:
+# =~ len >= col->mbminlen
+# MDEV-16958:
+# =~ field_length < 5
+# MDEV-14126:
+# =~ page_get_page_no
