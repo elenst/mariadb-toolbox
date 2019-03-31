@@ -197,6 +197,10 @@ TODO-842:
 =~ Version: '10\.1
 =~ pars_retrieve_table_def
 =~ fts_sync_index
+MDEV-19092:
+=~ Assertion \`foreign->referenced_index != __null'|signal 11|Assertion \`new_index != __null'
+=~ dict_mem_table_col_rename_low
+=~ innobase_rename_or_enlarge_columns_cache
 MDEV-19091:
 =~ Assertion \`args[0] == args[2] \|\| thd->stmt_arena->is_stmt_execute()'
 =~ Item_func_nullif::fix_length_and_dec
