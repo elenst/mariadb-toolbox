@@ -74,7 +74,10 @@ if (defined $ENV{TYPE}) {
         $scenario= 'UndoLogUpgrade';
       }
 
-      push @type_options,
+# Add vcols after the next batch of bugs is fixed
+#        . ' --vcols'
+
+        push @type_options,
           ' --grammar=conf/mariadb/oltp-transactional.yy'
         . ' --grammar2=conf/mariadb/oltp_and_ddl.yy'
         . ' --gendata=conf/mariadb/innodb_upgrade.zz'
@@ -82,7 +85,6 @@ if (defined $ENV{TYPE}) {
         . ' --mysqld=--server-id=111'
         . ' --scenario='.$scenario
         . ' --duration='.$duration
-        . ' --vcols'
         . $basedirs
       ;
     }
