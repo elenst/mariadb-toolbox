@@ -197,6 +197,20 @@ TODO-842:
 =~ Version: '10\.1
 =~ pars_retrieve_table_def
 =~ fts_sync_index
+MDEV-19166:
+=~ Assertion \`!is_zero_datetime()'
+=~ Timestamp_or_zero_datetime::tv
+=~ Item_cache_timestamp::to_datetime
+=~ Item_cache_timestamp::val_int
+MDEV-19130:
+=~ Assertion \`next_insert_id >= auto_inc_interval_for_cur_row\.minimum()'
+=~ handler::update_auto_increment
+=~ TABLE::update_generated_fields
+=~ TABLE::period_make_insert
+MDEV-19127:
+=~ Assertion \`row_start_field'
+=~ vers_prepare_keys
+=~ mysql_create_frm_image
 MDEV-19092:
 =~ Assertion \`foreign->referenced_index != __null'|signal 11|Assertion \`new_index != __null'
 =~ dict_mem_table_col_rename_low
@@ -1023,6 +1037,10 @@ MDEV-10748:
 =~ AddressSanitizer: heap-use-after-free|signal 11
 =~ ha_maria::implicit_commit
 =~ trans_commit_implicit
+MDEV-10466:
+=~ SEL_ARG::store_min
+=~ ror_scan_selectivity
+=~ SQL_SELECT::test_quick_select
 MDEV-8089:
 =~ Apc_target::make_apc_call
 =~ fill_show_explain
