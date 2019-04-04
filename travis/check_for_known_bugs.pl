@@ -197,6 +197,11 @@ TODO-842:
 =~ Version: '10\.1
 =~ pars_retrieve_table_def
 =~ fts_sync_index
+MDEV-19173:
+=~ Assertion \`col_nr < table->n_def'
+=~ dict_table_get_col_name
+=~ innodb_base_col_setup_for_stored
+=~ create_table_info_t::create_table_def
 MDEV-19166:
 =~ Assertion \`!is_zero_datetime()'
 =~ Timestamp_or_zero_datetime::tv
@@ -668,7 +673,7 @@ MDEV-18088:
 =~ Assertion \`share->in_trans == 0'
 =~ maria_close
 =~ tc_remove_table
-=~ Locked_tables_list::reopen_tables
+=~ Locked_tables_list::reopen_tables|close_all_tables_for_name
 MDEV-18082:
 =~ Assertion \`! is_set()' failed
 =~ Diagnostics_area::disable_status
