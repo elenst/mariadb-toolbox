@@ -198,6 +198,11 @@ TODO-842:
 =~ pars_retrieve_table_def
 =~ fts_sync_index
 MDEV-19173:
+=~ Assertion \`pos < table->n_def'
+=~ dict_table_get_nth_col
+=~ dict_table_get_col_name
+=~ innodb_base_col_setup_for_stored
+MDEV-19173:
 =~ Assertion \`col_nr < table->n_def'
 =~ dict_table_get_col_name
 =~ innodb_base_col_setup_for_stored
@@ -224,19 +229,6 @@ MDEV-19091:
 =~ Assertion \`args[0] == args[2] \|\| thd->stmt_arena->is_stmt_execute()'
 =~ Item_func_nullif::fix_length_and_dec
 =~ Item_func::fix_fields
-MDEV-19085:
-=~ Assertion \`row->fields[new_trx_id_col]\.type\.mtype == 8'
-=~ row_merge_read_clustered_index
-=~ ha_innobase::inplace_alter_table
-MDEV-19085:
-=~ Assertion \`!(col->prtype & 256U)'
-=~ row_merge_buf_add
-=~ ha_innobase::inplace_alter_table
-MDEV-19085:
-=~ Assertion \`n < tuple->n_fields'
-=~ dtuple_get_nth_field
-=~ row_merge_read_clustered_index
-=~ ha_innobase::inplace_alter_table
 MDEV-19067:
 =~ AddressSanitizer: heap-use-after-free
 =~ ha_maria::store_lock
@@ -856,6 +848,11 @@ MDEV-17004:
 =~ innobase_get_fts_charset
 =~ Server version: 10\.1|Server version: 10\.0
 =~ ADD FULLTEXT
+MDEV-16994:
+=~ signal 11|Assertion \`!alloced \|\| !Ptr \|\| !Alloced_length \|\| (Alloced_length >= (str_length + 1))'
+=~ String::c_ptr|base_list_iterator::next
+=~ partition_info::prune_partition_bitmaps
+=~ open_and_process_table
 MDEV-16962:
 =~ Assertion \`!error \|\| !ot_ctx.can_recover_from_failed_open()'
 =~ open_purge_table
@@ -1319,12 +1316,6 @@ MDEV-17053:
 =~ sync_check_iterate
 MDEV-17019:
 =~ multi_delete::~multi_delete
-MDEV-16994:
-=~ Alloced_length >=
-MDEV-16994:
-=~ in base_list_iterator::next
-MDEV-16994:
-=~ partition_info::prune_partition_bitmaps
 MDEV-16929:
 =~ thd->transaction\.stmt\.is_empty
 MDEV-16794:
@@ -2312,3 +2303,16 @@ MDEV-5924:
 # =~ field_length < 5
 # MDEV-14126:
 # =~ page_get_page_no
+# MDEV-19085:
+# =~ Assertion \`row->fields[new_trx_id_col]\.type\.mtype == 8'
+# =~ row_merge_read_clustered_index
+# =~ ha_innobase::inplace_alter_table
+# MDEV-19085:
+# =~ Assertion \`!(col->prtype & 256U)'
+# =~ row_merge_buf_add
+# =~ ha_innobase::inplace_alter_table
+# MDEV-19085:
+# =~ Assertion \`n < tuple->n_fields'
+# =~ dtuple_get_nth_field
+# =~ row_merge_read_clustered_index
+# =~ ha_innobase::inplace_alter_table
