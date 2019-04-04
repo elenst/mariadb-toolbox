@@ -197,6 +197,16 @@ TODO-842:
 =~ Version: '10\.1
 =~ pars_retrieve_table_def
 =~ fts_sync_index
+MDEV-19178:
+=~ Assertion \`m_sp == __null'
+=~ Item_func_sp::fix_fields
+=~ create_view_field
+=~ Field_iterator_view::create_item
+MDEV-19175:
+=~ signal 11|AddressSanitizer: SEGV on unknown address
+=~ ha_partition::vers_can_native
+=~ TABLE_SHARE::init_from_binary_frm_image
+=~ Delayed_insert::open_and_lock_table
 MDEV-19173:
 =~ Assertion \`pos < table->n_def'
 =~ dict_table_get_nth_col
@@ -347,11 +357,6 @@ MDEV-18899:
 =~ Field::set_warning_truncated_wrong_value
 =~ Field_longstr::check_string_copy_error
 =~ Column_stat::get_stat_values
-MDEV-18891:
-=~  AddressSanitizer: heap-use-after-free
-=~ innobase_get_computed_value
-=~ row_upd_del_mark_clust_rec
-=~ Version: '10\.4
 MDEV-18882:
 =~ AddressSanitizer: heap-use-after-free
 =~ Binary_string::copy|String::copy
@@ -2316,3 +2321,8 @@ MDEV-5924:
 # =~ dtuple_get_nth_field
 # =~ row_merge_read_clustered_index
 # =~ ha_innobase::inplace_alter_table
+# MDEV-18891:
+# =~  AddressSanitizer: heap-use-after-free
+# =~ innobase_get_computed_value
+# =~ row_upd_del_mark_clust_rec
+# =~ Version: '10\.4
