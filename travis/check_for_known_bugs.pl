@@ -181,7 +181,7 @@ MDEV-19186:
 =~ JOIN::create_postjoin_aggr_table
 =~ JOIN::make_aggr_tables_info
 MDEV-19185:
-=~ Assertion `select_lex->select_number == (0x7fffffff * 2U + 1U) || select_lex->select_number == 0x7fffffff || !output || !output->get_select(select_lex->select_number) || output->get_select(select_lex->select_number)->select_lex == select_lex'
+=~ Assertion \`select_lex->select_number == (0x7fffffff * 2U + 1U) || select_lex->select_number == 0x7fffffff || !output || !output->get_select(select_lex->select_number) || output->get_select(select_lex->select_number)->select_lex == select_lex'
 =~ JOIN::save_explain_data
 =~ JOIN::optimize
 MDEV-19185:
@@ -668,12 +668,12 @@ MDEV-18418:
 =~ Assertion \`mdl_ticket->m_type == MDL_SHARED_UPGRADABLE \|\| mdl_ticket->m_type == MDL_SHARED_NO_WRITE \|\| mdl_ticket->m_type == MDL_SHARED_NO_READ_WRITE \|\| mdl_ticket->m_type == MDL_SHARED_READ \|\| mdl_ticket->m_type == MDL_SHARED_WRITE'
 =~ MDL_context::upgrade_shared_lock
 MDEV-18167:
-=~ Assertion `!table \|\| (!table->read_set \|\| bitmap_is_set(table->read_set, field_index) \|\| (!(ptr >= table->record[0] && ptr < table->record[0] + table->s->reclength)))'
+=~ Assertion \`!table \|\| (!table->read_set \|\| bitmap_is_set(table->read_set, field_index) \|\| (!(ptr >= table->record[0] && ptr < table->record[0] + table->s->reclength)))'
 =~ Field_enum::store_field
 =~ field_conv_incompatible
 =~ TABLE::update_virtual_fields
 MDEV-18166:
-=~ Assertion `!table \|\| (!table->read_set \|\| bitmap_is_set(table->read_set, field_index) \|\| (!(ptr >= table->record[0] && ptr < table->record[0] + table->s->reclength)))'
+=~ Assertion \`!table \|\| (!table->read_set \|\| bitmap_is_set(table->read_set, field_index) \|\| (!(ptr >= table->record[0] && ptr < table->record[0] + table->s->reclength)))'
 =~ Field_datetimef::get_TIME|Field_short::val_int|Field_enum::val_int|Field_newdate::get_TIME
 =~ field_conv_incompatible
 =~ TABLE::update_virtual_fields
@@ -1161,6 +1161,11 @@ TODO-842:
 =~ mem_heap_create_block_func
 =~ mem_heap_add_block
 =~ dtuple_create_with_vcol
+TODO-842:
+=~ signal 11
+=~ Time_zone_system::gmt_sec_to_TIME
+=~ Temporal_with_date::Temporal_with_date
+=~ Arg_comparator::compare_datetime
 
 ##############################################################################
 # Weak matches
