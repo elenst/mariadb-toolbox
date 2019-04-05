@@ -157,46 +157,38 @@ __DATA__
 # Strong matches
 ##############################################################################
 
-TODO-842:
-=~ signal 11|AddressSanitizer: use-after-poison
-=~ mem_heap_dup
-=~ row_log_table_get_pk_col
-=~ row_upd_step
-TODO-842:
-=~ InnoDB: Failing assertion: err == DB_SUCCESS
-=~ JOIN_CACHE::join_records
-=~ rbt_eject_node
-TODO-842:
-=~ AddressSanitizer: heap-use-after-free
-=~ my_strcasecmp_utf8
-=~ make_unique_constraint_name
-=~ mysql_create_frm_image
-TODO-842:
+MDEV-19194:
 =~ signal 11
-=~ maria_status
-=~ ha_maria::info
-=~ ha_partition::open
-=~ open_and_process_table
-TODO-842:
-=~ AddressSanitizer: heap-buffer-overflow
-=~ Item_exists_subselect::is_top_level_item
-=~ st_select_lex::update_used_tables
+=~ fk_prepare_copy_alter_table
+=~ mysql_alter_table
+MDEV-19194:
+=~ AddressSanitizer: use-after-poison
+=~ base_list_iterator::next_fast
+=~ fk_prepare_copy_alter_table
+=~ mysql_alter_table
+MDEV-19190:
+=~ Assertion \`part_share->auto_inc_initialized'
+=~ ha_partition::get_auto_increment
+=~ TABLE::update_generated_fields
+=~ TABLE::period_make_insert
+MDEV-19189:
+=~ AddressSanitizer: memcpy-param-overlap: memory ranges
+=~ fill_alter_inplace_info
+=~ mysql_alter_table
+MDEV-19186:
+=~ Assertion \`field->table == table'
+=~ create_tmp_table
+=~ JOIN::create_postjoin_aggr_table
+=~ JOIN::make_aggr_tables_info
+MDEV-19185:
+=~ Assertion `select_lex->select_number == (0x7fffffff * 2U + 1U) || select_lex->select_number == 0x7fffffff || !output || !output->get_select(select_lex->select_number) || output->get_select(select_lex->select_number)->select_lex == select_lex'
+=~ JOIN::save_explain_data
 =~ JOIN::optimize
-TODO-842:
-=~ InnoDB: foreign constraints: secondary index is out of sync
-=~ Assertion \`!"secondary index is out of sync"'
-=~ dict_index_t::vers_history_row
-=~ row_upd_check_references_constraints
-TODO-842:
-=~ InnoDB: Failing assertion: s_latch == rw_lock_own(&index->lock, 352)
-=~ Version: '10\.1
-=~ row_ins_scan_sec_index_for_duplicate
-=~ mysql_load
-TODO-842:
-=~ InnoDB: Failing assertion: sym_node->table != NULL
-=~ Version: '10\.1
-=~ pars_retrieve_table_def
-=~ fts_sync_index
+MDEV-19185:
+=~ signal 11
+=~ incr_loops
+=~ subselect_single_select_engine::exec
+=~ and_new_conditions_to_optimized_cond
 MDEV-19178:
 =~ Assertion \`m_sp == __null'
 =~ Item_func_sp::fix_fields
@@ -222,6 +214,10 @@ MDEV-19166:
 =~ Timestamp_or_zero_datetime::tv
 =~ Item_cache_timestamp::to_datetime
 =~ Item_cache_timestamp::val_int
+MDEV-19131:
+=~ Assertion \`table->versioned(VERS_TRX_ID) \|\| (table->versioned() && table->s->table_category == TABLE_CATEGORY_TEMPORARY)'
+=~ Field_vers_trx_id::get_date
+=~ Temporal_with_date::make_from_item
 MDEV-19130:
 =~ Assertion \`next_insert_id >= auto_inc_interval_for_cur_row\.minimum()'
 =~ handler::update_auto_increment
@@ -649,6 +645,12 @@ MDEV-18240:
 MDEV-18220:
 =~ AddressSanitizer: heap-use-after-free
 =~ fts_get_table_name_prefix
+MDEV-18216:
+=~ signal 11
+=~ Query_arena::set_query_arena
+=~ THD::set_n_backup_active_arena
+=~ Field::set_default
+=~ CREATE.*VIEW
 MDEV-18207:
 =~ AddressSanitizer: heap-use-after-free|Invalid read of size
 =~ _ma_get_status
@@ -717,6 +719,10 @@ MDEV-18047:
 =~ AddressSanitizer: heap-use-after-free
 =~ dict_index_get_nth_field
 =~ innobase_update_foreign_try
+MDEV-18046:
+=~ Assertion \`(buf[0] & 0xe0) == 0x80'
+=~ binlog_get_uncompress_len
+=~ Rows_log_event::uncompress_buf
 MDEV-18018:
 =~ signal 11|AddressSanitizer: heap-use-after-free
 =~ TABLE_LIST::reinit_before_use
@@ -742,6 +748,10 @@ MDEV-17964:
 =~ Assertion \`status == 0'
 =~ add_role_user_mapping_action
 =~ rebuild_role_grants
+MDEV-17951:
+=~ Assertion \`thd->transaction\.stmt\.is_empty() \|\| thd->in_sub_stmt \|\| (thd->state_flags & Open_tables_state::BACKUPS_AVAIL)'
+=~ close_thread_tables
+=~ Query_log_event::do_apply_event
 MDEV-17939:
 =~ Assertion \`++loop_count < 2'
 =~ trx_undo_report_rename
@@ -776,6 +786,11 @@ MDEV-17843:
 =~ Assertion \`page_rec_is_leaf(rec)'
 =~ lock_rec_queue_validate
 =~ innodb_show_status
+MDEV-17837:
+=~ Assertion \`!is_set() \|\| (m_status == DA_OK_BULK && is_bulk_op())'
+=~ Diagnostics_area::set_ok_status
+=~ my_ok
+=~ mysql_insert
 MDEV-17699:
 =~ AddressSanitizer: use-after-poison
 =~ base_list_iterator::next_fast
@@ -873,10 +888,20 @@ MDEV-16932:
 =~ my_well_formed_char_length_utf8|lex_string_cmp
 =~ mysql_prepare_create_table
 =~ sp_head::execute
+MDEV-16929:
+=~ Assertion \`thd->transaction\.stmt\.is_empty() \|\| (thd->state_flags & Open_tables_state::BACKUPS_AVAIL)'
+=~ open_normal_and_derived_tables
+=~ mysql_test_create_view
+=~ check_prepared_statement
 MDEV-16887:
 =~ Assertion \`n_idx > 0'
 =~ trx_undo_log_v_idx
 =~ trx_undo_report_row_operation
+MDEV-16794:
+=~ Server version: 10\.1|Server version: 10\.0
+=~ Assertion \`thd->transaction\.stmt\.is_empty()'
+=~ Locked_tables_list::unlock_locked_tables
+=~ mysql_inplace_alter_table
 MDEV-16788:
 =~ Assertion \`ls->length < 0xFFFFFFFFL && ((ls->length == 0 && !ls->str) \|\| ls->length == strlen(ls->str))'
 =~ String::q_append|Static_binary_string::q_append
@@ -886,6 +911,10 @@ MDEV-16788:
 =~ my_strcasecmp_utf8
 =~ handle_if_exists_options
 =~ Sql_cmd_alter_table::execute
+MDEV-16745:
+=~ Assertion \`thd->transaction\.stmt\.is_empty()'
+=~ Prepared_statement::prepare
+=~ KILL_CONNECTION|KILL_SERVER
 MDEV-16699:
 =~ AddressSanitizer: heap-use-after-free|signal 11
 =~ my_strnncoll_binary
@@ -919,6 +948,11 @@ MDEV-16240:
 =~ Assertion \`0' failed
 =~ row_sel_convert_mysql_key_to_innobase
 =~ multi_update::send_data
+MDEV-16222:
+=~ InnoDB: tried to purge non-delete-marked record in index
+=~ Assertion \`0'
+=~ row_purge_remove_sec_if_poss_leaf
+=~ row_purge
 MDEV-16128:
 =~ signal 11
 =~ Item_func::print_op
@@ -1059,9 +1093,60 @@ MDEV-5628:
 =~ mysql_update
 =~ ( SELECT 
 MDEV-5628:
-=~ Assertion \`!is_set() \|\ (m_status == DA_OK_BULK && is_bulk_op())' failed
+=~ Assertion \`!is_set() \|\| (m_status == DA_OK_BULK && is_bulk_op())' failed
+=~ Diagnostics_area::set_ok_status
 =~ mysql_update
 =~ ( SELECT 
+TODO-842:
+=~ signal 11|AddressSanitizer: use-after-poison
+=~ mem_heap_dup
+=~ row_log_table_get_pk_col
+=~ row_upd_step
+TODO-842:
+=~ InnoDB: Failing assertion: err == DB_SUCCESS
+=~ JOIN_CACHE::join_records
+=~ rbt_eject_node
+TODO-842:
+=~ AddressSanitizer: heap-use-after-free
+=~ my_strcasecmp_utf8
+=~ make_unique_constraint_name
+=~ mysql_create_frm_image
+TODO-842:
+=~ signal 11
+=~ maria_status
+=~ ha_maria::info
+=~ ha_partition::open
+=~ open_and_process_table
+TODO-842:
+=~ AddressSanitizer: heap-buffer-overflow
+=~ Item_exists_subselect::is_top_level_item
+=~ st_select_lex::update_used_tables
+=~ JOIN::optimize
+TODO-842:
+=~ InnoDB: foreign constraints: secondary index is out of sync
+=~ Assertion \`!"secondary index is out of sync"'
+=~ dict_index_t::vers_history_row
+=~ row_upd_check_references_constraints
+TODO-842:
+=~ InnoDB: Failing assertion: s_latch == rw_lock_own(&index->lock, 352)
+=~ Version: '10\.1
+=~ row_ins_scan_sec_index_for_duplicate
+=~ mysql_load
+TODO-842:
+=~ InnoDB: Failing assertion: sym_node->table != NULL
+=~ Version: '10\.1
+=~ pars_retrieve_table_def
+=~ fts_sync_index
+TODO-842:
+=~ AddressSanitizer: heap-buffer-overflow
+=~ Field_timestamp_with_dec::sort_string
+=~ Field::make_sort_key
+=~ Bounded_queue
+TODO-842:
+=~ LeakSanitizer: detected memory leaks
+=~ mem_heap_create_block_func
+=~ mem_heap_add_block
+=~ dtuple_create_with_vcol
 
 ##############################################################################
 # Weak matches
@@ -1120,8 +1205,6 @@ MDEV-18217:
 =~ InnoDB: Summed data size
 MDEV-18217:
 =~ row_sel_field_store_in_mysql_format_func
-MDEV-18216:
-=~ Query_arena::set_query_arena
 MDEV-18213:
 =~ Error: failed to execute query BACKUP STAGE BLOCK_COMMIT: Deadlock found when trying to get lock
 MDEV-18209:
@@ -1191,8 +1274,6 @@ MDEV-18046:
 MDEV-18046:
 =~ in Rotate_log_event::Rotate_log_event
 MDEV-18046:
-=~ binlog_get_uncompress_len
-MDEV-18046:
 =~ m_field_metadata_size <=
 MDEV-18046:
 =~ in inline_mysql_mutex_destroy
@@ -1228,6 +1309,10 @@ MDEV-17971:
 =~ Field_iterator_table_ref::set_field_iterator
 MDEV-17962:
 =~ setup_jtbm_semi_joins
+MDEV-17942:
+=~ signal 11
+=~ mysql_show_grants
+=~ mysql_execute_command
 MDEV-17936:
 =~ Field::is_null
 MDEV-17912:
@@ -1246,8 +1331,6 @@ MDEV-17842:
 =~ pfs_lock::allocated_to_free
 MDEV-17838:
 =~ in Item_field::rename_fields_processor
-MDEV-17837:
-=~ m_status == DA_OK_BULK
 MDEV-17834:
 =~ row_upd_build_difference_binary
 MDEV-17830:
@@ -1321,14 +1404,8 @@ MDEV-17053:
 =~ sync_check_iterate
 MDEV-17019:
 =~ multi_delete::~multi_delete
-MDEV-16929:
-=~ thd->transaction\.stmt\.is_empty
-MDEV-16794:
-=~ thd->transaction\.stmt\.is_empty
 MDEV-16789:
 =~ in insert_fields
-MDEV-16745:
-=~ thd->transaction\.stmt\.is_empty
 MDEV-16654:
 =~ returned 38 for ALTER TABLE
 MDEV-16654:
@@ -1353,8 +1430,6 @@ MDEV-16242:
 =~ Slave worker thread retried transaction
 MDEV-16242:
 =~ Can't find record
-MDEV-16222:
-=~ InnoDB: tried to purge non-delete-marked record in index
 MDEV-16184:
 =~ nest->counter > 0
 MDEV-16171:
