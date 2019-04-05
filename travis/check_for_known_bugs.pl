@@ -633,6 +633,11 @@ MDEV-18259:
 =~ strlen|id_name_t::operator
 =~ get_foreign_key_info
 =~ ha_innobase::get_parent_foreign_key_list|ha_innobase::get_foreign_key_list
+MDEV-18249:
+=~ Assertion \`!table \|\| (!table->read_set \|\| bitmap_is_set(table->read_set, field_index) \|\| (!(ptr >= table->record[0] && ptr < table->record[0] + table->s->reclength)))'
+=~ Field_varstring::val_str|Field_datetimef::get_TIME|Field_blob::val_str
+=~ Item::save_in_field|Item_field::save_in_field
+=~ TABLE::update_virtual_fields
 MDEV-18244:
 =~ signal 11|AddressSanitizer: SEGV on unknown address
 =~ ha_innobase::update_thd
@@ -662,6 +667,16 @@ MDEV-18418:
 MDEV-18418:
 =~ Assertion \`mdl_ticket->m_type == MDL_SHARED_UPGRADABLE \|\| mdl_ticket->m_type == MDL_SHARED_NO_WRITE \|\| mdl_ticket->m_type == MDL_SHARED_NO_READ_WRITE \|\| mdl_ticket->m_type == MDL_SHARED_READ \|\| mdl_ticket->m_type == MDL_SHARED_WRITE'
 =~ MDL_context::upgrade_shared_lock
+MDEV-18167:
+=~ Assertion `!table \|\| (!table->read_set \|\| bitmap_is_set(table->read_set, field_index) \|\| (!(ptr >= table->record[0] && ptr < table->record[0] + table->s->reclength)))'
+=~ Field_enum::store_field
+=~ field_conv_incompatible
+=~ TABLE::update_virtual_fields
+MDEV-18166:
+=~ Assertion `!table \|\| (!table->read_set \|\| bitmap_is_set(table->read_set, field_index) \|\| (!(ptr >= table->record[0] && ptr < table->record[0] + table->s->reclength)))'
+=~ Field_datetimef::get_TIME|Field_short::val_int|Field_enum::val_int|Field_newdate::get_TIME
+=~ field_conv_incompatible
+=~ TABLE::update_virtual_fields
 MDEV-18153:
 =~ Index for table .* is corrupt; try to repair it|InnoDB: Record in index .* of table .* was not found on update: TUPLE
 =~ Assertion \`0'
@@ -671,8 +686,7 @@ MDEV-18153:
 MDEV-18088:
 =~ Assertion \`share->in_trans == 0'
 =~ maria_close
-=~ tc_remove_table
-=~ Locked_tables_list::reopen_tables|close_all_tables_for_name
+=~ Locked_tables_list::reopen_tables|close_all_tables_for_name|alter_close_table
 MDEV-18082:
 =~ Assertion \`! is_set()' failed
 =~ Diagnostics_area::disable_status
@@ -1223,10 +1237,6 @@ MDEV-18169:
 =~ n_fields <= ulint
 MDEV-18168:
 =~ general_log_write
-MDEV-18167:
-=~ table->s->reclength
-MDEV-18166:
-=~ table->s->reclength
 MDEV-18158:
 =~ Can't find record in
 MDEV-18157:
