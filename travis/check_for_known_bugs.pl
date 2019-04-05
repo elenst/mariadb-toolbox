@@ -1166,6 +1166,16 @@ TODO-842:
 =~ Time_zone_system::gmt_sec_to_TIME
 =~ Temporal_with_date::Temporal_with_date
 =~ Arg_comparator::compare_datetime
+TODO-842:
+=~ signal 11
+=~ wait_while_table_is_used
+=~ mysql_rm_table_no_locks
+=~ mysql_create_table
+TODO-842:
+=~ AddressSanitizer: SEGV on unknown address
+=~ Query_arena::set_query_arena
+=~ Field::set_default
+=~ Item::remove_eq_conds
 
 ##############################################################################
 # Weak matches
