@@ -188,20 +188,6 @@ MDEV-19189:
 =~ AddressSanitizer: memcpy-param-overlap: memory ranges
 =~ fill_alter_inplace_info
 =~ mysql_alter_table
-MDEV-19186:
-=~ Assertion \`field->table == table'
-=~ create_tmp_table
-=~ JOIN::create_postjoin_aggr_table
-=~ JOIN::make_aggr_tables_info
-MDEV-19185:
-=~ Assertion \`select_lex->select_number == (0x7fffffff * 2U + 1U) || select_lex->select_number == 0x7fffffff || !output || !output->get_select(select_lex->select_number) || output->get_select(select_lex->select_number)->select_lex == select_lex'
-=~ JOIN::save_explain_data
-=~ JOIN::optimize
-MDEV-19185:
-=~ signal 11
-=~ incr_loops
-=~ subselect_single_select_engine::exec
-=~ and_new_conditions_to_optimized_cond
 MDEV-19178:
 =~ Assertion \`m_sp == __null'
 =~ Item_func_sp::fix_fields
@@ -272,10 +258,6 @@ MDEV-19049:
 =~ stack smashing detected
 =~ __fortify_fail
 =~ check_duplicate_long_entry_key
-MDEV-19048:
-=~ Assertion \`ctx.compare_type_handler()->cmp_type() != STRING_RESULT'
-=~ Field_num::get_equal_zerofill_const_item
-=~ st_select_lex::build_pushable_cond_for_having_pushdown
 MDEV-19038:
 =~ signal 11|AddressSanitizer: SEGV on unknown address
 =~ calc_row_difference
@@ -286,11 +268,6 @@ MDEV-19034:
 =~ get_date_time_separator
 =~ str_to_datetime
 =~ Field_temporal_with_date::store
-MDEV-19030:
-=~ Assertion \`index->n_core_null_bytes <= (((index->n_nullable) + 7) / 8) \|\| (! leaf && index->n_core_fields != index->n_fields)'
-=~ Version: '10\.4
-=~ rec_init_offsets
-=~ row_purge_parse_undo_rec
 MDEV-19027:
 =~ Assertion \`table->n_def == (table->n_cols - 3)'
 =~ dict_table_add_system_columns
@@ -325,20 +302,11 @@ MDEV-18977:
 =~ Conditional jump or move depends on uninitialised value
 =~ TABLE::prune_range_rowid_filters
 =~ TABLE::init_cost_info_for_usable_range_rowid_filters
-MDEV-18962:
-=~ AddressSanitizer: heap-buffer-overflow
-=~ Single_line_formatting_helper::on_add_str
-=~ Json_writer::add_str
-=~ TRP_ROR_INTERSECT::trace_basic_info
 MDEV-18947:
 =~ points to uninitialised byte
 =~ pagecache_fwrite
 =~ flush_cached_blocks
 =~ flush_pagecache_blocks_with_filter
-MDEV-18942:
-=~ Conditional jump or move depends on uninitialised value
-=~ Json_writer::add_bool
-=~ print_keyuse_array_for_trace
 MDEV-18933:
 =~ InnoDB: Failing assertion: share->idx_trans_tbl.index_count == mysql_num_index
 =~ innobase_build_index_translation
@@ -347,11 +315,6 @@ MDEV-18923:
 =~ Assertion \`!lex_string_cmp(system_charset_info, fk_info->referenced_table, &table->s->table_name)'
 =~ fk_truncate_illegal_if_parent
 =~ Sql_cmd_truncate_table::truncate_table
-MDEV-18921:
-=~ signal 11
-=~ bitmap_bits_set|bitmap_is_set
-=~ pack_row|max_row_length
-=~ THD::binlog_update_row|THD::binlog_write_row
 MDEV-18911:
 =~ Assertion \`(templ->is_virtual && !field) \|\| (field && field->prefix_len ? field->prefix_len == len : templ->mysql_col_len == len)'
 =~ row_sel_field_store_in_mysql_format_func
@@ -376,25 +339,11 @@ MDEV-18875:
 =~ ha_rollback_trans
 =~ mysql_trans_commit_alter_copy_data|trans_commit_implicit
 =~ ADD PERIOD|add period|LOCK TABLE
-MDEV-18853:
-=~ Assertion \`0'
-=~ Version: '10\.4
-=~ Protocol::end_statement
-=~ DELETE .* FOR PORTION
-MDEV-18852:
-=~ signal 11|AddressSanitizer: heap-use-after-free|AddressSanitizer: heap-buffer-overflow|AddressSanitizer: use-after-poison
-=~ Version: '10\.4
-=~ reinit_stmt_before_use
-=~ Prepared_statement::execute|sp_head::execute
 MDEV-18826:
 =~ signal 11
 =~ l_find
 =~ MDL_map::remove
 =~ MDL_context::release_transactional_locks
-MDEV-18820:
-=~ Assertion \`lock_table_has(trx, index->table, LOCK_IX)'
-=~ lock_rec_insert_check_and_lock
-=~ btr_cur_optimistic_insert
 MDEV-18805:
 =~ Warning: Enabling keys got errno 127 on
 =~ AddressSanitizer: heap-buffer-overflow
@@ -435,10 +384,6 @@ MDEV-18770:
 =~ my_strnxfrm_8bit_bin
 =~ make_sortkey
 =~ create_sort_index
-MDEV-18769:
-=~ Assertion \`fixed == 1'
-=~ Item_cond_or::val_int|Item_cond_and::val_int
-=~ has_value
 MDEV-18756:
 =~ Use of uninitialised value of size
 =~ DES_set_key_unchecked
@@ -483,23 +428,10 @@ MDEV-18690:
 =~ base_list::head
 =~ substitute_for_best_equal_field
 =~ JOIN::optimize_stage2
-MDEV-18675:
-=~ signal 11|AddressSanitizer: SEGV on unknown address
-=~ COND_EQUAL::copy
-=~ and_new_conditions_to_optimized_cond
-MDEV-18656:
-=~ AddressSanitizer: unknown-crash
-=~ trx_undo_rec_get_pars
-=~ row_purge_parse_undo_rec
-=~ srv_task_execute
 MDEV-18602:
 =~ InnoDB: Failing assertion: !recv_no_log_write
 =~ mtr_commit
 =~ xtrabackup_prepare_func
-MDEV-18595:
-=~ Assertion \`0' failed
-=~ Item_cache_timestamp::val_datetime_packed
-=~ Predicant_to_list_comparator::cmp_arg
 MDEV-18589:
 =~ Assertion \`fil_space_t::physical_size(flags) == info\.page_size' failed
 =~ xb_delta_open_matching_space
@@ -516,12 +448,6 @@ MDEV-18524:
 =~ Assertion \`!"invalid table name"' failed
 =~ innodb_find_table_for_vc
 =~ row_ins_check_foreign_constraint
-MDEV-18505:
-=~ InnoDB: Failing assertion: pos != ULINT_UNDEFINED
-=~ row_build_row_ref_in_tuple
-MDEV-18503:
-=~ Assertion \`native\.length() == binlen'
-=~ Type_handler_timestamp_common::make_sort_key
 MDEV-18500:
 =~ (block)->n_pointers == 0
 =~ btr_search_build_page_hash_index
@@ -567,16 +493,6 @@ MDEV-18441:
 =~ Assertion \`tables_opened == 1'
 =~ Sql_cmd_alter_table::execute
 =~ ADD .*FOREIGN KEY
-MDEV-18417:
-=~ AddressSanitizer: unknown-crash
-=~ mach_read_from_4
-=~ mach_read_compressed|mach_read_next_compressed
-=~ trx_undo_rec_get_col_val
-=~ trx_undo_rec_get_partial_row
-MDEV-18402:
-=~ Assertion \`sec\.sec() <= 59'
-=~ Item_func_maketime::get_date
-=~ Time::make_from_item|Item::get_time
 MDEV-18389:
 =~ Cannot find index .* in InnoDB index dictionary
 =~ InnoDB indexes are inconsistent with what defined in \.frm for table
@@ -612,10 +528,6 @@ MDEV-18309:
 =~ InnoDB: Operating system error number 2 in a file operation
 =~ InnoDB: Cannot open datafile for read-only:
 =~ OS error: 71
-MDEV-18302:
-=~ Assertion \`!((new_col->prtype ^ col->prtype) & ~256U)' failed
-=~ row_log_table_apply_convert_mrec
-=~ ha_innobase::inplace_alter_table
 MDEV-18300:
 =~ AddressSanitizer: use-after-poison|AddressSanitizer: unknown-crash
 =~ Field_blob::get_key_image
@@ -656,10 +568,6 @@ MDEV-18244:
 =~ ha_innobase::update_thd
 =~ ha_innobase::info_low
 =~ ha_partition::update_next_auto_inc_val
-MDEV-18240:
-=~ Assertion \`0' failed
-=~ Item_cache_timestamp::val_datetime_packed
-=~ Arg_comparator::compare_datetime
 MDEV-18220:
 =~ AddressSanitizer: heap-use-after-free
 =~ fts_get_table_name_prefix
@@ -1208,9 +1116,6 @@ MDEV-18805:
 =~ Field::is_null_in_record
 =~ Column_definition::Column_definition
 =~ Create_field::Create_field
-MDEV-18675:
-=~ AddressSanitizer: SEGV on unknown address
-=~ and_new_conditions_to_optimized_cond
 MDEV-18461:
 =~ sure_page <= last_page
 MDEV-18461:
@@ -1351,10 +1256,6 @@ MDEV-17971:
 =~ Field_iterator_table_ref::set_field_iterator
 MDEV-17962:
 =~ setup_jtbm_semi_joins
-MDEV-17942:
-=~ signal 11
-=~ mysql_show_grants
-=~ mysql_execute_command
 MDEV-17936:
 =~ Field::is_null
 MDEV-17912:
@@ -1490,8 +1391,6 @@ MDEV-15776:
 =~ table->get_ref_count
 MDEV-15753:
 =~ thd->is_error
-MDEV-15658:
-=~ expl_lock->trx == arg->impl_trx
 MDEV-15657:
 =~ file->inited == handler::NONE
 MDEV-15656:
@@ -2441,3 +2340,104 @@ MDEV-5924:
 # =~ innobase_get_computed_value
 # =~ row_upd_del_mark_clust_rec
 # =~ Version: '10\.4
+# MDEV-19186:
+# =~ Assertion \`field->table == table'
+# =~ create_tmp_table
+# =~ JOIN::create_postjoin_aggr_table
+# =~ JOIN::make_aggr_tables_info
+# MDEV-19185:
+# =~ Assertion \`select_lex->select_number == (0x7fffffff * 2U + 1U) || select_lex->select_number == 0x7fffffff || !output || !output->get_select(select_lex->select_number) || output->get_select(select_lex->select_number)->select_lex == select_lex'
+# =~ JOIN::save_explain_data
+# =~ JOIN::optimize
+# MDEV-19185:
+# =~ signal 11
+# =~ incr_loops
+# =~ subselect_single_select_engine::exec
+# =~ and_new_conditions_to_optimized_cond
+# MDEV-19048:
+# =~ Assertion \`ctx.compare_type_handler()->cmp_type() != STRING_RESULT'
+# =~ Field_num::get_equal_zerofill_const_item
+# =~ st_select_lex::build_pushable_cond_for_having_pushdown
+# MDEV-19030:
+# =~ Assertion \`index->n_core_null_bytes <= (((index->n_nullable) + 7) / 8) \|\| (! leaf && index->n_core_fields != index->n_fields)'
+# =~ Version: '10\.4
+# =~ rec_init_offsets
+# =~ row_purge_parse_undo_rec
+# MDEV-18962:
+# =~ AddressSanitizer: heap-buffer-overflow
+# =~ Single_line_formatting_helper::on_add_str
+# =~ Json_writer::add_str
+# =~ TRP_ROR_INTERSECT::trace_basic_info
+# MDEV-18942:
+# =~ Conditional jump or move depends on uninitialised value
+# =~ Json_writer::add_bool
+# =~ print_keyuse_array_for_trace
+# MDEV-18921:
+# =~ signal 11
+# =~ bitmap_bits_set|bitmap_is_set
+# =~ pack_row|max_row_length
+# =~ THD::binlog_update_row|THD::binlog_write_row
+# MDEV-18853:
+# =~ Assertion \`0'
+# =~ Version: '10\.4
+# =~ Protocol::end_statement
+# =~ DELETE .* FOR PORTION
+# MDEV-18852:
+# =~ signal 11|AddressSanitizer: heap-use-after-free|AddressSanitizer: heap-buffer-overflow|AddressSanitizer: use-after-poison
+# =~ Version: '10\.4
+# =~ reinit_stmt_before_use
+# =~ Prepared_statement::execute|sp_head::execute
+# MDEV-18820:
+# =~ Assertion \`lock_table_has(trx, index->table, LOCK_IX)'
+# =~ lock_rec_insert_check_and_lock
+# =~ btr_cur_optimistic_insert
+# MDEV-18769:
+# =~ Assertion \`fixed == 1'
+# =~ Item_cond_or::val_int|Item_cond_and::val_int
+# =~ has_value
+# MDEV-18675:
+# =~ signal 11|AddressSanitizer: SEGV on unknown address
+# =~ COND_EQUAL::copy
+# =~ and_new_conditions_to_optimized_cond
+# MDEV-18675:
+# =~ AddressSanitizer: SEGV on unknown address
+# =~ and_new_conditions_to_optimized_cond
+# MDEV-18656:
+# =~ AddressSanitizer: unknown-crash
+# =~ trx_undo_rec_get_pars
+# =~ row_purge_parse_undo_rec
+# =~ srv_task_execute
+# MDEV-18595:
+# =~ Assertion \`0' failed
+# =~ Item_cache_timestamp::val_datetime_packed
+# =~ Predicant_to_list_comparator::cmp_arg
+# MDEV-18505:
+# =~ InnoDB: Failing assertion: pos != ULINT_UNDEFINED
+# =~ row_build_row_ref_in_tuple
+# MDEV-18503:
+# =~ Assertion \`native\.length() == binlen'
+# =~ Type_handler_timestamp_common::make_sort_key
+# MDEV-18417:
+# =~ AddressSanitizer: unknown-crash
+# =~ mach_read_from_4
+# =~ mach_read_compressed|mach_read_next_compressed
+# =~ trx_undo_rec_get_col_val
+# =~ trx_undo_rec_get_partial_row
+# MDEV-18402:
+# =~ Assertion \`sec\.sec() <= 59'
+# =~ Item_func_maketime::get_date
+# =~ Time::make_from_item|Item::get_time
+# MDEV-18302:
+# =~ Assertion \`!((new_col->prtype ^ col->prtype) & ~256U)' failed
+# =~ row_log_table_apply_convert_mrec
+# =~ ha_innobase::inplace_alter_table
+# MDEV-18240:
+# =~ Assertion \`0' failed
+# =~ Item_cache_timestamp::val_datetime_packed
+# =~ Arg_comparator::compare_datetime
+# MDEV-17942:
+# =~ signal 11
+# =~ mysql_show_grants
+# =~ mysql_execute_command
+# MDEV-15658:
+# =~ expl_lock->trx == arg->impl_trx
