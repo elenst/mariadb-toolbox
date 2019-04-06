@@ -157,6 +157,15 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-19202:
+=~ signal 11
+=~ strlen
+=~ dict_col_t::name
+=~ rollback_instant
+MDEV-19202:
+=~ Assertion \`n'
+=~ find_old_col_no
+=~ dict_table_t::rollback_instant
 MDEV-19198:
 =~ Assertion \`(create_info->tmp_table()) \|\| thd->mdl_context\.is_lock_owner(MDL_key::TABLE, table->db.str, table->table_name\.str, MDL_EXCLUSIVE)'|Assertion \`(create_info->tmp_table()) \|\| thd->mdl_context\.is_lock_owner(MDL_key::TABLE, table->db, table->table_name, MDL_EXCLUSIVE)'|Assertion \`(create_info->options & 1) \|\| thd->mdl_context\.is_lock_owner(MDL_key::TABLE, table->db, table->table_name, MDL_EXCLUSIVE)'
 =~ mysql_create_like_table
@@ -678,7 +687,7 @@ MDEV-18167:
 =~ TABLE::update_virtual_fields
 MDEV-18166:
 =~ Assertion \`!table \|\| (!table->read_set \|\| bitmap_is_set(table->read_set, field_index) \|\| (!(ptr >= table->record[0] && ptr < table->record[0] + table->s->reclength)))'
-=~ Field_datetimef::get_TIME|Field_short::val_int|Field_enum::val_int|Field_newdate::get_TIME|Field_long::val_int
+=~ Field_datetimef::get_TIME|Field_short::val_int|Field_enum::val_int|Field_newdate::get_TIME|Field_long::val_int|Field_varstring::val_real
 =~ field_conv_incompatible
 =~ TABLE::update_virtual_fields
 MDEV-18153:
