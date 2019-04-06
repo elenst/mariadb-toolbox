@@ -157,6 +157,10 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-19198:
+=~ Assertion \`(create_info->tmp_table()) \|\| thd->mdl_context\.is_lock_owner(MDL_key::TABLE, table->db.str, table->table_name\.str, MDL_EXCLUSIVE)'|Assertion \`(create_info->tmp_table()) \|\| thd->mdl_context\.is_lock_owner(MDL_key::TABLE, table->db, table->table_name, MDL_EXCLUSIVE)'|Assertion \`(create_info->options & 1) \|\| thd->mdl_context\.is_lock_owner(MDL_key::TABLE, table->db, table->table_name, MDL_EXCLUSIVE)'
+=~ mysql_create_like_table
+=~ mysql_execute_command
 MDEV-19194:
 =~ signal 11
 =~ fk_prepare_copy_alter_table
@@ -347,7 +351,7 @@ MDEV-18900:
 =~ AddressSanitizer: heap-use-after-free
 =~ my_strnncoll_binary
 =~ Item_func_min_max::val_str
-=~ end_send_group|AGGR_OP::put_record
+=~ end_send_group|AGGR_OP::put_record|make_sortkey
 MDEV-18899:
 =~ signal 11
 =~ Field::set_warning_truncated_wrong_value
@@ -674,7 +678,7 @@ MDEV-18167:
 =~ TABLE::update_virtual_fields
 MDEV-18166:
 =~ Assertion \`!table \|\| (!table->read_set \|\| bitmap_is_set(table->read_set, field_index) \|\| (!(ptr >= table->record[0] && ptr < table->record[0] + table->s->reclength)))'
-=~ Field_datetimef::get_TIME|Field_short::val_int|Field_enum::val_int|Field_newdate::get_TIME
+=~ Field_datetimef::get_TIME|Field_short::val_int|Field_enum::val_int|Field_newdate::get_TIME|Field_long::val_int
 =~ field_conv_incompatible
 =~ TABLE::update_virtual_fields
 MDEV-18153:
@@ -846,6 +850,10 @@ MDEV-17361:
 =~ in Query_arena::set_query_arena
 =~ THD::set_n_backup_active_arena
 =~ Field::set_default
+MDEV-17275:
+=~ Assertion \`thd->mdl_context\.is_lock_owner(MDL_key::TABLE, table_list->db, table_list->table_name, MDL_SHARED)'
+=~ get_table_share
+=~ get_table_share_with_discover
 MDEV-17223:
 =~ Assertion \`thd->killed != 0'
 =~ ha_maria::enable_indexes
@@ -901,7 +909,7 @@ MDEV-16932:
 =~ AddressSanitizer: heap-use-after-free
 =~ my_well_formed_char_length_utf8|lex_string_cmp
 =~ mysql_prepare_create_table
-=~ sp_head::execute
+=~ sp_head::execute|Prepared_statement::execute
 MDEV-16929:
 =~ Assertion \`thd->transaction\.stmt\.is_empty() \|\| (thd->state_flags & Open_tables_state::BACKUPS_AVAIL)'
 =~ open_normal_and_derived_tables
@@ -1009,7 +1017,7 @@ MDEV-15776:
 MDEV-15776:
 =~ Assertion \`user_table->get_ref_count() == 1' failed
 =~ commit_try_rebuild
-=~ Sql_cmd_alter_table::execute
+=~ Sql_cmd_alter_table::execute|Sql_cmd_optimize_table::execute
 MDEV-15572:
 =~ signal 11|AddressSanitizer: SEGV
 =~ ha_maria::end_bulk_insert
@@ -1413,8 +1421,6 @@ MDEV-17333:
 =~ next_insert_id >= auto_inc_interval_for_cur_row\.minimum
 MDEV-17307:
 =~ Incorrect key file for table
-MDEV-17275:
-=~ Diagnostics_area::set_ok_status
 MDEV-17225:
 =~ log_descriptor\.bc\.buffer->prev_last_lsn
 MDEV-17217:
