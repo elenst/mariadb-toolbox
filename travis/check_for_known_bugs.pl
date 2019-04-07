@@ -269,7 +269,7 @@ MDEV-19034:
 =~ str_to_datetime
 =~ Field_temporal_with_date::store
 MDEV-19027:
-=~ Assertion \`table->n_def == (table->n_cols - 3)'
+=~ Assertion \`table->n_def == (table->n_cols - 3)'|Assertion \`table->n_def == table->n_cols - 3'
 =~ dict_table_add_system_columns
 =~ create_table_info_t::create_table_def
 =~ ha_innobase::truncate
