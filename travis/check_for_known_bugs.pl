@@ -1101,6 +1101,12 @@ TODO-842:
 =~ Query_arena::set_query_arena
 =~ Field::set_default
 =~ Item::remove_eq_conds
+TODO-842:
+=~ Assertion \`marked_for_read()'
+=~ Field_datetimef::get_TIME
+=~ Temporal_with_date::make_from_item
+TODO-842:
+=~ InnoDB: InnoDB FTS: Doc ID cannot be 0
 
 ##############################################################################
 # Weak matches
