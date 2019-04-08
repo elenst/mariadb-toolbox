@@ -157,6 +157,10 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-19216:
+=~ Assertion \`!strcmp(index->table->name\.m_name, "SYS_FOREIGN") \|\| !strcmp(index->table->name\.m_name, "SYS_FOREIGN_COLS")'
+=~ btr_node_ptr_max_size
+=~ btr_cur_search_to_nth_level
 MDEV-19202:
 =~ signal 11
 =~ strlen
@@ -852,8 +856,13 @@ MDEV-16788:
 =~ Sql_cmd_alter_table::execute
 MDEV-16745:
 =~ Assertion \`thd->transaction\.stmt\.is_empty()'
-=~ Prepared_statement::prepare
+=~ Prepared_statement::prepare|Sql_cmd_alter_table::execute
 =~ KILL_CONNECTION|KILL_SERVER
+MDEV-16745:
+=~ Assertion \`thd->transaction\.stmt\.is_empty() \|\| thd->in_sub_stmt \|\| (thd->state_flags & Open_tables_state::BACKUPS_AVAIL)'
+=~ close_thread_tables
+=~ mysqld_show_create
+=~ KILL_SERVER
 MDEV-16699:
 =~ AddressSanitizer: heap-use-after-free|signal 11
 =~ my_strnncoll_binary
@@ -1107,6 +1116,10 @@ TODO-842:
 =~ Temporal_with_date::make_from_item
 TODO-842:
 =~ InnoDB: InnoDB FTS: Doc ID cannot be 0
+TODO-842:
+=~ Assertion \`!is_set() \|\| (m_status == DA_OK_BULK && is_bulk_op())'
+=~ Diagnostics_area::set_ok_status
+=~ BACKUP STAGE BLOCK_COMMIT
 
 ##############################################################################
 # Weak matches
