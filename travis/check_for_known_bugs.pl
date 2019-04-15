@@ -317,12 +317,6 @@ MDEV-19014:
 =~ pure virtual method called|signal 11|AddressSanitizer: heap-use-after-free
 =~ Item_direct_view_ref::fix_fields
 =~ Table_triggers_list::process_triggers
-MDEV-19012:
-=~ signal 11|AddressSanitizer: SEGV on unknown address
-=~ Version: '10\.4
-=~ st_select_lex_unit::optimize
-=~ mysql_derived_optimize
-=~ TABLE_LIST::handle_derived
 MDEV-19011:
 =~ Assertion \`file->s->base.reclength < file->s->vreclength'
 =~ ha_myisam::setup_vcols_for_repair
@@ -359,11 +353,6 @@ MDEV-18900:
 =~ my_strnncoll_binary
 =~ Item_func_min_max::val_str
 =~ end_send_group|AGGR_OP::put_record|make_sortkey
-MDEV-18899:
-=~ signal 11
-=~ Field::set_warning_truncated_wrong_value
-=~ Field_longstr::check_string_copy_error
-=~ Column_stat::get_stat_values
 MDEV-18882:
 =~ AddressSanitizer: heap-use-after-free
 =~ Binary_string::copy|String::copy
@@ -452,17 +441,6 @@ MDEV-18693:
 =~ _ma_remove_table_from_trnman
 =~ wait_while_table_is_used
 =~ reload_acl_and_cache
-MDEV-18690:
-=~ signal 11
-=~ Item_equal_iterator<List_iterator_fast, Item>::Item_equal_iterator
-=~ Item_field::find_item_equal
-=~ eliminate_item_equal
-=~ substitute_for_best_equal_field
-MDEV-18690:
-=~ AddressSanitizer: use-after-poison|signal 11
-=~ base_list::head
-=~ substitute_for_best_equal_field
-=~ JOIN::optimize_stage2
 MDEV-18602:
 =~ InnoDB: Failing assertion: !recv_no_log_write
 =~ mtr_commit
@@ -559,10 +537,6 @@ MDEV-18325:
 =~ Version: '10\.1
 MDEV-18310:
 =~ Got error 121 when executing undo undo_key_delete
-MDEV-18309:
-=~ InnoDB: Operating system error number 2 in a file operation
-=~ InnoDB: Cannot open datafile for read-only:
-=~ OS error: 71
 MDEV-18300:
 =~ AddressSanitizer: use-after-poison|AddressSanitizer: unknown-crash
 =~ Field_blob::get_key_image
@@ -2511,3 +2485,29 @@ MDEV-5924:
 # =~ mysql_execute_command
 # MDEV-15658:
 # =~ expl_lock->trx == arg->impl_trx
+# MDEV-19012:
+# =~ signal 11|AddressSanitizer: SEGV on unknown address
+# =~ Version: '10\.4
+# =~ st_select_lex_unit::optimize
+# =~ mysql_derived_optimize
+# =~ TABLE_LIST::handle_derived
+# MDEV-18899:
+# =~ signal 11
+# =~ Field::set_warning_truncated_wrong_value
+# =~ Field_longstr::check_string_copy_error
+# =~ Column_stat::get_stat_values
+# MDEV-18690:
+# =~ signal 11
+# =~ Item_equal_iterator<List_iterator_fast, Item>::Item_equal_iterator
+# =~ Item_field::find_item_equal
+# =~ eliminate_item_equal
+# =~ substitute_for_best_equal_field
+# MDEV-18690:
+# =~ AddressSanitizer: use-after-poison|signal 11
+# =~ base_list::head
+# =~ substitute_for_best_equal_field
+# =~ JOIN::optimize_stage2
+# MDEV-18309:
+# =~ InnoDB: Operating system error number 2 in a file operation
+# =~ InnoDB: Cannot open datafile for read-only:
+# =~ OS error: 71
