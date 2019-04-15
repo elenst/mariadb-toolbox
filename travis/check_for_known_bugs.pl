@@ -157,6 +157,12 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-19225:
+=~ InnoDB: InnoDB FTS: Doc ID cannot be 0
+MDEV-19224:
+=~ Assertion \`marked_for_read()'
+=~ Field_varstring::val_str|Field_varstring::val_real
+=~ Item_func_between::val_int_cmp_string|Item_func_between::val_int_cmp_real
 MDEV-19216:
 =~ Assertion \`!strcmp(index->table->name\.m_name, "SYS_FOREIGN") \|\| !strcmp(index->table->name\.m_name, "SYS_FOREIGN_COLS")'
 =~ btr_node_ptr_max_size
@@ -948,6 +954,19 @@ MDEV-15572:
 =~ signal 11|AddressSanitizer: SEGV
 =~ ha_maria::end_bulk_insert
 =~ select_insert::abort_result_set
+MDEV-15534:
+=~ Assertion \`m_lock_type == 2'
+=~ handler::ha_drop_table
+=~ free_tmp_table
+=~ sp_instr_stmt::exec_core
+MDEV-15534:
+=~ mi_set_index_cond_func|ma_set_index_cond_func
+=~ mark_used_tables_as_free_for_reuse
+=~ sp_instr_stmt::exec_core
+MDEV-15534:
+=~ InnoDB: Failing assertion: prebuilt->magic_n == ROW_PREBUILT_ALLOCATED
+=~ row_update_prebuilt_trx
+=~ ha_innobase::external_lock
 MDEV-15458:
 =~ AddressSanitizer: heap-buffer-overflow|signal 11|Conditional jump or move depends on uninitialised value|AddressSanitizer: heap-use-after-free|AddressSanitizer: SEGV on unknown address
 =~ heap_scan
@@ -1114,8 +1133,6 @@ TODO-842:
 =~ Assertion \`marked_for_read()'
 =~ Field_datetimef::get_TIME
 =~ Temporal_with_date::make_from_item
-TODO-842:
-=~ InnoDB: InnoDB FTS: Doc ID cannot be 0
 TODO-842:
 =~ Assertion \`!is_set() \|\| (m_status == DA_OK_BULK && is_bulk_op())'
 =~ Diagnostics_area::set_ok_status
