@@ -157,12 +157,27 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-19255:
+=~ signal 11
+=~ JOIN::save_explain_data_intern
+=~ st_join_table::save_explain_data
+=~ JOIN::build_explain
+MDEV-19255:
+=~ Assertion \`sel->quick'
+=~ JOIN::make_range_rowid_filters
+=~ JOIN::optimize_stage2
+MDEV-19254:
+=~ signal 11|AddressSanitizer: SEGV on unknown address
+=~ maria_status
+=~ ha_maria::info
+=~ ha_partition::open
+=~ open_and_process_table
 MDEV-19225:
 =~ InnoDB: InnoDB FTS: Doc ID cannot be 0
 MDEV-19224:
 =~ Assertion \`marked_for_read()'
 =~ Field_varstring::val_str|Field_varstring::val_real
-=~ Item_func_between::val_int_cmp_string|Item_func_between::val_int_cmp_real
+=~ Item_func_between::val_int_cmp_string|Item_func_between::val_int_cmp_real|Item_char_typecast::val_str
 MDEV-19216:
 =~ Assertion \`!strcmp(index->table->name\.m_name, "SYS_FOREIGN") \|\| !strcmp(index->table->name\.m_name, "SYS_FOREIGN_COLS")'
 =~ btr_node_ptr_max_size
@@ -223,6 +238,11 @@ MDEV-19166:
 =~ Timestamp_or_zero_datetime::tv
 =~ Item_cache_timestamp::to_datetime
 =~ Item_cache_timestamp::val_int
+MDEV-19164:
+=~ Assertion \`fixed'
+=~ Version: '10\.4
+=~ get_date_from_
+=~ Item_func_between::val_int
 MDEV-19131:
 =~ Assertion \`table->versioned(VERS_TRX_ID) \|\| (table->versioned() && table->s->table_category == TABLE_CATEGORY_TEMPORARY)'
 =~ Field_vers_trx_id::get_date
@@ -321,6 +341,11 @@ MDEV-18933:
 =~ InnoDB: Failing assertion: share->idx_trans_tbl.index_count == mysql_num_index
 =~ innobase_build_index_translation
 =~ open_table_uncached
+MDEV-18925:
+=~ AddressSanitizer: heap-buffer-overflow
+=~ Item_exists_subselect::is_top_level_item
+=~ st_select_lex::update_used_tables
+=~ JOIN::optimize
 MDEV-18923:
 =~ Assertion \`!lex_string_cmp(system_charset_info, fk_info->referenced_table, &table->s->table_name)'
 =~ fk_truncate_illegal_if_parent
@@ -653,7 +678,7 @@ MDEV-18067:
 =~ run_backup_stage
 MDEV-18047:
 =~ index->magic_n == 76789786|Assertion \`pos < index->n_def'|AddressSanitizer: heap-use-after-free
-=~ dict_index_get_nth_field
+=~ dict_index_get_nth_field|dict_index_get_nth_col
 =~ dict_foreign_qualify_index
 =~ innobase_update_foreign_try
 MDEV-18047:
@@ -1079,17 +1104,6 @@ TODO-842:
 =~ make_unique_constraint_name
 =~ mysql_create_frm_image
 TODO-842:
-=~ signal 11
-=~ maria_status
-=~ ha_maria::info
-=~ ha_partition::open
-=~ open_and_process_table
-TODO-842:
-=~ AddressSanitizer: heap-buffer-overflow
-=~ Item_exists_subselect::is_top_level_item
-=~ st_select_lex::update_used_tables
-=~ JOIN::optimize
-TODO-842:
 =~ InnoDB: foreign constraints: secondary index is out of sync
 =~ Assertion \`!"secondary index is out of sync"'
 =~ dict_index_t::vers_history_row
@@ -1137,6 +1151,26 @@ TODO-842:
 =~ Assertion \`!is_set() \|\| (m_status == DA_OK_BULK && is_bulk_op())'
 =~ Diagnostics_area::set_ok_status
 =~ BACKUP STAGE BLOCK_COMMIT
+TODO-842:
+=~ AddressSanitizer: heap-use-after-free
+=~ create_tmp_table
+=~ select_unit::create_result_table
+=~ mysql_derived_prepare
+TODO-842:
+=~ AddressSanitizer: unknown-crash
+=~ compare_record
+=~ mysql_update
+TODO-842:
+=~ AddressSanitizer: heap-buffer-overflow
+=~ update_const_equal_items
+=~ join_read_const_table
+=~ make_join_statistics
+=~ mysql_multi_update
+TODO-842:
+=~ InnoDB: Failing assertion: !index->n_def \|\| i <= max_n_fields
+=~ rem0rec\.cc
+=~ rec_offs_validate
+=~ rec_get_nth_cfield
 
 ##############################################################################
 # Weak matches
