@@ -234,7 +234,6 @@ MDEV-19175:
 =~ signal 11|AddressSanitizer: SEGV on unknown address
 =~ ha_partition::vers_can_native
 =~ TABLE_SHARE::init_from_binary_frm_image
-=~ Delayed_insert::open_and_lock_table
 MDEV-19173:
 =~ Assertion \`pos < table->n_def'
 =~ dict_table_get_nth_col
