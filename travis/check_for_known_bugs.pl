@@ -157,6 +157,14 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-19273:
+=~ Assertion \`thd->mdl_context\.is_lock_owner(MDL_key::TABLE, table->db\.str, table->table_name\.str, MDL_SHARED)'
+=~ mysql_rm_table_no_locks
+MDEV-19261:
+=~ InnoDB: Failing assertion: dfield->type\.mtype == 0 \|\| dfield->len == len
+=~ trx_undo_rec_get_partial_row
+=~ row_purge_parse_undo_rec
+=~ Server version: 10\.1
 MDEV-19255:
 =~ signal 11
 =~ JOIN::save_explain_data_intern
@@ -176,8 +184,7 @@ MDEV-19225:
 =~ InnoDB: InnoDB FTS: Doc ID cannot be 0
 MDEV-19224:
 =~ Assertion \`marked_for_read()'
-=~ Field_varstring::val_str|Field_varstring::val_real
-=~ Item_func_between::val_int_cmp_string|Item_func_between::val_int_cmp_real|Item_char_typecast::val_str
+=~ Field_varstring::val_str|Field_varstring::val_real|Field_datetimef::get_TIME|Field_medium::val_int|Field_enum::val_int
 MDEV-19216:
 =~ Assertion \`!strcmp(index->table->name\.m_name, "SYS_FOREIGN") \|\| !strcmp(index->table->name\.m_name, "SYS_FOREIGN_COLS")'
 =~ btr_node_ptr_max_size
@@ -208,7 +215,7 @@ MDEV-19190:
 =~ Assertion \`part_share->auto_inc_initialized'
 =~ ha_partition::get_auto_increment
 =~ TABLE::update_generated_fields
-=~ TABLE::period_make_insert
+=~ TABLE::period_make_insert|update_portion_of_time
 MDEV-19189:
 =~ AddressSanitizer: memcpy-param-overlap: memory ranges
 =~ fill_alter_inplace_info
@@ -640,7 +647,6 @@ MDEV-18068:
 =~ Assertion \`this == ticket->get_ctx()'
 =~ MDL_context::release_lock
 =~ backup_end
-=~ run_backup_stage
 MDEV-18067:
 =~ Assertion \`ticket->m_duration == MDL_EXPLICIT'|AddressSanitizer: heap-use-after-free
 =~ MDL_context::release_lock
@@ -943,7 +949,7 @@ MDEV-15800:
 =~ mysql_load|select_insert::send_data
 MDEV-15776:
 =~ Failing assertion: table->get_ref_count() == 0
-=~ row_merge_drop_table
+=~ row_merge_drop_table|dict_table_t::get_ref_count
 =~ Sql_cmd_alter_table::execute
 MDEV-15776:
 =~ Assertion \`user_table->get_ref_count() == 1' failed
@@ -1117,10 +1123,6 @@ TODO-842:
 =~ Query_arena::set_query_arena
 =~ Field::set_default
 =~ Item::remove_eq_conds
-TODO-842:
-=~ Assertion \`marked_for_read()'
-=~ Field_datetimef::get_TIME
-=~ Temporal_with_date::make_from_item
 TODO-842:
 =~ Assertion \`!is_set() \|\| (m_status == DA_OK_BULK && is_bulk_op())'
 =~ Diagnostics_area::set_ok_status
