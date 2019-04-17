@@ -158,6 +158,11 @@ __DATA__
 ##############################################################################
 
 MDEV-19273:
+=~ signal 11|AddressSanitizer: SEGV on unknown address
+=~ MDL_ticket::has_stronger_or_equal_type
+=~ MDL_context::upgrade_shared_lock
+=~ wait_while_table_is_used
+MDEV-19273:
 =~ Assertion \`thd->mdl_context\.is_lock_owner(MDL_key::TABLE, table->db\.str, table->table_name\.str, MDL_SHARED)'
 =~ mysql_rm_table_no_locks
 MDEV-19261:
