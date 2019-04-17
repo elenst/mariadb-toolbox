@@ -694,6 +694,11 @@ MDEV-17991:
 =~ Out of memory
 =~ Lex_input_stream::body_utf8_start
 =~ MYSQLparse
+MDEV-17974:
+=~ signal 11|AddressSanitizer: use-after-poison
+=~ sp_process_definer
+=~ mysql_create_user
+=~ Prepared_statement::execute|sp_head::execute
 MDEV-17964:
 =~ Assertion \`status == 0'
 =~ add_role_user_mapping_action
@@ -720,6 +725,10 @@ MDEV-17891:
 =~ Assertion \`transactional_table \|\| !(info.copied \|\| info.deleted) \|\| thd->transaction.stmt.modified_non_trans_table'
 =~ mysql_load
 =~ Server version: 10\.3|Server version: 10\.4
+MDEV-17890:
+=~ InnoDB: Record in index .* was not found on update: TUPLE
+=~ Assertion \`0'|signal 11
+=~ row_upd_sec_index_entry|row_upd_build_difference_binary
 MDEV-17869:
 =~ AddressSanitizer: use-after-poison
 =~ Item_change_list::rollback_item_tree_changes
@@ -1294,8 +1303,6 @@ MDEV-17976:
 =~ lock->magic_n == 22643
 MDEV-17976:
 =~ rec_get_offsets_func
-MDEV-17974:
-=~ sp_process_definer
 MDEV-17971:
 =~ Field_iterator_table::set
 MDEV-17971:
@@ -1310,10 +1317,6 @@ MDEV-17897:
 =~ block->frame
 MDEV-17895:
 =~ trx->dict_operation != TRX_DICT_OP_NONE
-MDEV-17890:
-=~ row_upd_sec_index_entry
-MDEV-17890:
-=~ row_upd_build_difference_binary
 MDEV-17884:
 =~ is marked as crashed and should be repaired
 MDEV-17842:
