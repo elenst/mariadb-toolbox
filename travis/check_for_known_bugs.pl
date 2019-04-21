@@ -157,6 +157,10 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-19297:
+=~ InnoDB: Failing assertion: thr->magic_n == QUE_THR_MAGIC_N
+=~ que_graph_free_recursive
+=~ tdc_remove_table
 MDEV-19273:
 =~ signal 11|AddressSanitizer: SEGV on unknown address
 =~ MDL_ticket::has_stronger_or_equal_type
@@ -374,6 +378,11 @@ MDEV-18875:
 =~ ha_rollback_trans
 =~ mysql_trans_commit_alter_copy_data|trans_commit_implicit
 =~ ADD PERIOD|add period|LOCK TABLE
+MDEV-18870:
+=~ signal 11|AddressSanitizer: SEGV on unknown address
+=~ row_upd_step
+=~ row_update_for_mysql
+=~ TABLE::delete_row
 MDEV-18826:
 =~ signal 11
 =~ l_find
