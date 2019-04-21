@@ -1169,6 +1169,11 @@ TODO-842:
 =~ rem0rec\.cc
 =~ rec_offs_validate
 =~ rec_get_nth_cfield
+TODO-842:
+=~ undefined at 0
+=~ Uninitialised byte(s) found during client check request
+=~ dtuple_validate
+=~ page_cur_search_with_match_bytes
 
 ##############################################################################
 # Weak matches
