@@ -157,6 +157,20 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-19304:
+=~ AddressSanitizer: unknown-crash on address
+=~ my_timestamp_from_binary
+=~ Field_timestampf::get_timestamp
+=~ Column_definition::Column_definition
+MDEV-19304:
+=~ AddressSanitizer: SEGV on unknown address|signal 11
+=~ calc_row_difference
+=~ handler::ha_update_row
+MDEV-19304:
+=~ AddressSanitizer: unknown-crash
+=~ Field::cmp_binary
+=~ compare_record
+=~ mysql_update
 MDEV-19303:
 =~ Conditional jump or move depends on uninitialised value
 =~ mi_rrnd
