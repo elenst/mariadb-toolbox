@@ -157,6 +157,16 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-19303:
+=~ Conditional jump or move depends on uninitialised value
+=~ mi_rrnd
+=~ ha_sequence::rnd_pos
+=~ rr_from_pointers
+MDEV-19303:
+=~ Uninitialised byte(s) found during client check request
+=~ dtuple_validate
+=~ page_cur_search_with_match_bytes
+=~ rr_from_pointers
 MDEV-19302:
 =~ Assertion \`!current_stmt_is_commit \|\| !rgi->tables_to_lock'
 =~ Server version: 10\.4
@@ -168,6 +178,12 @@ MDEV-19301:
 =~ Datetime_truncation_not_needed::Datetime_truncation_not_needed
 =~ Item_func_nullif::date_op
 =~ Type_handler_temporal_result::Item_func_hybrid_field_type_get_date
+MDEV-19299:
+=~ AddressSanitizer: heap-use-after-free
+=~ my_scan_weight_utf8_general_ci|my_utf8_uni
+=~ my_strnncollsp_utf8_general_ci|my_strnncollsp_utf8
+=~ sortcmp
+=~ test_if_group_changed
 MDEV-19297:
 =~ InnoDB: Failing assertion: thr->magic_n == QUE_THR_MAGIC_N
 =~ que_graph_free_recursive
@@ -1053,12 +1069,6 @@ MDEV-14041:
 =~ String::length
 =~ sortcmp
 =~ test_if_group_changed
-MDEV-14041:
-=~ AddressSanitizer: heap-use-after-free
-=~ my_scan_weight_utf8_general_ci|my_utf8_uni
-=~ my_strnncollsp_utf8_general_ci|my_strnncollsp_utf8
-=~ sortcmp
-=~ test_if_group_changed
 MDEV-11740:
 =~ Assertion \`pos != (~(my_off_t) 0)' failed
 =~ my_seek
@@ -1177,11 +1187,6 @@ TODO-842:
 =~ rem0rec\.cc
 =~ rec_offs_validate
 =~ rec_get_nth_cfield
-TODO-842:
-=~ undefined at 0
-=~ Uninitialised byte(s) found during client check request
-=~ dtuple_validate
-=~ page_cur_search_with_match_bytes
 
 ##############################################################################
 # Weak matches
@@ -1588,8 +1593,6 @@ MDEV-11015:
 =~ precision > 0
 MDEV-9137:
 =~  in _ma_ck_real_write_btree
-MDEV-8203:
-=~  rgi->tables_to_lock
 MDEV-5924:
 =~  Query_cache::register_all_tables
 
@@ -2545,3 +2548,5 @@ MDEV-5924:
 # MDEV-19224:
 # =~ Assertion \`marked_for_read()'
 # =~ Field_varstring::val_str|Field_varstring::val_real|Field_datetimef::get_TIME|Field_medium::val_int|Field_enum::val_int
+# MDEV-8203:
+# =~  rgi->tables_to_lock
