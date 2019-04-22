@@ -157,6 +157,10 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-19306:
+=~ Assertion \`marked_for_read()'
+=~ field_conv_incompatible
+=~ TABLE::update_virtual_fields
 MDEV-19304:
 =~ signal 11|AddressSanitizer: SEGV on unknown address
 =~ row_sel_field_store_in_mysql_format_func|row_sel_store_mysql_rec
