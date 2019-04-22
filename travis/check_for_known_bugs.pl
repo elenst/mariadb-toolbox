@@ -157,6 +157,17 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-19302:
+=~ Assertion \`!current_stmt_is_commit \|\| !rgi->tables_to_lock'
+=~ Server version: 10\.4
+=~ Query_log_event::do_apply_event
+=~ apply_event_and_update_pos_apply
+MDEV-19301:
+=~ Assertion \`!is_valid_datetime() \|\| fraction_remainder(((item->decimals) < (6) ? (item->decimals) : (6))) == 0'
+=~ Server version: 10\.4
+=~ Datetime_truncation_not_needed::Datetime_truncation_not_needed
+=~ Item_func_nullif::date_op
+=~ Type_handler_temporal_result::Item_func_hybrid_field_type_get_date
 MDEV-19297:
 =~ InnoDB: Failing assertion: thr->magic_n == QUE_THR_MAGIC_N
 =~ que_graph_free_recursive
@@ -191,9 +202,6 @@ MDEV-19254:
 =~ open_and_process_table
 MDEV-19225:
 =~ InnoDB: InnoDB FTS: Doc ID cannot be 0
-MDEV-19224:
-=~ Assertion \`marked_for_read()'
-=~ Field_varstring::val_str|Field_varstring::val_real|Field_datetimef::get_TIME|Field_medium::val_int|Field_enum::val_int
 MDEV-19216:
 =~ Assertion \`!strcmp(index->table->name\.m_name, "SYS_FOREIGN") \|\| !strcmp(index->table->name\.m_name, "SYS_FOREIGN_COLS")'
 =~ btr_node_ptr_max_size
@@ -2534,3 +2542,6 @@ MDEV-5924:
 # =~ InnoDB: Operating system error number 2 in a file operation
 # =~ InnoDB: Cannot open datafile for read-only:
 # =~ OS error: 71
+# MDEV-19224:
+# =~ Assertion \`marked_for_read()'
+# =~ Field_varstring::val_str|Field_varstring::val_real|Field_datetimef::get_TIME|Field_medium::val_int|Field_enum::val_int
