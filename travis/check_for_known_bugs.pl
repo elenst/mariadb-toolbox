@@ -220,15 +220,6 @@ MDEV-19261:
 =~ trx_undo_rec_get_partial_row
 =~ row_purge_parse_undo_rec
 =~ Server version: 10\.1
-MDEV-19255:
-=~ signal 11
-=~ JOIN::save_explain_data_intern
-=~ st_join_table::save_explain_data
-=~ JOIN::build_explain
-MDEV-19255:
-=~ Assertion \`sel->quick'
-=~ JOIN::make_range_rowid_filters
-=~ JOIN::optimize_stage2
 MDEV-19254:
 =~ signal 11|AddressSanitizer: SEGV on unknown address
 =~ maria_status
@@ -296,11 +287,6 @@ MDEV-19166:
 =~ Timestamp_or_zero_datetime::tv
 =~ Item_cache_timestamp::to_datetime
 =~ Item_cache_timestamp::val_int
-MDEV-19164:
-=~ Assertion \`fixed'
-=~ Version: '10\.4
-=~ get_date_from_
-=~ Item_func_between::val_int
 MDEV-19131:
 =~ Assertion \`table->versioned(VERS_TRX_ID) \|\| (table->versioned() && table->s->table_category == TABLE_CATEGORY_TEMPORARY)'
 =~ Field_vers_trx_id::get_date
@@ -1143,11 +1129,6 @@ TODO-842:
 =~ JOIN_CACHE::join_records
 =~ rbt_eject_node
 TODO-842:
-=~ AddressSanitizer: heap-use-after-free
-=~ my_strcasecmp_utf8
-=~ make_unique_constraint_name
-=~ mysql_create_frm_image
-TODO-842:
 =~ InnoDB: foreign constraints: secondary index is out of sync
 =~ Assertion \`!"secondary index is out of sync"'
 =~ dict_index_t::vers_history_row
@@ -1191,15 +1172,6 @@ TODO-842:
 =~ Assertion \`!is_set() \|\| (m_status == DA_OK_BULK && is_bulk_op())'
 =~ Diagnostics_area::set_ok_status
 =~ BACKUP STAGE BLOCK_COMMIT
-TODO-842:
-=~ AddressSanitizer: heap-use-after-free
-=~ create_tmp_table
-=~ select_unit::create_result_table
-=~ mysql_derived_prepare
-TODO-842:
-=~ AddressSanitizer: unknown-crash
-=~ compare_record
-=~ mysql_update
 TODO-842:
 =~ AddressSanitizer: heap-buffer-overflow
 =~ update_const_equal_items
@@ -1451,10 +1423,6 @@ MDEV-17019:
 =~ multi_delete::~multi_delete
 MDEV-16789:
 =~ in insert_fields
-MDEV-16654:
-=~ returned 38 for ALTER TABLE
-MDEV-16654:
-=~ ha_innodb::commit_inplace_alter_table
 MDEV-16539:
 =~ THD::mark_tmp_table_as_free_for_reuse
 MDEV-16523:
@@ -2574,3 +2542,21 @@ MDEV-5924:
 # =~ Field_varstring::val_str|Field_varstring::val_real|Field_datetimef::get_TIME|Field_medium::val_int|Field_enum::val_int
 # MDEV-8203:
 # =~  rgi->tables_to_lock
+# MDEV-19255:
+# =~ signal 11
+# =~ JOIN::save_explain_data_intern
+# =~ st_join_table::save_explain_data
+# =~ JOIN::build_explain
+MDEV-19255:
+# =~ Assertion \`sel->quick'
+# =~ JOIN::make_range_rowid_filters
+# =~ JOIN::optimize_stage2
+# MDEV-19164:
+# =~ Assertion \`fixed'
+# =~ Version: '10\.4
+# =~ get_date_from_
+# =~ Item_func_between::val_int
+# MDEV-16654:
+# =~ returned 38 for ALTER TABLE
+# MDEV-16654:
+# =~ ha_innodb::commit_inplace_alter_table
