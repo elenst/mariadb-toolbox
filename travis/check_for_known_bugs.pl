@@ -158,6 +158,11 @@ __DATA__
 ##############################################################################
 
 MDEV-19304:
+=~ signal 11|AddressSanitizer: SEGV on unknown address
+=~ row_sel_field_store_in_mysql_format_func|row_sel_store_mysql_rec
+=~ row_search_mvcc
+=~ rr_sequential
+MDEV-19304:
 =~ AddressSanitizer: unknown-crash on address
 =~ my_timestamp_from_binary
 =~ Field_timestampf::get_timestamp
@@ -573,6 +578,11 @@ MDEV-18371:
 =~ Conditional jump or move depends on uninitialised value|signal 11
 =~ cmp_key_rowid_part_id
 =~ QUICK_RANGE_SELECT::get_next
+MDEV-18361:
+=~ Assertion \`0'
+=~ row_log_table_apply_ops
+=~ commit_try_rebuild
+=~ Sql_cmd_alter_table::execute
 MDEV-18335:
 =~ Assertion \`!error \|\| error == 137' failed
 =~ subselect_rowid_merge_engine::init
@@ -876,7 +886,7 @@ MDEV-17091:
 MDEV-17005:
 =~ AddressSanitizer: heap-use-after-free|AddressSanitizer: heap-buffer-overflow
 =~ innobase_get_computed_value
-=~ row_upd_clust_step
+=~ row_upd_clust_step|row_ins_clust_index_entry
 MDEV-17004:
 =~ InnoDB: Assertion failure in thread .* in file ha_innodb.cc line
 =~ innobase_get_fts_charset
@@ -899,7 +909,7 @@ MDEV-16940:
 =~ sp_head::execute
 MDEV-16932:
 =~ AddressSanitizer: heap-use-after-free
-=~ my_well_formed_char_length_utf8|lex_string_cmp
+=~ my_well_formed_char_length_utf8|lex_string_cmp|my_strcasecmp_utf8
 =~ mysql_prepare_create_table
 =~ sp_head::execute|Prepared_statement::execute
 MDEV-16929:
