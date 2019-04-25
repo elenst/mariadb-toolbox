@@ -494,6 +494,10 @@ MDEV-18693:
 =~ _ma_remove_table_from_trnman
 =~ wait_while_table_is_used
 =~ reload_acl_and_cache
+MDEV-18654:
+=~ InnoDB: Failing assertion: sym_node->table != NULL
+=~ pars_retrieve_table_def
+=~ pars_insert_statement
 MDEV-18602:
 =~ InnoDB: Failing assertion: !recv_no_log_write
 =~ mtr_commit
@@ -873,6 +877,10 @@ MDEV-17091:
 =~ Assertion \`old_part_id == m_last_part'
 =~ ha_partition::update_row
 =~ mysql_update
+MDEV-17019:
+=~ signal 11
+=~ multi_delete::~multi_delete
+=~ Prepared_statement::execute
 MDEV-17005:
 =~ AddressSanitizer: heap-use-after-free|AddressSanitizer: heap-buffer-overflow
 =~ innobase_get_computed_value
@@ -1007,6 +1015,11 @@ MDEV-15800:
 =~ Assertion \`next_insert_id >= auto_inc_interval_for_cur_row\.minimum()'
 =~ handler::update_auto_increment
 =~ mysql_load|select_insert::send_data
+MDEV-15878:
+=~ Assertion \`table->file->stats\.records > 0 \|\| error'
+=~ join_read_const_table
+=~ JOIN::optimize
+=~ mysql_select
 MDEV-15776:
 =~ Failing assertion: table->get_ref_count() == 0
 =~ row_merge_drop_table|dict_table_t::get_ref_count
@@ -1187,11 +1200,33 @@ TODO-842:
 =~ rem0rec\.cc
 =~ rec_offs_validate
 =~ rec_get_nth_cfield
+TODO-842:
+=~ AddressSanitizer: SEGV on unknown address
+=~ check_fields
+=~ mysql_update
+=~ sp_instr_stmt::execute
+TODO-842:
+=~ Assertion \`Item_cache_temporal::field_type() == MYSQL_TYPE_TIME'
+=~ Item_cache_temporal::val_time_packed
+=~ Item_func_between::val_int
+TODO-842:
+=~ AddressSanitizer: heap-use-after-free
+=~ Query_arena::strmake
+=~ list_callback
+=~ THD_list::iterate
+TODO-842:
+=~ AddressSanitizer: SEGV on unknown address
+=~ Item_field::used_tables
+=~ Item::const_item
+=~ mysql_update
+=~ sp_instr_stmt::execute
 
 ##############################################################################
 # Weak matches
 ##############################################################################
 
+MDEV-19320:
+=~ Can't find record
 MDEV-18929:
 =~ Slave SQL: Error 'Table .* is not system-versioned' on query
 MDEV-18805:
@@ -1423,8 +1458,6 @@ MDEV-17054:
 =~ in innobase_get_fts_charset
 MDEV-17053:
 =~ sync_check_iterate
-MDEV-17019:
-=~ multi_delete::~multi_delete
 MDEV-16789:
 =~ in insert_fields
 MDEV-16539:
@@ -1455,8 +1488,6 @@ MDEV-16060:
 =~ Failing assertion: ut_strcmp
 MDEV-15949:
 =~ space->n_pending_ops == 0
-MDEV-15878:
-=~ table->file->stats\.records > 0
 MDEV-15873:
 =~ precision > 0
 MDEV-15802:
