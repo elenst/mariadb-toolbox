@@ -157,6 +157,31 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-19352:
+=~ signal 11|AddressSanitizer: SEGV on unknown address
+=~ alloc_histograms_for_table_share
+=~ read_histograms_for_table
+=~ read_statistics_for_tables_if_needed
+=~ get_all_tables
+MDEV-19351:
+=~ Conditional jump or move depends on uninitialised value
+=~ statistics_for_command_is_needed
+=~ alloc_statistics_for_table_share
+=~ open_and_process_table
+MDEV-19350:
+=~ signal 11
+=~ delete_tree_element
+=~ free_tree
+=~ Item_func_group_concat::repack_tree
+MDEV-19348:
+=~ InnoDB: Database page corruption on disk or a failed file read of tablespace .* page .* You may have to recover from a backup
+=~ InnoDB: Failed to read file .* at offset .* Page read from tablespace is corrupted
+=~ mariabackup: innodb_init() returned 39 (Data structure corruption)
+MDEV-19318:
+=~ Assertion \`!(length < share->base\.min_block_length)'
+=~ _ma_scan_block_record
+=~ rr_sequential
+=~ READ_RECORD::read_record
 MDEV-19306:
 =~ Assertion \`marked_for_read()'
 =~ field_conv_incompatible
@@ -225,11 +250,11 @@ MDEV-19261:
 =~ row_purge_parse_undo_rec
 =~ Server version: 10\.1
 MDEV-19254:
-=~ signal 11|AddressSanitizer: SEGV on unknown address
+=~ signal 11|AddressSanitizer: SEGV on unknown address|AddressSanitizer: heap-use-after-free
 =~ maria_status
 =~ ha_maria::info
-=~ ha_partition::open
-=~ open_and_process_table
+=~ ha_partition
+=~ open_and_process_table|open_and_lock_tables
 MDEV-19225:
 =~ InnoDB: InnoDB FTS: Doc ID cannot be 0
 MDEV-19216:
@@ -498,6 +523,11 @@ MDEV-18654:
 =~ InnoDB: Failing assertion: sym_node->table != NULL
 =~ pars_retrieve_table_def
 =~ pars_insert_statement
+MDEV-18624:
+=~ AddressSanitizer: heap-use-after-free
+=~ mysql_derived_prepare
+=~ mysql_multi_update_prepare
+=~ sp_instr_stmt::exec_core
 MDEV-18602:
 =~ InnoDB: Failing assertion: !recv_no_log_write
 =~ mtr_commit
@@ -1045,6 +1075,10 @@ MDEV-15534:
 =~ InnoDB: Failing assertion: prebuilt->magic_n == ROW_PREBUILT_ALLOCATED
 =~ row_update_prebuilt_trx
 =~ ha_innobase::external_lock
+MDEV-15471:
+=~ Assertion \`new_clustered == ctx->need_rebuild()'
+=~ ha_innobase::commit_inplace_alter_table
+=~ ha_partition::commit_inplace_alter_table
 MDEV-15458:
 =~ AddressSanitizer: heap-buffer-overflow|signal 11|Conditional jump or move depends on uninitialised value|AddressSanitizer: heap-use-after-free|AddressSanitizer: SEGV on unknown address
 =~ heap_scan
@@ -1220,6 +1254,11 @@ TODO-842:
 =~ Item::const_item
 =~ mysql_update
 =~ sp_instr_stmt::execute
+TODO-842:
+=~ Server version: 10\.1
+=~ InnoDB: Failing assertion: s_latch == rw_lock_own(&index->lock, 352)
+=~ row_ins_scan_sec_index_for_duplicate
+=~ row_ins_index_entry
 
 ##############################################################################
 # Weak matches
@@ -1520,8 +1559,6 @@ MDEV-15482:
 =~ Type_std_attributes::set
 MDEV-15481:
 =~ I_P_List_null_counter, I_P_List_fast_push_back
-MDEV-15471:
-=~ new_clustered == ctx->need_rebuild
 MDEV-15470:
 =~ TABLE::mark_columns_used_by_index_no_reset
 MDEV-15468:
