@@ -641,7 +641,7 @@ MDEV-18293:
 MDEV-18291:
 =~ std::__cxx11::_List_base|std::_List_base
 =~ dict_table_remove_from_cache
-=~ ha_delete_table|ha_innobase_inplace_ctx::~ha_innobase_inplace_ctx|Sql_cmd_truncate_table::handler_truncate
+=~ ha_delete_table|ha_innobase_inplace_ctx::~ha_innobase_inplace_ctx|Sql_cmd_truncate_table::handler_truncate|row_merge_drop_table
 MDEV-18286:
 =~ Assertion \`pagecache->cnt_for_resize_op == 0'
 =~ check_pagecache_is_cleaned_up
@@ -1259,6 +1259,12 @@ TODO-842:
 =~ InnoDB: Failing assertion: s_latch == rw_lock_own(&index->lock, 352)
 =~ row_ins_scan_sec_index_for_duplicate
 =~ row_ins_index_entry
+TODO-842:
+=~ InnoDB: Page .* log sequence number .* is in the future! Current system log sequence number .*
+=~ InnoDB: Your database may be corrupt or you may have copied the InnoDB tablespace but not the InnoDB log files
+=~ Assertion \`undo->state == 3'
+=~ trx_undo_commit_cleanup
+=~ trx_rollback_resurrected
 
 ##############################################################################
 # Weak matches
@@ -1304,10 +1310,6 @@ MDEV-18343:
 =~ Mutex RW_LOCK_LIST created sync0debug\.cc
 MDEV-18322:
 =~ wrong page type
-MDEV-18321:
-=~ ha_innodb::commit_inplace_alter_table
-MDEV-18321:
-=~ ha_innobase::commit_inplace_alter_table
 MDEV-18291:
 =~ ha_innobase_inplace_ctx::
 MDEV-18274:
@@ -2632,3 +2634,7 @@ MDEV-19255:
 # =~ returned 38 for ALTER TABLE
 # MDEV-16654:
 # =~ ha_innodb::commit_inplace_alter_table
+# MDEV-18321:
+# =~ ha_innodb::commit_inplace_alter_table
+# MDEV-18321:
+# =~ ha_innobase::commit_inplace_alter_table
