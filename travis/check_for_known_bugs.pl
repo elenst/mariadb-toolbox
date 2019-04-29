@@ -168,6 +168,11 @@ MDEV-19351:
 =~ statistics_for_command_is_needed
 =~ alloc_statistics_for_table_share
 =~ open_and_process_table
+MDEV-19351:
+=~ AddressSanitizer: heap-use-after-free
+=~ is_temporary_table
+=~ read_statistics_for_tables_if_needed
+=~ fill_schema_table_by_open
 MDEV-19350:
 =~ signal 11
 =~ delete_tree_element
