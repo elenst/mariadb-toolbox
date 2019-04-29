@@ -1276,6 +1276,38 @@ TODO-842:
 =~ Assertion \`undo->state == 3'
 =~ trx_undo_commit_cleanup
 =~ trx_rollback_resurrected
+TODO-842:
+=~ Assertion \`log->blobs'
+=~ row_log_table_apply_update
+=~ row_log_table_apply_op
+=~ ha_innobase::inplace_alter_table
+TODO-842:
+=~ AddressSanitizer: heap-use-after-free
+=~ row_ins_check_foreign_constraint
+=~ row_ins_clust_index_entry
+=~ row_ins_index_entry
+TODO-842:
+=~ AddressSanitizer: SEGV|signal 11
+=~ mi_extra
+=~ ha_partition::loop_extra_alter
+=~ wait_while_table_is_used
+=~ fast_alter_partition_table
+TODO-842:
+=~ AddressSanitizer: heap-use-after-free
+=~ ib_vector_size
+=~ fts_cache_append_deleted_doc_ids
+=~ init_ftfuncs
+TODO-842:
+=~ AddressSanitizer: heap-use-after-free
+=~ maria_status
+=~ ha_partition::info
+=~ ha_partition::update_create_info
+=~ mysql_prepare_alter_table
+TODO-842:
+=~ Assertion \`inited==INDEX'
+=~ opt_sum_query
+=~ handler::ha_index_end
+=~ JOIN::optimize
 
 ##############################################################################
 # Weak matches
@@ -1512,6 +1544,11 @@ MDEV-17053:
 =~ sync_check_iterate
 MDEV-16789:
 =~ in insert_fields
+MDEV-16788:
+=~ signal 11
+=~ build_frm_image
+=~ mysql_create_frm_image
+=~ mysql_alter_table
 MDEV-16539:
 =~ THD::mark_tmp_table_as_free_for_reuse
 MDEV-16523:
