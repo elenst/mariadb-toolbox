@@ -157,6 +157,12 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-19359:
+=~ AddressSanitizer: heap-use-after-free
+=~ copy_if_not_alloced
+=~ make_sortkey
+=~ find_all_keys
+=~ create_sort_index
 MDEV-19352:
 =~ signal 11|AddressSanitizer: SEGV on unknown address
 =~ alloc_histograms_for_table_share
