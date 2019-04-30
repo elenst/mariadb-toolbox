@@ -158,10 +158,20 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-19361:
+=~ Assertion \`marked_for_read()'
+=~ Item_func_mul::int_op
+=~ Item_func_hybrid_field_type::val_int_from_int_op
+=~ TABLE::update_virtual_fields
+MDEV-19361:
+=~ signal 11|AddressSanitizer: SEGV on unknown address
+=~ handler_index_cond_check
+=~ row_search_idx_cond_check
+=~ JOIN_TAB_SCAN::open
 MDEV-19359:
 =~ AddressSanitizer: heap-use-after-free
 =~ copy_if_not_alloced
-=~ make_sortkey
+=~ make_sortkey|SQL_SELECT::skip_record
 =~ find_all_keys
 =~ create_sort_index
 MDEV-19352:
@@ -483,8 +493,8 @@ MDEV-18787:
 MDEV-18783:
 =~ AddressSanitizer: heap-use-after-free|signal 11
 =~ tree_search_next|hp_rb_make_key|tree_search_edge|check_one_key
-=~ tc_purge
-=~ run_backup_stage
+=~ tc_purge|tc_remove_table
+=~ run_backup_stage|close_thread_tables
 MDEV-18780:
 =~  Assertion \`col->prtype == prtype'
 =~ innobase_rename_or_enlarge_column_try
@@ -1032,6 +1042,11 @@ MDEV-16128:
 =~ Item_func::convert_const_compared_to_int_field|Item_func::check_argument_types_like_args0
 =~ setup_without_group
 =~ Prepared_statement::execute|sp_instr_stmt::execute
+MDEV-16060:
+=~ InnoDB: Failing assertion: ut_strcmp(index->name, key->name) == 0
+=~ ha_innobase::innobase_get_index
+=~ ha_innobase::info_low
+=~ open_table_from_share
 MDEV-15977:
 =~ Assertion \`! thd->in_sub_stmt' failed
 =~ SEQUENCE::read_initial_values
@@ -1574,8 +1589,6 @@ MDEV-16184:
 =~ nest->counter > 0
 MDEV-16171:
 =~ in setup_table_map
-MDEV-16060:
-=~ Failing assertion: ut_strcmp
 MDEV-15949:
 =~ space->n_pending_ops == 0
 MDEV-15873:
