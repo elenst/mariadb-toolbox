@@ -315,10 +315,10 @@ MDEV-19189:
 =~ fill_alter_inplace_info
 =~ mysql_alter_table
 MDEV-19178:
-=~ Assertion \`m_sp == __null'
-=~ Item_func_sp::fix_fields
+=~ Assertion \`m_sp == __null'|signal 11|AddressSanitizer: heap-use-after-free
 =~ create_view_field
 =~ Field_iterator_view::create_item
+=~ sp_instr_stmt::exec_core
 MDEV-19175:
 =~ signal 11|AddressSanitizer: SEGV on unknown address
 =~ ha_partition::vers_can_native
