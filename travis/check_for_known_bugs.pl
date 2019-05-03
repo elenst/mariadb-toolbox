@@ -180,16 +180,6 @@ MDEV-19352:
 =~ read_histograms_for_table
 =~ read_statistics_for_tables_if_needed
 =~ get_all_tables
-MDEV-19351:
-=~ Conditional jump or move depends on uninitialised value
-=~ statistics_for_command_is_needed
-=~ alloc_statistics_for_table_share
-=~ open_and_process_table
-MDEV-19351:
-=~ AddressSanitizer: heap-use-after-free
-=~ is_temporary_table
-=~ read_statistics_for_tables_if_needed
-=~ fill_schema_table_by_open
 MDEV-19350:
 =~ signal 11
 =~ delete_tree_element
@@ -411,7 +401,7 @@ MDEV-19020:
 MDEV-19014:
 =~ pure virtual method called|signal 11|AddressSanitizer: heap-use-after-free
 =~ Item_direct_view_ref::fix_fields
-=~ Table_triggers_list::process_triggers
+=~ sp_instr_stmt::exec_core
 MDEV-19011:
 =~ Assertion \`file->s->base.reclength < file->s->vreclength'
 =~ ha_myisam::setup_vcols_for_repair
@@ -439,6 +429,10 @@ MDEV-18923:
 =~ Assertion \`!lex_string_cmp(system_charset_info, fk_info->referenced_table, &table->s->table_name)'
 =~ fk_truncate_illegal_if_parent
 =~ Sql_cmd_truncate_table::truncate_table
+MDEV-18923:
+=~ Assertion \`!((system_charset_info)->coll->strcasecmp((system_charset_info), (fk_info->referenced_table->str), (table->s->table_name\.str)))'
+=~ fk_truncate_illegal_if_parent
+=~ Sql_cmd_truncate_table::handler_truncate
 MDEV-18911:
 =~ Assertion \`(templ->is_virtual && !field) \|\| (field && field->prefix_len ? field->prefix_len == len : templ->mysql_col_len == len)'
 =~ row_sel_field_store_in_mysql_format_func
@@ -1417,8 +1411,6 @@ MDEV-18146:
 =~ merge_page, index
 MDEV-18141:
 =~ Can't find record in
-MDEV-18139:
-=~ Table rename would cause two FOREIGN KEY constraints
 # Not fixed, but I don't want it to match
 # MDEV-18065:
 # =~ Fatal error: Can't open and lock privilege tables
@@ -2683,7 +2675,7 @@ MDEV-5924:
 # =~ JOIN::save_explain_data_intern
 # =~ st_join_table::save_explain_data
 # =~ JOIN::build_explain
-MDEV-19255:
+# MDEV-19255:
 # =~ Assertion \`sel->quick'
 # =~ JOIN::make_range_rowid_filters
 # =~ JOIN::optimize_stage2
@@ -2700,3 +2692,15 @@ MDEV-19255:
 # =~ ha_innodb::commit_inplace_alter_table
 # MDEV-18321:
 # =~ ha_innobase::commit_inplace_alter_table
+# MDEV-18139:
+# =~ Table rename would cause two FOREIGN KEY constraints
+# MDEV-19351:
+# =~ Conditional jump or move depends on uninitialised value
+# =~ statistics_for_command_is_needed
+# =~ alloc_statistics_for_table_share
+# =~ open_and_process_table
+# MDEV-19351:
+# =~ AddressSanitizer: heap-use-after-free|signal 11
+# =~ is_temporary_table
+# =~ read_statistics_for_tables_if_needed
+# =~ fill_schema_table_by_open
