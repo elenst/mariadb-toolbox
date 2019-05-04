@@ -158,6 +158,12 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-19394:
+=~ InnoDB: checksum mismatch in tablespace
+=~ InnoDB: Operating system error number 2 in a file operation
+=~ fil_load_single_table_tablespace
+=~ recv_init_crash_recovery
+=~ recv_scan_log_recs
 MDEV-19361:
 =~ Assertion \`marked_for_read()'
 =~ Item_func_mul::int_op
@@ -217,6 +223,11 @@ MDEV-19304:
 =~ Field::cmp_binary
 =~ compare_record
 =~ mysql_update
+MDEV-19304:
+=~ AddressSanitizer: unknown-crash
+=~ create_tmp_table
+=~ select_unit::create_result_table
+=~ mysql_derived_prepare
 MDEV-19303:
 =~ Conditional jump or move depends on uninitialised value
 =~ mi_rrnd
@@ -226,6 +237,12 @@ MDEV-19303:
 =~ Uninitialised byte(s) found during client check request
 =~ dtuple_validate
 =~ page_cur_search_with_match_bytes
+=~ rr_from_pointers
+MDEV-19303:
+=~ File too short; Expected more data in file
+=~ Conditional jump or move depends on uninitialised value
+=~ maria_rrnd
+=~ ha_sequence::rnd_pos
 =~ rr_from_pointers
 MDEV-19302:
 =~ Assertion \`!current_stmt_is_commit \|\| !rgi->tables_to_lock'
@@ -498,10 +515,10 @@ MDEV-18776:
 =~ mysql_execute_command
 =~ SET STATEMENT
 MDEV-18770:
-=~ AddressSanitizer: memcpy-param-overlap
+=~ AddressSanitizer: memcpy-param-overlap|AddressSanitizer: heap-use-after-free
 =~ my_strnxfrm_8bit_bin
 =~ make_sortkey
-=~ create_sort_index
+=~ create_sort_index|find_all_keys
 MDEV-18756:
 =~ Use of uninitialised value of size
 =~ DES_set_key_unchecked
@@ -941,6 +958,11 @@ MDEV-16994:
 =~ String::c_ptr|base_list_iterator::next
 =~ partition_info::prune_partition_bitmaps
 =~ open_and_process_table
+MDEV-16985:
+=~ Assertion \`strcmp(share->unique_file_name,filename) \|\| share->last_version'
+=~ test_if_reopen
+=~ mi_open
+=~ open_table_from_share
 MDEV-16962:
 =~ Assertion \`!error \|\| !ot_ctx.can_recover_from_failed_open()'
 =~ open_purge_table
