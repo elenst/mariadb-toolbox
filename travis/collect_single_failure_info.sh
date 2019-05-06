@@ -145,12 +145,10 @@ if [ "$res" == "0" ] ; then
       res=1
     fi
 
-    if [ -e  ${VARDIR}*/mysql.err ] ; then
-      if ! perl $SCRIPT_DIR/check_for_known_bugs.pl ${VARDIR}*/mysql.err ${VARDIR}*/mbackup_*.log ; then
-        # Check trial log as a last resort. It's likely to cause false positives
-        if [ -e $TRIAL_LOG ] ; then
-          perl $SCRIPT_DIR/check_for_known_bugs.pl $TRIAL_LOG
-        fi
+    if ! perl $SCRIPT_DIR/check_for_known_bugs.pl ${VARDIR}*/mysql.err* ${VARDIR}*/mbackup_*.log ; then
+      # Check trial log as a last resort. It's likely to cause false positives
+      if [ -e $TRIAL_LOG ] ; then
+        perl $SCRIPT_DIR/check_for_known_bugs.pl $TRIAL_LOG
       fi
     fi
 

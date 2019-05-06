@@ -10,7 +10,13 @@ use strict;
 my @expected_files= glob "@ARGV";
 my @files;
 map { push @files, $_ if -e $_ } @expected_files;
-print "The following files will be checked for signatures of known bugs: @files\n";
+
+if (scalar @files) {
+  print "The following files will be checked for signatures of known bugs: @files\n";
+} else {
+  print "No files found to check for signatures";
+  exit 0;
+}
 
 my %found_mdevs= ();
 my %fixed_mdevs= ();
