@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 #
-#  Copyright (c) 2017, 2018, MariaDB
+#  Copyright (c) 2017, 2019, MariaDB
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -52,13 +52,16 @@ fi
 
 function load_failure
 {
+  date
   ls -l ${LOGDIR}/${ARCHDIR}*.tar.gz
 
   for f in logs datadirs coredumps ; do
 
     if [ -e ${LOGDIR}/${ARCHDIR}_${f}.tar.gz ] ; then
 
-      $MYSQL --local-infile --host=$DB_HOST --port=$DB_PORT -u$DB_USER -p$DBP -e "LOAD DATA LOCAL INFILE \"${LOGDIR}/${ARCHDIR}_${f}.tar.gz\" REPLACE INTO TABLE travis.${f} CHARACTER SET BINARY FIELDS TERMINATED BY 'xxxxxthisxxlinexxxshouldxxneverxxeverxxappearxxinxxanyxxfilexxxxxxxxxxxxxxxxxxxxxxxx' ESCAPED BY '' LINES TERMINATED BY 'XXXTHISXXLINEXXSHOULDXXNEVERXXEVERXXAPPEARXXINXXANYXXFILEXXXXXXXXXXXXXXXXXXXX' (data) SET build_id = $TRAVIS_BUILD_NUMBER, job_id = $TRAVIS_JOB, trial_id = $TRIAL, command_line = \"$TRIAL_CMD\", server_branch = \"$SERVER_BRANCH\", server_revision = \"$SERVER_REVISION\", test_branch = \"$RQG_BRANCH\", test_revision = \"$RQG_REVISION\""
+      time printf "user anonymous foo\\nput ${LOGDIR}/${ARCHDIR}_${f}.tar.gz private/travis/${ARCHDIR}_${f}.tar.gz\n" | ftp -ni $DB_HOST
+
+      time $MYSQL --local-infile --host=$DB_HOST --port=$DB_PORT -u$DB_USER -p$DBP -e "LOAD DATA LOCAL INFILE \"${LOGDIR}/${ARCHDIR}_${f}.tar.gz\" REPLACE INTO TABLE travis.${f} CHARACTER SET BINARY FIELDS TERMINATED BY 'xxxxxthisxxlinexxxshouldxxneverxxeverxxappearxxinxxanyxxfilexxxxxxxxxxxxxxxxxxxxxxxx' ESCAPED BY '' LINES TERMINATED BY 'XXXTHISXXLINEXXSHOULDXXNEVERXXEVERXXAPPEARXXINXXANYXXFILEXXXXXXXXXXXXXXXXXXXX' (data) SET build_id = $TRAVIS_BUILD_NUMBER, job_id = $TRAVIS_JOB, trial_id = $TRIAL, command_line = \"$TRIAL_CMD\", server_branch = \"$SERVER_BRANCH\", server_revision = \"$SERVER_REVISION\", test_branch = \"$RQG_BRANCH\", test_revision = \"$RQG_REVISION\""
 
       if [ "$?" != "0" ] ; then
         echo "ERROR: Failed to load $f for build_id = $TRAVIS_BUILD_NUMBER, job_id = $TRAVIS_JOB, trial_id = $TRIAL"
