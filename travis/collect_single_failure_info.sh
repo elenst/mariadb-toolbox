@@ -59,7 +59,7 @@ function load_failure
 
     if [ -e ${LOGDIR}/${ARCHDIR}_${f}.tar.gz ] ; then
 
-      time printf "user anonymous foo\\nput ${LOGDIR}/${ARCHDIR}_${f}.tar.gz private/travis/${ARCHDIR}_${f}.tar.gz\n" | ftp -ni $DB_HOST
+      time printf "passive\nuser anonymous foo\nput ${LOGDIR}/${ARCHDIR}_${f}.tar.gz private/travis/${ARCHDIR}_${f}.tar.gz\n" | ftp -ni $DB_HOST
 
       time $MYSQL --local-infile --host=$DB_HOST --port=$DB_PORT -u$DB_USER -p$DBP -e "LOAD DATA LOCAL INFILE \"${LOGDIR}/${ARCHDIR}_${f}.tar.gz\" REPLACE INTO TABLE travis.${f} CHARACTER SET BINARY FIELDS TERMINATED BY 'xxxxxthisxxlinexxxshouldxxneverxxeverxxappearxxinxxanyxxfilexxxxxxxxxxxxxxxxxxxxxxxx' ESCAPED BY '' LINES TERMINATED BY 'XXXTHISXXLINEXXSHOULDXXNEVERXXEVERXXAPPEARXXINXXANYXXFILEXXXXXXXXXXXXXXXXXXXX' (data) SET build_id = $TRAVIS_BUILD_NUMBER, job_id = $TRAVIS_JOB, trial_id = $TRIAL, command_line = \"$TRIAL_CMD\", server_branch = \"$SERVER_BRANCH\", server_revision = \"$SERVER_REVISION\", test_branch = \"$RQG_BRANCH\", test_revision = \"$RQG_REVISION\""
 
