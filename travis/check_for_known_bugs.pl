@@ -164,6 +164,30 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-19408:
+=~ Assertion \`trx->state == TRX_STATE_ACTIVE \|\| trx->state == TRX_STATE_PREPARED'
+=~ ReadView::copy_trx_ids
+=~ ReadView::prepare
+=~ MVCC::clone_oldest_view
+MDEV-19406:
+=~ Assertion \`marked_for_write_or_computed()'|Assertion \`is_stat_field \|\| !table \|\| (!table->write_set \|\| bitmap_is_set(table->write_set, field_index) \|\| (!(ptr >= table->record[0] && ptr < table->record[0] + table->s->reclength))) \|\| (table->vcol_set && bitmap_is_set(table->vcol_set, field_index))'
+=~ Field_date_common::store_TIME_with_warning
+=~ Field::do_field_temporal
+=~ multi_update::do_updates
+MDEV-19406:
+=~ Assertion \`bitmap_is_set_all(&table->s->all_set)'
+=~ handler::ha_reset
+=~ close_thread_table
+MDEV-19400:
+=~ Assertion \`!table->s->tmp_table'
+=~ wait_while_table_is_used
+=~ mysql_rm_table_no_locks
+MDEV-19400:
+=~ signal 11
+=~ MDL_ticket::has_stronger_or_equal_type
+=~ MDL_context::upgrade_shared_lock
+=~ wait_while_table_is_used
+=~ mysql_rm_table_no_locks
 MDEV-19394:
 =~ InnoDB: checksum mismatch in tablespace
 =~ InnoDB: Operating system error number 2 in a file operation
@@ -579,6 +603,11 @@ MDEV-18581:
 =~ row_purge_remove_sec_if_poss_leaf|row_purge_upd_exist_or_extern_func
 =~ row_purge_record_func
 =~ row_purge_step
+MDEV-18550:
+=~ Assertion failure in file /home/travis/src/storage/innobase/fil/fil0fil.cc
+=~ InnoDB: Failing assertion: success
+=~ fil_node_open_file
+=~ xb_load_single_table_tablespace
 MDEV-18546:
 =~ AddressSanitizer: heap-use-after-free
 =~ innobase_get_computed_value
@@ -998,6 +1027,9 @@ MDEV-16887:
 =~ Assertion \`n_idx > 0'
 =~ trx_undo_log_v_idx
 =~ trx_undo_report_row_operation
+MDEV-16866:
+=~ InnoDB: redo log checkpoint: 0 [ chk key ]:
+=~ InnoDB: Redo log crypto: failed to decrypt log block. Reason could be
 MDEV-16794:
 =~ Server version: 10\.1|Server version: 10\.0
 =~ Assertion \`thd->transaction\.stmt\.is_empty()'
