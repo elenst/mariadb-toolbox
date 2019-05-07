@@ -628,6 +628,11 @@ MDEV-18451:
 =~ maria_create_trn_for_mysql
 =~ _ma_setup_live_state
 =~ trans_commit_implicit
+MDEV-18449:
+=~ AddressSanitizer: heap-use-after-free
+=~ my_strnncollsp_simple
+=~ sortcmp
+=~ sub_select
 MDEV-18441:
 =~ Assertion \`tables_opened == 1'
 =~ Sql_cmd_alter_table::execute
@@ -1377,8 +1382,6 @@ MDEV-18454:
 =~ ReadView::check_trx_id_sanity
 MDEV-18453:
 =~ rec_get_deleted_flag
-MDEV-18449:
-=~ my_strnncollsp_simple
 MDEV-18421:
 =~ foreign->foreign_table
 MDEV-18414:
