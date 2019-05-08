@@ -469,7 +469,7 @@ MDEV-18933:
 =~ open_table_uncached
 MDEV-18925:
 =~ AddressSanitizer: heap-buffer-overflow
-=~ Item_exists_subselect::is_top_level_item
+=~ Item_exists_subselect::is_top_level_item|Item_in_optimizer::is_top_level_item
 =~ st_select_lex::update_used_tables
 =~ JOIN::optimize
 MDEV-18923:
@@ -774,7 +774,7 @@ MDEV-18166:
 =~ TABLE::update_virtual_fields
 MDEV-18153:
 =~ Index for table .* is corrupt; try to repair it|InnoDB: Record in index .* of table .* was not found on update: TUPLE
-=~ Assertion \`0'
+=~ Assertion \`0'|Assertion \`btr_validate_index(index, 0)'
 =~ Server version: 10\.4
 =~ row_upd_sec_index_entry
 =~ row_update_for_mysql
@@ -1165,6 +1165,10 @@ MDEV-15471:
 =~ Assertion \`new_clustered == ctx->need_rebuild()'
 =~ ha_innobase::commit_inplace_alter_table
 =~ ha_partition::commit_inplace_alter_table
+MDEV-15464:
+=~ Assertion \`purge_sys\.purge_queue\.empty() \|\| purge_sys\.purge_queue\.top() != m_rsegs'
+=~ TrxUndoRsegsIterator::set_next
+=~ trx_purge_choose_next_log
 MDEV-15458:
 =~ AddressSanitizer: heap-buffer-overflow|signal 11|Conditional jump or move depends on uninitialised value|AddressSanitizer: heap-use-after-free|AddressSanitizer: SEGV on unknown address
 =~ heap_scan
@@ -1682,10 +1686,6 @@ MDEV-15470:
 =~ TABLE::mark_columns_used_by_index_no_reset
 MDEV-15468:
 =~ table_events_waits_common::make_row
-MDEV-15464:
-=~ in TrxUndoRsegsIterator::set_next
-MDEV-15464:
-=~ purge_sys\.purge_queue\.top
 MDEV-15329:
 =~ in dict_table_check_for_dup_indexes
 MDEV-15257:
