@@ -944,6 +944,11 @@ MDEV-17556:
 =~ Assertion \`bitmap_is_set_all(&table->s->all_set)'
 =~ handler::ha_reset
 =~ close_thread_tables
+MDEV-17540:
+=~ Assertion `table'|signal 11|AddressSanitizer: heap-use-after-free|AddressSanitizer: SEGV
+=~ dict_table_get_first_index|mem_heap_free
+=~ row_purge_upd_exist_or_extern_func
+=~ row_purge_step
 MDEV-17361:
 =~ signal 11|AddressSanitizer: SEGV on unknown address
 =~ in Query_arena::set_query_arena
@@ -1387,6 +1392,11 @@ TODO-842:
 =~ opt_sum_query
 =~ handler::ha_index_end
 =~ JOIN::optimize
+TODO-842:
+=~ Assertion \`(uint) (res->buff[7] & 7) == page_type'
+=~ get_head_or_tail_page
+=~ allocate_and_write_block_record
+=~ maria_write
 
 ##############################################################################
 # Weak matches
@@ -1585,8 +1595,6 @@ MDEV-17582:
 =~ status_var\.local_memory_used == 0
 MDEV-17551:
 =~ _ma_state_info_write
-MDEV-17540:
-=~ dict_table_get_first_index
 MDEV-17539:
 =~ Protocol::end_statement
 MDEV-17538:
