@@ -945,7 +945,7 @@ MDEV-17556:
 =~ handler::ha_reset
 =~ close_thread_tables
 MDEV-17540:
-=~ Assertion `table'|signal 11|AddressSanitizer: heap-use-after-free|AddressSanitizer: SEGV
+=~ Assertion \`table'|signal 11|AddressSanitizer: heap-use-after-free|AddressSanitizer: SEGV
 =~ dict_table_get_first_index|mem_heap_free
 =~ row_purge_upd_exist_or_extern_func
 =~ row_purge_step
@@ -1151,7 +1151,7 @@ MDEV-15776:
 =~ Sql_cmd_alter_table::execute|Sql_cmd_optimize_table::execute
 MDEV-15572:
 =~ signal 11|AddressSanitizer: SEGV
-=~ ha_maria::end_bulk_insert
+=~ ha_maria::end_bulk_insert|ha_maria::extra
 =~ select_insert::abort_result_set
 MDEV-15534:
 =~ Assertion \`m_lock_type == 2'
@@ -1397,6 +1397,11 @@ TODO-842:
 =~ get_head_or_tail_page
 =~ allocate_and_write_block_record
 =~ maria_write
+TODO-842:
+=~ Assertion \`m_status == DA_ERROR'
+=~ Diagnostics_area::sql_errno
+=~ trans_rollback_implicit
+=~ mysql_admin_table
 
 ##############################################################################
 # Weak matches
@@ -1674,8 +1679,6 @@ MDEV-15656:
 =~ is_last_prefix <= 0
 MDEV-15653:
 =~ lock_word <= 0x20000000
-MDEV-15572:
-=~ ha_maria::end_bulk_insert
 MDEV-15533:
 =~ log->blobs
 MDEV-15493:
