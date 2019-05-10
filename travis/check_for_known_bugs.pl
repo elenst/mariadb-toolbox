@@ -94,7 +94,7 @@ if ($res) {
 if (keys %fixed_mdevs) {
   foreach my $m (sort keys %fixed_mdevs) {
     print "\n--- ATTENTION! FOUND FIXED MDEV: -----\n";
-    print "\t$m: $fixed_mdevs{$m}\n";
+    print "\t$m - $fixed_mdevs{$m}\n";
   }
   print "--------------------------------------\n";
 }
