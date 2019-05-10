@@ -927,8 +927,8 @@ MDEV-17699:
 =~ substitute_for_best_equal_field
 =~ JOIN::optimize_stage2
 MDEV-17678:
-=~ AddressSanitizer: heap-use-after-free
-=~ Field::val_str|Field::is_null
+=~ AddressSanitizer: heap-use-after-free|signal 11
+=~ Field::val_str|Field::is_null|ErrConvString::ptr
 =~ field_unpack
 =~ print_keydup_error
 =~ ha_myisam::enable_indexes
