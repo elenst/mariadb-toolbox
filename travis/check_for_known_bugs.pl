@@ -34,7 +34,7 @@ while (<DATA>) {
   if (/^\# Weak matches/) {
     # Don't search for weak matches if strong ones have been found
     if ($matches_info) {
-      print "--- STRONG matches ---------------------------------\n";
+      print "\n--- STRONG matches ---------------------------------\n";
       print $matches_info;
       $matches_info= '';
       $res= 0;
@@ -81,10 +81,12 @@ while (<DATA>) {
 
 # If it's non-empty at this point, it's weak matches
 if ($matches_info) {
-  print "--- WEAK matches -------------------------------\n";
+  print "\n--- WEAK matches -------------------------------\n";
   print $matches_info;
   print "--------------------------------------\n";
   $res= 0;
+} else {
+  print "\n--- NO MATCHES FOUND ---------------------------\n";
 }
 
 if (keys %fixed_mdevs) {
@@ -164,6 +166,17 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-19438:
+=~ Conditional jump or move depends on uninitialised value
+=~ Session_tracker::store
+=~ net_send_ok
+=~ Protocol::end_statement
+MDEV-19418:
+=~ Assertion \`ptr == a \|\| ptr == b'
+=~ Field_bit::cmp
+=~ group_concat_key_cmp_with_order
+=~ tree_walk_left_root_right
+=~ Item_func_group_concat::repack_tree
 MDEV-19408:
 =~ Assertion \`trx->state == TRX_STATE_ACTIVE \|\| trx->state == TRX_STATE_PREPARED'
 =~ ReadView::copy_trx_ids
@@ -774,7 +787,7 @@ MDEV-18166:
 =~ TABLE::update_virtual_fields
 MDEV-18153:
 =~ Index for table .* is corrupt; try to repair it|InnoDB: Record in index .* of table .* was not found on update: TUPLE
-=~ Assertion \`0'|Assertion \`btr_validate_index(index, 0)'
+=~ Assertion \`0'|Assertion \`btr_validate_index(index, 0)'|Assertion \`btr_validate_index(index, 0, false)'
 =~ Server version: 10\.4
 =~ row_upd_sec_index_entry
 =~ row_update_for_mysql
@@ -1011,8 +1024,6 @@ MDEV-16985:
 MDEV-16962:
 =~ Assertion \`!error \|\| !ot_ctx.can_recover_from_failed_open()'
 =~ open_purge_table
-=~ innodb_acquire_mdl
-=~ innobase_allocate_row_for_vcol
 MDEV-16940:
 =~ signal 11|AddressSanitizer: SEGV on unknown address
 =~ unsafe_key_update
