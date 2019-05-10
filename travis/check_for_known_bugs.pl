@@ -85,7 +85,9 @@ if ($matches_info) {
   print $matches_info;
   print "--------------------------------------\n";
   $res= 0;
-} else {
+}
+
+if ($res) {
   print "\n--- NO MATCHES FOUND ---------------------------\n";
 }
 
