@@ -11,12 +11,13 @@ my @expected_files= glob "@ARGV";
 my @files;
 map { push @files, $_ if -e $_ } @expected_files;
 
-if (scalar @files) {
-  print "The following files will be checked for signatures of known bugs: @files\n";
-} else {
+if (! scalar @files) {
   print "No files found to check for signatures";
   exit 0;
 }
+#else {
+#  print "The following files will be checked for signatures of known bugs: @files\n";
+#}
 
 my %found_mdevs= ();
 my %fixed_mdevs= ();
@@ -793,6 +794,11 @@ MDEV-18153:
 =~ Server version: 10\.4
 =~ row_upd_sec_index_entry
 =~ row_update_for_mysql
+MDEV-18151:
+=~ Assertion \`0'
+=~ Protocol::end_statement
+=~ Server version: 10\.4
+=~ IDENTIFIED.*WITH|IDENTIFIED.*VIA
 MDEV-18088:
 =~ Assertion \`share->in_trans == 0'
 =~ maria_close
@@ -888,7 +894,7 @@ MDEV-17939:
 MDEV-17896:
 =~ Assertion \`pfs->get_refcount() > 0'
 =~ release_table_share|tdc_delete_share_from_hash
-=~ purge_tables
+=~ purge_tables|close_all_tables_for_name
 MDEV-17891:
 =~ Assertion \`transactional_table \|\| !changed \|\| thd->transaction.stmt.modified_non_trans_table'
 =~ select_insert::abort_result_set
@@ -1494,8 +1500,6 @@ MDEV-18156:
 =~ was not found on update: TUPLE
 MDEV-18156:
 =~ row_upd_sec_index_entry
-MDEV-18151:
-=~ Protocol::end_statement
 MDEV-18147:
 =~ templ->mysql_col_len >= len
 MDEV-18146:
@@ -1799,9 +1803,9 @@ MDEV-11783:
 MDEV-11015:
 =~ precision > 0
 MDEV-9137:
-=~  in _ma_ck_real_write_btree
+=~ in _ma_ck_real_write_btree
 MDEV-5924:
-=~  Query_cache::register_all_tables
+=~ Query_cache::register_all_tables
 
 ##############################################################################
 # Fixed:
