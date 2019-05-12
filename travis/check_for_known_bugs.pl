@@ -259,7 +259,7 @@ MDEV-19304:
 =~ AddressSanitizer: unknown-crash on address
 =~ my_timestamp_from_binary
 =~ Field_timestampf::get_timestamp
-=~ Column_definition::Column_definition
+=~ Column_definition::Column_definition|TABLE::validate_default_values_of_unset_fields
 MDEV-19304:
 =~ AddressSanitizer: SEGV on unknown address|signal 11
 =~ calc_row_difference
@@ -856,6 +856,11 @@ MDEV-18018:
 =~ signal 11|AddressSanitizer: heap-use-after-free
 =~ TABLE_LIST::reinit_before_use
 =~ sp_head::execute|Prepared_statement::execute
+MDEV-18013:
+=~ Assertion \`share->now_transactional'
+=~ flush_log_for_bitmap
+=~ pagecache_fwrite
+=~ _ma_flush_table_files
 MDEV-18003:
 =~ Assertion \`grantee->counter > 0'
 =~ merge_role_privileges
