@@ -265,7 +265,7 @@ MDEV-19304:
 =~ calc_row_difference
 =~ handler::ha_update_row
 MDEV-19304:
-=~ AddressSanitizer: unknown-crash
+=~ AddressSanitizer: unknown-crash|AddressSanitizer: heap-use-after-free
 =~ Field::cmp_binary
 =~ compare_record
 =~ mysql_update
