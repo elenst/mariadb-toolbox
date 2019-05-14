@@ -2,6 +2,7 @@
 
 #!/usr/bin/perl
 
+use DBI;
 use strict;
 
 # If a file with an exact name does not exist, it will prevent grep from working.
@@ -39,6 +40,7 @@ while (<DATA>) {
       print $matches_info;
       $matches_info= '';
       $res= 0;
+      register_matches();
       last;
     }
     $mdev= undef;
@@ -101,6 +103,20 @@ if (keys %fixed_mdevs) {
 }
 
 exit $res;
+
+sub register_matches
+{
+  if (defined $ENV{DB_USER}) {
+    my $dbh= DBI->connect("dbi:mysql:host=$ENV{DB_HOST}:port=$ENV{DB_PORT}",$ENV{DB_USER}, $ENV{DBP}, { RaiseError => 1 } );
+    unless ($dbh) {
+      print "ERROR: Couldn't connect to the database to register the result\n";
+      return 1;
+    }
+    foreach my $j (keys %found_mdevs) {
+      $dbh->do("REPLACE INTO travis.strong_match (test_id, jira) VALUES (\'$ENV{TEST_ID}\',\'$j\')");
+    }
+  }
+}
 
 sub process_found_mdev
 {
