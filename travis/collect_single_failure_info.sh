@@ -102,6 +102,8 @@ function process_coredump
 
 ###### "main"
 
+export TEST_ID="${TRAVIS_BUILD_NUMBER}.${TRAVIS_JOB}.${TRIAL}"
+
 # Only do the job if initial checks passed
 
 if [ "$res" == "0" ] ; then
