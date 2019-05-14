@@ -549,7 +549,7 @@ MDEV-18787:
 =~ mysqld_show_create
 MDEV-18783:
 =~ AddressSanitizer: heap-use-after-free|signal 11
-=~ tree_search_next|hp_rb_make_key|tree_search_edge|check_one_key
+=~ tree_search_next|hp_rb_make_key|tree_search_edge|check_one_key|check_one_rb_key
 =~ tc_purge|tc_remove_table
 =~ run_backup_stage|close_thread_tables
 MDEV-18780:
@@ -1165,11 +1165,11 @@ MDEV-15878:
 =~ join_read_const_table
 =~ JOIN::optimize
 =~ mysql_select
-MDEV-15776:
+MDEV-16060:
 =~ Failing assertion: table->get_ref_count() == 0
 =~ row_merge_drop_table|dict_table_t::get_ref_count
 =~ Sql_cmd_alter_table::execute
-MDEV-15776:
+MDEV-16060:
 =~ Assertion \`user_table->get_ref_count() == 1' failed
 =~ commit_try_rebuild
 =~ Sql_cmd_alter_table::execute|Sql_cmd_optimize_table::execute
@@ -1426,6 +1426,11 @@ TODO-842:
 =~ Diagnostics_area::sql_errno
 =~ trans_rollback_implicit
 =~ mysql_admin_table
+TODO-842:
+=~ signal 11
+=~ Server version: 10\.1
+=~ lock_tables_check
+=~ mysql_multi_update_prepare
 
 ##############################################################################
 # Weak matches
@@ -1689,9 +1694,9 @@ MDEV-15873:
 =~ precision > 0
 MDEV-15802:
 =~ Item::delete_self
-MDEV-15776:
+MDEV-16060:
 =~ commit_try_rebuild
-MDEV-15776:
+MDEV-16060:
 =~ table->get_ref_count
 MDEV-15753:
 =~ thd->is_error
