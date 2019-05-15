@@ -22,6 +22,7 @@ if (! scalar @files) {
 
 my %found_mdevs= ();
 my %fixed_mdevs= ();
+my %draft_mdevs= ();
 my $matches_info= '';
 
 my $mdev;
@@ -120,7 +121,8 @@ sub register_matches
     }
     foreach my $j (keys %found_mdevs) {
       my $fixdate= "'$fixed_mdevs{$j}'" || 'NULL';
-      $dbh->do("REPLACE INTO travis.strong_match (ci, test_id, jira, fixdate) VALUES (\'$ci\',\'$ENV{TEST_ID}\',\'$j\', $fixdate)");
+      my $draft= $draft_mdevs{$j} || 0;
+      $dbh->do("REPLACE INTO travis.strong_match (ci, test_id, jira, fixdate, draft) VALUES (\'$ci\',\'$ENV{TEST_ID}\',\'$j\', $fixdate, $draft)");
     }
   }
 }
@@ -159,6 +161,10 @@ sub process_found_mdev
   my $summary= `cat /tmp/$mdev.summary`;
   if ($summary =~ /\{\"summary\":\"(.*?)\"\}/) {
     $summary= $1;
+  }
+
+  if ($mdev =~ /TODO/ or $summary =~ /^[\(\[]?draft/i) {
+    $draft_mdevs{$mdev}= 1;
   }
 
   if ($resolution eq 'FIXED' and not -e "/tmp/$mdev.fixVersions") {
