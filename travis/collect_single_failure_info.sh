@@ -102,6 +102,7 @@ function process_coredump
 
 ###### "main"
 
+TRAVIS_JOB=`echo $TRAVIS_JOB_NUMBER | sed -e 's/.*\.//'`
 export TEST_ID="${TRAVIS_BUILD_NUMBER}.${TRAVIS_JOB}.${TRIAL}"
 
 # Only do the job if initial checks passed
@@ -113,7 +114,6 @@ if [ "$res" == "0" ] ; then
   VARDIR="${VARDIR:-$LOGDIR/vardir}"
   TRIAL_LOG="${TRIAL_LOG:-$LOGDIR/trial.log}"
   ARCHDIR="arch_${TRAVIS_JOB_NUMBER}.${TRIAL}"
-  TRAVIS_JOB=`echo $TRAVIS_JOB_NUMBER | sed -e 's/.*\.//'`
 
   TRIAL_CMD=""
   TRIAL_STATUS=""
