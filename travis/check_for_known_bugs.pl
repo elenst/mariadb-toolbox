@@ -119,7 +119,8 @@ sub register_matches
       $ci= 'Azure';
     }
     foreach my $j (keys %found_mdevs) {
-      $dbh->do("REPLACE INTO travis.strong_match (ci, test_id, jira) VALUES (\'$ci\',\'$ENV{TEST_ID}\',\'$j\')");
+      my $fixdate= "'$fixed_mdevs{$j}'" || 'NULL';
+      $dbh->do("REPLACE INTO travis.strong_match (ci, test_id, jira, fixdate) VALUES (\'$ci\',\'$ENV{TEST_ID}\',\'$j\', $fixdate)");
     }
   }
 }
