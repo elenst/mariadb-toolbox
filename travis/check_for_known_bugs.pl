@@ -185,6 +185,22 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-19486:
+=~ signal 11|AddressSanitizer: SEGV on unknown address
+=~ row_upd_step
+=~ ha_innobase::delete_row
+=~ AGGR_OP::end_send
+=~ sub_select_postjoin_aggr
+MDEV-19485:
+=~ [FATAL] InnoDB: Data field type 0, len 32
+=~ dfield_check_typed
+=~ row_search_index_entry
+=~ row_purge_del_mark
+MDEV-19485:
+=~ AddressSanitizer: global-buffer-overflow
+=~ rtree_get_geometry_mbr
+=~ row_build_spatial_index_key
+=~ row_purge_del_mark
 MDEV-19438:
 =~ Conditional jump or move depends on uninitialised value
 =~ Session_tracker::store
@@ -387,7 +403,8 @@ MDEV-19178:
 =~ Assertion \`m_sp == __null'|signal 11|AddressSanitizer: heap-use-after-free
 =~ create_view_field
 =~ Field_iterator_view::create_item
-=~ sp_instr_stmt::exec_core
+=~ find_field_in_tables
+=~ setup_fields
 MDEV-19175:
 =~ signal 11|AddressSanitizer: SEGV on unknown address
 =~ ha_partition::vers_can_native
