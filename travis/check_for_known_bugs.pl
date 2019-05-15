@@ -13,7 +13,7 @@ my @files;
 map { push @files, $_ if -e $_ } @expected_files;
 
 if (! scalar @files) {
-  print "No files found to check for signatures";
+  print "No files found to check for signatures\n";
   exit 0;
 }
 #else {
@@ -112,8 +112,14 @@ sub register_matches
       print "ERROR: Couldn't connect to the database to register the result\n";
       return 1;
     }
+    my $ci= 'N/A';
+    if ($ENV{TRAVIS} eq 'true') {
+      $ci= 'Travis';
+    } elsif (defined $ENV{AZURE_HTTP_USER_AGENT}) {
+      $ci= 'Azure';
+    }
     foreach my $j (keys %found_mdevs) {
-      $dbh->do("REPLACE INTO travis.strong_match (test_id, jira) VALUES (\'$ENV{TEST_ID}\',\'$j\')");
+      $dbh->do("REPLACE INTO travis.strong_match (ci, test_id, jira) VALUES (\'$ci\',\'$ENV{TEST_ID}\',\'$j\')");
     }
   }
 }
