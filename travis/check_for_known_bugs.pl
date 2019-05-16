@@ -198,6 +198,10 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-19493:
+=~ signal 11|AddressSanitizer: heap-use-after-free
+=~ lock_tables_check|get_lock_data|multi_update_check_table_access
+=~ mysql_multi_update_prepare
 MDEV-19486:
 =~ signal 11|AddressSanitizer: SEGV on unknown address
 =~ row_upd_step
