@@ -120,7 +120,7 @@ sub register_matches
       $ci= 'Azure';
     }
     foreach my $j (keys %found_mdevs) {
-      my $fixdate= "'$fixed_mdevs{$j}'" || 'NULL';
+      my $fixdate= defined $fixed_mdevs{$j} ? "'$fixed_mdevs{$j}'" : 'NULL';
       my $draft= $draft_mdevs{$j} || 0;
       $dbh->do("REPLACE INTO travis.strong_match (ci, test_id, jira, fixdate, draft) VALUES (\'$ci\',\'$ENV{TEST_ID}\',\'$j\', $fixdate, $draft)");
     }
