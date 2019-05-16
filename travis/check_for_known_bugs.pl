@@ -198,6 +198,10 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-19501:
+=~ Failing assertion: ib_vector_size(optim->words) > 0
+=~ fts_optimize_words
+=~ fts_optimize_table
 MDEV-19493:
 =~ signal 11|AddressSanitizer: heap-use-after-free
 =~ lock_tables_check|get_lock_data|multi_update_check_table_access
