@@ -147,12 +147,7 @@ if [ "$res" == "0" ] ; then
       res=1
     fi
 
-    if ! perl $SCRIPT_DIR/check_for_known_bugs.pl ${VARDIR}*/mysql.err* ${VARDIR}*/mbackup_*.log ; then
-      # Check trial log as a last resort. It's likely to cause false positives
-      if [ -e $TRIAL_LOG ] ; then
-        perl $SCRIPT_DIR/check_for_known_bugs.pl $TRIAL_LOG
-      fi
-    fi
+    perl $SCRIPT_DIR/check_for_known_bugs.pl ${VARDIR}*/mysql.err* ${VARDIR}*/mbackup_*.log --last=$TRIAL_LOG
 
     echo
     echo '#' ${TRAVIS_BUILD_NUMBER} ${TRAVIS_JOB} ${TRIAL}
