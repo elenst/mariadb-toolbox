@@ -61,7 +61,7 @@ sub search_files_for_matches
         print $matches_info;
         $matches_info= '';
         $res= 0;
-        register_matches();
+        register_matches('strong');
         last;
       }
       $mdev= undef;
@@ -109,6 +109,7 @@ sub search_files_for_matches
     print $matches_info;
     print "--------------------------------------\n";
     $res= 0;
+    register_matches('weak');
   }
   return $res;
 }
@@ -133,6 +134,7 @@ exit $res;
 
 sub register_matches
 {
+  my $type= shift; # Strong or weak, based on it, the table is chosen
   if (defined $ENV{DB_USER}) {
     my $dbh= DBI->connect("dbi:mysql:host=$ENV{DB_HOST}:port=$ENV{DB_PORT}",$ENV{DB_USER}, $ENV{DBP}, { RaiseError => 1 } );
     unless ($dbh) {
@@ -148,7 +150,7 @@ sub register_matches
     foreach my $j (keys %found_mdevs) {
       my $fixdate= defined $fixed_mdevs{$j} ? "'$fixed_mdevs{$j}'" : 'NULL';
       my $draft= $draft_mdevs{$j} || 0;
-      $dbh->do("REPLACE INTO travis.strong_match (ci, test_id, jira, fixdate, draft) VALUES (\'$ci\',\'$ENV{TEST_ID}\',\'$j\', $fixdate, $draft)");
+      $dbh->do("REPLACE INTO travis.${type}_match (ci, test_id, jira, fixdate, draft) VALUES (\'$ci\',\'$ENV{TEST_ID}\',\'$j\', $fixdate, $draft)");
     }
   }
 }
@@ -1288,6 +1290,11 @@ MDEV-15401:
 =~ Item_direct_view_ref::used_tables() const: Assertion \`fixed' failed
 =~ Item_func_nullif::update_used_tables
 =~ Prepared_statement::execute
+MDEV-15257:
+=~ Assertion \`!is_set() \|\| (m_status == DA_OK_BULK && is_bulk_op())'
+=~ Diagnostics_area::set_ok_status|Diagnostics_area::set_error_status
+=~ THD::raise_condition|my_ok
+=~ mysql_prepare_create_table|mysql_alter_table
 MDEV-15011:
 =~ Server version: 10\.2|Server version: 10\.1|Server version: 10\.0|Server version: 5\.5
 =~ AddressSanitizer: heap-buffer-overflow|signal 11
@@ -1806,8 +1813,6 @@ MDEV-15468:
 =~ table_events_waits_common::make_row
 MDEV-15329:
 =~ in dict_table_check_for_dup_indexes
-MDEV-15257:
-=~ m_status == DA_OK_BULK
 MDEV-15255:
 =~ m_lock_type == 2
 MDEV-15255:
