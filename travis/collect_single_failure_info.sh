@@ -134,6 +134,7 @@ if [ "$res" == "0" ] ; then
   fi
   echo "TEST RESULT: $TRIAL_STATUS"
   echo ""
+  export TEST_RESULT=$TRIAL_STATUS
   
   # Success processing
   if [[ "$TRIAL_STATUS" == "OK" ]] ; then
