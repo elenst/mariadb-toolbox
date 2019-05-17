@@ -31,6 +31,14 @@ if (! scalar @files) {
 #  print "The following files will be checked for signatures of known bugs: @files\n";
 #}
 
+my $ci= 'N/A';
+if ($ENV{TRAVIS} eq 'true') {
+  $ci= 'Travis';
+} elsif (defined $ENV{AZURE_HTTP_USER_AGENT}) {
+  $ci= 'Azure';
+}
+my $test_result= (defined $ENV{TEST_RESULT} and $ENV{TEST_RESULT} !~ /\s/) ? $ENV{TEST_RESULT} : 'N/A';
+
 if (scalar @last_choice_files) {
   my @last_files- glob "@last_choice_files";
   @last_choice_files= ();
@@ -119,6 +127,7 @@ if (search_files_for_matches(@files)) {
   search_files_for_matches(@last_choice_files);
   if ($res) {
     print "\n--- NO MATCHES FOUND ---------------------------\n";
+    register_no_match();
   }
 }
 
@@ -132,26 +141,34 @@ if (keys %fixed_mdevs) {
 
 exit $res;
 
+sub connect_to_db {
+  if (defined $ENV{DB_USER}) {
+    my $dbh= DBI->connect("dbi:mysql:host=$ENV{DB_HOST}:port=$ENV{DB_PORT}",$ENV{DB_USER}, $ENV{DBP}, { RaiseError => 1 } );
+    if ($dbh) {
+      return $dbh;
+    } else {
+      print "ERROR: Couldn't connect to the database to register the result\n";
+    }
+  }
+  return undef;
+}
+
 sub register_matches
 {
   my $type= shift; # Strong or weak, based on it, the table is chosen
-  if (defined $ENV{DB_USER}) {
-    my $dbh= DBI->connect("dbi:mysql:host=$ENV{DB_HOST}:port=$ENV{DB_PORT}",$ENV{DB_USER}, $ENV{DBP}, { RaiseError => 1 } );
-    unless ($dbh) {
-      print "ERROR: Couldn't connect to the database to register the result\n";
-      return 1;
-    }
-    my $ci= 'N/A';
-    if ($ENV{TRAVIS} eq 'true') {
-      $ci= 'Travis';
-    } elsif (defined $ENV{AZURE_HTTP_USER_AGENT}) {
-      $ci= 'Azure';
-    }
+  if (my $dbh= connect_to_db()) {
     foreach my $j (keys %found_mdevs) {
       my $fixdate= defined $fixed_mdevs{$j} ? "'$fixed_mdevs{$j}'" : 'NULL';
       my $draft= $draft_mdevs{$j} || 0;
-      $dbh->do("REPLACE INTO travis.${type}_match (ci, test_id, jira, fixdate, draft) VALUES (\'$ci\',\'$ENV{TEST_ID}\',\'$j\', $fixdate, $draft)");
+      $dbh->do("REPLACE INTO travis.${type}_match (ci, test_id, jira, fixdate, draft, test_result) VALUES (\'$ci\',\'$ENV{TEST_ID}\',\'$j\', $fixdate, $draft, \'$test_result\')");
     }
+  }
+}
+
+sub register_no_match
+{
+  if (my $dbh= connect_to_db()) {
+    $dbh->do("REPLACE INTO travis.no_match (ci, test_id, test_result) VALUES (\'$ci\',\'$ENV{TEST_ID}\', \'$test_result\')");
   }
 }
 
