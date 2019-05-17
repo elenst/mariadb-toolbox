@@ -1,9 +1,20 @@
 # Returns 0 if known bugs have been found, and 1 otherwise
+# Non-option arguments are the files to check first, typically
+# server error logs, stack traces and such.
+# Files provided as option --last <file> (possibly multiple files)
+# are to check last, if the arguments didn't help to detect anything
 
 #!/usr/bin/perl
 
 use DBI;
+use Getopt::Long;
 use strict;
+
+my @last_choice_files= ();
+
+GetOptions (
+  "last=s@" => \@last_choice_files,
+);
 
 # If a file with an exact name does not exist, it will prevent grep from working.
 # So, we want to exclude such files
@@ -20,6 +31,12 @@ if (! scalar @files) {
 #  print "The following files will be checked for signatures of known bugs: @files\n";
 #}
 
+if (scalar @last_choice_files) {
+  my @last_files- glob "@last_choice_files";
+  @last_choice_files= ();
+  map { push @last_choice_files, $_ if -e $_ } @last_files;
+}
+
 my %found_mdevs= ();
 my %fixed_mdevs= ();
 my %draft_mdevs= ();
@@ -32,67 +49,76 @@ my $signature_lines_found= 0;
 
 my $res= 1;
 
-while (<DATA>) {
+sub search_files_for_matches
+{
+  my @files= @_;
 
-  if (/^\# Weak matches/) {
-    # Don't search for weak matches if strong ones have been found
-    if ($matches_info) {
-      print "\n--- STRONG matches ---------------------------------\n";
-      print $matches_info;
-      $matches_info= '';
-      $res= 0;
-      register_matches();
-      last;
+  while (<DATA>) {
+    if (/^\# Weak matches/) {
+      # Don't search for weak matches if strong ones have been found
+      if ($matches_info) {
+        print "\n--- STRONG matches ---------------------------------\n";
+        print $matches_info;
+        $matches_info= '';
+        $res= 0;
+        register_matches();
+        last;
+      }
+      $mdev= undef;
+      next;
     }
-    $mdev= undef;
-    next;
+
+    # Signature line starts with =~
+    # (TODO: in future maybe also !~ for anti-patterns)
+    if (/^\s*=~\s*(.*)/) {
+      # If we have already found a pattern which does not match, don't check this signature further
+      next if $signature_does_not_match;
+      # Don't check other MDEV signatures if one was already found
+      next if $found_mdevs{$mdev};
+      $pattern= $1;
+      chomp $pattern;
+      $pattern=~ s/(\"|\?|\!|\(|\)|\[|\]|\&|\^|\~|\+|\/)/\\$1/g;
+    }
+    # MDEV line starts a new signature
+    elsif(/^\s*(MDEV-\d+|TODO-\d+):\s*(.*)/) {
+      my $new_mdev= $1;
+      # Process the previous result, if there was any
+      if ($signature_lines_found and not $signature_does_not_match) {
+        process_found_mdev($mdev);
+      }
+      $mdev= $new_mdev;
+      $signature_lines_found= 0;
+      $signature_does_not_match= 0;
+      next;
+    }
+    else {
+      # Skip comments and whatever else
+      next;
+    }
+    system("grep -h -E -e \"$pattern\" @files > /dev/null 2>&1");
+    if ($?) {
+      $signature_does_not_match= 1;
+    } else {
+      $signature_lines_found++;
+    }
   }
 
-  # Signature line starts with =~
-  # (TODO: in future maybe also !~ for anti-patterns)
-  if (/^\s*=~\s*(.*)/) {
-    # If we have already found a pattern which does not match, don't check this signature further
-    next if $signature_does_not_match;
-    # Don't check other MDEV signatures if one was already found
-    next if $found_mdevs{$mdev};
-    $pattern= $1;
-    chomp $pattern;
-    $pattern=~ s/(\"|\?|\!|\(|\)|\[|\]|\&|\^|\~|\+|\/)/\\$1/g;
+  # If it's non-empty at this point, it's weak matches
+  if ($matches_info) {
+    print "\n--- WEAK matches -------------------------------\n";
+    print $matches_info;
+    print "--------------------------------------\n";
+    $res= 0;
   }
-  # MDEV line starts a new signature
-  elsif(/^\s*(MDEV-\d+|TODO-\d+):\s*(.*)/) {
-    my $new_mdev= $1;
-    # Process the previous result, if there was any
-    if ($signature_lines_found and not $signature_does_not_match) {
-      process_found_mdev($mdev);
-    }
-    $mdev= $new_mdev;
-    $signature_lines_found= 0;
-    $signature_does_not_match= 0;
-    next;
-  }
-  else {
-    # Skip comments and whatever else
-    next;
-  }
-  system("grep -h -E -e \"$pattern\" @files > /dev/null 2>&1");
-  if ($?) {
-    $signature_does_not_match= 1;
-  } else {
-    $signature_lines_found++;
-  }
+  return $res;
 }
 
-# If it's non-empty at this point, it's weak matches
-if ($matches_info) {
-  print "\n--- WEAK matches -------------------------------\n";
-  print $matches_info;
-  print "--------------------------------------\n";
-  $res= 0;
-}
-
-if ($res) {
-  print "\n--- NO MATCHES FOUND ---------------------------\n";
+if (search_files_for_matches(@files)) {
+  # No matches found in main files, search last choice files
+  search_files_for_matches(@last_choice_files);
+  if ($res) {
+    print "\n--- NO MATCHES FOUND ---------------------------\n";
+  }
 }
 
 if (keys %fixed_mdevs) {
