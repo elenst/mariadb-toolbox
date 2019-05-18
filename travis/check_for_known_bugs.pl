@@ -40,11 +40,10 @@ if ($ENV{TRAVIS} eq 'true') {
 my $test_result= (defined $ENV{TEST_RESULT} and $ENV{TEST_RESULT} !~ /\s/) ? $ENV{TEST_RESULT} : 'N/A';
 
 if (scalar @last_choice_files) {
-  my @last_files- glob "@last_choice_files";
+  my @last_files= glob "@last_choice_files";
   @last_choice_files= ();
   map { push @last_choice_files, $_ if -e $_ } @last_files;
 }
-
 my %found_mdevs= ();
 my %fixed_mdevs= ();
 my %draft_mdevs= ();
@@ -60,7 +59,7 @@ my $res= 1;
 sub search_files_for_matches
 {
   my @files= @_;
-
+  seek DATA, 0, 0;
   while (<DATA>) {
     if (/^\# Weak matches/) {
       # Don't search for weak matches if strong ones have been found
@@ -243,6 +242,11 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-19520:
+=~ signal 11|AddressSanitizer: SEGV on unknown address
+=~ Item_func_not::fix_fields
+=~ st_select_lex::pushdown_from_having_into_where
+=~ JOIN::optimize_inner
 MDEV-19501:
 =~ Failing assertion: ib_vector_size(optim->words) > 0
 =~ fts_optimize_words
