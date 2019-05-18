@@ -334,6 +334,11 @@ MDEV-19352:
 =~ read_histograms_for_table
 =~ read_statistics_for_tables_if_needed
 =~ get_all_tables
+MDEV-19352:
+=~ AddressSanitizer: heap-use-after-free|signal 11
+=~ is_temporary_table
+=~ read_statistics_for_tables_if_needed
+=~ fill_schema_table_by_open
 MDEV-19350:
 =~ signal 11
 =~ delete_tree_element
