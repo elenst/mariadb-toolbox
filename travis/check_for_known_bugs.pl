@@ -32,13 +32,13 @@ if (! scalar @files) {
 #}
 
 my $ci= 'N/A';
-my $page_url= 'N/A';
+my $page_url= "NULL";
 if ($ENV{TRAVIS} eq 'true') {
   $ci= 'Travis';
-  $page_url= 'https://travis-ci.org/elenst/travis-tests/jobs/'.$ENV{TRAVIS_JOB_ID};
+  $page_url= "'https://travis-ci.org/elenst/travis-tests/jobs/".$ENV{TRAVIS_JOB_ID}."'";
 } elsif (defined $ENV{AZURE_HTTP_USER_AGENT}) {
   $ci= 'Azure';
-  $page_url= 'https://dev.azure.com/elenst/MariaDB tests/_build/results?buildId='.$ENV{BUILD_BUILDID};
+  $page_url= "'https://dev.azure.com/elenst/MariaDB tests/_build/results?buildId=".$ENV{BUILD_BUILDID}."'";
 }
 my $test_result= (defined $ENV{TEST_RESULT} and $ENV{TEST_RESULT} !~ /\s/) ? $ENV{TEST_RESULT} : 'N/A';
 
@@ -162,7 +162,7 @@ sub register_matches
     foreach my $j (keys %found_mdevs) {
       my $fixdate= defined $fixed_mdevs{$j} ? "'$fixed_mdevs{$j}'" : 'NULL';
       my $draft= $draft_mdevs{$j} || 0;
-      $dbh->do("REPLACE INTO travis.${type}_match (ci, test_id, jira, fixdate, draft, test_result, url) VALUES (\'$ci\',\'$ENV{TEST_ID}\',\'$j\', $fixdate, $draft, \'$test_result\', \'$page_url\')");
+      $dbh->do("REPLACE INTO travis.${type}_match (ci, test_id, jira, fixdate, draft, test_result, url) VALUES (\'$ci\',\'$ENV{TEST_ID}\',\'$j\', $fixdate, $draft, \'$test_result\', $page_url)");
     }
   }
 }
@@ -170,7 +170,7 @@ sub register_matches
 sub register_no_match
 {
   if (my $dbh= connect_to_db()) {
-    $dbh->do("REPLACE INTO travis.no_match (ci, test_id, test_result, url) VALUES (\'$ci\',\'$ENV{TEST_ID}\', \'$test_result\', \'$page_url\')");
+    $dbh->do("REPLACE INTO travis.no_match (ci, test_id, test_result, url) VALUES (\'$ci\',\'$ENV{TEST_ID}\', \'$test_result\', $page_url)");
   }
 }
 
