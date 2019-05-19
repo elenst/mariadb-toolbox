@@ -1573,6 +1573,11 @@ TODO-842:
 =~ Server version: 10\.1
 =~ lock_tables_check
 =~ mysql_multi_update_prepare
+TODO-842:
+=~ Assertion \`0'
+=~ Field_blob_compressed::get_key_image
+=~ stored_field_make_mm_leaf
+=~ calculate_cond_selectivity_for_table
 
 ##############################################################################
 # Weak matches
