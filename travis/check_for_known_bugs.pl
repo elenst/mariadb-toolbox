@@ -245,6 +245,11 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-19524:
+=~ AddressSanitizer: SEGV on unknown address|signal 11
+=~ Field_longstr::csinfo_change_allows_instant_alter
+=~ compare_keys_but_name
+=~ fill_alter_inplace_info
 MDEV-19522:
 =~ Assertion \`val <= 4294967295u'
 =~ fts_encode_int
@@ -1125,7 +1130,7 @@ MDEV-17091:
 MDEV-17091:
 =~ Assertion \`old_part_id == m_last_part'
 =~ ha_partition::update_row
-=~ mysql_update
+=~ mysql_update|Update_rows_log_event::do_exec_row|mysql_multi_update
 MDEV-17019:
 =~ signal 11
 =~ multi_delete::~multi_delete
@@ -1570,6 +1575,9 @@ MDEV-19320:
 =~ Can't find record
 MDEV-18929:
 =~ Slave SQL: Error 'Table .* is not system-versioned' on query
+MDEV-18918:
+=~ Error running query, slave SQL thread aborted
+=~ Invalid default value for .*
 MDEV-18805:
 =~ Found too many records; Can't continue
 =~ Number of rows changed from
