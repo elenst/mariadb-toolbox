@@ -157,12 +157,19 @@ sub connect_to_db {
 
 sub register_matches
 {
-  my $type= shift; # Strong or weak, based on it, the table is chosen
+  my $type= shift; # Strong or weak, based on it, the table and the logic are chosen
   if (my $dbh= connect_to_db()) {
-    foreach my $j (keys %found_mdevs) {
-      my $fixdate= defined $fixed_mdevs{$j} ? "'$fixed_mdevs{$j}'" : 'NULL';
-      my $draft= $draft_mdevs{$j} || 0;
-      $dbh->do("REPLACE INTO travis.${type}_match (ci, test_id, jira, fixdate, draft, test_result, url) VALUES (\'$ci\',\'$ENV{TEST_ID}\',\'$j\', $fixdate, $draft, \'$test_result\', $page_url)");
+    if ( $type eq 'strong' ) {
+      # For strong matches, we insert each of them separately into jira field
+      foreach my $j (keys %found_mdevs) {
+        my $fixdate= defined $fixed_mdevs{$j} ? "'$fixed_mdevs{$j}'" : 'NULL';
+        my $draft= $draft_mdevs{$j} || 0;
+        $dbh->do("REPLACE INTO travis.strong_match (ci, test_id, jira, fixdate, draft, test_result, url) VALUES (\'$ci\',\'$ENV{TEST_ID}\',\'$j\', $fixdate, $draft, \'$test_result\', $page_url)");
+      }
+    } elsif ( $type eq 'weak' ) {
+      my $jiras= join /,/, keys %found_mdevs;
+      # For weak matches, we insert the concatenation into the notes field
+      $dbh->do("REPLACE INTO travis.weak_match (ci, test_id, notes, test_result, url) VALUES (\'$ci\',\'$ENV{TEST_ID}\',\'$jiras\', \'$test_result\', $page_url)");
     }
   }
 }
