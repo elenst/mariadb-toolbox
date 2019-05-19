@@ -242,6 +242,11 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-19522:
+=~ Assertion \`val <= 4294967295u'
+=~ fts_encode_int
+=~ fts_cache_node_add_positions
+=~ fts_commit_table
 MDEV-19520:
 =~ signal 11|AddressSanitizer: SEGV on unknown address
 =~ Item_func_not::fix_fields
@@ -498,7 +503,6 @@ MDEV-19166:
 =~ Assertion \`!is_zero_datetime()'
 =~ Timestamp_or_zero_datetime::tv
 =~ Item_cache_timestamp::to_datetime
-=~ Item_cache_timestamp::val_int
 MDEV-19131:
 =~ Assertion \`table->versioned(VERS_TRX_ID) \|\| (table->versioned() && table->s->table_category == TABLE_CATEGORY_TEMPORARY)'
 =~ Field_vers_trx_id::get_date
@@ -1160,6 +1164,12 @@ MDEV-16929:
 =~ open_normal_and_derived_tables
 =~ mysql_test_create_view
 =~ check_prepared_statement
+=~ KILL_SERVER|KILL_CONNECTION
+MDEV-16929:
+=~ Assertion \`thd->transaction\.stmt\.is_empty() \|\| (thd->state_flags & Open_tables_state::BACKUPS_AVAIL)'
+=~ open_normal_and_derived_tables
+=~ mysql_table_grant
+=~ KILL_SERVER|KILL_CONNECTION
 MDEV-16887:
 =~ Assertion \`n_idx > 0'
 =~ trx_undo_log_v_idx
@@ -1343,6 +1353,10 @@ MDEV-14996:
 =~ int ha_maria::external_lock
 =~ THD::cleanup
 =~ Status: KILL_CONNECTION|Status: KILL_SERVER
+MDEV-14894:
+=~ Assertion \`remove_type == TDC_RT_REMOVE_UNUSED \|\| thd->mdl_context\.is_lock_owner(MDL_key::TABLE, db, table_name, MDL_EXCLUSIVE)'
+=~ tdc_remove_table
+=~ mysql_rm_table_no_locks
 MDEV-14854:
 =~ Assertion \`trid >= info->s->state\.create_trid'
 =~ transid_store_packed
