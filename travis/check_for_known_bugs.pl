@@ -169,7 +169,7 @@ sub register_matches
     } elsif ( $type eq 'weak' ) {
       my $jiras= join ',', keys %found_mdevs;
       # For weak matches, we insert the concatenation into the notes field
-      $dbh->do("REPLACE INTO travis.weak_match (ci, test_id, notes, test_result, url) VALUES (\'$ci\',\'$ENV{TEST_ID}\',\'$jiras\', \'$test_result\', $page_url)");
+      $dbh->do("REPLACE INTO travis.weak_match (ci, test_id, notes, test_result, url) VALUES (\'$ci\',\'$ENV{TEST_ID}\',\'$jiras\', \'??? $test_result\', $page_url)");
     }
   }
 }
