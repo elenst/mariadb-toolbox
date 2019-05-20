@@ -285,32 +285,12 @@ MDEV-19486:
 =~ ha_innobase::delete_row
 =~ AGGR_OP::end_send
 =~ sub_select_postjoin_aggr
-MDEV-19485:
-=~ [FATAL] InnoDB: Data field type 0, len 32
-=~ dfield_check_typed
-=~ row_search_index_entry
-=~ row_purge_del_mark
-MDEV-19485:
-=~ AddressSanitizer: global-buffer-overflow
-=~ rtree_get_geometry_mbr
-=~ row_build_spatial_index_key
-=~ row_purge_del_mark
-MDEV-19438:
-=~ Conditional jump or move depends on uninitialised value
-=~ Session_tracker::store
-=~ net_send_ok
-=~ Protocol::end_statement
 MDEV-19418:
 =~ Assertion \`ptr == a \|\| ptr == b'
 =~ Field_bit::cmp
 =~ group_concat_key_cmp_with_order
 =~ tree_walk_left_root_right
 =~ Item_func_group_concat::repack_tree
-MDEV-19408:
-=~ Assertion \`trx->state == TRX_STATE_ACTIVE \|\| trx->state == TRX_STATE_PREPARED'
-=~ ReadView::copy_trx_ids
-=~ ReadView::prepare
-=~ MVCC::clone_oldest_view
 MDEV-19406:
 =~ Assertion \`marked_for_write_or_computed()'|Assertion \`is_stat_field \|\| !table \|\| (!table->write_set \|\| bitmap_is_set(table->write_set, field_index) \|\| (!(ptr >= table->record[0] && ptr < table->record[0] + table->s->reclength))) \|\| (table->vcol_set && bitmap_is_set(table->vcol_set, field_index))'
 =~ Field_date_common::store_TIME_with_warning
@@ -346,28 +326,6 @@ MDEV-19361:
 =~ handler_index_cond_check
 =~ row_search_idx_cond_check
 =~ JOIN_TAB_SCAN::open
-MDEV-19359:
-=~ AddressSanitizer: heap-use-after-free
-=~ copy_if_not_alloced
-=~ make_sortkey|SQL_SELECT::skip_record
-=~ find_all_keys
-=~ create_sort_index
-MDEV-19352:
-=~ signal 11|AddressSanitizer: SEGV on unknown address
-=~ alloc_histograms_for_table_share
-=~ read_histograms_for_table
-=~ read_statistics_for_tables_if_needed
-=~ get_all_tables
-MDEV-19352:
-=~ AddressSanitizer: heap-use-after-free|signal 11
-=~ is_temporary_table
-=~ read_statistics_for_tables_if_needed
-=~ fill_schema_table_by_open
-MDEV-19350:
-=~ signal 11
-=~ delete_tree_element
-=~ free_tree
-=~ Item_func_group_concat::repack_tree
 MDEV-19348:
 =~ InnoDB: Database page corruption on disk or a failed file read of tablespace .* page .* You may have to recover from a backup
 =~ InnoDB: Failed to read file .* at offset .* Page read from tablespace is corrupted
@@ -610,23 +568,11 @@ MDEV-18947:
 =~ pagecache_fwrite
 =~ flush_cached_blocks
 =~ flush_pagecache_blocks_with_filter
-MDEV-18933:
-=~ InnoDB: Failing assertion: share->idx_trans_tbl.index_count == mysql_num_index
-=~ innobase_build_index_translation
-=~ open_table_uncached
 MDEV-18925:
 =~ AddressSanitizer: heap-buffer-overflow
 =~ Item_exists_subselect::is_top_level_item|Item_in_optimizer::is_top_level_item
 =~ st_select_lex::update_used_tables
 =~ JOIN::optimize
-MDEV-18923:
-=~ Assertion \`!lex_string_cmp(system_charset_info, fk_info->referenced_table, &table->s->table_name)'
-=~ fk_truncate_illegal_if_parent
-=~ Sql_cmd_truncate_table::truncate_table
-MDEV-18923:
-=~ Assertion \`!((system_charset_info)->coll->strcasecmp((system_charset_info), (fk_info->referenced_table->str), (table->s->table_name\.str)))'
-=~ fk_truncate_illegal_if_parent
-=~ Sql_cmd_truncate_table::handler_truncate
 MDEV-18911:
 =~ Assertion \`(templ->is_virtual && !field) \|\| (field && field->prefix_len ? field->prefix_len == len : templ->mysql_col_len == len)'
 =~ row_sel_field_store_in_mysql_format_func
@@ -700,11 +646,6 @@ MDEV-18756:
 =~ Use of uninitialised value of size
 =~ DES_set_key_unchecked
 =~ Item_func_des_encrypt::val_str
-MDEV-18738:
-=~ AddressSanitizer: heap-use-after-free
-=~ copy_if_not_alloced
-=~ Item_copy_string::copy
-=~ end_send_group
 MDEV-18735:
 =~ Conditional jump or move depends on uninitialised value
 =~ promote_first_timestamp_column
@@ -759,10 +700,6 @@ MDEV-18546:
 =~ AddressSanitizer: heap-use-after-free
 =~ innobase_get_computed_value
 =~ row_vers_build_clust_v_col
-MDEV-18524:
-=~ Assertion \`!"invalid table name"' failed
-=~ innodb_find_table_for_vc
-=~ row_ins_check_foreign_constraint
 MDEV-18500:
 =~ (block)->n_pointers == 0
 =~ btr_search_build_page_hash_index
@@ -789,16 +726,6 @@ MDEV-18456:
 =~ Assertion \`item->maybe_null'
 =~ Type_handler_temporal_result::make_sort_key
 =~ create_sort_index
-MDEV-18452:
-=~ AddressSanitizer: use-after-poison|AddressSanitizer: unknown-crash|signal 11|Invalid read of size
-=~ Field::set_default
-=~ Field_bit::set_default
-=~ fill_record_n_invoke_before_triggers
-MDEV-18452:
-=~ Version: '10.*-MariaDB-log'
-=~ AddressSanitizer: unknown-crash
-=~ Field::set_default
-=~ Item_default_value::save_in_field
 MDEV-18451:
 =~ signal 11|AddressSanitizer: SEGV on unknown address
 =~ maria_create_trn_for_mysql
@@ -849,11 +776,6 @@ MDEV-18325:
 =~ Version: '10\.1
 MDEV-18310:
 =~ Got error 121 when executing undo undo_key_delete
-MDEV-18300:
-=~ AddressSanitizer: use-after-poison|AddressSanitizer: unknown-crash
-=~ Field_blob::get_key_image
-=~ Field::stored_field_make_mm_leaf
-=~ calculate_cond_selectivity_for_table
 MDEV-18293:
 =~ signal 11|AddressSanitizer: SEGV
 =~ row_sel_sec_rec_is_for_clust_rec
@@ -889,9 +811,6 @@ MDEV-18244:
 =~ ha_innobase::update_thd
 =~ ha_innobase::info_low
 =~ ha_partition::update_next_auto_inc_val
-MDEV-18220:
-=~ AddressSanitizer: heap-use-after-free
-=~ fts_get_table_name_prefix
 MDEV-18216:
 =~ signal 11
 =~ Query_arena::set_query_arena
@@ -1101,11 +1020,6 @@ MDEV-17556:
 =~ Assertion \`bitmap_is_set_all(&table->s->all_set)'
 =~ handler::ha_reset
 =~ close_thread_tables
-MDEV-17540:
-=~ Assertion \`table'|signal 11|AddressSanitizer: heap-use-after-free|AddressSanitizer: SEGV
-=~ dict_table_get_first_index|mem_heap_free
-=~ row_purge_upd_exist_or_extern_func
-=~ row_purge_step
 MDEV-17361:
 =~ signal 11|AddressSanitizer: SEGV on unknown address
 =~ in Query_arena::set_query_arena
@@ -1247,11 +1161,6 @@ MDEV-16500:
 =~ Server version: 10\.1
 =~ innobase_get_col_names
 =~ Sql_cmd_alter_table::execute
-MDEV-16240:
-=~ Last data field length .* bytes, key ptr now exceeds key end by .* bytes
-=~ Assertion \`0' failed
-=~ row_sel_convert_mysql_key_to_innobase
-=~ multi_update::send_data
 MDEV-16222:
 =~ InnoDB: tried to purge non-delete-marked record in index
 =~ Assertion \`0'
@@ -1267,11 +1176,6 @@ MDEV-16128:
 =~ Item_func::convert_const_compared_to_int_field|Item_func::check_argument_types_like_args0
 =~ setup_without_group
 =~ Prepared_statement::execute|sp_instr_stmt::execute
-MDEV-16060:
-=~ InnoDB: Failing assertion: ut_strcmp(index->name, key->name) == 0
-=~ ha_innobase::innobase_get_index
-=~ ha_innobase::info_low
-=~ open_table_from_share
 MDEV-15977:
 =~ Assertion \`! thd->in_sub_stmt' failed
 =~ SEQUENCE::read_initial_values
@@ -1285,14 +1189,6 @@ MDEV-15912:
 =~ Failing assertion: purge_sys\.tail\.commit <= purge_sys\.rseg->last_commit
 =~ TrxUndoRsegsIterator::set_next
 =~ trx_purge_choose_next_log
-MDEV-15907:
-=~ AddressSanitizer: heap-use-after-free
-=~ strnmov
-=~ fill_effective_table_privileges
-MDEV-15881:
-=~ Assertion \`is_valid_value_slow()' failed
-=~ Datetime::Datetime
-=~ Arg_comparator::compare
 MDEV-15800:
 =~ Assertion \`next_insert_id >= auto_inc_interval_for_cur_row\.minimum()'
 =~ handler::update_auto_increment
@@ -1302,14 +1198,6 @@ MDEV-15878:
 =~ join_read_const_table
 =~ JOIN::optimize
 =~ mysql_select
-MDEV-16060:
-=~ Failing assertion: table->get_ref_count() == 0
-=~ row_merge_drop_table|dict_table_t::get_ref_count
-=~ Sql_cmd_alter_table::execute
-MDEV-16060:
-=~ Assertion \`user_table->get_ref_count() == 1' failed
-=~ commit_try_rebuild
-=~ Sql_cmd_alter_table::execute|Sql_cmd_optimize_table::execute
 MDEV-15572:
 =~ signal 11|AddressSanitizer: SEGV
 =~ ha_maria::end_bulk_insert|ha_maria::extra
@@ -1390,11 +1278,6 @@ MDEV-14472:
 =~ Assertion \`is_current_stmt_binlog_format_row()'
 =~ THD::binlog_write_table_map
 =~ write_locked_table_maps
-MDEV-14041:
-=~ signal 11
-=~ String::length
-=~ sortcmp
-=~ test_if_group_changed
 MDEV-11740:
 =~ Assertion \`pos != (~(my_off_t) 0)' failed
 =~ my_seek
@@ -1620,8 +1503,6 @@ MDEV-18421:
 =~ foreign->foreign_table
 MDEV-18414:
 =~ Value_source::Converter_strntod::Converter_strntod
-MDEV-18388:
-=~ thd->spcont
 MDEV-18381:
 =~ ha_innobase::store_lock
 MDEV-18343:
@@ -1706,12 +1587,6 @@ MDEV-18042:
 =~ signal 11
 =~ mysql_alter_table
 =~ Sql_cmd_alter_table::execute
-MDEV-18020:
-=~ prebuilt->trx->check_foreigns
-MDEV-18020:
-=~ ctx->prebuilt->trx->check_foreigns
-MDEV-18020:
-=~ m_prebuilt->trx->check_foreigns
 MDEV-18017:
 =~ index->to_be_dropped
 MDEV-17999:
@@ -1746,8 +1621,6 @@ MDEV-17838:
 =~ in Item_field::rename_fields_processor
 MDEV-17834:
 =~ row_upd_build_difference_binary
-MDEV-17830:
-=~ Item_null_result::field_type
 MDEV-17818:
 =~ parse_vcol_defs
 MDEV-17814:
@@ -1848,10 +1721,6 @@ MDEV-15873:
 =~ precision > 0
 MDEV-15802:
 =~ Item::delete_self
-MDEV-16060:
-=~ commit_try_rebuild
-MDEV-16060:
-=~ table->get_ref_count
 MDEV-15753:
 =~ thd->is_error
 MDEV-15657:
@@ -2957,3 +2826,134 @@ MDEV-5924:
 # =~ is_temporary_table
 # =~ read_statistics_for_tables_if_needed
 # =~ fill_schema_table_by_open
+# MDEV-19485:
+# =~ [FATAL] InnoDB: Data field type 0, len 32
+# =~ dfield_check_typed
+# =~ row_search_index_entry
+# =~ row_purge_del_mark
+# MDEV-19485:
+# =~ AddressSanitizer: global-buffer-overflow
+# =~ rtree_get_geometry_mbr
+# =~ row_build_spatial_index_key
+# =~ row_purge_del_mark
+# MDEV-19438:
+# =~ Conditional jump or move depends on uninitialised value
+# =~ Session_tracker::store
+# =~ net_send_ok
+# =~ Protocol::end_statement
+# MDEV-19408:
+# =~ Assertion \`trx->state == TRX_STATE_ACTIVE \|\| trx->state == TRX_STATE_PREPARED'
+# =~ ReadView::copy_trx_ids
+# =~ ReadView::prepare
+# =~ MVCC::clone_oldest_view
+# MDEV-19359:
+# =~ AddressSanitizer: heap-use-after-free
+# =~ copy_if_not_alloced
+# =~ make_sortkey|SQL_SELECT::skip_record
+# =~ find_all_keys
+# =~ create_sort_index
+# MDEV-19352:
+# =~ signal 11|AddressSanitizer: SEGV on unknown address
+# =~ alloc_histograms_for_table_share
+# =~ read_histograms_for_table
+# =~ read_statistics_for_tables_if_needed
+# =~ get_all_tables
+# MDEV-19352:
+# =~ AddressSanitizer: heap-use-after-free|signal 11
+# =~ is_temporary_table
+# =~ read_statistics_for_tables_if_needed
+# =~ fill_schema_table_by_open
+# MDEV-19350:
+# =~ signal 11
+# =~ delete_tree_element
+# =~ free_tree
+# =~ Item_func_group_concat::repack_tree
+# MDEV-18933:
+# =~ InnoDB: Failing assertion: share->idx_trans_tbl.index_count == mysql_num_index
+# =~ innobase_build_index_translation
+# =~ open_table_uncached
+# MDEV-18923:
+# =~ Assertion \`!lex_string_cmp(system_charset_info, fk_info->referenced_table, &table->s->table_name)'
+# =~ fk_truncate_illegal_if_parent
+# =~ Sql_cmd_truncate_table::truncate_table
+# MDEV-18923:
+# =~ Assertion \`!((system_charset_info)->coll->strcasecmp((system_charset_info), (fk_info->referenced_table->str), (table->s->table_name\.str)))'
+# =~ fk_truncate_illegal_if_parent
+# =~ Sql_cmd_truncate_table::handler_truncate
+# MDEV-18738:
+# =~ AddressSanitizer: heap-use-after-free
+# =~ copy_if_not_alloced
+# =~ Item_copy_string::copy
+# =~ end_send_group
+# MDEV-18524:
+# =~ Assertion \`!"invalid table name"' failed
+# =~ innodb_find_table_for_vc
+# =~ row_ins_check_foreign_constraint
+# MDEV-18452:
+# =~ AddressSanitizer: use-after-poison|AddressSanitizer: unknown-crash|signal 11|Invalid read of size
+# =~ Field::set_default
+# =~ Field_bit::set_default
+# =~ fill_record_n_invoke_before_triggers
+# MDEV-18452:
+# =~ Version: '10.*-MariaDB-log'
+# =~ AddressSanitizer: unknown-crash
+# =~ Field::set_default
+# =~ Item_default_value::save_in_field
+# MDEV-18300:
+# =~ AddressSanitizer: use-after-poison|AddressSanitizer: unknown-crash
+# =~ Field_blob::get_key_image
+# =~ Field::stored_field_make_mm_leaf
+# =~ calculate_cond_selectivity_for_table
+# MDEV-18220:
+# =~ AddressSanitizer: heap-use-after-free
+# =~ fts_get_table_name_prefix
+# MDEV-17540:
+# =~ Assertion \`table'|signal 11|AddressSanitizer: heap-use-after-free|AddressSanitizer: SEGV
+# =~ dict_table_get_first_index|mem_heap_free
+# =~ row_purge_upd_exist_or_extern_func
+# =~ row_purge_step
+# MDEV-16240:
+# =~ Last data field length .* bytes, key ptr now exceeds key end by .* bytes
+# =~ Assertion \`0' failed
+# =~ row_sel_convert_mysql_key_to_innobase
+# =~ multi_update::send_data
+# MDEV-16060:
+# =~ InnoDB: Failing assertion: ut_strcmp(index->name, key->name) == 0
+# =~ ha_innobase::innobase_get_index
+# =~ ha_innobase::info_low
+# =~ open_table_from_share
+# MDEV-16060:
+# =~ Failing assertion: table->get_ref_count() == 0
+# =~ row_merge_drop_table|dict_table_t::get_ref_count
+# =~ Sql_cmd_alter_table::execute
+# MDEV-16060:
+# =~ Assertion \`user_table->get_ref_count() == 1' failed
+# =~ commit_try_rebuild
+# =~ Sql_cmd_alter_table::execute|Sql_cmd_optimize_table::execute
+# MDEV-16060:
+# =~ commit_try_rebuild
+# MDEV-16060:
+# =~ table->get_ref_count
+# MDEV-15907:
+# =~ AddressSanitizer: heap-use-after-free
+# =~ strnmov
+# =~ fill_effective_table_privileges
+# MDEV-15881:
+# =~ Assertion \`is_valid_value_slow()' failed
+# =~ Datetime::Datetime
+# =~ Arg_comparator::compare
+# MDEV-14041:
+# =~ signal 11
+# =~ String::length
+# =~ sortcmp
+# =~ test_if_group_changed
+# MDEV-18388:
+# =~ thd->spcont
+# MDEV-18020:
+# =~ prebuilt->trx->check_foreigns
+# MDEV-18020:
+# =~ ctx->prebuilt->trx->check_foreigns
+# MDEV-18020:
+# =~ m_prebuilt->trx->check_foreigns
+# MDEV-17830:
+# =~ Item_null_result::field_type
