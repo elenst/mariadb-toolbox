@@ -125,8 +125,8 @@ sub search_files_for_matches
 }
 
 if (search_files_for_matches(@files)) {
-  # No matches found in main files, search last choice files
-  search_files_for_matches(@last_choice_files);
+  # No matches found in main files, add the "last choice" files to the search
+  search_files_for_matches(@files, @last_choice_files);
   if ($res) {
     print "\n--- NO MATCHES FOUND ---------------------------\n";
     register_no_match();
