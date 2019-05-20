@@ -252,6 +252,10 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-19526:
+=~ Assertion \`((val << shift) & mask) == (val << shift)'
+=~ rec_set_bit_field_2
+=~ page_cur_tuple_insert
 MDEV-19524:
 =~ AddressSanitizer: SEGV on unknown address|signal 11
 =~ Field_longstr::csinfo_change_allows_instant_alter
