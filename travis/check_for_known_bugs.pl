@@ -253,7 +253,7 @@ __DATA__
 ##############################################################################
 
 MDEV-19536:
-=~ AddressSanitizer: heap-use-after-free
+=~ AddressSanitizer: heap-use-after-free|signal 11
 =~ is_temporary_table
 =~ read_statistics_for_tables_if_needed
 =~ fill_schema_table_by_open
