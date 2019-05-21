@@ -252,6 +252,11 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-19536:
+=~ AddressSanitizer: heap-use-after-free
+=~ is_temporary_table
+=~ read_statistics_for_tables_if_needed
+=~ fill_schema_table_by_open
 MDEV-19526:
 =~ Assertion \`((val << shift) & mask) == (val << shift)'
 =~ rec_set_bit_field_2
