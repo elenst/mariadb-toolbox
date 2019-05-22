@@ -1474,6 +1474,11 @@ TODO-842:
 =~ Field_blob_compressed::get_key_image
 =~ stored_field_make_mm_leaf
 =~ calculate_cond_selectivity_for_table
+TODO-842:
+=~ Assertion \`pos < index->n_def'
+=~ dict_index_get_nth_field
+=~ dict_index_get_nth_col
+=~ row_purge_parse_undo_rec
 
 ##############################################################################
 # Weak matches
