@@ -254,7 +254,7 @@ __DATA__
 
 MDEV-19536:
 =~ AddressSanitizer: heap-use-after-free|signal 11
-=~ is_temporary_table
+=~ is_temporary_table|Index_stat::set_full_table_name
 =~ read_statistics_for_tables_if_needed
 =~ fill_schema_table_by_open
 MDEV-19526:
@@ -787,7 +787,7 @@ MDEV-18293:
 =~ ha_innobase::general_fetch
 MDEV-18291:
 =~ std::__cxx11::_List_base|std::_List_base
-=~ dict_table_remove_from_cache
+=~ dict_table_remove_from_cache|dict_sys_t::remove
 =~ ha_delete_table|ha_innobase_inplace_ctx::~ha_innobase_inplace_ctx|Sql_cmd_truncate_table::handler_truncate|row_merge_drop_table
 MDEV-18286:
 =~ Assertion \`pagecache->cnt_for_resize_op == 0'
@@ -840,7 +840,7 @@ MDEV-18167:
 =~ TABLE::update_virtual_fields
 MDEV-18166:
 =~ Assertion \`!table \|\| (!table->read_set \|\| bitmap_is_set(table->read_set, field_index) \|\| (!(ptr >= table->record[0] && ptr < table->record[0] + table->s->reclength)))'
-=~ Field_datetimef::get_TIME|Field_short::val_int|Field_enum::val_int|Field_newdate::get_TIME|Field_long::val_int|Field_varstring::val_real
+=~ Field_datetimef::get_TIME|Field_short::val_int|Field_enum::val_int|Field_newdate::get_TIME|Field_long::val_int|Field_varstring::val_real|Field_bit::val_int
 =~ field_conv_incompatible
 =~ TABLE::update_virtual_fields
 MDEV-18153:
@@ -951,6 +951,10 @@ MDEV-17939:
 =~ trx_undo_report_rename
 =~ fts_drop_table
 =~ mysql_alter_table
+MDEV-17912:
+=~ failed to decrypt .*  rc: -1  dstlen: 0  size: .*
+=~ Got error 192 when executing record .*
+=~ Aria engine: Redo phase failed
 MDEV-17896:
 =~ Assertion \`pfs->get_refcount() > 0'
 =~ release_table_share|tdc_delete_share_from_hash
@@ -1612,8 +1616,6 @@ MDEV-17962:
 =~ setup_jtbm_semi_joins
 MDEV-17936:
 =~ Field::is_null
-MDEV-17912:
-=~ Aria engine: Redo phase failed
 MDEV-17897:
 =~ block->frame
 MDEV-17895:
