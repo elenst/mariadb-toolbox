@@ -252,6 +252,10 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-19576:
+=~ Got error 175 when executing record redo_index
+=~ Aria engine: Redo phase failed
+=~ Aria recovery failed
 MDEV-19536:
 =~ AddressSanitizer: heap-use-after-free|signal 11
 =~ is_temporary_table|Index_stat::set_full_table_name|Stat_table::Stat_table
@@ -749,6 +753,13 @@ MDEV-18441:
 =~ Assertion \`tables_opened == 1'
 =~ Sql_cmd_alter_table::execute
 =~ ADD .*FOREIGN KEY
+MDEV-18418:
+=~ Assertion \`mdl_ticket->m_type == MDL_SHARED_UPGRADABLE \|\| mdl_ticket->m_type == MDL_SHARED_NO_WRITE \|\| mdl_ticket->m_type == MDL_SHARED_NO_READ_WRITE'
+=~ Server version: 10\.1
+=~ MDL_context::upgrade_shared_lock
+MDEV-18418:
+=~ Assertion \`mdl_ticket->m_type == MDL_SHARED_UPGRADABLE \|\| mdl_ticket->m_type == MDL_SHARED_NO_WRITE \|\| mdl_ticket->m_type == MDL_SHARED_NO_READ_WRITE \|\| mdl_ticket->m_type == MDL_SHARED_READ \|\| mdl_ticket->m_type == MDL_SHARED_WRITE'
+=~ MDL_context::upgrade_shared_lock
 MDEV-18389:
 =~ Cannot find index .* in InnoDB index dictionary
 =~ InnoDB indexes are inconsistent with what defined in \.frm for table
@@ -830,13 +841,10 @@ MDEV-18207:
 =~ AddressSanitizer: heap-use-after-free|Invalid read of size
 =~ _ma_get_status
 =~ mysql_lock_tables
-MDEV-18418:
-=~ Assertion \`mdl_ticket->m_type == MDL_SHARED_UPGRADABLE \|\| mdl_ticket->m_type == MDL_SHARED_NO_WRITE \|\| mdl_ticket->m_type == MDL_SHARED_NO_READ_WRITE'
-=~ Server version: 10\.1
-=~ MDL_context::upgrade_shared_lock
-MDEV-18418:
-=~ Assertion \`mdl_ticket->m_type == MDL_SHARED_UPGRADABLE \|\| mdl_ticket->m_type == MDL_SHARED_NO_WRITE \|\| mdl_ticket->m_type == MDL_SHARED_NO_READ_WRITE \|\| mdl_ticket->m_type == MDL_SHARED_READ \|\| mdl_ticket->m_type == MDL_SHARED_WRITE'
-=~ MDL_context::upgrade_shared_lock
+MDEV-18203:
+=~ error 126 when executing undo undo_key_insert
+=~ Aria engine: Undo phase failed
+=~ Plugin 'Aria' init function returned error
 MDEV-18167:
 =~ Assertion \`!table \|\| (!table->read_set \|\| bitmap_is_set(table->read_set, field_index) \|\| (!(ptr >= table->record[0] && ptr < table->record[0] + table->s->reclength)))'
 =~ Field_enum::store_field
@@ -1544,8 +1552,6 @@ MDEV-18213:
 =~ Error: failed to execute query BACKUP STAGE BLOCK_COMMIT: Deadlock found when trying to get lock
 MDEV-18209:
 =~ Enabling keys got errno 0 on
-MDEV-18203:
-=~ error 126 when executing undo undo_key_insert
 MDEV-18200:
 =~ InnoDB: Failing assertion: success
 MDEV-18187:
