@@ -91,7 +91,7 @@ print "CREATE USER rqg\@localhost;\n";
 print "GRANT ALL ON *.* TO rqg\@localhost;\n";
 
 #foreach my $c ( keys %interesting_connections ) {
-#  print "$c\n";
+#  print "Interesting connection: $c\n";
 #}
 
 # The flag will be used if we are only interested in certain connections
@@ -179,7 +179,7 @@ while(<>)
     # set the flag, but proceed parsing, in case the connection does something
     # important on the system level (like server shutdown)
 
-    $ignore= scalar(keys %interesting_connections) and not $interesting_connections{$new_log_con};
+    $ignore= (scalar(keys %interesting_connections) and not $interesting_connections{$new_log_con});
 
     if ( $new_log_timestamp )
     {
