@@ -254,7 +254,11 @@ __DATA__
 
 MDEV-19536:
 =~ AddressSanitizer: heap-use-after-free|signal 11
-=~ is_temporary_table|Index_stat::set_full_table_name
+=~ is_temporary_table|Index_stat::set_full_table_name|Stat_table::Stat_table
+=~ read_statistics_for_tables_if_needed
+=~ fill_schema_table_by_open
+MDEV-19536:
+=~ signal 11
 =~ read_statistics_for_tables_if_needed
 =~ fill_schema_table_by_open
 MDEV-19526:
@@ -279,7 +283,7 @@ MDEV-19520:
 MDEV-19501:
 =~ Failing assertion: ib_vector_size(optim->words) > 0
 =~ fts_optimize_words
-=~ fts_optimize_table
+=~ fts_optimize_table|fts_optimize_index
 MDEV-19493:
 =~ signal 11|AddressSanitizer: heap-use-after-free
 =~ lock_tables_check|get_lock_data|multi_update_check_table_access
@@ -1031,7 +1035,7 @@ MDEV-17556:
 =~ close_thread_tables
 MDEV-17361:
 =~ signal 11|AddressSanitizer: SEGV on unknown address
-=~ in Query_arena::set_query_arena
+=~ Query_arena::set_query_arena
 =~ THD::set_n_backup_active_arena
 =~ Field::set_default
 MDEV-17275:
@@ -1479,6 +1483,11 @@ TODO-842:
 =~ dict_index_get_nth_field
 =~ dict_index_get_nth_col
 =~ row_purge_parse_undo_rec
+TODO-842:
+=~ Assertion \`inited==NONE'
+=~ handler::ha_index_init
+=~ check_duplicate_long_entry_key
+=~ ha_partition::copy_partitions
 
 ##############################################################################
 # Weak matches
