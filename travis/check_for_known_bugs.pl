@@ -870,6 +870,11 @@ MDEV-18166:
 =~ Field_datetimef::get_TIME|Field_short::val_int|Field_enum::val_int|Field_newdate::get_TIME|Field_long::val_int|Field_varstring::val_real|Field_bit::val_int
 =~ field_conv_incompatible
 =~ TABLE::update_virtual_fields
+MDEV-18156:
+=~ InnoDB: Record in index .* of table .* was not found on update: TUPLE
+=~ Assertion \`btr_validate_index(index, 0, false)'|Assertion \`0'
+=~ row_upd_sec_index_entry
+=~ row_update_for_mysql
 MDEV-18153:
 =~ Index for table .* is corrupt; try to repair it|InnoDB: Record in index .* of table .* was not found on update: TUPLE
 =~ Assertion \`0'|Assertion \`btr_validate_index(index, 0)'|Assertion \`btr_validate_index(index, 0, false)'
@@ -1015,6 +1020,10 @@ MDEV-17843:
 =~ Assertion \`page_rec_is_leaf(rec)'
 =~ lock_rec_queue_validate
 =~ innodb_show_status
+MDEV-17842:
+=~ Assertion \`((copy & 0x00000003) == 0x02)'
+=~ pfs_lock::allocated_to_free
+=~ drop_table_share
 MDEV-17837:
 =~ Assertion \`!is_set() \|\| (m_status == DA_OK_BULK && is_bulk_op())'
 =~ Diagnostics_area::set_ok_status
@@ -1589,12 +1598,6 @@ MDEV-18158:
 =~ Can't find record in
 MDEV-18157:
 =~ Explain_node::print_explain_for_children
-MDEV-18156:
-=~ is corrupt; try to repair it
-MDEV-18156:
-=~ was not found on update: TUPLE
-MDEV-18156:
-=~ row_upd_sec_index_entry
 MDEV-18147:
 =~ templ->mysql_col_len >= len
 MDEV-18146:
@@ -1663,8 +1666,6 @@ MDEV-17895:
 =~ trx->dict_operation != TRX_DICT_OP_NONE
 MDEV-17884:
 =~ is marked as crashed and should be repaired
-MDEV-17842:
-=~ pfs_lock::allocated_to_free
 MDEV-17838:
 =~ in Item_field::rename_fields_processor
 MDEV-17834:
