@@ -252,13 +252,23 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-19596:
+=~ Assertion \`inited==NONE'
+=~ handler::ha_index_read_idx_map
+=~ Delayed_insert::handle_inserts
+MDEV-19595:
+=~ Table .* is marked as crashed and should be repaired
+=~ Assertion \`!is_set() \|\| (m_status == DA_OK_BULK && is_bulk_op())'
+=~ Diagnostics_area::set_ok_status
+=~ my_ok
+=~ mysql_alter_table|Sql_cmd_truncate_table::execute|mysqld_show_create
 MDEV-19576:
 =~ Got error 175 when executing record redo_index
 =~ Aria engine: Redo phase failed
 =~ Aria recovery failed
 MDEV-19536:
-=~ AddressSanitizer: heap-use-after-free|signal 11
-=~ is_temporary_table|Index_stat::set_full_table_name|Stat_table::Stat_table
+=~ AddressSanitizer: heap-use-after-free|signal 11|Invalid read of size
+=~ is_temporary_table|Index_stat::set_full_table_name|Stat_table::Stat_table|statistics_for_tables_is_needed
 =~ read_statistics_for_tables_if_needed
 =~ fill_schema_table_by_open
 MDEV-19536:
@@ -821,6 +831,11 @@ MDEV-18259:
 =~ strlen|id_name_t::operator
 =~ get_foreign_key_info
 =~ ha_innobase::get_parent_foreign_key_list|ha_innobase::get_foreign_key_list
+MDEV-18250:
+=~ signal 11|exception
+=~ dirname_length
+=~ innobase_basename
+=~ sync_arr_fill_sys_semphore_waits_table
 MDEV-18249:
 =~ Assertion \`!table \|\| (!table->read_set \|\| bitmap_is_set(table->read_set, field_index) \|\| (!(ptr >= table->record[0] && ptr < table->record[0] + table->s->reclength)))'
 =~ Field_varstring::val_str|Field_datetimef::get_TIME|Field_blob::val_str
@@ -1496,6 +1511,12 @@ TODO-842:
 =~ handler::ha_index_init
 =~ check_duplicate_long_entry_key
 =~ ha_partition::copy_partitions
+TODO-842:
+=~ Conditional jump or move depends on uninitialised value
+=~ row_ins_step
+=~ row_update_vers_insert
+=~ row_update_cascade_for_mysql
+=~ row_ins_foreign_check_on_constraint
 
 ##############################################################################
 # Weak matches
