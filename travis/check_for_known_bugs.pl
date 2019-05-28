@@ -252,6 +252,11 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-19621:
+=~ signal 11|AddressSanitizer: SEGV on unknown address
+=~ ha_innobase::commit_inplace_alter_table
+=~ handler::ha_commit_inplace_alter_table
+=~ mysql_inplace_alter_table
 MDEV-19619:
 =~ AddressSanitizer: heap-use-after-free
 =~ Field_longlong::val_int
