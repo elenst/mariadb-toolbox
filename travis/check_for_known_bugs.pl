@@ -252,6 +252,56 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-19619:
+=~ AddressSanitizer: heap-use-after-free
+=~ Field_longlong::val_int
+=~ ha_innobase::write_row
+=~ read_sep_field
+=~ mysql_load
+MDEV-19619:
+=~ Assertion \`tmp != ((long long) 0x8000000000000000LL)'
+=~ TIME_from_longlong_datetime_packed
+=~ Field_datetimef::get_TIME
+=~ get_field_default_value
+=~ fill_schema_table_by_open
+MDEV-19619:
+=~ signal 11
+=~ create_tmp_table
+=~ select_unit::create_result_table
+=~ open_normal_and_derived_tables
+=~ fill_schema_table_by_open
+MDEV-19619:
+=~ signal 11
+=~ String::copy
+=~ get_field_default_value
+=~ get_schema_column_record
+=~ fill_schema_table_by_open
+MDEV-19619:
+=~ signal 11
+=~ Field::is_null_in_record
+=~ create_tmp_table
+=~ select_unit::create_result_table
+=~ open_normal_and_derived_tables
+MDEV-19619:
+=~ signal 11
+=~ row_sel_field_store_in_mysql_format_func
+=~ row_search_mvcc
+=~ ha_innobase::index_read
+=~ READ_RECORD::read_record
+MDEV-19619:
+=~ Assertion \`prebuilt->mysql_prefix_len <= prebuilt->mysql_row_len'
+=~ row_sel_dequeue_cached_row_for_mysql
+=~ row_search_mvcc
+=~ ha_innobase::general_fetch
+MDEV-19619:
+=~ InnoDB: Record in index .* of table .* was not found on update: TUPLE
+=~ Assertion \`btr_validate_index(index, 0, false)'
+=~ row_upd_sec_index_entry
+=~ ha_innobase::delete_row
+=~ read_sep_field
+MDEV-19609:
+=~ Slave SQL: Error 'You have an error in your SQL syntax .* near 'TYPE=
+=~ CREATE TABLE
 MDEV-19596:
 =~ Assertion \`inited==NONE'
 =~ handler::ha_index_read_idx_map
@@ -484,7 +534,6 @@ MDEV-19178:
 =~ create_view_field
 =~ Field_iterator_view::create_item
 =~ find_field_in_tables
-=~ setup_fields
 MDEV-19175:
 =~ signal 11|AddressSanitizer: SEGV on unknown address
 =~ ha_partition::vers_can_native
@@ -596,6 +645,9 @@ MDEV-18925:
 =~ Item_exists_subselect::is_top_level_item|Item_in_optimizer::is_top_level_item
 =~ st_select_lex::update_used_tables
 =~ JOIN::optimize
+MDEV-18918:
+=~ Slave SQL: Error 'Invalid default value for .*
+=~ NOT NULL DEFAULT ''
 MDEV-18911:
 =~ Assertion \`(templ->is_virtual && !field) \|\| (field && field->prefix_len ? field->prefix_len == len : templ->mysql_col_len == len)'
 =~ row_sel_field_store_in_mysql_format_func
@@ -939,6 +991,27 @@ MDEV-18046:
 =~ Assertion \`(buf[0] & 0xe0) == 0x80'
 =~ binlog_get_uncompress_len
 =~ Rows_log_event::uncompress_buf
+=~ mysql_show_binlog_events
+MDEV-18046:
+=~ AddressSanitizer: unknown-crash
+=~ my_strndup
+=~ Rotate_log_event::Rotate_log_event
+=~ Log_event::read_log_event
+=~ mysql_show_binlog_events
+MDEV-18046:
+=~ Assertion \`var_header_len >= 2'
+=~ Rows_log_event::Rows_log_event
+=~ Update_rows_log_event::Update_rows_log_event
+=~ mysql_show_binlog_events
+MDEV-18046:
+=~ Assertion \`m_field_metadata_size <= (m_colcnt \* 2)'
+=~ Table_map_log_event::Table_map_log_event
+=~ mysql_show_binlog_events
+MDEV-18046:
+=~ signal 11
+=~ my_bitmap_free
+=~ Update_rows_log_event::~Update_rows_log_event
+=~ mysql_show_binlog_events
 MDEV-18018:
 =~ signal 11|AddressSanitizer: heap-use-after-free
 =~ TABLE_LIST::reinit_before_use
@@ -990,7 +1063,7 @@ MDEV-17912:
 MDEV-17896:
 =~ Assertion \`pfs->get_refcount() > 0'
 =~ release_table_share|tdc_delete_share_from_hash
-=~ purge_tables|close_all_tables_for_name
+=~ purge_tables|close_all_tables_for_name|tdc_release_share
 MDEV-17891:
 =~ Assertion \`transactional_table \|\| !changed \|\| thd->transaction.stmt.modified_non_trans_table'
 =~ select_insert::abort_result_set
@@ -1242,7 +1315,7 @@ MDEV-15878:
 =~ Assertion \`table->file->stats\.records > 0 \|\| error'
 =~ join_read_const_table
 =~ JOIN::optimize
-=~ mysql_select
+=~ mysql_select|mysql_update
 MDEV-15572:
 =~ signal 11|AddressSanitizer: SEGV
 =~ ha_maria::end_bulk_insert|ha_maria::extra
@@ -1526,6 +1599,21 @@ TODO-842:
 =~ row_update_vers_insert
 =~ row_update_cascade_for_mysql
 =~ row_ins_foreign_check_on_constraint
+TODO-842:
+=~ InnoDB: Failing assertion: thr_get_trx(thr)->error_state == DB_SUCCESS
+=~ que_run_threads
+=~ fts_eval_sql
+=~ fts_config_set_value
+TODO-842:
+=~ AddressSanitizer: heap-use-after-free
+=~ innobase_get_computed_value
+=~ row_merge_read_clustered_index
+=~ ha_innobase::inplace_alter_table
+TODO-842:
+=~ AddressSanitizer: use-after-poison
+=~ ShowStatus::GetCount::operator
+=~ innodb_show_mutex_status
+=~ innobase_show_status
 
 ##############################################################################
 # Weak matches
@@ -1535,9 +1623,6 @@ MDEV-19320:
 =~ Can't find record
 MDEV-18929:
 =~ Slave SQL: Error 'Table .* is not system-versioned' on query
-MDEV-18918:
-=~ Error running query, slave SQL thread aborted
-=~ Invalid default value for .*
 MDEV-18805:
 =~ Found too many records; Can't continue
 =~ Number of rows changed from
