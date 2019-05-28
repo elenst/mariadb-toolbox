@@ -252,6 +252,10 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-19622:
+=~ Assertion \`!table \|\| (!table->read_set \|\| bitmap_is_set(table->read_set, field_index))'|Assertion \`!table \|\| (!table->read_set \|\| bitmap_is_set(table->read_set, field_index) \|\| (!(ptr >= table->record[0] && ptr < table->record[0] + table->s->reclength)))'|Assertion \`marked_for_read()'
+=~ ha_partition::set_auto_increment_if_higher
+=~ ha_partition::update_row
 MDEV-19621:
 =~ signal 11|AddressSanitizer: SEGV on unknown address
 =~ ha_innobase::commit_inplace_alter_table
@@ -1619,6 +1623,12 @@ TODO-842:
 =~ ShowStatus::GetCount::operator
 =~ innodb_show_mutex_status
 =~ innobase_show_status
+TODO-842:
+=~ Assertion \`!m_freed'
+=~ OSMutex::enter
+=~ fil_space_crypt_close_tablespace
+=~ fil_delete_tablespace
+=~ fts_drop_tables
 
 ##############################################################################
 # Weak matches
