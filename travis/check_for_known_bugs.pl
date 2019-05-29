@@ -252,6 +252,19 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-19634:
+=~ InnoDB: Using a partial-field key prefix in search, index .* of table .*\. Last data field length .* bytes, key ptr now exceeds key end by .* bytes
+=~ Assertion `0'
+=~ row_sel_convert_mysql_key_to_innobase
+=~ ha_innobase::records_in_range
+=~ handler::multi_range_read_info_const
+MDEV-19632:
+=~ Slave SQL: Column .* of table .* cannot be converted from type 'tinyblob' to type 'longblob', Gtid .*, Internal MariaDB error code: 1677
+MDEV-19631:
+=~ Assertion \`0'
+=~ st_select_lex_unit::optimize
+=~ mysql_explain_union
+=~ return_zero_rows
 MDEV-19622:
 =~ Assertion \`!table \|\| (!table->read_set \|\| bitmap_is_set(table->read_set, field_index))'|Assertion \`!table \|\| (!table->read_set \|\| bitmap_is_set(table->read_set, field_index) \|\| (!(ptr >= table->record[0] && ptr < table->record[0] + table->s->reclength)))'|Assertion \`marked_for_read()'
 =~ ha_partition::set_auto_increment_if_higher
@@ -436,7 +449,7 @@ MDEV-19304:
 =~ calc_row_difference
 =~ handler::ha_update_row
 MDEV-19304:
-=~ AddressSanitizer: unknown-crash|AddressSanitizer: heap-use-after-free
+=~ AddressSanitizer: unknown-crash|AddressSanitizer: heap-use-after-free|AddressSanitizer: heap-buffer-overflow
 =~ Field::cmp_binary
 =~ compare_record
 =~ mysql_update
@@ -640,6 +653,11 @@ MDEV-19011:
 =~ ha_myisam::setup_vcols_for_repair
 =~ ha_myisam::enable_indexes
 =~ Sql_cmd_alter_table::execute
+MDEV-18980:
+=~ Assertion \`join->best_read < double(1\.79769313486231570814527423731704357e+308L)'
+=~ greedy_search
+=~ choose_plan
+=~ make_join_statistics
 MDEV-18977:
 =~ Conditional jump or move depends on uninitialised value
 =~ TABLE::prune_range_rowid_filters
@@ -906,7 +924,7 @@ MDEV-18244:
 =~ signal 11|AddressSanitizer: SEGV on unknown address
 =~ ha_innobase::update_thd
 =~ ha_innobase::info_low
-=~ ha_partition::update_next_auto_inc_val
+=~ ha_partition::update_next_auto_inc_val|ha_partition::update_row
 MDEV-18216:
 =~ signal 11
 =~ Query_arena::set_query_arena
