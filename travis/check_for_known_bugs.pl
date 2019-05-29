@@ -259,7 +259,7 @@ MDEV-19634:
 =~ ha_innobase::records_in_range
 =~ handler::multi_range_read_info_const
 MDEV-19632:
-=~ Slave SQL: Column .* of table .* cannot be converted from type 'tinyblob' to type 'longblob', Gtid .*, Internal MariaDB error code: 1677
+=~ Slave SQL: Column .* of table .* cannot be converted from type 'tinyblob' to type 'longblob', Gtid .*, Internal MariaDB error code: 1677|Slave SQL: Column .* of table .* cannot be converted from type 'date' to type 'datetime'
 MDEV-19631:
 =~ Assertion \`0'
 =~ st_select_lex_unit::optimize
@@ -1248,6 +1248,8 @@ MDEV-16929:
 =~ open_normal_and_derived_tables
 =~ mysql_table_grant
 =~ KILL_SERVER|KILL_CONNECTION
+MDEV-16909:
+=~ Slave SQL: Error 'Table .* doesn't exist' on query\. Default database: .*\. Query: 'RENAME TABLE .* Internal MariaDB error code: 1146
 MDEV-16887:
 =~ Assertion \`n_idx > 0'
 =~ trx_undo_log_v_idx
