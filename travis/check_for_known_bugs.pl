@@ -941,15 +941,9 @@ MDEV-18203:
 =~ error 126 when executing undo undo_key_insert
 =~ Aria engine: Undo phase failed
 =~ Plugin 'Aria' init function returned error
-MDEV-18167:
-=~ Assertion \`!table \|\| (!table->read_set \|\| bitmap_is_set(table->read_set, field_index) \|\| (!(ptr >= table->record[0] && ptr < table->record[0] + table->s->reclength)))'
-=~ Field_enum::store_field
-=~ field_conv_incompatible
-=~ TABLE::update_virtual_fields
 MDEV-18166:
-=~ Server version: 10\.4
+=~ Server version: 10\.4|Server version: 10\.3|Server version: 10\.2
 =~ Assertion \`!table \|\| (!table->read_set \|\| bitmap_is_set(table->read_set, field_index) \|\| (!(ptr >= table->record[0] && ptr < table->record[0] + table->s->reclength)))'
-=~ Field_datetimef::get_TIME|Field_short::val_int|Field_enum::val_int|Field_newdate::get_TIME|Field_long::val_int|Field_varstring::val_real|Field_bit::val_int
 =~ field_conv_incompatible
 =~ TABLE::update_virtual_fields
 MDEV-18156:
