@@ -363,11 +363,6 @@ MDEV-19526:
 =~ Assertion \`((val << shift) & mask) == (val << shift)'
 =~ rec_set_bit_field_2
 =~ page_cur_tuple_insert
-MDEV-19524:
-=~ AddressSanitizer: SEGV on unknown address|signal 11
-=~ Field_longstr::csinfo_change_allows_instant_alter
-=~ compare_keys_but_name
-=~ fill_alter_inplace_info
 MDEV-19522:
 =~ Assertion \`val <= 4294967295u'
 =~ fts_encode_int
@@ -386,12 +381,6 @@ MDEV-19493:
 =~ signal 11|AddressSanitizer: heap-use-after-free
 =~ lock_tables_check|get_lock_data|multi_update_check_table_access
 =~ mysql_multi_update_prepare
-MDEV-19486:
-=~ signal 11|AddressSanitizer: SEGV on unknown address
-=~ row_upd_step
-=~ ha_innobase::delete_row
-=~ AGGR_OP::end_send
-=~ sub_select_postjoin_aggr
 MDEV-19418:
 =~ Assertion \`ptr == a \|\| ptr == b'
 =~ Field_bit::cmp
@@ -641,17 +630,6 @@ MDEV-19034:
 =~ get_date_time_separator
 =~ str_to_datetime
 =~ Field_temporal_with_date::store
-MDEV-19027:
-=~ Assertion \`table->n_def == (table->n_cols - 3)'|Assertion \`table->n_def == table->n_cols - 3'
-=~ dict_table_add_system_columns
-=~ create_table_info_t::create_table_def
-=~ ha_innobase::truncate
-MDEV-19027:
-=~ signal 11
-=~ dict_index_add_col
-=~ dict_index_build_internal_clust
-=~ dict_index_add_to_cache_w_vcol
-=~ que_thr_step
 MDEV-19020:
 =~ AddressSanitizer: heap-use-after-free
 =~ strxnmov
@@ -1207,7 +1185,7 @@ MDEV-17091:
 MDEV-17091:
 =~ Assertion \`old_part_id == m_last_part'
 =~ ha_partition::update_row
-=~ mysql_update|Update_rows_log_event::do_exec_row|mysql_multi_update
+=~ mysql_update|Update_rows_log_event::do_exec_row|mysql_multi_update|mysql_load
 MDEV-17019:
 =~ signal 11
 =~ multi_delete::~multi_delete
@@ -2020,8 +1998,6 @@ MDEV-12059:
 =~ precision > 0
 MDEV-11783:
 =~ checksum_length == f->ptr
-MDEV-11015:
-=~ precision > 0
 MDEV-9137:
 =~ in _ma_ck_real_write_btree
 MDEV-5924:
@@ -3146,3 +3122,27 @@ MDEV-5924:
 # =~ m_prebuilt->trx->check_foreigns
 # MDEV-17830:
 # =~ Item_null_result::field_type
+# MDEV-19524:
+# =~ AddressSanitizer: SEGV on unknown address|signal 11
+# =~ Field_longstr::csinfo_change_allows_instant_alter
+# =~ compare_keys_but_name
+# =~ fill_alter_inplace_info
+# MDEV-19486:
+# =~ signal 11|AddressSanitizer: SEGV on unknown address
+# =~ row_upd_step
+# =~ ha_innobase::delete_row
+# =~ AGGR_OP::end_send
+# =~ sub_select_postjoin_aggr
+# MDEV-19027:
+# =~ Assertion \`table->n_def == (table->n_cols - 3)'|Assertion \`table->n_def == table->n_cols - 3'
+# =~ dict_table_add_system_columns
+# =~ create_table_info_t::create_table_def
+# =~ ha_innobase::truncate
+# MDEV-19027:
+# =~ signal 11
+# =~ dict_index_add_col
+# =~ dict_index_build_internal_clust
+# =~ dict_index_add_to_cache_w_vcol
+# =~ que_thr_step
+# MDEV-11015:
+# =~ precision > 0
