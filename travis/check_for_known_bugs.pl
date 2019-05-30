@@ -41,6 +41,8 @@ if ($ENV{TRAVIS} eq 'true') {
   $page_url= "'https://dev.azure.com/elenst/MariaDB tests/_build/results?buildId=".$ENV{BUILD_BUILDID}."'";
 }
 my $test_result= (defined $ENV{TEST_RESULT} and $ENV{TEST_RESULT} !~ /\s/) ? $ENV{TEST_RESULT} : 'N/A';
+my $server_branch= $ENV{SERVER_BRANCH} || 'N/A';
+my $test_line= $ENV{SYSTEM_DEFINITIONNAME} || $ENV{TRAVIS_BRANCH} || 'N/A';
 
 if (scalar @last_choice_files) {
   my @last_files= glob "@last_choice_files";
@@ -164,12 +166,12 @@ sub register_matches
       foreach my $j (keys %found_mdevs) {
         my $fixdate= defined $fixed_mdevs{$j} ? "'$fixed_mdevs{$j}'" : 'NULL';
         my $draft= $draft_mdevs{$j} || 0;
-        $dbh->do("REPLACE INTO travis.strong_match (ci, test_id, jira, fixdate, draft, test_result, url) VALUES (\'$ci\',\'$ENV{TEST_ID}\',\'$j\', $fixdate, $draft, \'$test_result\', $page_url)");
+        $dbh->do("REPLACE INTO travis.strong_match (ci, test_id, jira, fixdate, draft, test_result, url, server_branch, test_line) VALUES (\'$ci\',\'$ENV{TEST_ID}\',\'$j\', $fixdate, $draft, \'$test_result\', $page_url, \'$server_branch\', \'$test_line\')");
       }
     } elsif ( $type eq 'weak' ) {
       my $jiras= join ',', keys %found_mdevs;
       # For weak matches, we insert the concatenation into the notes field
-      $dbh->do("REPLACE INTO travis.weak_match (ci, test_id, notes, test_result, url) VALUES (\'$ci\',\'$ENV{TEST_ID}\',\'??? $jiras\', \'$test_result\', $page_url)");
+      $dbh->do("REPLACE INTO travis.weak_match (ci, test_id, notes, test_result, url, server_branch, test_line) VALUES (\'$ci\',\'$ENV{TEST_ID}\',\'??? $jiras\', \'$test_result\', $page_url, \'$server_branch\', \'$test_line\')");
     }
   }
 }
@@ -177,7 +179,7 @@ sub register_matches
 sub register_no_match
 {
   if (my $dbh= connect_to_db()) {
-    $dbh->do("REPLACE INTO travis.no_match (ci, test_id, test_result, url) VALUES (\'$ci\',\'$ENV{TEST_ID}\', \'$test_result\', $page_url)");
+    $dbh->do("REPLACE INTO travis.no_match (ci, test_id, test_result, url, server_branch, test_line) VALUES (\'$ci\',\'$ENV{TEST_ID}\', \'$test_result\', $page_url, \'$server_branch\', \'$test_line\')");
   }
 }
 
@@ -945,6 +947,7 @@ MDEV-18167:
 =~ field_conv_incompatible
 =~ TABLE::update_virtual_fields
 MDEV-18166:
+=~ Server version: 10\.4
 =~ Assertion \`!table \|\| (!table->read_set \|\| bitmap_is_set(table->read_set, field_index) \|\| (!(ptr >= table->record[0] && ptr < table->record[0] + table->s->reclength)))'
 =~ Field_datetimef::get_TIME|Field_short::val_int|Field_enum::val_int|Field_newdate::get_TIME|Field_long::val_int|Field_varstring::val_real|Field_bit::val_int
 =~ field_conv_incompatible
