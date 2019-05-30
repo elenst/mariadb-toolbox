@@ -254,6 +254,16 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-19647:
+=~ Assertion \`find(table)'
+=~ dict_sys_t::prevent_eviction
+=~ fts_optimize_add_table
+=~ dict_load_columns
+MDEV-19644:
+=~ Server version: 10\.4|Server version: 10\.3
+=~ AddressSanitizer: SEGV|signal 6|signal 11
+=~ ha_partition::try_semi_consistent_read
+=~ mysql_update
 MDEV-19634:
 =~ InnoDB: Using a partial-field key prefix in search, index .* of table .*\. Last data field length .* bytes, key ptr now exceeds key end by .* bytes
 =~ Assertion `0'
@@ -1230,7 +1240,7 @@ MDEV-16940:
 =~ mysql_multi_update_prepare
 =~ sp_head::execute
 MDEV-16932:
-=~ AddressSanitizer: heap-use-after-free
+=~ AddressSanitizer: heap-use-after-free|AddressSanitizer: heap-buffer-overflow
 =~ my_well_formed_char_length_utf8|lex_string_cmp|my_strcasecmp_utf8
 =~ mysql_prepare_create_table
 =~ sp_head::execute|Prepared_statement::execute
