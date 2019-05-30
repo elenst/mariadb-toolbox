@@ -1573,9 +1573,9 @@ TODO-842:
 =~ row_log_table_apply_op
 =~ ha_innobase::inplace_alter_table
 TODO-842:
+=~ Server version: 10\.1
 =~ AddressSanitizer: heap-use-after-free
 =~ row_ins_check_foreign_constraint
-=~ row_ins_clust_index_entry
 =~ row_ins_index_entry
 TODO-842:
 =~ AddressSanitizer: SEGV|signal 11
@@ -1656,6 +1656,19 @@ TODO-842:
 =~ fil_space_crypt_close_tablespace
 =~ fil_delete_tablespace
 =~ fts_drop_tables
+TODO-842:
+=~ InnoDB: Failing assertion: index_cache->words == NULL
+=~ fts_index_cache_init
+=~ fts_sync_table
+TODO-842:
+=~ Assertion \`!((new_col->prtype ^ col->prtype) & ~256U)'
+=~ row_log_table_apply_convert_mrec
+=~ row_log_table_apply_op
+=~ mysql_alter_table
+TODO-842:
+=~ Assertion \`update->n_fields < ulint(table->n_cols + table->n_v_cols)'
+=~ upd_node_t::make_versioned_helper
+=~ TABLE::delete_row
 
 ##############################################################################
 # Weak matches
