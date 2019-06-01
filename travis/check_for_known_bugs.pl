@@ -254,6 +254,9 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-19663:
+=~ Got error 127 when reading table .*
+=~ Table .* is marked as crashed and should be repaired
 MDEV-19647:
 =~ Assertion \`find(table)'
 =~ dict_sys_t::prevent_eviction
@@ -266,7 +269,7 @@ MDEV-19644:
 =~ mysql_update
 MDEV-19634:
 =~ InnoDB: Using a partial-field key prefix in search, index .* of table .*\. Last data field length .* bytes, key ptr now exceeds key end by .* bytes
-=~ Assertion `0'
+=~ Assertion \`0'
 =~ row_sel_convert_mysql_key_to_innobase
 =~ ha_innobase::records_in_range
 =~ handler::multi_range_read_info_const
@@ -450,7 +453,7 @@ MDEV-19304:
 =~ calc_row_difference
 =~ handler::ha_update_row
 MDEV-19304:
-=~ AddressSanitizer: unknown-crash|AddressSanitizer: heap-use-after-free|AddressSanitizer: heap-buffer-overflow
+=~ AddressSanitizer: unknown-crash|AddressSanitizer: heap-use-after-free|AddressSanitizer: heap-buffer-overflow|AddressSanitizer: use-after-poison
 =~ Field::cmp_binary
 =~ compare_record
 =~ mysql_update
@@ -1233,8 +1236,6 @@ MDEV-16929:
 =~ open_normal_and_derived_tables
 =~ mysql_table_grant
 =~ KILL_SERVER|KILL_CONNECTION
-MDEV-16909:
-=~ Slave SQL: Error 'Table .* doesn't exist' on query\. Default database: .*\. Query: 'RENAME TABLE .* Internal MariaDB error code: 1146
 MDEV-16887:
 =~ Assertion \`n_idx > 0'
 =~ trx_undo_log_v_idx
@@ -1755,7 +1756,7 @@ MDEV-18046:
 MDEV-18046:
 =~ Update_rows_log_event::~Update_rows_log_event
 MDEV-18042:
-=~ signal 11
+=~ signal 11|AddressSanitizer: SEGV
 =~ mysql_alter_table
 =~ Sql_cmd_alter_table::execute
 MDEV-18017:
@@ -1858,6 +1859,13 @@ MDEV-16788:
 =~ build_frm_image
 =~ mysql_create_frm_image
 =~ mysql_alter_table
+# Need to check that it's happening with temporary tables, or at least there can be temporary tables involved
+MDEV-16728:
+=~ Slave SQL: Error 'Table .* doesn't exist' on query\. Default database: .*\. Query: 'RENAME TABLE .* Internal MariaDB error code: 1146
+MDEV-16728:
+=~ Slave SQL: Error 'Table .* already exists' on query\. Default database: .*\. Query: 'RENAME TABLE .* Internal MariaDB error code: 1050
+MDEV-16728:
+=~ Slave SQL: Error 'ALGORITHM=INPLACE is not supported for this operation. Try ALGORITHM=COPY' on query
 MDEV-16539:
 =~ THD::mark_tmp_table_as_free_for_reuse
 MDEV-16523:
