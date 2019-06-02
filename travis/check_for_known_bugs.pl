@@ -254,6 +254,15 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-19674:
+=~ Assertion \`marked_for_read()'
+=~ Field_newdate::get_TIME|Field_timestampf::val_native
+=~ TABLE::verify_constraints
+=~ TABLE_LIST::view_check_option
+=~ multi_update::do_updates
+MDEV-19672:
+=~ MariaDB Audit Plugin version .* STARTED
+=~ safe_mutex: Trying to lock mutex at .*, when the mutex was already locked at .*
 MDEV-19663:
 =~ Got error 127 when reading table .*
 =~ Table .* is marked as crashed and should be repaired
@@ -1148,7 +1157,7 @@ MDEV-17580:
 MDEV-17576:
 =~ Assertion \`share->reopen == 1'
 =~ maria_extra
-=~ mysql_alter_table
+=~ mysql_alter_table|mysql_create_or_drop_trigger
 MDEV-17556:
 =~ Assertion \`bitmap_is_set_all(&table->s->all_set)'
 =~ handler::ha_reset
