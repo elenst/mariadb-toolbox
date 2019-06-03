@@ -254,6 +254,11 @@ __DATA__
 # Strong matches
 ##############################################################################
 
+MDEV-19680:
+=~ Assertion \`!table \|\| (!table->read_set \|\| bitmap_is_set(table->read_set, field_index) \|\| (!(ptr >= table->record[0] && ptr < table->record[0] + table->s->reclength)))'|Assertion \`!table \|\| (!table->read_set \|\| bitmap_is_set(table->read_set, field_index))'
+=~ Field_.*::val_.*
+=~ Item_direct_view_ref::val_.*
+=~ Aggregator_simple::add
 MDEV-19674:
 =~ Assertion \`marked_for_read()'
 =~ Field_newdate::get_TIME|Field_timestampf::val_native
@@ -917,11 +922,6 @@ MDEV-18250:
 =~ dirname_length
 =~ innobase_basename
 =~ sync_arr_fill_sys_semphore_waits_table
-MDEV-18249:
-=~ Assertion \`!table \|\| (!table->read_set \|\| bitmap_is_set(table->read_set, field_index) \|\| (!(ptr >= table->record[0] && ptr < table->record[0] + table->s->reclength)))'
-=~ Field_varstring::val_str|Field_datetimef::get_TIME|Field_blob::val_str
-=~ Item::save_in_field|Item_field::save_in_field
-=~ TABLE::update_virtual_fields
 MDEV-18244:
 =~ signal 11|AddressSanitizer: SEGV on unknown address
 =~ ha_innobase::update_thd
@@ -941,6 +941,11 @@ MDEV-18203:
 =~ error 126 when executing undo undo_key_insert
 =~ Aria engine: Undo phase failed
 =~ Plugin 'Aria' init function returned error
+MDEV-18166:
+=~ Assertion \`!table \|\| (!table->read_set \|\| bitmap_is_set(table->read_set, field_index) \|\| (!(ptr >= table->record[0] && ptr < table->record[0] + table->s->reclength)))'
+=~ Field_varstring::val_str|Field_datetimef::get_TIME|Field_blob::val_str
+=~ Item::save_in_field|Item_field::save_in_field
+=~ TABLE::update_virtual_fields
 MDEV-18166:
 =~ Server version: 10\.4|Server version: 10\.3|Server version: 10\.2
 =~ Assertion \`!table \|\| (!table->read_set \|\| bitmap_is_set(table->read_set, field_index) \|\| (!(ptr >= table->record[0] && ptr < table->record[0] + table->s->reclength)))'
@@ -1125,7 +1130,7 @@ MDEV-17837:
 =~ Assertion \`!is_set() \|\| (m_status == DA_OK_BULK && is_bulk_op())'
 =~ Diagnostics_area::set_ok_status
 =~ my_ok
-=~ mysql_insert
+=~ mysql_insert|CREATE .*PROCEDURE|mysql_rm_table|CREATE .*EVENT
 MDEV-17699:
 =~ AddressSanitizer: use-after-poison
 =~ base_list_iterator::next_fast
