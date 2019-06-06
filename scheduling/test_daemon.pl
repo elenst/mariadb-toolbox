@@ -103,10 +103,13 @@ while (1) {
 sub collect_finished_workers {
     foreach my $p (keys %worker_build_threads) {
         waitpid($p, WNOHANG);
-        if ($? > -1) { # process exited
+        my $res= $?
+        if ($res > -1) { # process exited
             say("Worker with pid $p has finished execution of queue line $worker_queue_lines{$p}");
             delete $worker_build_threads{$p};
             delete $worker_queue_lines{$p};
+        } else {
+            say("Status for worker with pid $p: $res");
         }
     }
 }
@@ -116,11 +119,12 @@ sub run_test {
 
     while (scalar(keys %worker_build_threads)) {
         collect_finished_workers();
-        if (scalar(keys(%worker_build_threads)) < $max_workers) {
+        my @ids= keys %worker_build_threads;
+        if (scalar(@ids) < $max_workers) {
             # We have a free worker, won't wait anymore
             last;
         } else {
-            say("All workers are busy, waiting...");
+            say("All $max_workers workers are busy: [ @ids ]. Waiting...");
             sleep $sleep;
         }
     }
