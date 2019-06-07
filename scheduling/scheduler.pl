@@ -61,7 +61,6 @@ my $num=`$cmd | grep -c runall`;
 chomp $num;
 
 say("Scheduling $num test(s) for:\n\ttest alias: $alias\n\tbranch: $branch\n\tbuild type: $build_type\n\tconfig: $config\n\tbasedirs: $basedirs");
-exit;
 system('echo "### TEST_ALIAS='.$alias.'" >> '.$queue_file);
 system('echo "### SERVER_BRANCH='.$branch.'" >> '.$queue_file);
 system("$cmd >> $queue_file");
