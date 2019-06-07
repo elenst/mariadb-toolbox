@@ -198,5 +198,5 @@ sub say {
 }
 
 sub git_pull {
-    system("cd $_ && git pull");
+    system("cd $_[0] && git pull");
 }
