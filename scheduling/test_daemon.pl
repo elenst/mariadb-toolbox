@@ -168,7 +168,8 @@ sub run_test {
             $res= $1;
         }
 
-        $cmd= "SERVER_BRANCH=$server_branch TEST_ALIAS=$test_alias TEST_RESULT=$res TEST_ID=$prefix LOCAL_CI=`hostname` perl $ENV{RQG_HOME}/util/check_for_known_bugs.pl " . '`find ' . "$logdir/${prefix}" . '_vardir* -name mysql*.err*` `find ' . "$logdir/${prefix}" . '_vardir* -name mbackup*.log` --last=' . "$logdir/${prefix}_trial.log";
+        git_pull($ENV{$RQG_HOME});
+        $cmd= "SERVER_BRANCH=$server_branch TEST_ALIAS=$test_alias TEST_RESULT=$res TEST_ID=$prefix LOCAL_CI=`hostname` perl $ENV{RQG_HOME}/util/check_for_known_bugs.pl --signatures=$ENV{RQG_HOME}/data/bug_signatures " . '`find ' . "$logdir/${prefix}" . '_vardir* -name mysql*.err*` `find ' . "$logdir/${prefix}" . '_vardir* -name mbackup*.log` --last=' . "$logdir/${prefix}_trial.log";
         system("echo $cmd > $logdir/${prefix}_postmortem; $cmd >> $logdir/${prefix}_postmortem 2>&1");
         exit $?>>8;
     } else {
@@ -194,4 +195,8 @@ sub say {
     foreach my $l (@lines) {
         print $ts, ' ', $l, "\n";
     }
+}
+
+sub git_pull {
+    system("cd $_ && git pull");
 }
