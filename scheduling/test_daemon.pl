@@ -101,17 +101,18 @@ while (1) {
 }
 
 sub collect_finished_workers {
+    my $status="Worker status:";
     foreach my $p (keys %worker_build_threads) {
         waitpid($p, WNOHANG);
         my $res= $?;
+        $status .= " [$p $res]";
         if ($res > -1) { # process exited
             say("Worker with pid $p has finished execution of queue line $worker_queue_lines{$p}");
             delete $worker_build_threads{$p};
             delete $worker_queue_lines{$p};
-        } else {
-            say("Status for worker with pid $p: $res");
         }
     }
+    say($status);
 }
 
 sub run_test {
