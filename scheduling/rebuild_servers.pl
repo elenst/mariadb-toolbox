@@ -4,6 +4,7 @@ use Getopt::Long;
 use strict;
 
 my @branches;
+my @builds;
 my ($bin_home, $source_home, $remote_source);
 
 GetOptions (
@@ -11,12 +12,20 @@ GetOptions (
   "source-home=s" => \$source_home,
   "remote-source=s" => \$remote_source,
   "branch=s@" => \@branches,
+  "build=s@"  => \@builds,
 );
 
 if ($?) {
     say("FATAL  ERROR: unknown option");
     exit 1;
 }
+
+unless (scalar @builds) {
+    @builds= ('deb', 'rel');
+}
+
+my %builds=();
+map { $builds{$_}= 1 } @builds;
 
 foreach my $b (@branches)
 {
@@ -30,29 +39,44 @@ foreach my $b (@branches)
     chomp $revno;
 
     # Release build
-    $bindir= "$bin_home/${b}-${revno}-rel";
-    if (-e $bindir) {
-        say("Release build for $b $revno already exists");
-    } else {
-        build($srcdir, $bindir, "$bin_home/${b}-rel", "-DCMAKE_BUILD_TYPE=RelWithDebInfo");
+    if ($builds{'rel'}) {
+        $bindir= "$bin_home/${b}-${revno}-rel";
+        if (-e $bindir) {
+            say("Release build for $b $revno already exists");
+        } else {
+            build($srcdir, $bindir, "$bin_home/${b}-rel", "-DCMAKE_BUILD_TYPE=RelWithDebInfo");
+        }
     }
 
     # ASAN build
-
-    $bindir= "$bin_home/${b}-${revno}-asan";
-    if (-e $bindir) {
-        say("ASAN build for $b $revno already exists");
-    } else {
-        build($srcdir, $bindir, "$bin_home/${b}-asan", "-DCMAKE_BUILD_TYPE=Debug -DWITH_ASAN=YES -DMYSQL_MAINTAINER_MODE=OFF");
+    if ($builds{'asan'}) {
+        $bindir= "$bin_home/${b}-${revno}-asan";
+        if (-e $bindir) {
+            say("ASAN build for $b $revno already exists");
+        } else {
+            build($srcdir, $bindir, "$bin_home/${b}-asan", "-DCMAKE_BUILD_TYPE=Debug -DWITH_ASAN=YES -DMYSQL_MAINTAINER_MODE=OFF");
+        }
+    }
+    
+    # Debug build
+    if ($builds{'deb'}) {
+        $bindir= "$bin_home/${b}-${revno}-deb";
+        if (-e $bindir) {
+            say("Debug build for $b $revno already exists");
+        } else {
+            build($srcdir, $bindir, "$bin_home/${b}-debug", "-DCMAKE_BUILD_TYPE=Debug");
+        }
     }
 
     # GCOV build, has to be in-source
-    $bindir= "$bin_home/${b}-${revno}-gcov";
-    if (-e $bindir) {
-        say("GCOV build for $b $revno already exists");
-    } else {
-        system("cd $bin_home; git clone $srcdir $bindir");
-        build($bindir, undef, "$bin_home/${b}-gcov", "-DCMAKE_BUILD_TYPE=Debug -DENABLE_GCOV=YES");
+    if ($builds{'gcov'}) {
+        $bindir= "$bin_home/${b}-${revno}-gcov";
+        if (-e $bindir) {
+            say("GCOV build for $b $revno already exists");
+        } else {
+            system("cd $bin_home; git clone $srcdir $bindir");
+            build($bindir, undef, "$bin_home/${b}-gcov", "-DCMAKE_BUILD_TYPE=Debug -DENABLE_GCOV=YES");
+        }
     }
 }
 
