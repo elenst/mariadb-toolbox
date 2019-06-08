@@ -64,7 +64,7 @@ foreach my $b (@branches)
         if (-e $bindir) {
             say("Debug build for $b $revno already exists");
         } else {
-            build($srcdir, $bindir, "$bin_home/${b}-debug", "-DCMAKE_BUILD_TYPE=Debug");
+            build($srcdir, $bindir, "$bin_home/${b}-deb", "-DCMAKE_BUILD_TYPE=Debug");
         }
     }
 
