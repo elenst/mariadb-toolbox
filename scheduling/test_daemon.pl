@@ -170,7 +170,12 @@ sub run_test {
 
         git_pull($ENV{RQG_HOME});
         $cmd= "SERVER_BRANCH=$server_branch TEST_ALIAS=$test_alias TEST_RESULT=$res TEST_ID=$prefix LOCAL_CI=`hostname` perl $ENV{RQG_HOME}/util/check_for_known_bugs.pl --signatures=$ENV{RQG_HOME}/data/bug_signatures " . '`find ' . "$logdir/${prefix}" . '_vardir* -name mysql*.err*` `find ' . "$logdir/${prefix}" . '_vardir* -name mbackup*.log` --last=' . "$logdir/${prefix}_trial.log";
-        system("echo $cmd > $logdir/${prefix}_postmortem; $cmd >> $logdir/${prefix}_postmortem 2>&1");
+        system("echo Test result: $res > $logdir/${prefix}_postmortem; echo $cmd >> $logdir/${prefix}_postmortem; $cmd >> $logdir/${prefix}_postmortem 2>&1");
+        if ($res eq 'OK') {
+            system("rm -rf $logdir/${prefix}_vardir*");
+        } else {
+            system("cd $logdir; tar zcf ${prefix}_vardir.tar.gz ${prefix}_vardir*");
+        }
         exit $?>>8;
     } else {
         say("ERROR: Could not fork for the test job!");
