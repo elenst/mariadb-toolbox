@@ -32,7 +32,11 @@ foreach my $b (@branches)
     my $srcdir= "$source_home/$b";
     my ($revno, $bindir);
     unless (-e $srcdir) {
-        system("cd $source_home; git clone $remote_source --branch $b $b");
+        if (-e $remote_source/$b) {
+            system("cd $source_home; git clone $remote_source/$b $b");
+        } else {
+            system("cd $source_home; git clone $remote_source --branch $b $b");
+        }
     }
     system("cd $srcdir; git pull; git log -1 --abbrev=8 --pretty=\"%h\" > revno");
     $revno=`cat $srcdir/revno`;
