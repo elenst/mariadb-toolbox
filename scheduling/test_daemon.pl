@@ -174,8 +174,9 @@ sub run_test {
         if ($res eq 'OK') {
             system("rm -rf $logdir/${prefix}_vardir*");
         } else {
-            system("cd $logdir; tar zcf ${prefix}_vardir.tar.gz ${prefix}_vardir*");
+            system("cd $logdir; tar zcf ${prefix}_vardir.tar.gz ${prefix}_vardir*; rm -rf ${prefix}_vardir*");
         }
+        system("mv $logdir/${prefix}_* $logdir/archive/");
         exit $?>>8;
     } else {
         say("ERROR: Could not fork for the test job!");
