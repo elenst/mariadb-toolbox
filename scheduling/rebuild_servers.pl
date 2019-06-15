@@ -15,14 +15,12 @@ GetOptions (
   "build=s@"  => \@builds,
 );
 
-if ($?) {
-    say("FATAL  ERROR: unknown option");
-    exit 1;
-}
-
 unless (scalar @builds) {
     @builds= ('deb', 'rel');
 }
+
+say("Branches to build: @branches");
+say("Build types: @builds");
 
 my %builds=();
 map { $builds{$_}= 1 } @builds;
