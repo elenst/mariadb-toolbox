@@ -148,7 +148,7 @@ if [ "$res" == "0" ] ; then
       res=1
     fi
 
-    perl $SCRIPT_DIR/check_for_known_bugs.pl ${VARDIR}*/mysql.err* ${VARDIR}*/mbackup_*.log --last=$TRIAL_LOG
+    perl $SCRIPT_DIR/check_for_known_bugs.pl --signatures=$SCRIPT_DIR/../data/bug_signatures ${VARDIR}*/mysql.err* ${VARDIR}*/mbackup_*.log --last=$TRIAL_LOG
 
     echo
     echo '#' ${TRAVIS_BUILD_NUMBER} ${TRAVIS_JOB} ${TRIAL}
