@@ -28,7 +28,18 @@ map { $builds{$_}= 1 } @builds;
 foreach my $b (@branches)
 {
     my $srcdir= "$source_home/$b";
-    my ($revno, $bindir);
+    my ($revno, $remote_revno, $bindir);
+    if (-e $srcdir) {
+        system("cd $srcdir; git log -1 --abbrev=8 --pretty=\"%h\" > revno; git ls-remote origin $b | cut -c 1-8 > remote_revno");
+        $revno=`cat $srcdir/revno`;
+        chomp $revno;
+        my $remote_revno=`cat $srcdir/remote_revno`;
+        chomp $remote_revno;
+        if ($revno ne $remote_revno) {
+            system("cd $source_home; rm -rf $b");
+        }
+    }
+
     unless (-e $srcdir) {
         if (-e "$remote_source/$b") {
             system("cd $source_home; git clone $remote_source/$b $b");
@@ -36,9 +47,6 @@ foreach my $b (@branches)
             system("cd $source_home; git clone $remote_source --branch $b $b");
         }
     }
-    system("cd $srcdir; git pull; git log -1 --abbrev=8 --pretty=\"%h\" > revno");
-    $revno=`cat $srcdir/revno`;
-    chomp $revno;
 
     # Release build
     if ($builds{'rel'}) {
