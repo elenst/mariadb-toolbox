@@ -113,7 +113,7 @@ sub build {
         }
     } else {
         # In-source build (e.g. for GCOV)
-        system("cd $srcdir && cmake . @cmake_args && make -j12");
+        system("cd $srcdir && cmake . -DMAX_INDEXES=128 @cmake_args && make -j12");
         # Update symlink
         if ($?==0) {
             system("rm $symlink; ln -s $srcdir $symlink");
