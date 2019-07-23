@@ -101,13 +101,13 @@ while (1) {
 }
 
 sub collect_finished_workers {
-    my $status="Worker status:";
+    my $status="Worker status <[pid mtr_build_thread status]>:";
     foreach my $p (keys %worker_build_threads) {
         waitpid($p, WNOHANG);
         my $res= $?;
-        $status .= " [$p $res]";
+        $status .= " [$p $worker_build_threads{$p} $res]";
         if ($res > -1) { # process exited
-            say("Worker with pid $p has finished execution of queue line $worker_queue_lines{$p}");
+            say("Worker with pid $p (mtr_build_thread $worker_build_threads{$p}) has finished execution of queue line $worker_queue_lines{$p}");
             delete $worker_build_threads{$p};
             delete $worker_queue_lines{$p};
         }
@@ -142,9 +142,10 @@ sub run_test {
     $cmd =~ s/(--basedir\d*)=([\/\S]+)/$1=`realpath $2`/g;
 
     my %used_mtr_build_threads= reverse %worker_build_threads;
-    my @used_mtr_build_threads= reverse sort {$a<=>$b} keys(%used_mtr_build_threads);
-    my $mtr_build_thread= ($used_mtr_build_threads[0] || $base_mtr_build_thread-1)+1;
-    
+    my $mtr_build_thread= $base_mtr_build_thread;
+    while (exists $used_mtr_build_threads{$mtr_build_thread}) {
+        $mtr_build_thread++;
+    };
 
     $cmd .= " --mtr-build-thread=$mtr_build_thread";
     $cmd .= " > $logdir/${prefix}_trial.log 2>&1";
