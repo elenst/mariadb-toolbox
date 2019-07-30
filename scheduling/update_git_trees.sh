@@ -16,7 +16,7 @@ echo "Checking branches $* for updates"
 for b in $branches ; do
     echo
     cd $local_repo
-    remote_rev=`git ls-remote $remote_repo $b | cut -c 1-8`
+    remote_rev=`git ls-remote $remote_repo $b | grep heads | cut -c 1-8`
     if [ -e $b ] ; then
         cd $b
         git reset --hard HEAD
