@@ -56,7 +56,7 @@ if ($config and ! -e $config) {
     $config= "$rqg_home/$config";
 }
 
-my $cmd= "RQG_HOME=$rqg_home perl $rqg_home/combinations.pl $basedirs --dry-run --config=$config --workdir=$logdir/dummy --run-all-combinations-once $options | sed -e 's/.*perl /perl /g'";
+my $cmd= "RQG_HOME=$rqg_home perl $rqg_home/combinations.pl $basedirs --dry-run --config=$config --workdir=$logdir/dummy --run-all-combinations-once $test_options | sed -e 's/.*perl /perl /g'";
 
 my $num=`$cmd | grep -c runall`;
 chomp $num;
