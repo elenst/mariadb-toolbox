@@ -3,7 +3,7 @@
 use Getopt::Long;
 use strict;
 
-my ($branch, $build_type, $alias, $basedirs, $bin_home, $rqg_home, $config, $logdir, $queue_file);
+my ($branch, $build_type, $alias, $basedirs, $bin_home, $rqg_home, $config, $logdir, $queue_file, $test_options);
 
 GetOptions (
   "bin-home=s" => \$bin_home,
@@ -15,6 +15,7 @@ GetOptions (
   "basedirs=s" => \$basedirs,
   "logdir=s" => \$logdir,
   "queue=s" => \$queue_file,
+  "options=s" => \$test_options,
 );
 
 if ($?) {
@@ -55,7 +56,7 @@ if ($config and ! -e $config) {
     $config= "$rqg_home/$config";
 }
 
-my $cmd= "RQG_HOME=$rqg_home perl $rqg_home/combinations.pl $basedirs --dry-run --config=$config --workdir=$logdir/dummy --run-all-combinations-once | sed -e 's/.*perl /perl /g'";
+my $cmd= "RQG_HOME=$rqg_home perl $rqg_home/combinations.pl $basedirs --dry-run --config=$config --workdir=$logdir/dummy --run-all-combinations-once $options | sed -e 's/.*perl /perl /g'";
 
 my $num=`$cmd | grep -c runall`;
 chomp $num;
