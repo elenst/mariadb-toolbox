@@ -4,7 +4,7 @@ use Getopt::Long;
 use Getopt::Long qw( :config pass_through );
 use strict;
 
-my ($branch, $build_type, $alias, $basedirs, $bin_home, $rqg_home, $config, $logdir, $queue_file);
+my ($branch, $build_type, $alias, $bin_home, $rqg_home, $config, $logdir, $queue_file);
 
 GetOptions (
   "bin-home=s" => \$bin_home,
@@ -13,7 +13,6 @@ GetOptions (
   "build=s" => \$build_type,
   "alias=s" => \$alias,
   "config=s" => \$config,
-  "basedirs=s" => \$basedirs,
   "logdir=s" => \$logdir,
   "queue=s" => \$queue_file,
 );
@@ -48,20 +47,23 @@ $rqg_home   ||= "$ENV{TEST_HOME}/rqg";
 $logdir     ||= "$ENV{TEST_HOME}/logs";
 $queue_file ||= "$ENV{TEST_HOME}/test_queue";
 
-unless ($basedirs) {
-    $basedirs= "--basedir=$bin_home/${branch}-${build_type}";
-}
-
 if ($config and ! -e $config) {
     $config= "$rqg_home/$config";
 }
 
-my $cmd= "RQG_HOME=$rqg_home perl $rqg_home/combinations.pl $basedirs --dry-run --config=$config --workdir=$logdir/dummy --run-all-combinations-once @ARGV | sed -e 's/.*perl /perl /g'";
+unless ("@ARGV" =~ /basedir/) {
+    push @ARGV, "--basedir=$bin_home/${branch}-${build_type}";
+}
+
+my $cmd= "RQG_HOME=$rqg_home perl $rqg_home/combinations.pl --dry-run --config=$config --workdir=$logdir/dummy --run-all-combinations-once @ARGV | sed -e 's/.*perl /perl /g'";
+
+# Allow providing only relative names for basedirs
+$cmd=~ s/basedir(\d?=)([^\/])/basedir${1}$bin_home\/$2/g;
 
 my $num=`$cmd | grep -c runall`;
 chomp $num;
 
-say("Scheduling $num test(s) for:\n\ttest alias: $alias\n\tbranch: $branch\n\tbuild type: $build_type\n\tconfig: $config\n\tbasedirs: $basedirs");
+say("Scheduling $num test(s) for:\n\ttest alias: $alias\n\tbranch: $branch\n\tbuild type: $build_type\n\tconfig: $config");
 system('echo "### TEST_ALIAS='.$alias.'" >> '.$queue_file);
 system('echo "### SERVER_BRANCH='.$branch.'" >> '.$queue_file);
 system("$cmd >> $queue_file");
