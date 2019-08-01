@@ -4,7 +4,7 @@ use POSIX ":sys_wait_h";
 use Getopt::Long;
 use strict;
 
-my ($queue_file, $lastline_file, $sleep, $max_workers, $logdir, $base_mtr_build_thread);
+my ($queue_file, $lastline_file, $sleep, $max_workers, $logdir, $base_mtr_build_thread, $test_timeout);
 
 GetOptions (
   "queue=s" => \$queue_file,
@@ -13,6 +13,7 @@ GetOptions (
   "workers=i" => \$max_workers,
   "logdir=s" => \$logdir,
   "mtr-build-thread=i" => \$base_mtr_build_thread,
+  "test-timeout=i" => \$test_timeout,
 );
 
 $|=1;
@@ -21,10 +22,13 @@ $sleep ||= 30;
 $max_workers ||= 10;
 $logdir ||= '$ENV{HOME}/logs';
 $base_mtr_build_thread ||= 200;
+$test_timeout ||= 7200;
 
 my $lastline=`cat $lastline_file` || 0;
 my %worker_build_threads= ();
 my %worker_queue_lines= ();
+my %worker_full_ids= ();
+my %worker_start_times= ();
 chomp $lastline;
 say("Last executed line: $lastline");
 
@@ -110,6 +114,10 @@ sub collect_finished_workers {
             say("Worker with pid $p (mtr_build_thread $worker_build_threads{$p}) has finished execution of queue line $worker_queue_lines{$p}");
             delete $worker_build_threads{$p};
             delete $worker_queue_lines{$p};
+        } elsif ($worker_start_times{$p} < time() + $test_timeout) {
+            my $id= $worker_full_ids{$p};
+            say("Worker with pid $p ($id) has been running too long, trying to terminate");
+            system("kill `ps -ef | grep $id | awk '{print \$2}' | xargs`");
         }
     }
     say($status);
@@ -154,6 +162,8 @@ sub run_test {
     if ($worker_pid) {
         $worker_build_threads{$worker_pid}= $mtr_build_thread;
         $worker_queue_lines{$worker_pid}= $lastline;
+        $worker_full_ids{$worker_pid}= $prefix;
+        $worker_start_times{$worker_pid}= time();
         say("Worker for line $lastline has been started with pid $worker_pid to execute the command:", "\t$cmd");
         return 0;
     } elsif (defined $worker_pid) {
