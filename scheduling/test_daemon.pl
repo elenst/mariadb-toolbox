@@ -114,7 +114,7 @@ sub collect_finished_workers {
             say("Worker with pid $p (mtr_build_thread $worker_build_threads{$p}) has finished execution of queue line $worker_queue_lines{$p}");
             delete $worker_build_threads{$p};
             delete $worker_queue_lines{$p};
-        } elsif ($worker_start_times{$p} < time() + $test_timeout) {
+        } elsif ($worker_start_times{$p} + $test_timeout < time()) {
             my $id= $worker_full_ids{$p};
             say("Worker with pid $p ($id) has been running too long, trying to terminate");
             system("kill `ps -ef | grep $id | awk '{print \$2}' | xargs`");
