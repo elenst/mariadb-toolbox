@@ -145,7 +145,7 @@ sub run_test {
     # use unique mtr-build-thread
 
     $cmd =~ s/2>&1.*//;
-    $cmd =~ s/--vardir(.*)=[\/\S]+/--vardir${1}=$logdir\/${prefix}_vardir${1}/g;
+    $cmd =~ s/--vardir([\S]*)=[\S]+/--vardir${1}=$logdir\/${prefix}_vardir${1}/g;
     $cmd =~ s/--mtr-build-thread=\S+//g;
     $cmd =~ s/(--basedir\d*)=([\/\S]+)/$1=`realpath $2`/g;
 
@@ -157,7 +157,7 @@ sub run_test {
 
     $cmd .= " --mtr-build-thread=$mtr_build_thread";
     $cmd .= " > $logdir/${prefix}_trial.log 2>&1";
-    
+
     my $worker_pid= fork();
     if ($worker_pid) {
         $worker_build_threads{$worker_pid}= $mtr_build_thread;
