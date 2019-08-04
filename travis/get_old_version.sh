@@ -45,7 +45,7 @@ if [ -n "$OLD" ] ; then
     ;;
     10.*|5.*)
       wget https://downloads.mariadb.com/MariaDB/mariadb-${OLD}/bintar-linux-glibc_214-x86_64/
-      fname=`grep "\"mariadb-.*tar.gz\"" index.html | sed -e 's/.*\(mariadb-.*\)\.tar\.gz.*/\1/'`
+      fname=`grep "\"mariadb-.*tar.gz\"" index.html | grep ${OLD} | sed -e 's/.*\(mariadb-.*\)\.tar\.gz.*/\1/'`
       if [ ! -e ${fname}.tar.gz ] ; then
         if ! wget -nv https://downloads.mariadb.com/MariaDB/mariadb-${OLD}/bintar-linux-glibc_214-x86_64/${fname}.tar.gz ; then
           soft_exit 1
