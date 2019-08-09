@@ -5,6 +5,7 @@ use Getopt::Long qw( :config pass_through );
 use strict;
 
 my ($branch, $build_type, $alias, $bin_home, $rqg_home, $config, $logdir, $queue_file);
+$build_type= '';
 
 GetOptions (
   "bin-home=s" => \$bin_home,
@@ -29,8 +30,8 @@ unless (defined $alias) {
     sayLastWords("Test alias must be specified");
 }
 
-unless (defined $build_type) {
-    sayLastWords("Build type (rel|asan|gcov) must be specified");
+unless ($build_type) {
+    say("Build type (rel|asan|gcov|debug) not specified, will use the base name");
 }
 
 unless ((defined $bin_home
@@ -52,7 +53,7 @@ if ($config and ! -e $config) {
 }
 
 unless ("@ARGV" =~ /basedir/) {
-    push @ARGV, "--basedir=$bin_home/${branch}-${build_type}";
+    push @ARGV, ($build_type ? "--basedir=$bin_home/${branch}-${build_type}" : "--basedir=$bin_home/${branch}");
 }
 
 my $cmd= "RQG_HOME=$rqg_home perl $rqg_home/combinations.pl --dry-run --config=$config --workdir=$logdir/dummy --run-all-combinations-once @ARGV | sed -e 's/.*perl /perl /g'";
