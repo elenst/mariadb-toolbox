@@ -41,6 +41,8 @@ say("Last executed line: $lastline");
 my ($test_alias, $server_branch);
 my ($backlog_test_alias, $backlog_server_branch);
 
+my $backlog_test_count= 0;
+
 sub open_backlog {
     if ($backlog_file) {
         unless (open(BACKLOG, "$backlog_file")) {
@@ -110,7 +112,7 @@ while (1) {
         process_queue_line(\$l, \$test_alias, \$server_branch);
         if ($l) {
             say("New test set: TEST_ALIAS=$test_alias, SERVER_BRANCH=$server_branch");
-            my $res= run_test($l, $test_alias, $server_branch);
+            my $res= run_test($l, $test_alias, $server_branch, $lastline);
             write_lastline($lastline) if $res == 0;
         }
     }
@@ -135,7 +137,8 @@ sub run_backlog_test {
         }
         process_queue_line(\$bl, \$backlog_test_alias, \$backlog_server_branch);
     } until (defined $bl);
-    run_test($bl, $backlog_test_alias, $backlog_server_branch);
+    $backup_test_count++;
+    run_test($bl, $backlog_test_alias, $backlog_server_branch, $backup_test_count);
 }
 
 # Conditionally modifies test_alias, server_branch and line.
@@ -176,7 +179,7 @@ sub collect_finished_workers {
 }
 
 sub run_test {
-    my ($cmd, $test_alias, $server_branch)= @_;
+    my ($cmd, $test_alias, $server_branch, $counter)= @_;
 
     while (scalar(keys %worker_build_threads)) {
         collect_finished_workers();
@@ -189,7 +192,7 @@ sub run_test {
             sleep $sleep;
         }
     }
-    my $prefix= sprintf("%02d%02d.%02d%02d%02d.%07d",(localtime())[4]+1,(localtime())[3],(localtime())[2],(localtime())[1],(localtime())[0],$lastline);
+    my $prefix= sprintf("%02d%02d.%02d%02d%02d.%07d",(localtime())[4]+1,(localtime())[3],(localtime())[2],(localtime())[1],(localtime())[0],$counter);
     # Process the command line a little: remove redirection,
     # replace it with our own,
     # replace vardir values with our own,
@@ -213,10 +216,10 @@ sub run_test {
     my $worker_pid= fork();
     if ($worker_pid) {
         $worker_build_threads{$worker_pid}= $mtr_build_thread;
-        $worker_queue_lines{$worker_pid}= $lastline;
+        $worker_queue_lines{$worker_pid}= $counter;
         $worker_full_ids{$worker_pid}= $prefix;
         $worker_start_times{$worker_pid}= time();
-        say("Worker for line $lastline has been started with pid $worker_pid to execute the command:", "\t$cmd");
+        say("Worker for line $counter has been started with pid $worker_pid to execute the command:", "\t$cmd");
         return 0;
     } elsif (defined $worker_pid) {
         system("cd $ENV{RQG_HOME}; $cmd");
