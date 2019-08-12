@@ -137,8 +137,8 @@ sub run_backlog_test {
         }
         process_queue_line(\$bl, \$backlog_test_alias, \$backlog_server_branch);
     } until (defined $bl);
-    $backup_test_count++;
-    run_test($bl, $backlog_test_alias, $backlog_server_branch, $backup_test_count);
+    $backlog_test_count++;
+    run_test($bl, $backlog_test_alias, $backlog_server_branch, $backlog_test_count);
 }
 
 # Conditionally modifies test_alias, server_branch and line.
