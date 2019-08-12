@@ -41,10 +41,12 @@ say("Last executed line: $lastline");
 my ($test_alias, $server_branch);
 my ($backlog_test_alias, $backlog_server_branch);
 
-if ($backlog_file) {
-    unless (open(BACKLOG, "$backlog_file")) {
-        sayError("Could not open backlog $backlog_file for reading: $!");
-        $backlog_file= undef;
+sub open_backlog {
+    if ($backlog_file) {
+        unless (open(BACKLOG, "$backlog_file")) {
+            sayError("Could not open backlog $backlog_file for reading: $!");
+            $backlog_file= undef;
+        }
     }
 }
 
@@ -118,7 +120,8 @@ sub run_backlog_test {
     my $reopened= 0;
     do {
         if (not defined $bl and not $reopened) {
-            seek BACKLOG, 0, 0;
+            close(BACKLOG);
+            open_backlog();
             $reopened= 1;
             $bl=<BACKLOG>;
         } elsif (not defined $bl) {
