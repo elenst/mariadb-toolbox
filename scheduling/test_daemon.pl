@@ -50,6 +50,8 @@ sub open_backlog {
     }
 }
 
+open_backlog();
+
 my $separator= '======================================================';
 
 while (1) {
@@ -125,7 +127,7 @@ sub run_backlog_test {
             $reopened= 1;
             $bl=<BACKLOG>;
         } elsif (not defined $bl) {
-            say("Couldn't find any usable lines in backlog, ignoring discarding from now on");
+            say("Couldn't find any usable lines in backlog, discarding it from now on");
             close(BACKLOG);
             sleep $sleep;
             return;
