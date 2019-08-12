@@ -118,9 +118,10 @@ while (1) {
 }
 
 sub run_backlog_test {
-    my $bl=<BACKLOG>;
     my $reopened= 0;
+    my $bl;
     do {
+        $bl=<BACKLOG>;
         if (not defined $bl and not $reopened) {
             close(BACKLOG);
             open_backlog();
