@@ -4,10 +4,11 @@ use POSIX ":sys_wait_h";
 use Getopt::Long;
 use strict;
 
-my ($queue_file, $lastline_file, $sleep, $max_workers, $logdir, $base_mtr_build_thread, $test_timeout);
+my ($queue_file, $lastline_file, $sleep, $max_workers, $logdir, $base_mtr_build_thread, $test_timeout, $backlog_file);
 
 GetOptions (
   "queue=s" => \$queue_file,
+  "backlog=s" => \$backlog_file,
   "lastline=s" => \$lastline_file,
   "sleep=i" => \$sleep,
   "workers=i" => \$max_workers,
@@ -38,14 +39,27 @@ say("Last executed line: $lastline");
 # If set, they'll be used for writing to the database
 
 my ($test_alias, $server_branch);
+my ($backlog_test_alias, $backlog_server_branch);
+
+if ($backlog_file) {
+    unless (open(BACKLOG, "$backlog_file")) {
+        sayError("Could not open backlog $backlog_file for reading: $!");
+        $backlog_file= undef;
+    }
+}
 
 my $separator= '======================================================';
 
 while (1) {
 
     unless (-e $queue_file) {
-        say("The queue file $queue_file doesn't exist, waiting...");
-        sleep $sleep;
+        if ($backlog_file) {
+            say("The queue file $queue_file doesn't exist, using backlog...");
+            run_backlog_test();
+        } else {
+            say("The queue file $queue_file doesn't exist and backlog not defined, waiting...");
+            sleep $sleep;
+        }
         next;
     }
 
@@ -53,14 +67,24 @@ while (1) {
     chomp $queue_length;
 
     if ($queue_length == 0) {
-        say("The queue is empty, waiting for updates...");
-        sleep $sleep;
+        if ($backlog_file) {
+            say("The queue is empty, using backlog...");
+            run_backlog_test();
+        } else {
+            say("The queue is empty and backlog not defined, waiting for updates...");
+            sleep $sleep;
+        }
         next;
     }
 
     if ($lastline == $queue_length) {
-        say("All $lastline line(s) in the queue file have been executed, waiting for updates...");
-        sleep $sleep;
+        if ($backlog_file) {
+            say("All $lastline line(s) in the queue file have been executed, using backlog...");
+            run_backlog_test();
+        } else {
+            say("All $lastline line(s) in the queue file have been executed and backlog not defined, waiting for updates...");
+            sleep $sleep;
+        }
         next;
     }
 
@@ -73,35 +97,57 @@ while (1) {
     say("Skipping $lastline line(s) in the schedule\n");
     foreach (1..$lastline) {
         my $l=<QUEUE>;
-        if ($l =~ /^\#\#\#\s*TEST_ALIAS=(.*)/i) {
-            $test_alias= $1;
-            chomp $test_alias;
-        } elsif ($l =~ /^\#\#\#\s*SERVER_BRANCH=(.*)/i) {
-            $server_branch= $1;
-            chomp $server_branch;
-        }
+        process_queue_line(\$l, \$test_alias, \$server_branch);
     }
     while (my $l=<QUEUE>) {
         $lastline++;
         # Skip comments and empty lines, but pay attention
         # to "special" comments
-        if ($l =~ /^\s*\#/ || $l =~ /^\s*$/) {
-            if ($l =~ /^\#\#\#\s*TEST_ALIAS=(.*)/i) {
-                $test_alias= $1;
-                chomp $test_alias;
-            } elsif ($l =~ /^\#\#\#\s*SERVER_BRANCH=(.*)/i) {
-                $server_branch= $1;
-                chomp $server_branch;
-            }
-            write_lastline($lastline);
-            next;
+        process_queue_line(\$l, \$test_alias, \$server_branch);
+        if ($l) {
+            say("New test set: TEST_ALIAS=$test_alias, SERVER_BRANCH=$server_branch");
+            my $res= run_test($l, $test_alias, $server_branch);
+            write_lastline($lastline) if $res == 0;
         }
-        chomp $l;
-        say("New test set: TEST_ALIAS=$test_alias, SERVER_BRANCH=$server_branch");
-        my $res= run_test($l);
-        write_lastline($lastline) if $res == 0;
     }
     close(QUEUE);
+}
+
+sub run_backlog_test {
+    my $bl=<BACKLOG>;
+    my $reopened= 0;
+    do {
+        if (not defined $bl and not $reopened) {
+            seek BACKLOG, 0, 0;
+            $reopened= 1;
+            $bl=<BACKLOG>;
+        } elsif (not defined $bl) {
+            say("Couldn't find any usable lines in backlog, ignoring discarding from now on");
+            close(BACKLOG);
+            sleep $sleep;
+            return;
+        }
+        process_queue_line(\$bl, \$backlog_test_alias, \$backlog_server_branch);
+    } until (defined $bl);
+    run_test($bl, $backlog_test_alias, $backlog_server_branch);
+}
+
+# Conditionally modifies test_alias, server_branch and line.
+# line stays defined if it's a test line, and goes undef otherwise
+sub process_queue_line {
+    my ($l_ref, $alias_ref, $branch_ref) = @_;
+    if ($$l_ref =~ /^\s*\#/ || $$l_ref =~ /^\s*$/) {
+        if ($$l_ref =~ /^\#\#\#\s*TEST_ALIAS=(.*)/i) {
+            $$alias_ref= $1;
+            chomp $$alias_ref;
+        } elsif ($$l_ref =~ /^\#\#\#\s*SERVER_BRANCH=(.*)/i) {
+            $$branch_ref= $1;
+            chomp $$branch_ref;
+        }
+        $$l_ref= undef;
+    } else {
+        chomp $$l_ref;
+    }
 }
 
 sub collect_finished_workers {
@@ -124,7 +170,7 @@ sub collect_finished_workers {
 }
 
 sub run_test {
-    my $cmd= shift;
+    my ($cmd, $test_alias, $server_branch)= @_;
 
     while (scalar(keys %worker_build_threads)) {
         collect_finished_workers();
