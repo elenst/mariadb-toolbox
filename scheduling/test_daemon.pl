@@ -240,6 +240,16 @@ sub run_test {
         if ($res eq 'OK') {
             system("rm -rf $logdir/${prefix}_vardir*");
         } else {
+            system("grep -i -A 200 -E 'assertion|signal' $logdir/${prefix}_vardir*/mysql.err >> $logdir/${prefix}_postmortem 2>&1");
+            if ($res =~ /(?:BACKUP_FAILURE|UPGRADE_FAILURE|RECOVERY_FAILURE)/) {
+                system("grep ERROR $logdir/${prefix}_trial.log $logdir/${prefix}_vardir*/mysql.err >> $logdir/${prefix}_postmortem 2>&1");
+            }
+            if ($res =~ /BACKUP_FAILURE/) {
+                system("grep -i error $logdir/${prefix}_vardir*/mbackup_* >> $logdir/${prefix}_postmortem 2>&1");
+            }
+            elsif ($res =~ /DATABASE_CORRUPTION/) {
+                system("grep DATABASE_CORRUPTION $logdir/${prefix}_trial.log >> $logdir/${prefix}_postmortem 2>&1");
+            }
             system("cd $logdir; tar zcf archive/${prefix}_vardir.tar.gz ${prefix}_vardir*; rm -rf ${prefix}_vardir*");
         }
         system("mv $logdir/${prefix}_* $logdir/archive/");
