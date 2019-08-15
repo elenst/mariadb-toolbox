@@ -236,12 +236,15 @@ sub run_test {
 
         git_pull($ENV{RQG_HOME});
         $cmd= "SERVER_BRANCH=$server_branch TEST_ALIAS=$test_alias TEST_RESULT=$res TEST_ID=$prefix LOCAL_CI=`hostname` perl $ENV{RQG_HOME}/util/check_for_known_bugs.pl --signatures=$ENV{RQG_HOME}/data/bug_signatures --signatures=$ENV{RQG_HOME}/data/bug_signatures.es " . '`find ' . "$logdir/${prefix}" . '_vardir* -name mysql*.err*` `find ' . "$logdir/${prefix}" . '_vardir* -name mbackup*.log` --last=' . "$logdir/${prefix}_trial.log";
-        system("echo Test result: $res > $logdir/${prefix}_postmortem; echo $cmd >> $logdir/${prefix}_postmortem; $cmd >> $logdir/${prefix}_postmortem 2>&1");
+        system("echo Test result: $res > $logdir/${prefix}_postmortem 2>&1");
+        system("echo SERVER_BRANCH=$server_branch TEST_ALIAS=$test_alias TEST_RESULT=$res TEST_ID=$prefix LOCAL_CI=`hostname` >> $logdir/${prefix}_postmortem 2>&1");
+        system("grep -A 1 'Final command line' $logdir/${prefix}_trial.log >> $logdir/${prefix}_postmortem 2>&1");
+        system("$cmd >> $logdir/${prefix}_postmortem 2>&1");
         if ($res eq 'OK') {
             system("rm -rf $logdir/${prefix}_vardir*");
         } else {
             system("grep -i -A 200 -E 'assertion|signal' $logdir/${prefix}_vardir*/mysql.err >> $logdir/${prefix}_postmortem 2>&1");
-            if ($res =~ /(?:BACKUP_FAILURE|UPGRADE_FAILURE|RECOVERY_FAILURE)/) {
+            if ($res =~ /(?:BACKUP_FAILURE|UPGRADE_FAILURE|RECOVERY_FAILURE|DEADLOCKED)/) {
                 system("grep ERROR $logdir/${prefix}_trial.log $logdir/${prefix}_vardir*/mysql.err >> $logdir/${prefix}_postmortem 2>&1");
             }
             if ($res =~ /BACKUP_FAILURE/) {
@@ -250,7 +253,8 @@ sub run_test {
             elsif ($res =~ /DATABASE_CORRUPTION/) {
                 system("grep DATABASE_CORRUPTION $logdir/${prefix}_trial.log >> $logdir/${prefix}_postmortem 2>&1");
             }
-            elsif ($res =~ /(?:CRITICAL_FAILURE|ALARM|ENVIRONMENT_FAILURE)/) {
+            elsif ($res =~ /(?:CRITICAL_FAILURE|ALARM|ENVIRONMENT_FAILURE|UNKNOWN_ERROR|N\/A)/) {
+                system("head -n 5 $logdir/${prefix}_trial.log >> $logdir/${prefix}_postmortem 2>&1");
                 system("tail -n 100 $logdir/${prefix}_trial.log >> $logdir/${prefix}_postmortem 2>&1");
             }
             system("cd $logdir; tar zcf archive/${prefix}_vardir.tar.gz ${prefix}_vardir*; rm -rf ${prefix}_vardir*");
