@@ -23,6 +23,7 @@
 # - TRIAL
 # - SERVER_BRANCH
 # - SERVER_REVISION
+# - RQG_HOME
 # - RQG_BRANCH
 # - RQG_REVISION
 # - CMAKE_OPTIONS
@@ -148,7 +149,13 @@ if [ "$res" == "0" ] ; then
       res=1
     fi
 
-    perl $SCRIPT_DIR/check_for_known_bugs.pl --signatures=$SCRIPT_DIR/../data/bug_signatures ${VARDIR}*/mysql.err* ${VARDIR}*/mbackup_*.log --last=$TRIAL_LOG
+    if [ -n "$RQG_HOME" ] ; then
+        signatures=$RQG_HOME/data/bug_signatures
+    else
+        # Probably an outdated version
+        signatures=$SCRIPT_DIR/../data/bug_signatures
+    fi
+    perl $SCRIPT_DIR/check_for_known_bugs.pl --signatures=$signatures ${VARDIR}*/mysql.err* ${VARDIR}*/mbackup_*.log --last=$TRIAL_LOG
 
     echo
     echo '#' ${TRAVIS_BUILD_NUMBER} ${TRAVIS_JOB} ${TRIAL}
