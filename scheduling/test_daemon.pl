@@ -257,7 +257,7 @@ sub run_test {
                 system("head -n 5 $logdir/${prefix}_trial.log >> $logdir/${prefix}_postmortem 2>&1");
                 system("tail -n 100 $logdir/${prefix}_trial.log >> $logdir/${prefix}_postmortem 2>&1");
             }
-            system("cd $logdir; tar zcf archive/${prefix}_vardir.tar.gz ${prefix}_vardir*; rm -rf ${prefix}_vardir*");
+            system("cd $logdir; tar zcf archive/${prefix}_vardir.tar.gz ${prefix}_vardir*; tar zcf archive/${prefix}_repro.tar.gz ${prefix}_vardir*/mysql.log ${prefix}_postmortem ; rm -rf ${prefix}_vardir*");
         }
         system("mv $logdir/${prefix}_* $logdir/archive/");
         exit $?>>8;
