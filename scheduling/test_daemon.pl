@@ -250,6 +250,9 @@ sub run_test {
             elsif ($res =~ /DATABASE_CORRUPTION/) {
                 system("grep DATABASE_CORRUPTION $logdir/${prefix}_trial.log >> $logdir/${prefix}_postmortem 2>&1");
             }
+            elsif ($res =~ /(?:CRITICAL_FAILURE|ALARM|ENVIRONMENT_FAILURE)/) {
+                system("tail -n 100 $logdir/${prefix}_trial.log >> $logdir/${prefix}_postmortem 2>&1");
+            }
             system("cd $logdir; tar zcf archive/${prefix}_vardir.tar.gz ${prefix}_vardir*; rm -rf ${prefix}_vardir*");
         }
         system("mv $logdir/${prefix}_* $logdir/archive/");
