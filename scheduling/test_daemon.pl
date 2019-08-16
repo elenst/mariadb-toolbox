@@ -243,7 +243,7 @@ sub run_test {
         if ($res eq 'OK') {
             system("rm -rf $logdir/${prefix}_vardir*");
         } else {
-            system("grep -i -A 200 -E 'assertion|signal' $logdir/${prefix}_vardir*/mysql.err >> $logdir/${prefix}_postmortem 2>&1");
+            system("grep -i -A 200 -E 'assertion|signal|\[FATAL\]|pure virtual method called' $logdir/${prefix}_vardir*/mysql.err >> $logdir/${prefix}_postmortem 2>&1");
             if ($res =~ /(?:BACKUP_FAILURE|UPGRADE_FAILURE|RECOVERY_FAILURE|DEADLOCKED)/) {
                 system("grep ERROR $logdir/${prefix}_trial.log $logdir/${prefix}_vardir*/mysql.err >> $logdir/${prefix}_postmortem 2>&1");
             }
