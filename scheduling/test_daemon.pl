@@ -231,7 +231,7 @@ sub run_test {
         my $exitcode= $?>>8;
 
         git_pull($ENV{RQG_HOME});
-        system("SERVER_BRANCH=$server_branch TEST_ALIAS=$test_alias TEST_RESULT=$res TEST_ID=$prefix LOGDIR=$logdir PREFIX=$prefix $path/postmortem.sh > $logdir/${prefix}_postmortem 2>&1");
+        system("SERVER_BRANCH=$server_branch TEST_ALIAS=$test_alias TEST_ID=$prefix LOGDIR=$logdir PREFIX=$prefix $path/postmortem.sh > $logdir/${prefix}_postmortem 2>&1");
         exit $exitcode;
     } else {
         say("ERROR: Could not fork for the test job!");

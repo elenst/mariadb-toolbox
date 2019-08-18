@@ -5,7 +5,6 @@
 # TEST_ALIAS
 # TEST_ID
 # LOGDIR
-# TEST_ID
 
 PREFIX=$TEST_ID"_"
 
