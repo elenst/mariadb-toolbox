@@ -91,7 +91,7 @@ for b in $branches ; do
             rm -rf /dev/shm/tmp_build
             mkdir /dev/shm/tmp_build
             cd /dev/shm/tmp_build
-            if cmake $srcdir $cmake_options -DCMAKE_INSTALL_PREFIX=$bindir ; then
+            if cmake $srcdir $cmake_options -DPLUGIN_TOKUDB=NO -DCMAKE_INSTALL_PREFIX=$bindir ; then
                 if make -j16 ; then
                     rm -rf $bindir
                     if make install ; then
