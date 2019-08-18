@@ -77,7 +77,13 @@ for b in $branches ; do
         else
             echo "Building $t build for branch $b revision $revno"
             case $t in
-                rel)  cmake_options="-DBUILD_CONFIG=enterprise" ;;
+                rel)
+                    if [[ $b =~ enterprise ]] ; then
+                        cmake_options="-DBUILD_CONFIG=enterprise"
+                    else
+                        cmake_options="-DBUILD_CONFIG=mysql_release"
+                    fi
+                    ;;
                 deb)  cmake_options="-DCMAKE_BUILD_TYPE=Debug" ;;
                 asan) cmake_options="-DCMAKE_BUILD_TYPE=Debug -DWITH_ASAN=YES -DMYSQL_MAINTAINER_MODE=OFF" ;;
                 *) echo "ERROR: Unknown build type: $t" && exit 1 ;;
