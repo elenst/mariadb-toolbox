@@ -79,13 +79,13 @@ for b in $branches ; do
             case $t in
                 rel)  cmake_options="-DBUILD_CONFIG=enterprise" ;;
                 deb)  cmake_options="-DCMAKE_BUILD_TYPE=Debug" ;;
-                asan) cmake_opitons="-DCMAKE_BUILD_TYPE=Debug -DWITH_ASAN=YES -DMYSQL_MAINTAINER_MODE=OFF" ;;
+                asan) cmake_options="-DCMAKE_BUILD_TYPE=Debug -DWITH_ASAN=YES -DMYSQL_MAINTAINER_MODE=OFF" ;;
                 *) echo "ERROR: Unknown build type: $t" && exit 1 ;;
             esac
             rm -rf /dev/shm/tmp_build
             mkdir /dev/shm/tmp_build
             cd /dev/shm/tmp_build
-            if cmake $srcdir $cmake_args -DCMAKE_INSTALL_PREFIX=$bindir ; then
+            if cmake $srcdir $cmake_options -DCMAKE_INSTALL_PREFIX=$bindir ; then
                 if make -j16 ; then
                     rm -rf $bindir
                     if make install ; then
