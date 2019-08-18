@@ -49,9 +49,15 @@ else
         cat $cnf
         echo "---------------------------------------------------------"
     done
+    for c in `find $LOGDIR/${PREFIX}vardir* -name core*` ; do
+        binary=`file $c | sed -e "s/.*execfn: '\(.*\)', platform.*/\\1/"`
+        gdb --batch --eval-command="thread apply all bt full" $binary $c > ${PREFIX}threads.$c
+        echo "--- Coredump $c" >> ${PREFIX}postmortem
+        gdb --batch --eval-command="bt" $binary $c
+        echo "---------------------------------------------------------"
     cd $LOGDIR
-    tar zcf archive/${PREFIX}vardir.tar.gz ${PREFIX}vardir*
-    tar zcf archive/${PREFIX}repro.tar.gz ${PREFIX}vardir*/mysql.log ${PREFIX}vardir*/mysql.err* ${PREFIX}postmortem
+    tar zcf archive/${PREFIX}vardir.tar.gz ${PREFIX}vardir* ${PREFIX}threads* ${PREFIX}postmortem ${PREFIX}trial.log
+    tar zcf archive/${PREFIX}repro.tar.gz ${PREFIX}vardir*/mysql.log ${PREFIX}vardir*/mysql.err* ${PREFIX}postmortem ${PREFIX}threads*
     rm -rf ${PREFIX}vardir*
     mv $LOGDIR/${PREFIX}* $LOGDIR/archive/
 fi
