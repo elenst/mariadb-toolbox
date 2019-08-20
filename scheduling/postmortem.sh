@@ -34,9 +34,7 @@ done
 
 SERVER_BRANCH=$SERVER_BRANCH TEST_ALIAS=$TEST_ALIAS TEST_RESULT=$TEST_RESULT TEST_ID=$TEST_ID LOCAL_CI=$LOCAL_CI perl $RQG_HOME/util/check_for_known_bugs.pl $SIGNATURES `find $LOGDIR/${PREFIX}vardir* -name mysql*.err*` `find $LOGDIR/${PREFIX}vardir* -name mbackup*.log` $LOGDIR/${PREFIX}threads.* --last=$LOGDIR/${PREFIX}trial.log
 
-if [ $TEST_RESULT == "OK" ] ; then
-    rm -rf $LOGDIR/${PREFIX}vardir*
-else
+if [ $TEST_RESULT != "OK" ] ; then
     grep -i -A 200 -E 'assertion|signal|\[FATAL\]|pure virtual method called' $LOGDIR/${PREFIX}vardir*/mysql.err
     if [[ $TEST_RESULT =~ BACKUP_FAILURE|UPGRADE_FAILURE|RECOVERY_FAILURE|DEADLOCKED ]] ; then
         echo "--- Errors in trial.log and mysql.err logs --------------"
@@ -64,6 +62,6 @@ else
         tar zcf archive/${PREFIX}vardir.tar.gz ${PREFIX}*
     fi
     tar zcf archive/${PREFIX}repro.tar.gz ${PREFIX}vardir*/mysql.log ${PREFIX}postmortem
-    rm -rf ${PREFIX}vardir*
-    mv $LOGDIR/${PREFIX}* $LOGDIR/archive/
 fi
+rm -rf ${PREFIX}vardir*
+mv $LOGDIR/${PREFIX}* $LOGDIR/archive/
