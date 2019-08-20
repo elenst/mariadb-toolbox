@@ -52,9 +52,10 @@ else
     for c in `find $LOGDIR/${PREFIX}vardir* -name core*` ; do
         binary=`file $c | sed -e "s/.*execfn: '\(.*\)', platform.*/\\1/"`
         gdb --batch --eval-command="thread apply all bt full" $binary $c > ${PREFIX}threads.$c
-        echo "--- Coredump $c" >> ${PREFIX}postmortem
+        echo "--- Coredump $c"
         gdb --batch --eval-command="bt" $binary $c
         echo "---------------------------------------------------------"
+    done
     cd $LOGDIR
     if ! grep 'STRONG matches' ${PREFIX}postmortem ; then
         tar zcf archive/${PREFIX}vardir.tar.gz ${PREFIX}vardir* ${PREFIX}threads* ${PREFIX}postmortem ${PREFIX}trial.log
