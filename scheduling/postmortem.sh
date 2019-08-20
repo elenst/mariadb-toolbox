@@ -26,7 +26,7 @@ grep -A 1 'Final command line' $LOGDIR/${PREFIX}trial.log
 for c in `find $LOGDIR/${PREFIX}vardir* -name core*` ; do
     binary=`file $c | sed -e "s/.*execfn: '\(.*\)', platform.*/\\1/"`
     core_pid=`echo $c | sed -e 's/.*core\.\([0-9]*\)$/\1/g'`
-    gdb --batch --eval-command="thread apply all bt full" $binary $c > ${PREFIX}threads.$core_pid 2>&1
+    gdb --batch --eval-command="thread apply all bt full" $binary $c > $LOGDIR/${PREFIX}threads.$core_pid 2>&1
     echo "--- Coredump $c"
     gdb --batch --eval-command="bt" $binary $c | grep -v 'New LWP'
     echo "---------------------------------------------------------"
