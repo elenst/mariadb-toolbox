@@ -28,7 +28,7 @@ for c in `find $LOGDIR/${PREFIX}vardir* -name core*` ; do
     core_pid=`echo $c | sed -e 's/.*core\.\([0-9]*\)$/\1/g'`
     gdb --batch --eval-command="thread apply all bt full" $binary $c > ${PREFIX}threads.$core_pid 2>&1
     echo "--- Coredump $c"
-    gdb --batch --eval-command="bt" $binary $c
+    gdb --batch --eval-command="bt" $binary $c | grep -v 'New LWP'
     echo "---------------------------------------------------------"
 done
 
@@ -48,7 +48,7 @@ else
         echo "--- CORRUPTION in trial.log -----------------------------"
         grep DATABASE_CORRUPTION $LOGDIR/${PREFIX}trial.log
         echo "---------------------------------------------------------"
-    elif [[ $TEST_RESULT =~ CRITICAL_FAILURE|ALARM|ENVIRONMENT_FAILURE|UNKNOWN_ERROR|N\/A ]] ; then
+    elif [[ $TEST_RESULT =~ CRITICAL_FAILURE|ALARM|ENVIRONMENT_FAILURE|UNKNOWN_ERROR|TEST_FAILURE|N\/A ]] ; then
         echo "--- Beginning and end of trial.log ----------------------"
         head -n 5 $LOGDIR/${PREFIX}trial.log
         tail -n 100 $LOGDIR/${PREFIX}trial.log
@@ -61,9 +61,9 @@ else
     done
     cd $LOGDIR
     if ! grep 'STRONG matches' ${PREFIX}postmortem > /dev/null ; then
-        tar zcf archive/${PREFIX}vardir.tar.gz ${PREFIX}vardir* ${PREFIX}threads* ${PREFIX}postmortem ${PREFIX}trial.log
+        tar zcf archive/${PREFIX}vardir.tar.gz ${PREFIX}*
     fi
-    tar zcf archive/${PREFIX}repro.tar.gz ${PREFIX}vardir*/mysql.log ${PREFIX}vardir*/mysql.err* ${PREFIX}postmortem ${PREFIX}threads*
+    tar zcf archive/${PREFIX}repro.tar.gz ${PREFIX}vardir*/mysql.log ${PREFIX}postmortem
     rm -rf ${PREFIX}vardir*
     mv $LOGDIR/${PREFIX}* $LOGDIR/archive/
 fi
