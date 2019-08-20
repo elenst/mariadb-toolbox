@@ -60,7 +60,7 @@ else
         echo "---------------------------------------------------------"
     done
     cd $LOGDIR
-    if ! grep 'STRONG matches' ${PREFIX}postmortem ; then
+    if ! grep 'STRONG matches' ${PREFIX}postmortem > /dev/null ; then
         tar zcf archive/${PREFIX}vardir.tar.gz ${PREFIX}vardir* ${PREFIX}threads* ${PREFIX}postmortem ${PREFIX}trial.log
     fi
     tar zcf archive/${PREFIX}repro.tar.gz ${PREFIX}vardir*/mysql.log ${PREFIX}vardir*/mysql.err* ${PREFIX}postmortem ${PREFIX}threads*
