@@ -4,6 +4,7 @@
 # Script-specific options are:
 # - --output=<string> -- the pattern to search for, mandatory
 # - --basedirX=<path to the basedir>, mandatory, but can be a part of RQG options
+# - --cnf=<path to cnf file>, optional
 # - --logdir=<path to the logdir>, optional, defaults to /dev/shm/
 # - --mtr-thread=<number>, optional, defaults to 400 (note the difference from mtr-build-thread)
 # - --rqg-home=<path to RQG>, optional
@@ -29,11 +30,12 @@ Getopt::Long::Configure("pass_through");
 
 use strict;
 
-my ($basedir, $logdir, $mtr_thread, $output, $rqg_home, $server_log);
+my ($basedir, $cnf_file, $logdir, $mtr_thread, $output, $rqg_home, $server_log);
 my $scriptdir = dirname(abs_path($0));
 
 my $opt_result = GetOptions(
     'basedir|basedir1=s' => \$basedir,
+    'cnf|cnf-file|cnf_file=s' => \$cnf_file,
     'mtr-thread|mtr_thread=i' => \$mtr_thread,
     'logdir|log-dir|log_dir=s' => \$logdir,
     'output=s' => \$output,
@@ -158,6 +160,9 @@ while ($result != 0)
         print "Ran out of options to try, giving up\n";
         exit 1;
     }
+    if (-e $logdir.'/repro_vardir_'.$mtr_thread.'_rqg/my.cnf') {
+        $cnf_file= $logdir.'/repro_vardir_'.$mtr_thread.'_rqg/my.cnf';
+    }
     $result= mtr_simplification($logdir.'/repro_vardir_'.$mtr_thread.'_rqg/mysql.log');
 
 }
@@ -176,10 +181,14 @@ sub mtr_simplification {
     print "\nCreating an MTR test from $log\n";
     my $suitedir= "$basedir/mysql-test/suite/repro_$mtr_thread";
     my $testname= "repro${mtr_thread}";
+    my $cnf_options="";
+    if (defined $cnf_file and -e $cnf_file) {
+        $cnf_options=`perl $scriptdir/cnf_to_command_line.pl $cnf_file`;
+    }
     system("rm -rf $suitedir; mkdir $suitedir; perl $scriptdir/mysql_log_to_mysqltest.pl $log > $suitedir/${testname}.test");
     print "Log file size: ".(-s $log).", test file size: ".(-s "$suitedir/${testname}.test")."\n\n";
     print "Running simplification\n";
-    system("cd $basedir/mysql-test; perl $scriptdir/simplify-mtr-test.pl --initial-trials=10 --suitedir=$suitedir --testcase=$testname --options=\"@mtr_options\" --output=\"$output\"");
+    system("cd $basedir/mysql-test; perl $scriptdir/simplify-mtr-test.pl --initial-trials=10 --suitedir=$suitedir --testcase=$testname --options=\"$cnf_options @mtr_options\" --output=\"$output\"");
     my $res= $?>>8;
     if ($res == 0) {
         my $cnt= 0;
