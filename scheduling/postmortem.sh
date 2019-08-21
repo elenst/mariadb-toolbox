@@ -27,6 +27,7 @@ for c in `find $LOGDIR/${PREFIX}vardir* -name core*` ; do
     binary=`file $c | sed -e "s/.*execfn: '\(.*\)', platform.*/\\1/"`
     core_pid=`echo $c | sed -e 's/.*core\.\([0-9]*\)$/\1/g'`
     gdb --batch --eval-command="thread apply all bt full" $binary $c > $LOGDIR/${PREFIX}threads.$core_pid 2>&1
+    echo "---------------------------------------------------------"
     echo "--- Coredump $c"
     gdb --batch --eval-command="bt" $binary $c | grep -v 'New LWP'
     echo "---------------------------------------------------------"
@@ -61,7 +62,7 @@ if [ $TEST_RESULT != "OK" ] ; then
     if ! grep 'STRONG matches' ${PREFIX}postmortem > /dev/null ; then
         tar zcf archive/${PREFIX}vardir.tar.gz ${PREFIX}*
     fi
-    tar zcf archive/${PREFIX}repro.tar.gz ${PREFIX}vardir*/mysql.log ${PREFIX}postmortem
+    tar zcf archive/${PREFIX}repro.tar.gz ${PREFIX}vardir*/mysql.log ${PREFIX}vardir*/my.cnf ${PREFIX}postmortem
 fi
 rm -rf ${PREFIX}vardir*
 mv $LOGDIR/${PREFIX}* $LOGDIR/archive/
