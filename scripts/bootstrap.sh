@@ -6,7 +6,7 @@ script_home=`dirname $script_path`
 rm -rf $tmpdir $datadir 
 mkdir $datadir
 
-mysql_install_db=`find $basedir -name mysql_install_db | head -1`
+mysql_install_db=`find $basedir/ -name mysql_install_db | head -1`
 
 # Serve both binary and source builds
 if [ -d $basedir/bin ] 
