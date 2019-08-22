@@ -66,7 +66,7 @@ if [ -n "$f" ] ; then
     cmd="$options --cnf=$logdir/my.cnf"
 fi
 
-rqg_cmd=`grep -A 1 "Final command line" ${test_id}_postmortem | sed -e 's/.* perl //'`
+rqg_cmd=`grep -A 1 "Final command line" ${test_id}_postmortem | tail -n 1 | sed -e 's/.* perl //'`
 
 echo "Final options: $options $rqg_cmd"
 perl $scriptdir/reprobug.pl $options $rqg_cmd
