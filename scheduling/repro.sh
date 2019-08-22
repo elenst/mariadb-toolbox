@@ -53,17 +53,17 @@ mkdir $logdir/repro_${test_id}_${screen_id}
 cd $logdir/repro_${test_id}_${screen_id}
 tar zxf $archdir/${test_id}_repro.tar.gz
 
-options="--output=$output --mtr-thread=$mtr_thread --logdir=$logdir"
+options="--output='$output' --mtr-thread=$mtr_thread --logdir=$logdir"
 
 f=`find . -name mysql.log`
 if [ -n "$f" ] ; then
     cp `find . -name mysql.log | head -n 1 | xargs` ./
-    cmd="$options --server-log=$logdir/mysql.log"
+    options="$options --server-log=$logdir/mysql.log"
 fi
 f=`find . -name my.cnf`
 if [ -n "$f" ] ; then
     cp `find . -name my.cnf | head -n 1 | xargs` ./
-    cmd="$options --cnf=$logdir/my.cnf"
+    options="$options --cnf=$logdir/my.cnf"
 fi
 
 rqg_cmd=`grep -A 1 "Final command line" ${test_id}_postmortem | tail -n 1 | sed -e 's/.* perl //'`
