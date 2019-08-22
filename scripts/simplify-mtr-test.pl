@@ -22,6 +22,7 @@ my $trials= 1;
 my $initial_trials= undef;
 my $timeout= 86400;
 my $simplification_timeout= 0;
+my $vardir='var';
 
 my @preserve_connections;
 my %preserve_connections;
@@ -74,6 +75,10 @@ if (lc($opt_mode) eq 'all') {
 if ($opt_preserve_connections) {
   @preserve_connections = split /,/, $opt_preserve_connections;
   foreach ( @preserve_connections ) { $preserve_connections{$_} = 1 };
+}
+
+if ("@options" =~ /--vardir=(\S+)/) {
+    $vardir=$1;
 }
 
 unless ($suitename) {
@@ -200,7 +205,7 @@ foreach my $mode (@modes)
         my @preserved_part = ();
         foreach my $l ( @chunk )
         {
-          if ( $l =~ /\#\s+PRESERVE/i or $l =~ /^\s*(?:if|while|{|}|--let|--dec|--inc|--eval|--enable_abort_on_error|--disable_abort_on_error)/ )
+          if ( $l =~ /\#\s+PRESERVE/i or $l =~ /^\s*(?:if|while|{|}|--let|--dec|--inc|--eval|--enable_abort_on_error|--disable_abort_on_error|--sync_slave_with_master|--exec|--cat_file|--error|--source\s+include\/master-slave\.inc|--source\s+include\/have_binlog_format.*\.inc)/ )
           {
             push @preserved_part, $l;
           }
@@ -263,7 +268,12 @@ foreach my $mode (@modes)
       qr/NATURAL\s+JOIN/ => 'JOIN',
       qr/SELECT\s+[\w\`,\.]?\s+FROM/ => 'SELECT * FROM',
       qr/PARTITION\s+BY\s+.*?\s+PARTITIONS\s+\d+/ => '',
-      qr/\/\*[^\!].*?\*\// => ''
+      qr/\/\*[^\!].*?\*\// => '',
+      qr/OR\s+REPLACE/ => '',
+      qr/ROW_FORMAT\s*=?\s*\w+/ => '',
+      qr/INVISIBLE/ => '',
+      qr/COMPRESSED/ => '',
+      qr/\`/ => '',
     );
 
     foreach my $p (keys %patterns) {
@@ -349,15 +359,18 @@ sub run_test
     }
 
     my $out= readpipe("cat $testcase.output/$testcase.out.last");
-    my $errlog = ( $ENV{MTR_VERSION} eq "1" ? 'var/log/master.err' : 'var/log/mysqld.1.err');
+    my $errlog = ( $ENV{MTR_VERSION} eq "1" ? "$vardir/log/master.err" : "$vardir/log/mysqld.1.err");
 
     my $separ= $/;
     $/= undef;
-    open(ERRLOG, "$errlog") || print "Cannot open $errlog\n" && exit 0;
+    unless (open(ERRLOG, "$errlog")) {
+        print "ERROR: Cannot open $errlog\n";
+        exit 1;
+    }
     $out.= <ERRLOG>;
     close(ERRLOG);
-    if (-e 'var/log/mysqld.2.err') {
-      open(ERRLOG, "var/log/mysqld.2.err") || print "Cannot open var/log/mysqld.2.err\n" && exit 0;
+    if (-e "$vardir/log/mysqld.2.err") {
+      open(ERRLOG, "$vardir/log/mysqld.2.err") || print "Cannot open $vardir/log/mysqld.2.err\n" && exit 0;
       $out.= <ERRLOG>;
       close(ERRLOG);
     }
@@ -414,7 +427,7 @@ sub write_testfile
   }
   print TEST @$testref;
   if ($rpl) {
-    print TEST "\n--sync_slave_with_master\n";
+    print TEST "\n--connection master\n--sync_slave_with_master\n";
   }
   close( TEST );
   system("perl $path/cleanup_sends_reaps.pl $suitedir/$test_basename.tmp > $suitedir/$test_basename.test");
@@ -432,12 +445,12 @@ sub read_testfile
   open( TEST, $testfile ) or die "could not open $testfile for reading: $!";
   while (<TEST>)
   {
-    if ( /include\/master-slave\.inc/s or /sync*_with_master/s )
-    {
-      # If replication is needed, it will be added separately
-      next;
-    }
-    elsif ( /^\s*--/s )
+#    if ( /include\/master-slave\.inc/s or /sync*_with_master/s )
+#    {
+#      # If replication is needed, it will be added separately
+#      next;
+#    }
+    if ( /^\s*--/s )
     {
       # SQL comments or MTR commands
       push @test, $_;
