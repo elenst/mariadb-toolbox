@@ -23,7 +23,8 @@ Usage:
 EOF
 }
 
-for arg in $* ; do
+for arg in "$@" ; do
+    echo $arg
     case "$arg" in
         --archive-dir=*|--archdir=*|--archives=*) archdir=`parse_arg "$arg"` ;;
         --log-dir=*|--logdir=*) logdir=`parse_arg "$arg"` ;;
