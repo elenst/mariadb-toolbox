@@ -3,12 +3,12 @@
 # Reproduce and hopefully get a test case for a bug initially hit by RQG
 # Script-specific options are:
 # - --output=<string> -- the pattern to search for, mandatory
-# - --basedirX=<path to the basedir>, mandatory, but can be a part of RQG options
 # - --cnf=<path to cnf file>, optional
 # - --logdir=<path to the logdir>, optional, defaults to /dev/shm/
 # - --mtr-thread=<number>, optional, defaults to 400 (note the difference from mtr-build-thread)
 # - --rqg-home=<path to RQG>, optional
 # - --server-log=<path to the general log> -- general log from the original failure, optional
+# - --basedirX=<path to the basedir>, mandatory, but can be a part of RQG options
 # Other options are assumed to be the original RQG line.
 # Out of them, --mysqld=--<..> options are passed over to MTR when MTR test is tried,
 # and all of them are initially passed over to RQG for RQG reproducing if needed.
@@ -184,11 +184,16 @@ sub mtr_simplification {
     my $cnf_options="";
     if (defined $cnf_file and -e $cnf_file) {
         $cnf_options=`perl $scriptdir/cnf_to_command_line.pl $cnf_file`;
+        chomp $cnf_options;
+        $cnf_options =~ s/--mysqld=--loose-(innodb[-_]page[-_]size|checksum[-_]algorithm|undo[-_]tablespaces|log[-_]group[-_]home[-_]dir|data[-_]home[-_]dir|data[-_]file[-_]path)/--mysqld=--$1/g;
     }
     system("rm -rf $suitedir; mkdir $suitedir; perl $scriptdir/mysql_log_to_mysqltest.pl $log > $suitedir/${testname}.test");
-    print "Log file size: ".(-s $log).", test file size: ".(-s "$suitedir/${testname}.test")."\n\n";
+    print "Log file size: ".(-s $log)." ($log)\n";
+    print "Test file size: ".(-s "$suitedir/${testname}.test")." ($suitedir/${testname}.test)\n\n";
     print "Running simplification\n";
-    system("cd $basedir/mysql-test; perl $scriptdir/simplify-mtr-test.pl --initial-trials=10 --suitedir=$suitedir --testcase=$testname --options=\"$cnf_options @mtr_options\" --output=\"$output\"");
+    my $cmd= "cd $basedir/mysql-test; perl $scriptdir/simplify-mtr-test.pl --initial-trials=10 --suitedir=$suitedir --testcase=$testname --options=\"$cnf_options @mtr_options\" --output=\"$output\"";
+    print "Command line:\n$cmd\n";
+    system($cmd);
     my $res= $?>>8;
     if ($res == 0) {
         my $cnt= 0;
