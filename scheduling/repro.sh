@@ -38,6 +38,8 @@ done
 if [ ! -e $archdir/${test_id}_repro.tar.gz ] ; then
     echo "Repro archive for $test_id not found"
     exit 1
+else
+    echo "Found archive for $test_id"
 fi
 
 screen_id=`echo $STY | awk -F'.' '{print $3}'`
@@ -66,4 +68,5 @@ fi
 
 rqg_cmd=`grep -A 1 "Final command line" ${test_id}_postmortem | sed -e 's/.* perl //'`
 
+echo "Final options: $options $rqg_cmd"
 perl $scriptdir/reprobug.pl $options $rqg_cmd
