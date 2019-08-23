@@ -55,7 +55,7 @@ mkdir $testdir
 cd $testdir
 tar zxf $archdir/${test_id}_repro.tar.gz
 
-options="--output=\"$output\" --mtr-thread=$mtr_thread --logdir=$logdir"
+options="--output=$output --mtr-thread=$mtr_thread --logdir=$logdir"
 
 f=`find . -name mysql.log`
 if [ -n "$f" ] ; then
