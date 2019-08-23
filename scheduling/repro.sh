@@ -55,9 +55,6 @@ mkdir $testdir
 cd $testdir
 tar zxf $archdir/${test_id}_repro.tar.gz
 
-if [[ "$output" =~ " " ]] ; then
-    output=\"$output\"
-fi
 options="--mtr-thread=$mtr_thread --logdir=$logdir"
 
 f=`find . -name mysql.log`
@@ -73,5 +70,5 @@ fi
 
 rqg_cmd=`grep -A 1 "Final command line" ${test_id}_postmortem | tail -n 1 | sed -e 's/.* perl //'`
 
-echo "Final options: --output=$output $options $rqg_cmd"
+echo "Final options: --output=\"$output\" $options $rqg_cmd"
 perl $scriptdir/reprobug.pl --output=$output $options $rqg_cmd
