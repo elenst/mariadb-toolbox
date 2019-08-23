@@ -24,6 +24,7 @@
 # 6) If (5) succeeds, stop at it.
 # 7) If (5) fails, try to simplify RQG command line and go back to (3)
 
+use DBI;
 use Cwd 'abs_path';
 use File::Basename;
 use Getopt::Long;
