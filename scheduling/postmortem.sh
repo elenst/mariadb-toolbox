@@ -37,12 +37,12 @@ SERVER_BRANCH=$SERVER_BRANCH TEST_ALIAS=$TEST_ALIAS TEST_RESULT=$TEST_RESULT TES
 
 cd $LOGDIR
 if [ $TEST_RESULT != "OK" ] ; then
-    grep -i -A 200 -E 'assertion|signal|\[FATAL\]|pure virtual method called' $LOGDIR/${PREFIX}vardir*/mysql.err
-    if [[ $TEST_RESULT =~ BACKUP_FAILURE|UPGRADE_FAILURE|RECOVERY_FAILURE|DEADLOCKED ]] ; then
+    grep -i -A 200 -E 'assertion|signal|\[FATAL\]|pure virtual method called' $LOGDIR/${PREFIX}vardir*/mysql.err $LOGDIR/${PREFIX}vardir*/mbackup_*
+    if [[ $TEST_RESULT =~ BACKUP_FAILURE|UPGRADE_FAILURE|RECOVERY_FAILURE|DEADLOCKED|TEST_FAILURE ]] ; then
         echo "--- Errors in trial.log and mysql.err logs --------------"
         grep ERROR $LOGDIR/${PREFIX}trial.log $LOGDIR/${PREFIX}vardir*/mysql.err*
     fi
-    if [[ $TEST_RESULT =~ BACKUP_FAILURE ]] ; then
+    if [[ $TEST_RESULT =~ BACKUP_FAILURE|TEST_FAILURE ]] ; then
         grep -i error $LOGDIR/${PREFIX}vardir*/mbackup_*
     elif [[ $TEST_RESULT =~ DATABASE_CORRUPTION ]] ; then
         echo "--- CORRUPTION in trial.log -----------------------------"
