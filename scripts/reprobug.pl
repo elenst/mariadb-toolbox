@@ -216,7 +216,7 @@ sub rqg_trials {
         print "ERROR: RQG home is not defined, cannot run the test\n";
         finalize(1);
     }
-    print "Running RQG test: perl $rqg_home/runall-trials.pl @rqg_mandatory_options @rqg_removable_options --threads=$rqg_threads";
+    print "Running RQG test: perl $rqg_home/runall-trials.pl @rqg_mandatory_options @rqg_removable_options --threads=$rqg_threads > $logdir/repro_trials_$mtr_thread.log\n";
     system("cd $rqg_home; perl $rqg_home/runall-trials.pl --output=\"$output\" @rqg_mandatory_options @rqg_removable_options --threads=$rqg_threads > $logdir/repro_trials_$mtr_thread.log 2>&1");
     my $res= $?>>8;
     system("grep -E 'will exit with exit status|exited with exit status' $logdir/repro_trials_$mtr_thread.log");
