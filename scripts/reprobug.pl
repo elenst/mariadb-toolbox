@@ -76,6 +76,14 @@ $SIG{ABRT} = sub { register_repro_stage('aborted'); exit(1) };
 $SIG{SEGV} = sub { register_repro_stage('crashed'); exit(1) };
 $SIG{KILL} = sub { register_repro_stage('aborted'); exit(1) };
 
+print "Initial options:\n";
+print "    Search pattern: $output\n";
+print "    Basedir: $basedir\n";
+print "    Config file: $cnf_file\n";
+print "    Logdir: $logdir\n";
+print "    RQG home: $rqg_home\n";
+print "    Server log: $server_log\n";
+print "    Test ID: $test_id\n\n";
 
 my @mtr_options= (
     '--testcase-timeout=120',
@@ -140,7 +148,7 @@ push @rqg_mandatory_options, '--basedir='.$basedir;
 push @rqg_mandatory_options, '--mtr-build-thread='.$mtr_thread;
 push @rqg_mandatory_options, '--vardir='.$logdir.'/repro_vardir_'.$mtr_thread.'_rqg';
 push @rqg_mandatory_options, '--trials=10';
-push @rqg_mandatory_options, '--output="'.$output.'"';
+push @rqg_mandatory_options, '--output='.$output;
 
 my $result= 1;
 
