@@ -8,6 +8,7 @@
 # - --mtr-thread=<number>, optional, defaults to 400 (note the difference from mtr-build-thread)
 # - --rqg-home=<path to RQG>, optional
 # - --server-log=<path to the general log> -- general log from the original failure, optional
+# - --test-id=<test ID> -- optional, for registration purposes only
 # - --basedirX=<path to the basedir>, mandatory, but can be a part of RQG options
 # Other options are assumed to be the original RQG line.
 # Out of them, --mysqld=--<..> options are passed over to MTR when MTR test is tried,
@@ -30,7 +31,7 @@ Getopt::Long::Configure("pass_through");
 
 use strict;
 
-my ($basedir, $cnf_file, $logdir, $mtr_thread, $output, $rqg_home, $server_log);
+my ($basedir, $cnf_file, $logdir, $mtr_thread, $output, $rqg_home, $server_log, $test_id);
 my $scriptdir = dirname(abs_path($0));
 
 my $opt_result = GetOptions(
@@ -41,6 +42,7 @@ my $opt_result = GetOptions(
     'output=s' => \$output,
     'rqg-home|rqg_home=s' => \$rqg_home,
     'server-log|server_log=s' => \$server_log,
+    'test-id|test_id|testid=s' => \$test_id,
 );
 
 if (not defined $basedir) {
@@ -183,7 +185,7 @@ sub rqg_trials {
         exit 1;
     }
     print "Running RQG test: perl $rqg_home/runall-trials.pl @rqg_mandatory_options @rqg_removable_options --threads=$rqg_threads";
-    system("perl $rqg_home/runall-trials.pl @rqg_mandatory_options @rqg_removable_options --threads=$rqg_threads > $logdir/repro_trials_$mtr_thread.log 2>&1");
+    system("cd $rqg_home; perl $rqg_home/runall-trials.pl @rqg_mandatory_options @rqg_removable_options --threads=$rqg_threads > $logdir/repro_trials_$mtr_thread.log 2>&1");
     my $res= $?>>8;
     system("grep -E 'will exit with exit status|exited with exit status' $logdir/repro_trials_$mtr_thread.log");
     return $res;
@@ -204,16 +206,13 @@ sub mtr_simplification {
     print "Log file size: ".(-s $log)." ($log)\n";
     print "Test file size: ".(-s "$suitedir/${testname}.test")." ($suitedir/${testname}.test)\n\n";
     print "Running simplification\n";
-    print "First trying with low timeouts\n";
     my $cmd1= "cd $basedir/mysql-test; perl $scriptdir/simplify-mtr-test.pl --initial-trials=10 --suitedir=$suitedir --testcase=$testname --options=\"$cnf_options @mtr_options @mtr_timeouts\" --output=\"$output\"";
-    print "Command line:\n$cmd1\n";
-
-    print "If it doesn't work, will try without low timeouts\n";
     my $cmd2= "cd $basedir/mysql-test; perl $scriptdir/simplify-mtr-test.pl --initial-trials=3 --suitedir=$suitedir --testcase=$testname --options=\"$cnf_options @mtr_options\" --output=\"$output\"";
-    print "Command line:\n$cmd2\n";
+    print "First attempt with low timeouts, if it doesn't work, try without them\n\n";
 
     my $res;
     foreach my $cmd ($cmd1, $cmd2) {
+        print "Command line\n$cmd1\n\n";
         system($cmd);
         $res= $?>>8;
         if ($res == 0) {
@@ -236,3 +235,4 @@ sub mtr_simplification {
     }
     return $res;
 }
+
