@@ -66,7 +66,6 @@ $mtr_thread= 400 unless defined $mtr_thread;
 $rqg_home= $ENV{RQG_HOME} unless defined $rqg_home;
 
 my @mtr_options= (
-    '--mtr-build-thread='.$mtr_thread,
     '--testcase-timeout=120',
     '--vardir='.$logdir.'/repro_vardir_'.$mtr_thread.'_mtr',
     '--mysqld=--innodb',
@@ -97,7 +96,11 @@ foreach my $o (@ARGV) {
     # We will use our own vardirs and ports
     next if ($o =~ /^(?:--vardir|--port|mtr[-_]build[-_]thread)/);
     
-    if ($o =~ /^(?:--mysqld1?|--ps-protocol)/) {
+    if ($o =~ /^(?:--mysqld1?=--server-id=\d+/) {
+        # MTR doesn't like custom server IDs, only keep it for RQG
+        push @rqg_removable_options, $o;
+    }
+    elsif ($o =~ /^(?:--mysqld1?|--ps-protocol)/) {
         $o =~ s/--mysqld1/--mysqld/;
         push @mtr_options, $o;
         push @rqg_removable_options, $o;
