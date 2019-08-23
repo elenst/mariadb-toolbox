@@ -178,8 +178,11 @@ sub rqg_trials {
         print "ERROR: RQG home is not defined, cannot run the test\n";
         exit 1;
     }
+    print "Running RQG test: perl $rqg_home/runall-trials.pl @rqg_mandatory_options @rqg_removable_options --threads=$rqg_threads";
     system("perl $rqg_home/runall-trials.pl @rqg_mandatory_options @rqg_removable_options --threads=$rqg_threads > $logdir/repro_trials_$mtr_thread.log 2>&1");
-    return $?>>8;
+    my $res= $?>>8;
+    system("grep -E 'will exit with exit status|exited with exit status' $logdir/repro_trials_$mtr_thread.log");
+    return $res;
 }
 
 sub mtr_simplification {
