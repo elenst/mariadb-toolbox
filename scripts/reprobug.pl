@@ -153,6 +153,7 @@ while ($result != 0)
         if ($res != 0) {
             print "RQG trials failed to reproduce, keeping the options\n";
             push @rqg_mandatory_options, $opt;
+            next;
         }
     } elsif ($rqg_threads > 1) {
         $rqg_threads--;
@@ -166,11 +167,14 @@ while ($result != 0)
         print "Ran out of options to try, giving up\n";
         exit 1;
     }
+    unless (-e $logdir.'/repro_vardir_'.$mtr_thread.'_rqg/mysql.log') {
+        print "RQG run didn't produce general log";
+        next;
+    }
     if (-e $logdir.'/repro_vardir_'.$mtr_thread.'_rqg/my.cnf') {
         $cnf_file= $logdir.'/repro_vardir_'.$mtr_thread.'_rqg/my.cnf';
     }
     $result= mtr_simplification($logdir.'/repro_vardir_'.$mtr_thread.'_rqg/mysql.log');
-
 }
 
 sub rqg_trials {
