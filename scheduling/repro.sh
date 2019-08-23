@@ -56,7 +56,7 @@ cd $testdir
 tar zxf $archdir/${test_id}_repro.tar.gz
 
 if [[ "$output" =~ " " ]] ; then
-    output=\"$output\"
+    output=\'$output\'
 fi
 options="--output=$output --mtr-thread=$mtr_thread --logdir=$logdir"
 
