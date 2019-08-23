@@ -206,10 +206,10 @@ sub mtr_simplification {
         system("echo \"\" >> $logdir/$testname.test.$cnt");
         system("cat $suitedir/new_test.test >> $logdir/$testname.test.$cnt");
         print "MTR simplification succeeded, resulting MTR test is $logdir/$testname.test.$cnt\n";
+        system("rm -rf $suitedir");
     }
     else {
         print "MTR simplification failed\n";
     }
-    system("rm -rf $suitedir");
     return $res;
 }
