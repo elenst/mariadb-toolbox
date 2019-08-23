@@ -205,9 +205,10 @@ sub mtr_simplification {
     my $cmd2= "cd $basedir/mysql-test; perl $scriptdir/simplify-mtr-test.pl --initial-trials=3 --suitedir=$suitedir --testcase=$testname --options=\"$cnf_options @mtr_options\" --output=\"$output\"";
     print "Command line:\n$cmd2\n";
 
+    my $res;
     foreach my $cmd ($cmd1, $cmd2) {
         system($cmd);
-        my $res= $?>>8;
+        $res= $?>>8;
         if ($res == 0) {
             my $cnt= 0;
             while (-e "$logdir/$testname.test.$cnt") {
