@@ -76,12 +76,15 @@ my @mtr_options= (
     '--mysqld=--max-allowed-packet=128M',
     '--mysqld=--innodb-buffer-pool-size=128M',
     '--mysqld=--innodb-log-file-size=48M',
-    '--mysqld=--loose-max-statement-time=10',
-    '--mysqld=--innodb-lock-wait-timeout=3',
-    '--mysqld=--lock-wait-timeout=5',
     '--mysqld=--log_bin_trust_function_creators=OFF',
     '--mysqld=--key_buffer_size=128M',
     '--mysqld=--performance-schema=OFF',
+);
+
+my @mtr_timeouts= (
+    '--mysqld=--loose-max-statement-time=10',
+    '--mysqld=--innodb-lock-wait-timeout=3',
+    '--mysqld=--lock-wait-timeout=5',
 );
 
 if ($basedir =~ /10\.[4-9]/) {
@@ -96,7 +99,7 @@ foreach my $o (@ARGV) {
     # We will use our own vardirs and ports
     next if ($o =~ /^(?:--vardir|--port|mtr[-_]build[-_]thread)/);
     
-    if ($o =~ /^(?:--mysqld1?=--server-id=\d+/) {
+    if ($o =~ /^--mysqld1?=--server[-_]id=\d+/) {
         # MTR doesn't like custom server IDs, only keep it for RQG
         push @rqg_removable_options, $o;
     }
@@ -194,25 +197,34 @@ sub mtr_simplification {
     print "Log file size: ".(-s $log)." ($log)\n";
     print "Test file size: ".(-s "$suitedir/${testname}.test")." ($suitedir/${testname}.test)\n\n";
     print "Running simplification\n";
-    my $cmd= "cd $basedir/mysql-test; perl $scriptdir/simplify-mtr-test.pl --initial-trials=10 --suitedir=$suitedir --testcase=$testname --options=\"$cnf_options @mtr_options\" --output=\"$output\"";
-    print "Command line:\n$cmd\n";
-    system($cmd);
-    my $res= $?>>8;
-    if ($res == 0) {
-        my $cnt= 0;
-        while (-e "$logdir/$testname.test.$cnt") {
-            $cnt++;
+    print "First trying with low timeouts\n";
+    my $cmd1= "cd $basedir/mysql-test; perl $scriptdir/simplify-mtr-test.pl --initial-trials=10 --suitedir=$suitedir --testcase=$testname --options=\"$cnf_options @mtr_options @mtr_timeouts\" --output=\"$output\"";
+    print "Command line:\n$cmd1\n";
+
+    print "If it doesn't work, will try without low timeouts\n";
+    my $cmd2= "cd $basedir/mysql-test; perl $scriptdir/simplify-mtr-test.pl --initial-trials=3 --suitedir=$suitedir --testcase=$testname --options=\"$cnf_options @mtr_options\" --output=\"$output\"";
+    print "Command line:\n$cmd2\n";
+
+    foreach my $cmd in ($cmd1, $cmd2) {
+        system($cmd);
+        my $res= $?>>8;
+        if ($res == 0) {
+            my $cnt= 0;
+            while (-e "$logdir/$testname.test.$cnt") {
+                $cnt++;
+            }
+            system("echo \"# Search pattern: $output\" > $logdir/$testname.test.$cnt");
+            system("echo \"# Basedir: $basedir\" >> $logdir/$testname.test.$cnt");
+            system("echo \"# MTR options: @mtr_options\" >> $logdir/$testname.test.$cnt");
+            system("echo \"\" >> $logdir/$testname.test.$cnt");
+            system("cat $suitedir/new_test.test >> $logdir/$testname.test.$cnt");
+            print "MTR simplification succeeded, resulting MTR test is $logdir/$testname.test.$cnt\n";
+            system("rm -rf $suitedir");
+            last;
         }
-        system("echo \"# Search pattern: $output\" > $logdir/$testname.test.$cnt");
-        system("echo \"# Basedir: $basedir\" >> $logdir/$testname.test.$cnt");
-        system("echo \"# MTR options: @mtr_options\" >> $logdir/$testname.test.$cnt");
-        system("echo \"\" >> $logdir/$testname.test.$cnt");
-        system("cat $suitedir/new_test.test >> $logdir/$testname.test.$cnt");
-        print "MTR simplification succeeded, resulting MTR test is $logdir/$testname.test.$cnt\n";
-        system("rm -rf $suitedir");
-    }
-    else {
-        print "MTR simplification failed\n";
+        else {
+            print "MTR simplification failed\n";
+        }
     }
     return $res;
 }
