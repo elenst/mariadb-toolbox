@@ -56,7 +56,7 @@ cd $testdir
 tar zxf $archdir/${test_id}_repro.tar.gz
 
 if [[ "$output" =~ " " ]] ; then
-    output=\'$output\'
+    output=\"$output\"
 fi
 options="--output=$output --mtr-thread=$mtr_thread --logdir=$logdir"
 
@@ -74,4 +74,4 @@ fi
 rqg_cmd=`grep -A 1 "Final command line" ${test_id}_postmortem | tail -n 1 | sed -e 's/.* perl //'`
 
 echo "Final options: $options $rqg_cmd"
-perl $scriptdir/reprobug.pl $options $rqg_cmd
+perl $scriptdir/reprobug.pl "$options $rqg_cmd"
