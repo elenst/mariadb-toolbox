@@ -148,7 +148,6 @@ push @rqg_mandatory_options, '--basedir='.$basedir;
 push @rqg_mandatory_options, '--mtr-build-thread='.$mtr_thread;
 push @rqg_mandatory_options, '--vardir='.$logdir.'/repro_vardir_'.$mtr_thread.'_rqg';
 push @rqg_mandatory_options, '--trials=10';
-push @rqg_mandatory_options, '--output='.$output;
 
 my $result= 1;
 
@@ -218,7 +217,7 @@ sub rqg_trials {
         finalize(1);
     }
     print "Running RQG test: perl $rqg_home/runall-trials.pl @rqg_mandatory_options @rqg_removable_options --threads=$rqg_threads";
-    system("cd $rqg_home; perl $rqg_home/runall-trials.pl @rqg_mandatory_options @rqg_removable_options --threads=$rqg_threads > $logdir/repro_trials_$mtr_thread.log 2>&1");
+    system("cd $rqg_home; perl $rqg_home/runall-trials.pl --output=\"$output\" @rqg_mandatory_options @rqg_removable_options --threads=$rqg_threads > $logdir/repro_trials_$mtr_thread.log 2>&1");
     my $res= $?>>8;
     system("grep -E 'will exit with exit status|exited with exit status' $logdir/repro_trials_$mtr_thread.log");
     return $res;
@@ -239,8 +238,8 @@ sub mtr_simplification {
     print "Log file size: ".(-s $log)." ($log)\n";
     print "Test file size: ".(-s "$suitedir/${testname}.test")." ($suitedir/${testname}.test)\n\n";
     print "Running simplification\n";
-    my $cmd1= "cd $basedir/mysql-test; perl $scriptdir/simplify-mtr-test.pl --initial-trials=10 --suitedir=$suitedir --testcase=$testname --options=\"$cnf_options @mtr_options @mtr_timeouts\" --output=$output";
-    my $cmd2= "cd $basedir/mysql-test; perl $scriptdir/simplify-mtr-test.pl --initial-trials=3 --suitedir=$suitedir --testcase=$testname --options=\"$cnf_options @mtr_options\" --output=$output";
+    my $cmd1= "cd $basedir/mysql-test; perl $scriptdir/simplify-mtr-test.pl --initial-trials=10 --suitedir=$suitedir --testcase=$testname --options=\"$cnf_options @mtr_options @mtr_timeouts\" --output=\"$output\"";
+    my $cmd2= "cd $basedir/mysql-test; perl $scriptdir/simplify-mtr-test.pl --initial-trials=3 --suitedir=$suitedir --testcase=$testname --options=\"$cnf_options @mtr_options\" --output=\"$output\"";
     print "First attempt with low timeouts, if it doesn't work, try without them\n\n";
 
     my $res;
