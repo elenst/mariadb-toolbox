@@ -265,7 +265,7 @@ sub register_repro_stage {
     if (defined $ENV{DB_USER}) {
         my $dbh= DBI->connect("dbi:mysql:host=$ENV{DB_HOST}:port=$ENV{DB_PORT}",$ENV{DB_USER}, $ENV{DBP}, { RaiseError => 1 } );
         if ($dbh) {
-            $dbh->do("REPLACE INTO regression.repro_status (host, test_id, mtr_thread, search_pattern, status) VALUES (\'$host\',\'$test_id\',\'$mtr_thread\', \'$output\', \'$status\')");
+            $dbh->do("REPLACE INTO regression.repro_status (host, test_id, screen, mtr_thread, search_pattern, status) VALUES (\'$host\',\'$test_id\',\'$ENV{STY}\',\'$mtr_thread\', \'$output\', \'$status\')");
         } else {
             print "ERROR: Couldn't connect to the database to register the result\n";
         }
