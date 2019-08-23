@@ -33,6 +33,8 @@ use strict;
 
 my ($basedir, $cnf_file, $logdir, $mtr_thread, $output, $rqg_home, $server_log, $test_id);
 my $scriptdir = dirname(abs_path($0));
+my $host=`hostname`;
+
 
 my $opt_result = GetOptions(
     'basedir|basedir1=s' => \$basedir,
@@ -66,6 +68,13 @@ unless (defined $output) {
 $logdir= '/dev/shm' unless defined $logdir;
 $mtr_thread= 400 unless defined $mtr_thread;
 $rqg_home= $ENV{RQG_HOME} unless defined $rqg_home;
+
+$SIG{INT}  = sub { register_repro_stage('aborted'); exit(1) };
+$SIG{TERM} = sub { register_repro_stage('aborted'); exit(1) };
+$SIG{ABRT} = sub { register_repro_stage('aborted'); exit(1) };
+$SIG{SEGV} = sub { register_repro_stage('crashed'); exit(1) };
+$SIG{KILL} = sub { register_repro_stage('aborted'); exit(1) };
+
 
 my @mtr_options= (
     '--testcase-timeout=120',
@@ -135,13 +144,15 @@ push @rqg_mandatory_options, '--output="'.$output.'"';
 my $result= 1;
 
 if (defined $server_log and -e $server_log) {
+    register_repro_stage('MTR initial');
     $result= mtr_simplification($server_log);
 } else {
     print "General log not provided, running RQG first\n";
+    register_repro_stage('RQG initial');
     my $res= rqg_trials();
     if ($res != 0) {
         print "RQG trials failed to reproduce, giving up\n";
-        exit 1;
+        finalize(1);
     }
     $result= mtr_simplification($logdir.'/repro_vardir_'.$mtr_thread.'_rqg/mysql.log');
 }
@@ -151,6 +162,7 @@ while ($result != 0)
     if (scalar @rqg_removable_options) {
         my $opt= shift @rqg_removable_options;
         print "Trying to remove option $opt from the command line\n";
+        register_repro_stage('RQG options');
         my $res= rqg_trials();
         if ($res != 0) {
             print "RQG trials failed to reproduce, keeping the options\n";
@@ -160,14 +172,15 @@ while ($result != 0)
     } elsif ($rqg_threads > 1) {
         $rqg_threads--;
         print "Trying to reduce the number of threads to $rqg_threads\n";
+        register_repro_stage('RQG threads');
         my $res= rqg_trials();
         if ($res != 0) {
             print "RQG trials failed to reproduce, giving up\n";
-            exit 1;
+            finalize(1);
         }
     } else {
         print "Ran out of options to try, giving up\n";
-        exit 1;
+        finalize(1);
     }
     unless (-e $logdir.'/repro_vardir_'.$mtr_thread.'_rqg/mysql.log') {
         print "RQG run didn't produce general log";
@@ -176,13 +189,24 @@ while ($result != 0)
     if (-e $logdir.'/repro_vardir_'.$mtr_thread.'_rqg/my.cnf') {
         $cnf_file= $logdir.'/repro_vardir_'.$mtr_thread.'_rqg/my.cnf';
     }
+    register_repro_stage('MTR iteration');
     $result= mtr_simplification($logdir.'/repro_vardir_'.$mtr_thread.'_rqg/mysql.log');
 }
+
+finalize(0);
+
+
+sub finalize {
+    my $res= shift;
+    $res ? register_repro_stage('failed') : register_repro_stage('succeeded');
+    exit $res;
+}
+
 
 sub rqg_trials {
     unless (defined $rqg_home) {
         print "ERROR: RQG home is not defined, cannot run the test\n";
-        exit 1;
+        finalize(1);
     }
     print "Running RQG test: perl $rqg_home/runall-trials.pl @rqg_mandatory_options @rqg_removable_options --threads=$rqg_threads";
     system("cd $rqg_home; perl $rqg_home/runall-trials.pl @rqg_mandatory_options @rqg_removable_options --threads=$rqg_threads > $logdir/repro_trials_$mtr_thread.log 2>&1");
@@ -236,3 +260,14 @@ sub mtr_simplification {
     return $res;
 }
 
+sub register_repro_stage {
+    my $status= shift;
+    if (defined $ENV{DB_USER}) {
+        my $dbh= DBI->connect("dbi:mysql:host=$ENV{DB_HOST}:port=$ENV{DB_PORT}",$ENV{DB_USER}, $ENV{DBP}, { RaiseError => 1 } );
+        if ($dbh) {
+            $dbh->do("REPLACE INTO regression.repro_status (host, test_id, mtr_thread, search_pattern, status) VALUES (\'$host\',\'$test_id\',\'$mtr_thread\', \'$output\', \'$status\')");
+        } else {
+            print "ERROR: Couldn't connect to the database to register the result\n";
+        }
+    }
+}
