@@ -35,6 +35,7 @@ use strict;
 my ($basedir, $cnf_file, $logdir, $mtr_thread, $output, $rqg_home, $server_log, $test_id);
 my $scriptdir = dirname(abs_path($0));
 my $host=`hostname`;
+my $id= time();
 chomp $host;
 
 my $opt_result = GetOptions(
@@ -273,7 +274,7 @@ sub register_repro_stage {
     if (defined $ENV{DB_USER}) {
         my $dbh= DBI->connect("dbi:mysql:host=$ENV{DB_HOST}:port=$ENV{DB_PORT}",$ENV{DB_USER}, $ENV{DBP}, { RaiseError => 1 } );
         if ($dbh) {
-            $dbh->do("REPLACE INTO regression.repro_status (host, test_id, screen, mtr_thread, search_pattern, status) VALUES (\'$host\',\'$test_id\',\'$ENV{STY}\',\'$mtr_thread\', \'$output\', \'$status\')");
+            $dbh->do("REPLACE INTO regression.repro_status (id, host, test_id, screen, mtr_thread, search_pattern, status) VALUES ($id,\'$host\',\'$test_id\',\'$ENV{STY}\',\'$mtr_thread\', \'$output\', \'$status\')");
         } else {
             print "ERROR: Couldn't connect to the database to register the result\n";
         }
