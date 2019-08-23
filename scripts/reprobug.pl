@@ -35,7 +35,7 @@ use strict;
 my ($basedir, $cnf_file, $logdir, $mtr_thread, $output, $rqg_home, $server_log, $test_id);
 my $scriptdir = dirname(abs_path($0));
 my $host=`hostname`;
-
+chomp $host;
 
 my $opt_result = GetOptions(
     'basedir|basedir1=s' => \$basedir,
