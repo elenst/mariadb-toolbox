@@ -59,8 +59,11 @@ if [ $TEST_RESULT != "OK" ] ; then
         cat $cnf
         echo "---------------------------------------------------------"
     done
-    if ! grep 'STRONG matches' ${PREFIX}postmortem > /dev/null ; then
+    if ! grep 'STRONG matches' ${PREFIX}postmortem > /dev/null || grep -E 'FOUND FIXED|\[Draft\]' ${PREFIX}postmortem > /dev/null ; then
         tar zcf archive/${PREFIX}vardir.tar.gz ${PREFIX}*
+        echo "Archived all data: " `ls -l archive/${PREFIX}vardir.tar.gz`
+    else
+        echo "Strong matches found, data discarded"
     fi
     tar zcf archive/${PREFIX}repro.tar.gz ${PREFIX}vardir*/mysql.log ${PREFIX}vardir*/my.cnf ${PREFIX}postmortem
 fi
