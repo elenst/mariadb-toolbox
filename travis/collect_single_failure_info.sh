@@ -151,11 +151,13 @@ if [ "$res" == "0" ] ; then
 
     if [ -n "$RQG_HOME" ] ; then
         signatures=$RQG_HOME/data/bug_signatures
+        check_path=$RQG_HOME/util
     else
         # Probably an outdated version
         signatures=$SCRIPT_DIR/../data/bug_signatures
+        check_path=$SCRIPT_DIR
     fi
-    perl $SCRIPT_DIR/check_for_known_bugs.pl --signatures=$signatures ${VARDIR}*/mysql.err* ${VARDIR}*/mbackup_*.log --last=$TRIAL_LOG
+    perl $check_path/check_for_known_bugs.pl --signatures=$signatures ${VARDIR}*/mysql.err* ${VARDIR}*/mbackup_*.log --last=$TRIAL_LOG
 
     echo
     echo '#' ${TRAVIS_BUILD_NUMBER} ${TRAVIS_JOB} ${TRIAL}
