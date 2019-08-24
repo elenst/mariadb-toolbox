@@ -118,7 +118,7 @@ my $rqg_threads;
 
 foreach my $o (@ARGV) {
     # We will use our own vardirs and ports
-    next if ($o =~ /^(?:--vardir|--port|mtr[-_]build[-_]thread)/);
+    next if ($o =~ /^(?:--vardir|--port|--mtr[-_]build[-_]thread)/);
     
     if ($o =~ /^--mysqld1?=--server[-_]id=\d+/) {
         # MTR doesn't like custom server IDs, only keep it for RQG
