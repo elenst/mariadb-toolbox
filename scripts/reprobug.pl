@@ -151,13 +151,14 @@ push @rqg_mandatory_options, '--vardir='.$logdir.'/repro_vardir_'.$mtr_thread.'_
 push @rqg_mandatory_options, '--trials=10';
 
 my $result= 1;
+my $stage= 'initial';
 
 if (defined $server_log and -e $server_log) {
-    register_repro_stage('MTR initial');
+    register_repro_stage('MTR: ' . $stage);
     $result= mtr_simplification($server_log);
 } else {
     print "General log not provided, running RQG first\n";
-    register_repro_stage('RQG initial');
+    register_repro_stage('RQG: '. $stage);
     my $res= rqg_trials();
     if ($res != 0) {
         print "RQG trials failed to reproduce, giving up\n";
@@ -169,9 +170,10 @@ if (defined $server_log and -e $server_log) {
 while ($result != 0)
 {
     if (scalar @rqg_removable_options) {
+        $stage= '' . scalar(@rqg_removable_options) . ' RQG option(s) left';
         my $opt= shift @rqg_removable_options;
         print "Trying to remove option $opt from the command line\n";
-        register_repro_stage('RQG options');
+        register_repro_stage('RQG: ' . $stage);
         my $res= rqg_trials();
         if ($res != 0) {
             print "RQG trials failed to reproduce, keeping the options\n";
@@ -180,8 +182,9 @@ while ($result != 0)
         }
     } elsif ($rqg_threads > 1) {
         $rqg_threads--;
+        $stage= "$rqg_threads RQG thread(s) left";
         print "Trying to reduce the number of threads to $rqg_threads\n";
-        register_repro_stage('RQG threads');
+        register_repro_stage('RQG: ' . $stage);
         my $res= rqg_trials();
         if ($res != 0) {
             print "RQG trials failed to reproduce, giving up\n";
@@ -198,7 +201,7 @@ while ($result != 0)
     if (-e $logdir.'/repro_vardir_'.$mtr_thread.'_rqg/my.cnf') {
         $cnf_file= $logdir.'/repro_vardir_'.$mtr_thread.'_rqg/my.cnf';
     }
-    register_repro_stage('MTR iteration');
+    register_repro_stage('MTR: ' . $stage);
     $result= mtr_simplification($logdir.'/repro_vardir_'.$mtr_thread.'_rqg/mysql.log');
 }
 
