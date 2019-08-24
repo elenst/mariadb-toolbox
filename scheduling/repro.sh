@@ -18,6 +18,7 @@ Usage:
        --logdir=<common location for logs>
        --output=<search pattern>
        --scriptdir=<script location>
+       --basedir=<basedir>
        --test-id=<test ID>
        --help (print this help and exit)
 EOF
@@ -30,6 +31,7 @@ for arg in "$@" ; do
         --log-dir=*|--logdir=*) logdir=`parse_arg "$arg"` ;;
         --output=*) output=`parse_arg "$arg"` ;;
         --script-dir=*|--scriptdir=*) scriptdir=`parse_arg "$arg"` ;;
+        --basedir=*) basedir=`parse_arg "$arg"` ;;
         --test-id=*|--testid=*) test_id=`parse_arg "$arg"` ;;
         --help) usage && exit 0 ;;
         *) echo "Unknown argument: $arg" && exit 1 ;;
@@ -56,6 +58,9 @@ cd $testdir
 tar zxf $archdir/${test_id}_repro.tar.gz
 
 options="--mtr-thread=$mtr_thread --logdir=$logdir"
+if [ -n "$basedir" ] ; then
+    options="$options --basedir=$basedir"
+fi
 
 f=`find . -name mysql.log`
 if [ -n "$f" ] ; then
@@ -70,5 +75,5 @@ fi
 
 rqg_cmd=`grep -A 1 "Final command line" ${test_id}_postmortem | tail -n 1 | sed -e 's/.* perl //'`
 
-echo "Final options: --output=\"$output\" $options $rqg_cmd"
-perl $scriptdir/reprobug.pl --output="$output" $options $rqg_cmd
+echo "Final options: --output=\"$output\"  $rqg_cmd $options"
+perl $scriptdir/reprobug.pl --output="$output" $rqg_cmd $options
