@@ -143,7 +143,6 @@ foreach my $o (@ARGV) {
 $rqg_threads= 10 unless defined $rqg_threads;
 
 push @rqg_options, '--basedir='.$basedir;
-push @rqg_options, '--mtr-build-thread='.$mtr_thread;
 push @rqg_options, '--trials=5';
 
 my $result= 1;
@@ -193,7 +192,7 @@ sub rqg_trials {
         register_repro_stage("Failed: RQG_HOME not defined");
         exit 1;
     }
-    print "Running RQG test: perl $rqg_home/runall-trials.pl @rqg_options --threads=$rqg_threads > $workdir/rqg_trials.out\n";
+    print "Running RQG test: perl $rqg_home/runall-trials.pl --mtr-build-thread=$mtr_thread @rqg_options --threads=$rqg_threads > $workdir/rqg_trials.out\n";
     system("cd $rqg_home; perl $rqg_home/runall-trials.pl --vardir=$vardir --output=\"$output\" @rqg_options --threads=$rqg_threads > $workdir/rqg_trials.out 2>&1");
     my $res= $?>>8;
     system("grep -E 'will exit with exit status|exited with exit status' $workdir/rqg_trials.out");
@@ -207,7 +206,7 @@ sub rqg_simplification {
         register_repro_stage("Failed: RQG_HOME not defined");
         exit 1;
     }
-    print "Running RQG simplification: perl $rqg_home/util/simplify-rqg-test.pl --workdir=$wdir --output=\"$output\" @rqg_options --threads=$rqg_threads > $workdir/rqg_simplification.out\n";
+    print "Running RQG simplification: perl $rqg_home/util/simplify-rqg-test.pl --mtr-thread=$mtr_thread --workdir=$wdir --output=\"$output\" @rqg_options --threads=$rqg_threads > $workdir/rqg_simplification.out\n";
     system("cd $rqg_home; perl $rqg_home/util/simplify-rqg-test.pl --workdir=$wdir --output=\"$output\" @rqg_options --threads=$rqg_threads > $workdir/rqg_simplification.out 2>&1");
     return $?>>8;
 }
