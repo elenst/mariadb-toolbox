@@ -232,7 +232,7 @@ sub mtr_simplification {
     print "First attempt with low timeouts, if it doesn't work, try without them\n\n";
 
     my $res;
-    foreach my $cmd ($cmd1 $cmd2) {
+    foreach my $cmd ($cmd1, $cmd2) {
         print "Command line\n$cmd1\n\n";
         system($cmd);
         $res= $?>>8;
