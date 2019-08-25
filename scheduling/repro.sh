@@ -24,6 +24,8 @@ Usage:
 EOF
 }
 
+pass_through=''
+
 for arg in "$@" ; do
     echo $arg
     case "$arg" in
@@ -34,7 +36,7 @@ for arg in "$@" ; do
         --basedir=*) basedir=`parse_arg "$arg"` ;;
         --test-id=*|--testid=*) test_id=`parse_arg "$arg"` ;;
         --help) usage && exit 0 ;;
-        *) echo "Unknown argument: $arg" && exit 1 ;;
+        *) pass_through="$pass_through $arg" ;;
     esac
 done
 
@@ -76,4 +78,4 @@ fi
 rqg_cmd=`grep -A 1 "Final command line" ${test_id}_postmortem | tail -n 1 | sed -e 's/.* perl //'`
 
 echo "Final options: --output=\"$output\"  $rqg_cmd $options"
-perl $scriptdir/reprobug.pl --output="$output" $rqg_cmd $options
+perl $scriptdir/reprobug.pl --output="$output" $rqg_cmd $options $pass_through
