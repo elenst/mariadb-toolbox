@@ -148,8 +148,7 @@ push @rqg_options, '--trials=5';
 my $result= 1;
 
 if (defined $server_log and -e $server_log) {
-    register_repro_stage('MTR: original log');
-    $result= mtr_simplification($server_log);
+    $result= mtr_simplification($server_log, 'initial');
 } else {
     print "General log not provided, running RQG trials first\n";
     register_repro_stage('RQG: trials');
@@ -159,8 +158,7 @@ if (defined $server_log and -e $server_log) {
         register_repro_stage("FAILED (RQG trials)");
         exit 1;
     }
-    register_repro_stage('MTR: from RQG log');
-    $result= mtr_simplification($workdir.'/rqg_trials/mysql.log');
+    $result= mtr_simplification($workdir.'/rqg_trials/mysql.log', 'from initial RQG');
     if ($result == 0) {
         register_repro_stage("SUCCEEDED (on MTR)");
         exit 0;
@@ -176,8 +174,7 @@ if ($rqg_result != 0) {
     exit 1;
 }
 
-register_repro_stage('MTR: from simplified RQG');
-$result= mtr_simplification($workdir.'/rqg_simplification/vardir/mysql.log');
+$result= mtr_simplification($workdir.'/rqg_simplification/vardir/mysql.log', 'from simplified RQG');
 if ($result == 0) {
     register_repro_stage("SUCCEEDED (on MTR)");
 } else {
@@ -213,7 +210,7 @@ sub rqg_simplification {
 }
 
 sub mtr_simplification {
-    my $log= shift;
+    my ($log, $stage)= @_;
     print "\nCreating an MTR test from $log\n";
     my $suitedir= "$basedir/mysql-test/suite/repro_$mtr_thread";
     my $testname= "repro${mtr_thread}";
@@ -226,33 +223,39 @@ sub mtr_simplification {
     system("rm -rf $suitedir; mkdir $suitedir; perl $scriptdir/mysql_log_to_mysqltest.pl $log > $suitedir/${testname}.test");
     print "Log file size: ".(-s $log)." ($log)\n";
     print "Test file size: ".(-s "$suitedir/${testname}.test")." ($suitedir/${testname}.test)\n\n";
-    print "Running simplification\n";
-    my $cmd1= "cd $basedir/mysql-test; perl $scriptdir/simplify-mtr-test.pl --initial-trials=10 --suitedir=$suitedir --testcase=$testname --options=\"$cnf_options @mtr_options @mtr_timeouts\" --output=\"$output\"";
-    my $cmd2= "cd $basedir/mysql-test; perl $scriptdir/simplify-mtr-test.pl --initial-trials=3 --suitedir=$suitedir --testcase=$testname --options=\"$cnf_options @mtr_options\" --output=\"$output\"";
-    print "First attempt with low timeouts, if it doesn't work, try without them\n\n";
+    print "Running simplification with short timeouts\n";
+    register_repro_stage("MTR: $stage: short timeouts");
+    my $res= run_mtr_simplification("cd $basedir/mysql-test; perl $scriptdir/simplify-mtr-test.pl --initial-trials=10 --options=\"$cnf_options @mtr_options @mtr_timeouts\" --output=\"$output\"", $suitedir, $testname);
+    if ($res != 0) {
+        register_repro_stage("MTR: $stage: original timeouts");
+        $res= run_mtr_simplification("cd $basedir/mysql-test; perl $scriptdir/simplify-mtr-test.pl --initial-trials=3 --options=\"$cnf_options @mtr_options\" --output=\"$output\"", $suitedir, $testname);
+    }
+    return $res;
+}
 
-    my $res;
-    foreach my $cmd ($cmd1, $cmd2) {
-        print "Command line\n$cmd1\n\n";
-        system($cmd);
-        $res= $?>>8;
-        if ($res == 0) {
-            my $cnt= 0;
-            while (-e "$logdir/$testname.test.$cnt") {
-                $cnt++;
-            }
-            system("echo \"# Search pattern: $output\" > $logdir/$testname.test.$cnt");
-            system("echo \"# Basedir: $basedir\" >> $logdir/$testname.test.$cnt");
-            system("echo \"# MTR options: @mtr_options\" >> $logdir/$testname.test.$cnt");
-            system("echo \"\" >> $logdir/$testname.test.$cnt");
-            system("cat $suitedir/new_test.test >> $logdir/$testname.test.$cnt");
-            print "MTR simplification succeeded, resulting MTR test is $logdir/$testname.test.$cnt\n";
-            system("rm -rf $suitedir");
-            last;
+sub run_mtr_simplification
+{
+    my ($cmd, $testname, $suitedir)= @_;
+    $cmd.= "--suitedir=$suitedir --testcase=$testname";
+    print "Command line\n$cmd\n\n";
+    system($cmd);
+    my $res= $?>>8;
+    if ($res == 0) {
+        my $cnt= 0;
+        while (-e "$logdir/$testname.test.$cnt") {
+            $cnt++;
         }
-        else {
-            print "MTR simplification failed\n";
-        }
+        system("echo \"# Search pattern: $output\" > $logdir/$testname.test.$cnt");
+        system("echo \"# Basedir: $basedir\" >> $logdir/$testname.test.$cnt");
+        system("echo \"# MTR options: @mtr_options\" >> $logdir/$testname.test.$cnt");
+        system("echo \"\" >> $logdir/$testname.test.$cnt");
+        system("cat $suitedir/new_test.test >> $logdir/$testname.test.$cnt");
+        print "MTR simplification succeeded, resulting MTR test is $logdir/$testname.test.$cnt\n";
+        system("rm -rf $suitedir");
+        last;
+    }
+    else {
+        print "MTR simplification failed\n";
     }
     return $res;
 }
