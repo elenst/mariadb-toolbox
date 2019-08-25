@@ -235,7 +235,7 @@ sub mtr_simplification {
 
 sub run_mtr_simplification
 {
-    my ($cmd, $testname, $suitedir)= @_;
+    my ($cmd, $suitedir, $testname)= @_;
     $cmd.= "--suitedir=$suitedir --testcase=$testname";
     print "Command line\n$cmd\n\n";
     system($cmd);
