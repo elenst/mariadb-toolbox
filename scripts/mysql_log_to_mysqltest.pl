@@ -347,10 +347,12 @@ print "--exit\n";
 
 ########### SUBROUTINES ############
 
-sub system_test_hacks
+sub test_hacks
 {
   my $log_record_ref= shift;
 
+  # Some frequently occurring syntax error in incoming statements
+  if ( $$log_record_ref =~ s/(IMMEDIATE|FROM) ' \//$1 '' \//g ) {};
   if ( $$log_record_ref =~ s/^\s*(kill(?:\s+query)?)\s+(\d+)/eval $1 \$con${2}_id/is ) {
     return 0;
   }
@@ -408,7 +410,7 @@ sub print_current_record
       $test_connections{$cur_log_con}= 0;
     }
     chomp $cur_log_record;
-    system_test_hacks(\$cur_log_record);
+    test_hacks(\$cur_log_record);
     if ( $cur_log_record )
     {
       my $delimiter= ( $cur_log_record =~ /;/ ? '|||' : ';' );
