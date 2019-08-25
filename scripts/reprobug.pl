@@ -79,6 +79,11 @@ unless (defined $output) {
 }
 
 my $workdir= $logdir.'/repro_'.$mtr_thread;
+system("rm -rf $workdir; mkdir -p $workdir");
+if ($? != 0) {
+    print "ERROR: could not create workdir $workdir\n";
+    exit 1;
+}
 
 $SIG{INT}  = sub { register_repro_stage('aborted'); exit(1) };
 $SIG{TERM} = sub { register_repro_stage('aborted'); exit(1) };
@@ -250,17 +255,23 @@ sub run_mtr_simplification
     my $res= $?>>8;
     if ($res == 0) {
         my $cnt= 0;
+        # Find the last reproducible test case
+        while (-e "$suitedir/$testname.test.reproducible.$cnt") {
+            $cnt++;
+        }
+        my $last_test= "$suitedir/$testname.test.reproducible.".($cnt-1);
+        # Find the first vacant name for storing
+        $cnt= 0;
         while (-e "$logdir/$testname.test.$cnt") {
             $cnt++;
         }
         system("echo \"# Search pattern: $output\" > $logdir/$testname.test.$cnt");
         system("echo \"# Basedir: $basedir\" >> $logdir/$testname.test.$cnt");
-        system("echo \"# MTR options: @mtr_options\" >> $logdir/$testname.test.$cnt");
+        system("echo \"# Command line: $cmd\" >> $logdir/$testname.test.$cnt");
         system("echo \"\" >> $logdir/$testname.test.$cnt");
-        system("cat $suitedir/new_test.test >> $logdir/$testname.test.$cnt");
+        system("cat $last_test/new_test.test >> $logdir/$testname.test.$cnt");
         print "MTR simplification succeeded, resulting MTR test is $logdir/$testname.test.$cnt\n";
         system("rm -rf $suitedir");
-        last;
     }
     else {
         print "MTR simplification failed\n";
