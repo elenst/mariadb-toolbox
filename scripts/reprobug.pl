@@ -32,19 +32,30 @@ Getopt::Long::Configure("pass_through");
 
 use strict;
 
-my ($basedir, $cnf_file, $logdir, $mtr_thread, $output, $rqg_home, $server_log, $test_id);
+my ($basedir, $cnf_file, $logdir, $mtr_thread, $mtr_timeout, $mtr_trials, $output, $rqg_home, $rqg_trials, $server_log, $test_id);
 my $scriptdir = dirname(abs_path($0));
 my $host=`hostname`;
 my $id= time();
 chomp $host;
 
+# Some defaults
+$mtr_thread= 400;
+$mtr_trials= 3;
+$rqg_trials= 3;
+$mtr_timeout= 120;
+$logdir= '/dev/shm';
+$rqg_home= $ENV{RQG_HOME};
+
 my $opt_result = GetOptions(
     'basedir|basedir1=s' => \$basedir,
     'cnf|cnf-file|cnf_file=s' => \$cnf_file,
     'mtr-thread|mtr_thread=i' => \$mtr_thread,
+    'mtr-timeout|mtr_timeout=i' => \$mtr_timeout,
+    'mtr-trials|mtr_trials=i' => \$mtr_trials,
     'logdir|log-dir|log_dir=s' => \$logdir,
     'output=s' => \$output,
     'rqg-home|rqg_home=s' => \$rqg_home,
+    'rqg-trials|rqg_trials=i' => \$rqg_trials,
     'server-log|server_log=s' => \$server_log,
     'test-id|test_id|testid=s' => \$test_id,
 );
@@ -57,7 +68,7 @@ if (not defined $basedir) {
     exit 1;
 }
 
-if (defined $rqg_home and not -d "$rqg_home") {
+unless (-d "$rqg_home") {
     print "ERROR: rqg_home ($rqg_home) does not exist, is not readable, or is not a directory\n";
     exit 1;
 }
@@ -67,9 +78,6 @@ unless (defined $output) {
     exit 1;
 }
 
-$mtr_thread= 400 unless defined $mtr_thread;
-$rqg_home= $ENV{RQG_HOME} unless defined $rqg_home;
-$logdir= '/dev/shm' unless defined $logdir;
 my $workdir= $logdir.'/repro_'.$mtr_thread;
 
 $SIG{INT}  = sub { register_repro_stage('aborted'); exit(1) };
@@ -88,7 +96,7 @@ print "    Server log: $server_log\n";
 print "    Test ID: $test_id\n\n";
 
 my @mtr_options= (
-    '--testcase-timeout=120',
+    '--testcase-timeout='.$mtr_timeout,
     '--vardir='.$workdir.'/mtr',
     '--mysqld=--innodb',
     '--mysqld=--default-storage-engine=InnoDB',
@@ -143,7 +151,7 @@ foreach my $o (@ARGV) {
 $rqg_threads= 10 unless defined $rqg_threads;
 
 push @rqg_options, '--basedir='.$basedir;
-push @rqg_options, '--trials=5';
+push @rqg_options, '--trials='.$rqg_trials;
 
 my $result= 1;
 
@@ -225,10 +233,10 @@ sub mtr_simplification {
     print "Test file size: ".(-s "$suitedir/${testname}.test")." ($suitedir/${testname}.test)\n\n";
     print "Running simplification with short timeouts\n";
     register_repro_stage("MTR: $stage: short timeouts");
-    my $res= run_mtr_simplification("cd $basedir/mysql-test; perl $scriptdir/simplify-mtr-test.pl --initial-trials=10 --options=\"$cnf_options @mtr_options @mtr_timeouts\" --output=\"$output\"", $suitedir, $testname);
+    my $res= run_mtr_simplification("cd $basedir/mysql-test; perl $scriptdir/simplify-mtr-test.pl --trials=$mtr_trials --options=\"$cnf_options @mtr_options @mtr_timeouts\" --output=\"$output\"", $suitedir, $testname);
     if ($res != 0) {
         register_repro_stage("MTR: $stage: original timeouts");
-        $res= run_mtr_simplification("cd $basedir/mysql-test; perl $scriptdir/simplify-mtr-test.pl --initial-trials=3 --options=\"$cnf_options @mtr_options\" --output=\"$output\"", $suitedir, $testname);
+        $res= run_mtr_simplification("cd $basedir/mysql-test; perl $scriptdir/simplify-mtr-test.pl --trials=$mtr_trials --options=\"$cnf_options @mtr_options\" --output=\"$output\"", $suitedir, $testname);
     }
     return $res;
 }
