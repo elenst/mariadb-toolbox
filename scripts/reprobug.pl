@@ -237,10 +237,10 @@ sub mtr_simplification {
     print "Log file size: ".(-s $log)." ($log)\n";
     print "Test file size: ".(-s "$suitedir/${testname}.test")." ($suitedir/${testname}.test)\n\n";
     print "Running simplification with short timeouts\n";
-    register_repro_stage("MTR: $stage: short timeouts");
+    register_repro_stage("MTR: $stage: short");
     my $res= run_mtr_simplification("cd $basedir/mysql-test; perl $scriptdir/simplify-mtr-test.pl --trials=$mtr_trials --options=\"$cnf_options @mtr_options @mtr_timeouts\" --output=\"$output\"", $suitedir, $testname);
     if ($res != 0) {
-        register_repro_stage("MTR: $stage: original timeouts");
+        register_repro_stage("MTR: $stage: long");
         $res= run_mtr_simplification("cd $basedir/mysql-test; perl $scriptdir/simplify-mtr-test.pl --trials=$mtr_trials --options=\"$cnf_options @mtr_options\" --output=\"$output\"", $suitedir, $testname);
     }
     return $res;
