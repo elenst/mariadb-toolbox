@@ -60,6 +60,9 @@ cd $testdir
 tar zxf $archdir/${test_id}_repro.tar.gz
 
 options="--mtr-thread=$mtr_thread --logdir=$logdir"
+if [ -n "$test_id" ] ; then
+    options="$options --test-id=$test_id"
+fi
 if [ -n "$basedir" ] ; then
     options="$options --basedir=$basedir"
 fi
