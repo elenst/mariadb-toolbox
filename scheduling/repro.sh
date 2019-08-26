@@ -82,3 +82,8 @@ rqg_cmd=`grep -A 1 "Final command line" ${test_id}_postmortem | tail -n 1 | sed 
 
 echo "Final options: --output=\"$output\"  $rqg_cmd $options"
 perl $scriptdir/reprobug.pl --output="$output" $rqg_cmd $options $pass_through
+res=$?
+
+rm -rf $testdir
+
+exit $res
