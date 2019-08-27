@@ -374,7 +374,7 @@ sub run_test
 
   write_testfile($testref);
 
-  my $result= undef;
+  my $result;
 
   my $i= 1;
   while ($i <= $trials) {
@@ -382,7 +382,7 @@ sub run_test
     print sprintf("Trial $i out if $trials started at %02d:%02d:%02d\n",(localtime($start))[2],(localtime($start))[1],(localtime($start))[0]);
     $testcase_timeout= min(max(int(($timeout-15)/60),1),300);
 
-    my $test_result;
+    my $test_result= undef;
     my $pid= fork();
 
     if ($pid) {
@@ -394,7 +394,7 @@ sub run_test
         }
         sleep 1;
       }
-      unless (defined $result) {
+      unless (defined $test_result) {
         print "The trial timed out\n";
         kill '-KILL', $pid;
         $test_result= 1;
@@ -437,19 +437,19 @@ sub run_test
     if ($output) {
       $result= ( $out =~ /$output/ );
       if ($result) {
-        print "Reproduced (no: $reproducible_counter) - output matched the pattern\n";
+        print "Reproduced (no: $reproducible_counter) - output matched the pattern\n\n";
       } elsif ($test_result) {
-        print "Could not reproduce - trial $i failed, but output didn't match the pattern\n";
+        print "Could not reproduce - trial $i failed, but output didn't match the pattern\n\n";
       } else {
-        print "Could not reproduce - trial $i passed, and output didn't match the pattern\n";
+        print "Could not reproduce - trial $i passed, and output didn't match the pattern\n\n";
       }
     }
     elsif ($test_result) {
       $result= $test_result;
-      print "Reproduced (no: $reproducible_counter) - test failed, and there was no pattern to match\n";
+      print "Reproduced (no: $reproducible_counter) - test failed, and there was no pattern to match\n\n";
     }
     else {
-      print "Could not reproduce - test passed, and there was no pattern to match\n";
+      print "Could not reproduce - test passed, and there was no pattern to match\n\n";
     }
 
     print "Trial $i time: $trial_duration\n";
@@ -461,7 +461,7 @@ sub run_test
         print "Timeout is now set to $timeout sec\n";
     } else {
         $outfile= "$testcase.output/$testcase.out.not_reproducible.$not_reproducible_counter";
-        if ($trial_duration > $testcase_timeout and $testcase_timeout >= 30 and $i < $trials - 1) {
+        if ($trial_duration > $testcase_timeout * 60 and $testcase_timeout >= 30 and $i < $trials - 1) {
             print "\nTest run took longer than testcase timeout $testcase_timeout min, trying only one more more\n\n";
             $trials= $i + 1;
         }
