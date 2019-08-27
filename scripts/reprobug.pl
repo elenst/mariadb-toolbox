@@ -269,7 +269,7 @@ sub run_mtr_simplification
         system("echo \"# Basedir: $basedir\" >> $logdir/$testname.test.$cnt");
         system("echo \"# Command line: $cmd\" >> $logdir/$testname.test.$cnt");
         system("echo \"\" >> $logdir/$testname.test.$cnt");
-        system("cat $last_test/new_test.test >> $logdir/$testname.test.$cnt");
+        system("cat $last_test >> $logdir/$testname.test.$cnt");
         print "MTR simplification succeeded, resulting MTR test is $logdir/$testname.test.$cnt\n";
         system("rm -rf $suitedir");
     }
