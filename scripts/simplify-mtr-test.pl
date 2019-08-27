@@ -18,11 +18,47 @@ my $path = dirname(abs_path($0));
 my $opt_preserve_connections;
 my $rpl= undef;
 my $max_chunk= 0;
-my $trials= 1;
-my $initial_trials= undef;
-my $timeout= 86400;
-my $simplification_timeout= 0;
 my $vardir='var';
+$|= 1;
+
+# $trials is the number of attempts for every intermediate test case.
+# It cannot be done via MTR --repeat, because we need it not just fail
+# (and not necessarily fail), but produce a specific outcome.
+# The number of trials will be to some extent dynamic: if the test case
+# timed out (and the current timeout is high enough, currently >= 30 min),
+# the number of trials will be temporarily reduced to 2.
+my $trials= 1;
+
+# $initial_trials is the number of attempts for the very attempt
+# for the unchanged test case produced from the original general log.
+# It is more important than consequent runs, because the outcome defines
+# whether simplification job will proceed or not. So, unless configured
+# explicitly, it will be set to $trials * 3
+# The number of trials will be to some extent dynamic: if the test case
+# timed out (and the current timeout is high enough, currently >= 30 min),
+# the number of trials will be temporarily reduced to 3.
+my $initial_trials= undef;
+
+# Timeout is used by a watchdog for every separate test run.
+# Normally this job is done by MTR via testcase-timeout, but sometimes
+# after certain failures it tends to hang (e.g. it happens often after stack overflow).
+# It is also useful when you want timeout less than 2 minutes, because
+# it is de-facto minimum in MTR.
+# In this case the simplifier will kill it after $timeout is exceeded
+# Since the maximum testcase-timeout in MTR is 5 hours, we'll set ours to 6 hours.
+# The actual timeout will be dynamic, based on the duration of previous
+# test runs. But it will never be *higher* than the configured --timeout
+# (which is stored in $max_timeout).
+# $testcase_timeout is what will be passed to MTR. If not defined
+# in @options, it will be set 2 minutes less than $timeout
+my $max_timeout= 21600;
+my $timeout;
+my $testcase_timeout;
+
+# $simplification_timeout is a limit for the whole simplification job.
+# When the timeout is approached, the job will store whatever best result it had.
+# It is useful when it is run in a time-limited environment.
+my $simplification_timeout= 0;
 
 my @preserve_connections;
 my %preserve_connections;
@@ -55,6 +91,7 @@ GetOptions (
 );
 
 my $endtime= ($simplification_timeout ? time() + $simplification_timeout : 0);
+
 my $max_trial_duration= 0;
 $initial_trials = $trials * 3 unless defined $initial_trials;
 
@@ -79,6 +116,18 @@ if ($opt_preserve_connections) {
 
 if ("@options" =~ /--vardir=(\S+)/) {
     $vardir=$1;
+}
+
+if ("@options" =~ /.*--testcase-timeout=(\d+)/) {
+    $testcase_timeout = $1;
+}
+
+if (defined $timeout) {
+    $max_timeout= $timeout;
+} elsif ($testcase_timeout) {
+    $max_timeout= $timeout= $testcase_timeout * 60 + 60;
+} else {
+    $timeout= $max_timeout;
 }
 
 unless ($suitename) {
@@ -321,16 +370,17 @@ sub run_test
     print "Only " . ($endtime - time()) . " seconds left till simplification timeout, while the longest trial took $max_trial_duration seconds. Quitting with what we have\n";
     exit 2;
   }
-
   print "\nSize of the test to run: " . scalar(@$testref) . "\n";
 
   write_testfile($testref);
 
-  my $result= 0;
+  my $result= undef;
 
-  foreach my $i (1 .. $trials) {
+  my $i= 1;
+  while ($i <= $trials) {
     my $start = time();
     print sprintf("Trial $i out if $trials started at %02d:%02d:%02d\n",(localtime($start))[2],(localtime($start))[1],(localtime($start))[0]);
+    $testcase_timeout= min(max(int(($timeout-15)/60),1),300);
 
     my $test_result;
     my $pid= fork();
@@ -347,11 +397,15 @@ sub run_test
       unless (defined $result) {
         print "The trial timed out\n";
         kill '-KILL', $pid;
-        $result= 1;
+        $test_result= 1;
+        $result= 0;
       }
     }
     elsif (defined $pid) {
-      system( "perl mysql-test-run.pl @options --suite=$suitename $test_basename > $testcase.output/$testcase.out.last 2>&1" );
+      # Leave 15 seconds for killing
+      print "Trial timeout: $timeout sec, testcase timeout: $testcase_timeout min\n\n";
+
+      system( "perl mysql-test-run.pl @options --suite=$suitename $test_basename --testcase-timeout=$testcase_timeout > $testcase.output/$testcase.out.last 2>&1" );
       exit $? >> 8;
     } else {
       print "ERROR: Could not fork for running the test\n";
@@ -376,6 +430,9 @@ sub run_test
     }
     $/= $separ;
 
+    my $trial_duration= time() - $start;
+    $max_trial_duration= $trial_duration if $trial_duration > $max_trial_duration;
+
     # Refined diagnostics
     if ($output) {
       $result= ( $out =~ /$output/ );
@@ -395,15 +452,25 @@ sub run_test
       print "Could not reproduce - test passed, and there was no pattern to match\n";
     }
 
-    my $outfile = ($result ? "$testcase.output/$testcase.out.reproducible.$reproducible_counter" : "$testcase.output/$testcase.out.not_reproducible.$not_reproducible_counter");
+    print "Trial $i time: $trial_duration\n";
+
+    my $outfile;
+    if ($result) {
+        $outfile= "$testcase.output/$testcase.out.reproducible.$reproducible_counter";
+        $timeout= min($timeout, $trial_duration*2);
+        print "Timeout is now set to $timeout sec\n";
+    } else {
+        $outfile= "$testcase.output/$testcase.out.not_reproducible.$not_reproducible_counter";
+        if ($trial_duration > $testcase_timeout and $testcase_timeout >= 30 and $i < $trials - 1) {
+            print "\nTest run took longer than testcase timeout $testcase_timeout min, trying only one more more\n\n";
+            $trials= $i + 1;
+        }
+    }
+    $i++;
     open( OUT, ">>$outfile" ) || die "Could not open $outfile for writing: $!";
     print OUT "\nTrial $i\n\n";
     print OUT $out;
     close( OUT );
-
-    my $trial_duration= time() - $start;
-    print "Trial $i time: $trial_duration\n";
-    $max_trial_duration= $trial_duration if $trial_duration > $max_trial_duration;
 
     if ($result)
     {
