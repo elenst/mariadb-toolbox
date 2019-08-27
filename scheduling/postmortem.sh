@@ -27,13 +27,14 @@ for c in `find $LOGDIR/${PREFIX}vardir* -name core*` ; do
     binary=`file $c | sed -e "s/.*execfn: '\(.*\)', platform.*/\\1/"`
     core_pid=`echo $c | sed -e 's/.*core\.\([0-9]*\)$/\1/g'`
     gdb --batch --eval-command="thread apply all bt full" $binary $c > $LOGDIR/${PREFIX}threads.$core_pid 2>&1
+    gdb --batch --eval-command="bt" $binary $c > $LOGDIR/${PREFIX}stack.$core_pid 2>&1
     echo "---------------------------------------------------------"
     echo "--- Coredump $c"
     gdb --batch --eval-command="bt" $binary $c | grep -v 'New LWP'
     echo "---------------------------------------------------------"
 done
 
-SERVER_BRANCH=$SERVER_BRANCH TEST_ALIAS=$TEST_ALIAS TEST_RESULT=$TEST_RESULT TEST_ID=$TEST_ID LOCAL_CI=$LOCAL_CI perl $RQG_HOME/util/check_for_known_bugs.pl $SIGNATURES `find $LOGDIR/${PREFIX}vardir* -name mysql*.err*` `find $LOGDIR/${PREFIX}vardir* -name mbackup*.log` $LOGDIR/${PREFIX}threads.* --last=$LOGDIR/${PREFIX}trial.log
+SERVER_BRANCH=$SERVER_BRANCH TEST_ALIAS=$TEST_ALIAS TEST_RESULT=$TEST_RESULT TEST_ID=$TEST_ID LOCAL_CI=$LOCAL_CI perl $RQG_HOME/util/check_for_known_bugs.pl $SIGNATURES `find $LOGDIR/${PREFIX}vardir* -name mysql*.err*` `find $LOGDIR/${PREFIX}vardir* -name mbackup*.log` $LOGDIR/${PREFIX}stack.* --last=$LOGDIR/${PREFIX}trial.log
 
 cd $LOGDIR
 if [ $TEST_RESULT != "OK" ] ; then
