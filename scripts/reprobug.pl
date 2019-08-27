@@ -41,7 +41,7 @@ chomp $host;
 # Some defaults
 $mtr_thread= 400;
 $mtr_trials= 3;
-$rqg_trials= 3;
+$rqg_trials= 5;
 $mtr_timeout= 120;
 $logdir= '/dev/shm';
 $rqg_home= $ENV{RQG_HOME};
