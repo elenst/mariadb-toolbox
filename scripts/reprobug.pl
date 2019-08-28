@@ -162,6 +162,10 @@ my $result= 1;
 
 if (defined $server_log and -e $server_log) {
     $result= mtr_simplification($server_log, 'initial');
+    if ($result == 0) {
+        register_repro_stage("SUCCEEDED (on MTR)");
+        exit 0;
+    }
 } else {
     print "General log not provided, running RQG trials first\n";
     register_repro_stage('RQG: trials');
@@ -171,10 +175,14 @@ if (defined $server_log and -e $server_log) {
         register_repro_stage("FAILED (RQG trials)");
         exit 1;
     }
-    $result= mtr_simplification($workdir.'/rqg_trials/mysql.log', 'from initial RQG');
-    if ($result == 0) {
-        register_repro_stage("SUCCEEDED (on MTR)");
-        exit 0;
+    if (-e "$workdir/rqg_trials/mysql.log") {
+        $result= mtr_simplification($workdir.'/rqg_trials/mysql.log', 'from initial RQG');
+        if ($result == 0) {
+            register_repro_stage("SUCCEEDED (on MTR)");
+            exit 0;
+        }
+    } else {
+        print "RQG trials did not produce any log, nothing to use for MTR\n";
     }
 }
 
@@ -187,11 +195,16 @@ if ($rqg_result != 0) {
     exit 1;
 }
 
-$result= mtr_simplification($workdir.'/rqg_simplification/vardir/mysql.log', 'from simplified RQG');
-if ($result == 0) {
-    register_repro_stage("SUCCEEDED (on MTR)");
+if (-e "$workdir/rqg_simplification/vardir/mysql.log") {
+    $result= mtr_simplification($workdir.'/rqg_simplification/vardir/mysql.log', 'from simplified RQG');
+    if ($result == 0) {
+        register_repro_stage("SUCCEEDED (on MTR)");
+    } else {
+        print "MTR simplifcication failed, staying with simplified RQG grammar\n";
+        register_repro_stage("SUCCEEDED (on RQG)");
+    }
 } else {
-    print "MTR simplifcication failed, staying with simplified RQG grammar\n";
+    print "RQG simplification did not produce any log, nothing to use for MTR\n";
     register_repro_stage("SUCCEEDED (on RQG)");
 }
 exit 0;
@@ -203,7 +216,7 @@ sub rqg_trials {
         register_repro_stage("Failed: RQG_HOME not defined");
         exit 1;
     }
-    print "Running RQG test: perl $rqg_home/runall-trials.pl --mtr-build-thread=$mtr_thread --vardir=$vardir --output=\"$output\" @rqg_options --threads=$rqg_threads > $workdir/rqg_trials.out\n";
+    print "\nRunning RQG test: perl $rqg_home/runall-trials.pl --mtr-build-thread=$mtr_thread --vardir=$vardir --output=\"$output\" @rqg_options --threads=$rqg_threads > $workdir/rqg_trials.out\n";
     system("cd $rqg_home; perl $rqg_home/runall-trials.pl --mtr-build-thread=$mtr_thread --vardir=$vardir --output=\"$output\" @rqg_options --threads=$rqg_threads > $workdir/rqg_trials.out 2>&1");
     my $res= $?>>8;
     system("grep -E 'will exit with exit status|exited with exit status' $workdir/rqg_trials.out");
@@ -217,7 +230,7 @@ sub rqg_simplification {
         register_repro_stage("Failed: RQG_HOME not defined");
         exit 1;
     }
-    print "Running RQG simplification: perl $rqg_home/util/simplify-rqg-test.pl --mtr-thread=$mtr_thread --workdir=$wdir --output=\"$output\" @rqg_options --threads=$rqg_threads > $workdir/rqg_simplification.out\n";
+    print "\nRunning RQG simplification: perl $rqg_home/util/simplify-rqg-test.pl --mtr-thread=$mtr_thread --workdir=$wdir --output=\"$output\" @rqg_options --threads=$rqg_threads > $workdir/rqg_simplification.out\n";
     system("cd $rqg_home; perl $rqg_home/util/simplify-rqg-test.pl --mtr-thread=$mtr_thread --workdir=$wdir --output=\"$output\" @rqg_options --threads=$rqg_threads > $workdir/rqg_simplification.out 2>&1");
     return $?>>8;
 }
@@ -240,6 +253,7 @@ sub mtr_simplification {
     register_repro_stage("MTR: $stage: short");
     my $res= run_mtr_simplification("cd $basedir/mysql-test; perl $scriptdir/simplify-mtr-test.pl --trials=$mtr_trials --options=\"$cnf_options @mtr_options @mtr_timeouts\" --output=\"$output\"", $suitedir, $testname);
     if ($res != 0) {
+        print "\nRunning simplification without short timeouts\n";
         register_repro_stage("MTR: $stage: long");
         $res= run_mtr_simplification("cd $basedir/mysql-test; perl $scriptdir/simplify-mtr-test.pl --trials=$mtr_trials --options=\"$cnf_options @mtr_options\" --output=\"$output\"", $suitedir, $testname);
     }
