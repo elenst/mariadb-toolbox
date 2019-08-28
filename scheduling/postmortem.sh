@@ -34,7 +34,8 @@ for c in `find $LOGDIR/${PREFIX}vardir* -name core*` ; do
     echo "---------------------------------------------------------"
 done
 
-SERVER_BRANCH=$SERVER_BRANCH TEST_ALIAS=$TEST_ALIAS TEST_RESULT=$TEST_RESULT TEST_ID=$TEST_ID LOCAL_CI=$LOCAL_CI perl $RQG_HOME/util/check_for_known_bugs.pl $SIGNATURES `find $LOGDIR/${PREFIX}vardir* -name mysql*.err*` `find $LOGDIR/${PREFIX}vardir* -name mbackup*.log` $LOGDIR/${PREFIX}stack.* --last=$LOGDIR/${PREFIX}trial.log
+SERVER_BRANCH=$SERVER_BRANCH TEST_ALIAS=$TEST_ALIAS TEST_RESULT=$TEST_RESULT TEST_ID=$TEST_ID LOCAL_CI=$LOCAL_CI perl $RQG_HOME/util/check_for_known_bugs.pl $SIGNATURES `find $LOGDIR/${PREFIX}vardir* -name mysql*.err*` `find $LOGDIR/${PREFIX}vardir* -name mbackup*.log` $LOGDIR/${PREFIX}stack.* --last=$LOGDIR/${PREFIX}trial.log > $LOGDIR/${PREFIX}matches 2>&1
+cat $LOGDIR/${PREFIX}matches
 
 cd $LOGDIR
 if [ $TEST_RESULT != "OK" ] ; then
@@ -60,13 +61,14 @@ if [ $TEST_RESULT != "OK" ] ; then
         cat $cnf
         echo "---------------------------------------------------------"
     done
-    if ! grep 'STRONG matches' ${PREFIX}postmortem > /dev/null || grep -E 'FOUND FIXED|\[Draft\]' ${PREFIX}postmortem > /dev/null ; then
+    if ! grep 'STRONG matches' $LOGDIR/${PREFIX}matches || grep -E 'FOUND FIXED|\[Draft\]' $LOGDIR/${PREFIX}matches ; then
         tar zcf archive/${PREFIX}vardir.tar.gz ${PREFIX}*
         echo "Archived all data: " `ls -l archive/${PREFIX}vardir.tar.gz`
+        rm $LOGDIR/${PREFIX}matches
     else
         echo "Strong matches found, data discarded"
     fi
-    tar zcf archive/${PREFIX}repro.tar.gz ${PREFIX}vardir*/mysql.log ${PREFIX}vardir*/my.cnf ${PREFIX}postmortem
+    tar zcf archive/${PREFIX}repro.tar.gz `find ${PREFIX}vardir* -name mysql.log` `find ${PREFIX}vardir* -name my.cnf` ${PREFIX}postmortem
 fi
 rm -rf ${PREFIX}vardir*
 mv $LOGDIR/${PREFIX}* $LOGDIR/archive/
