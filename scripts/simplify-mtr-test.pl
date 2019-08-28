@@ -437,22 +437,22 @@ sub run_test
     if ($output) {
       $result= ( $out =~ /$output/ );
       if ($result) {
-        print "Reproduced (no: $reproducible_counter) - output matched the pattern\n\n";
+        print "Reproduced (no: $reproducible_counter) - output matched the pattern\n";
       } elsif ($test_result) {
-        print "Could not reproduce - trial $i failed, but output didn't match the pattern\n\n";
+        print "Could not reproduce - trial $i failed, but output didn't match the pattern\n";
       } else {
-        print "Could not reproduce - trial $i passed, and output didn't match the pattern\n\n";
+        print "Could not reproduce - trial $i passed, and output didn't match the pattern\n";
       }
     }
     elsif ($test_result) {
       $result= $test_result;
-      print "Reproduced (no: $reproducible_counter) - test failed, and there was no pattern to match\n\n";
+      print "Reproduced (no: $reproducible_counter) - test failed, and there was no pattern to match\n";
     }
     else {
-      print "Could not reproduce - test passed, and there was no pattern to match\n\n";
+      print "Could not reproduce - test passed, and there was no pattern to match\n";
     }
 
-    print "Trial $i time: $trial_duration\n";
+    print "Trial $i time: $trial_duration\n\n";
 
     my $outfile;
     if ($result) {
