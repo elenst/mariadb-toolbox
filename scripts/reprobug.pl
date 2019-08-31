@@ -36,6 +36,8 @@ my ($basedir, $cnf_file, $logdir, $mtr_thread, $mtr_timeout, $mtr_trials, $outpu
 my $scriptdir = dirname(abs_path($0));
 my $host=`hostname`;
 my $id= time();
+my $skip_mtr= 0;
+my $skip_rqg= 0;
 chomp $host;
 
 # Some defaults
@@ -57,6 +59,8 @@ my $opt_result = GetOptions(
     'rqg-home|rqg_home=s' => \$rqg_home,
     'rqg-trials|rqg_trials=i' => \$rqg_trials,
     'server-log|server_log=s' => \$server_log,
+    'skip-mtr|skip_mtr' => \$skip_mtr,
+    'skip-rqg|skip_rqg' => \$skip_rqg,
     'test-id|test_id|testid=s' => \$test_id,
 );
 
@@ -160,7 +164,9 @@ push @rqg_options, '--trials='.$rqg_trials;
 
 my $result= 1;
 
-if (defined $server_log and -e $server_log) {
+if ($skip_mtr) {
+    print "MTR simplification is skipped by configuration\n";
+} elsif (defined $server_log and -e $server_log) {
     $result= mtr_simplification($server_log, 'initial');
     if ($result == 0) {
         register_repro_stage("SUCCEEDED (on MTR)");
@@ -186,16 +192,22 @@ if (defined $server_log and -e $server_log) {
     }
 }
 
-print "MTR simplification of the original log failed, trying RQG simplification\n";
-register_repro_stage("RQG: simplification");
-my $rqg_result= rqg_simplification($workdir.'/rqg_simplification');
-if ($rqg_result != 0) {
-    print "RQG simplification failed, giving up\n";
-    register_repro_stage("FAILED (RQG simplification)");
-    exit 1;
+if ($skip_rqg) {
+    print "RQG simplification is skipped by configuration\n";
+} else {
+    print "MTR simplification of the original log failed or was skipped, trying RQG simplification\n";
+    register_repro_stage("RQG: simplification");
+    my $rqg_result= rqg_simplification($workdir.'/rqg_simplification');
+    if ($rqg_result != 0) {
+        print "RQG simplification failed, giving up\n";
+        register_repro_stage("FAILED (RQG simplification)");
+        exit 1;
+    }
 }
 
-if (-e "$workdir/rqg_simplification/vardir/mysql.log") {
+if ($skip_mtr) {
+    print "MTR simplification is skipped by configuration\n";
+} elsif (-e "$workdir/rqg_simplification/vardir/mysql.log") {
     $result= mtr_simplification($workdir.'/rqg_simplification/vardir/mysql.log', 'from simplified RQG');
     if ($result == 0) {
         register_repro_stage("SUCCEEDED (on MTR)");
