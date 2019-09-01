@@ -247,10 +247,7 @@ if [ "$res" == "0" ] ; then
   load_failure
 fi
 
-  rm -rf ${LOGDIR}/${ARCHDIR}*
-else
-  echo "ERROR while processing logs"
-fi
+rm -rf ${LOGDIR}/${ARCHDIR}*
 
 cd $OLDDIR
 . $SCRIPT_DIR/soft_exit.sh $res
