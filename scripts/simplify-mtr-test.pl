@@ -45,13 +45,17 @@ my $initial_trials= undef;
 # It is also useful when you want timeout less than 2 minutes, because
 # it is de-facto minimum in MTR.
 # In this case the simplifier will kill it after $timeout is exceeded
-# Since the maximum testcase-timeout in MTR is 5 hours, we'll set ours to 6 hours.
-# The actual timeout will be dynamic, based on the duration of previous
-# test runs. But it will never be *higher* than the configured --timeout
-# (which is stored in $max_timeout).
+# Since the maximum testcase-timeout in MTR is 5 hours, we'll set our
+# hard default to 6 hours.
+# If the timeout is provided via --test-timeout option, it will be fixed
+# for the duration of the simplification. Otherwise it will be dynamic,
+# starting with max_timeout and further based on the duration of previous
+# test runs. But it will never be *higher* than the default max_timeout
+# and *lower* than the default min_timeout.
 # $testcase_timeout is what will be passed to MTR. If not defined
 # in @options, it will be set 2 minutes less than $timeout
 my $max_timeout= 21600;
+my $min_timeout= 300;
 my $timeout;
 my $testcase_timeout;
 
@@ -124,8 +128,9 @@ if ("@options" =~ /.*--testcase-timeout=(\d+)/) {
 
 if (defined $timeout) {
     $max_timeout= $timeout;
+    $min_timeout= $timeout;
 } elsif ($testcase_timeout) {
-    $max_timeout= $timeout= $testcase_timeout * 60 + 60;
+    $max_timeout= $timeout= max($testcase_timeout * 60 + 60,$min_timeout);
 } else {
     $timeout= $max_timeout;
 }
@@ -164,7 +169,7 @@ make_path("$testcase.output");
 
 my ($test, $big_connections, $small_connections) = read_testfile("$suitedir/$test_basename.test",$modes[0]);
 
-print "\nRunning initial test\n";
+print "\nRunning initial test\n\n";
 
 my $trials_save= $trials;
 # The intial test run is most important, we'll try it more before giving up
@@ -370,7 +375,7 @@ sub run_test
     print "Only " . ($endtime - time()) . " seconds left till simplification timeout, while the longest trial took $max_trial_duration seconds. Quitting with what we have\n";
     exit 2;
   }
-  print "\nSize of the test to run: " . scalar(@$testref) . "\n";
+  print "Size of the test to run: " . scalar(@$testref) . "\n";
 
   write_testfile($testref);
 
@@ -403,7 +408,7 @@ sub run_test
     }
     elsif (defined $pid) {
       # Leave 15 seconds for killing
-      print "Trial timeout: $timeout sec, testcase timeout: $testcase_timeout min\n\n";
+      print "Trial timeout: $timeout sec, testcase timeout: $testcase_timeout min\n";
 
       system( "perl mysql-test-run.pl @options --suite=$suitename $test_basename --testcase-timeout=$testcase_timeout > $testcase.output/$testcase.out.last 2>&1" );
       exit $? >> 8;
@@ -437,7 +442,7 @@ sub run_test
     if ($output) {
       $result= ( $out =~ /$output/ );
       if ($result) {
-        print "Reproduced (no: $reproducible_counter) - output matched the pattern\n";
+        print "REPRODUCED (no: $reproducible_counter) - output matched the pattern\n";
       } elsif ($test_result) {
         print "Could not reproduce - trial $i failed, but output didn't match the pattern\n";
       } else {
@@ -457,8 +462,11 @@ sub run_test
     my $outfile;
     if ($result) {
         $outfile= "$testcase.output/$testcase.out.reproducible.$reproducible_counter";
-        $timeout= min($timeout, $trial_duration*2);
-        print "Timeout is now set to $timeout sec\n";
+        my $old_timeout= $timeout;
+        $timeout= max(min($timeout, $trial_duration*2),$min_timeout);
+        if ($timeout != $old_timeout) {
+            print "Timeout is now set to $timeout sec\n";
+        }
     } else {
         $outfile= "$testcase.output/$testcase.out.not_reproducible.$not_reproducible_counter";
         if ($trial_duration > $testcase_timeout * 60 and $testcase_timeout >= 30 and $i < $trials - 1) {
