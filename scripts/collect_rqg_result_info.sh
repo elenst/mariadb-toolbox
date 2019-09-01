@@ -63,7 +63,7 @@ for v in $vardir ; do
     for l in $error_logs ; do
         echo "--- Error log $l"
         echo ""
-        grep -Ei 'Server version|assertion|signal |\[FATAL\]|ERROR|pure virtual method|overflow|overrun|0x' $l
+        grep -Ei '^Version: |assertion|signal |\[FATAL\]|ERROR|pure virtual method|overflow|overrun|0x' $l
         echo "---------------------------------------------------------"
         echo ""
     done
@@ -72,7 +72,7 @@ for v in $vardir ; do
     for b in $boot_logs ; do
         echo "--- Boot log $b"
         echo ""
-        grep -Ei 'Server version|assertion|signal |\[FATAL\]|ERROR|pure virtual method|overflow|overrun|0x' $b
+        grep -Ei 'assertion|signal |\[FATAL\]|ERROR|pure virtual method|overflow|overrun|0x' $b
         echo "---------------------------------------------------------"
         echo ""
     done
@@ -81,7 +81,7 @@ for v in $vardir ; do
     for b in $backup_logs ; do
         echo "--- Backup log $b"
         echo ""
-        grep -Ei 'Server version|assertion|signal |\[FATAL\]|ERROR|pure virtual method|overflow|overrun|0x' $b
+        grep -Ei 'assertion|signal |\[FATAL\]|ERROR|pure virtual method|overflow|overrun|0x' $b
         echo "---------------------------------------------------------"
         echo ""
     done
