@@ -130,7 +130,7 @@ if [ "$res" == "0" ] ; then
   echo ""
   export TEST_RESULT=$TRIAL_STATUS
 
-  `dirname $0`/../scripts/collect_rqg_result_info.sh $result_collection_options > ${LOGDIR}/${ARCHDIR}/result_info 2>&1
+  $SCRIPT_DIR/../scripts/collect_rqg_result_info.sh $result_collection_options > ${LOGDIR}/${ARCHDIR}/result_info 2>&1
 
   if [ -n "$RQG_HOME" ] ; then
     signatures=$RQG_HOME/data/bug_signatures
