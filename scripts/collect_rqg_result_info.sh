@@ -44,6 +44,10 @@ done
 #   from each mysql.err* and mbackup_* logs;
 # - stack traces from each mysql.err* and mbackup_* logs;
 
+# It looks like the collection somehow interferes with server's own postmortem,
+# so we'll wait a bit, there is no hurry
+sleep 15
+
 for t in $test_log ; do
     echo ""
     echo "----- Test log $t -----"
