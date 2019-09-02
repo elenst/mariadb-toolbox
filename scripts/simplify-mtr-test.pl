@@ -422,12 +422,12 @@ sub run_test
 
     my $separ= $/;
     $/= undef;
-    unless (open(ERRLOG, "$errlog")) {
-        print "ERROR: Cannot open $errlog\n";
-        exit 1;
+    if (open(ERRLOG, "$errlog")) {
+        $out.= <ERRLOG>;
+        close(ERRLOG);
+    else {
+        print "ERROR: Cannot open $errlog: $!\n";
     }
-    $out.= <ERRLOG>;
-    close(ERRLOG);
     if (-e "$vardir/log/mysqld.2.err") {
       open(ERRLOG, "$vardir/log/mysqld.2.err") || print "Cannot open $vardir/log/mysqld.2.err\n" && exit 0;
       $out.= <ERRLOG>;
