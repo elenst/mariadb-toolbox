@@ -425,7 +425,7 @@ sub run_test
     if (open(ERRLOG, "$errlog")) {
         $out.= <ERRLOG>;
         close(ERRLOG);
-    else {
+    } else {
         print "ERROR: Cannot open $errlog: $!\n";
     }
     if (-e "$vardir/log/mysqld.2.err") {
