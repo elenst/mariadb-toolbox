@@ -67,7 +67,7 @@ for v in $vardir ; do
     for l in $error_logs ; do
         echo "--- Error log $l"
         echo ""
-        grep -Ei '^Version: |assertion|signal |\[FATAL\]|ERROR|pure virtual method|overflow|overrun|0x' $l
+        grep -Ei '^Version: |assertion|signal |\[FATAL\]|ERROR|pure virtual method|overflow|overrun|0x|^Status: ' $l
         echo "---------------------------------------------------------"
         echo ""
     done
