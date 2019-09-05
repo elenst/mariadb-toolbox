@@ -28,6 +28,7 @@ use DBI;
 use Cwd 'abs_path';
 use File::Basename;
 use Getopt::Long;
+use POSIX ":sys_wait_h";
 Getopt::Long::Configure("pass_through");
 
 use strict;
@@ -196,7 +197,6 @@ if ($skip_rqg) {
     print "RQG simplification is skipped by configuration\n";
 } else {
     print "MTR simplification of the original log failed or was skipped, trying RQG simplification\n";
-    register_repro_stage("RQG: simplification");
     my $rqg_result= rqg_simplification($workdir.'/rqg_simplification');
     if ($rqg_result != 0) {
         print "RQG simplification failed, giving up\n";
@@ -221,6 +221,9 @@ if ($skip_mtr) {
 }
 exit 0;
 
+
+########################################################################
+
 sub rqg_trials {
     my $vardir= shift;
     unless (defined $rqg_home) {
@@ -242,9 +245,34 @@ sub rqg_simplification {
         register_repro_stage("Failed: RQG_HOME not defined");
         exit 1;
     }
-    print "\nRunning RQG simplification: perl $rqg_home/util/simplify-rqg-test.pl --mtr-thread=$mtr_thread --workdir=$wdir --output=\"$output\" @rqg_options --threads=$rqg_threads > $workdir/rqg_simplification.out\n";
-    system("cd $rqg_home; perl $rqg_home/util/simplify-rqg-test.pl --mtr-thread=$mtr_thread --workdir=$wdir --output=\"$output\" @rqg_options --threads=$rqg_threads > $workdir/rqg_simplification.out 2>&1");
-    return $?>>8;
+    my $pid= fork();
+
+    if ($pid) {
+        print "\nRunning RQG simplification: perl $rqg_home/util/simplify-rqg-test.pl --mtr-thread=$mtr_thread --workdir=$wdir --output=\"$output\" @rqg_options --threads=$rqg_threads > $workdir/rqg_simplification.out\n";
+        my $stage= 'RQG simplification';
+        register_repro_stage($stage);
+        my $prev_stage= $stage;
+        do {
+            sleep 60;
+            my $last_success=`grep SUCCESS $workdir/rqg_simplification.out | tail -n 1`;
+            if ($last_success =~ /\/(\d+)\.yy\s+\#/) {
+                $stage= "RQG success: $1";
+                if ($stage ne $prev_stage) {
+                    register_repro_stage($stage);
+                    $prev_stage= $stage;
+                }
+            }
+            waitpid($pid, WNOHANG);
+        } until ($? > -1);
+        return $?;
+    } elsif (defined $pid) {
+        system("cd $rqg_home; perl $rqg_home/util/simplify-rqg-test.pl --mtr-thread=$mtr_thread --workdir=$wdir --output=\"$output\" @rqg_options --threads=$rqg_threads > $workdir/rqg_simplification.out 2>&1");
+        exit $?>>8;
+    } else {
+      print "ERROR: Could not fork for running the test\n";
+      register_repro_stage("RQG aborted");
+      exit 1;
+    }
 }
 
 sub mtr_simplification {
@@ -262,23 +290,46 @@ sub mtr_simplification {
     print "Log file size: ".(-s $log)." ($log)\n";
     print "Test file size: ".(-s "$suitedir/${testname}.test")." ($suitedir/${testname}.test)\n\n";
     print "Running simplification with short timeouts\n";
-    register_repro_stage("MTR: $stage: short");
-    my $res= run_mtr_simplification("cd $basedir/mysql-test; perl $scriptdir/simplify-mtr-test.pl --trials=$mtr_trials --options=\"$cnf_options @mtr_options @mtr_timeouts\" --output=\"$output\"", $suitedir, $testname);
+    my $res= run_mtr_simplification("cd $basedir/mysql-test; perl $scriptdir/simplify-mtr-test.pl --trials=$mtr_trials --options=\"$cnf_options @mtr_options @mtr_timeouts\" --output=\"$output\"", $suitedir, $testname, "MTR: $stage: short");
     if ($res != 0) {
         print "\nRunning simplification without short timeouts\n";
-        register_repro_stage("MTR: $stage: long");
-        $res= run_mtr_simplification("cd $basedir/mysql-test; perl $scriptdir/simplify-mtr-test.pl --trials=$mtr_trials --options=\"$cnf_options @mtr_options\" --output=\"$output\"", $suitedir, $testname);
+        $res= run_mtr_simplification("cd $basedir/mysql-test; perl $scriptdir/simplify-mtr-test.pl --trials=$mtr_trials --options=\"$cnf_options @mtr_options\" --output=\"$output\"", $suitedir, $testname, "MTR: $stage: long");
     }
     return $res;
 }
 
 sub run_mtr_simplification
 {
-    my ($cmd, $suitedir, $testname)= @_;
+    my ($cmd, $suitedir, $testname, $stage)= @_;
     $cmd.= " --suitedir=$suitedir --testcase=$testname";
-    print "Command line\n$cmd\n\n";
-    system($cmd);
-    my $res= $?>>8;
+
+    my $pid= fork();
+    if ($pid) {
+        print "Command line\n$cmd\n\n";
+        register_repro_stage($stage);
+        my $prev_stage= $stage;
+        do {
+            sleep 60;
+            my $last_reproducible=`ls -t $suitedir/$testname.test.reproducible.* 2>/dev/null | head -n 1`;
+            chomp $last_reproducible;
+            if ($last_reproducible =~ /test.reproducible.(\d+)$/) {
+                $stage= "MTR reproducible: $1";
+                if ($stage ne $prev_stage) {
+                    register_repro_stage($stage);
+                    $prev_stage= $stage;
+                }
+            }
+            waitpid($pid, WNOHANG);
+        } until ($? > -1);
+    } elsif (defined $pid) {
+        system($cmd);
+        exit $?>>8;
+    } else {
+      print "ERROR: Could not fork for running the test\n";
+      register_repro_stage("MTR: aborted");
+      exit 1;
+    }
+    my $res= $?;
     if ($res == 0) {
         my $cnt= 0;
         # Find the last reproducible test case
