@@ -342,10 +342,15 @@ sub run_mtr_simplification
         while (-e "$logdir/$testname.test.$cnt") {
             $cnt++;
         }
-        system("echo \"# Search pattern: $output\" > $logdir/$testname.test.$cnt");
-        system("echo \"# Basedir: $basedir\" >> $logdir/$testname.test.$cnt");
-        system("echo \"# Command line: $cmd\" >> $logdir/$testname.test.$cnt");
-        system("echo \"\" >> $logdir/$testname.test.$cnt");
+        if (open(TESTCASE,">$logdir/$testname.test.$cnt"))
+        {
+            print TESTCASE "# Search pattern: $output\n";
+            print TESTCASE "# Basedir: $basedir\n";
+            print TESTCASE '# Command line:'.$cmd."\n\n";
+            close(TESTCASE);
+        } else {
+            print "ERROR: Could not open $logdir/$testname.test.$cnt for writing: $!\n";
+        }
         system("cat $last_test >> $logdir/$testname.test.$cnt");
         print "MTR simplification succeeded, resulting MTR test is $logdir/$testname.test.$cnt\n";
         system("rm -rf $suitedir");
