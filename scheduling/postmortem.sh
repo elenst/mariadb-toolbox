@@ -34,9 +34,15 @@ SERVER_BRANCH=$SERVER_BRANCH TEST_ALIAS=$TEST_ALIAS TEST_RESULT=$TEST_RESULT TES
 cat $LOGDIR/${PREFIX}matches
 cat $LOGDIR/${PREFIX}result_info
 
+i=0
 for c in `find $LOGDIR/${PREFIX}vardir* -name core*` ; do
     binary=`file $c | sed -e "s/.*execfn: '\(.*\)', platform.*/\\1/"`
     core_pid=`echo $c | sed -e 's/.*core\.\([0-9]*\)$/\1/g'`
+    if [[ $core_pid =~ "core" ]] ; then
+        # substitution didn't happen
+        core_pid=$i
+        (( i=i+1 ))
+    fi
     gdb --batch --eval-command="thread apply all bt full" $binary $c > $LOGDIR/${PREFIX}threads.$core_pid 2>&1
 done
 
