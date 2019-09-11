@@ -384,7 +384,7 @@ sub run_test
   my $i= 1;
   while ($i <= $trials) {
     my $start = time();
-    print sprintf("Trial $i out if $trials started at %02d:%02d:%02d\n",(localtime($start))[2],(localtime($start))[1],(localtime($start))[0]);
+    print sprintf("Trial $i out if $trials started %02d-%02d %02d:%02d:%02d\n",(localtime($start))[4]+1,(localtime($start))[3],(localtime($start))[2],(localtime($start))[1],(localtime($start))[0]);
     $testcase_timeout= min(max(int(($timeout-15)/60),1),300);
 
     my $test_result= undef;
