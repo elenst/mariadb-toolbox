@@ -88,6 +88,9 @@ for b in $branches ; do
                 asan) cmake_options="-DCMAKE_BUILD_TYPE=Debug -DWITH_ASAN=YES -DMYSQL_MAINTAINER_MODE=OFF" ;;
                 *) echo "ERROR: Unknown build type: $t" && exit 1 ;;
             esac
+            if [[ $b =~ 10.[34]-enterprise ]] ; then
+              cmake_options="$cmake_options -DPLUGIN_S3=STATIC"
+            fi
             rm -rf /dev/shm/tmp_build
             mkdir /dev/shm/tmp_build
             cd /dev/shm/tmp_build
