@@ -61,10 +61,11 @@ if [ -z "$build_types" ] ; then
     exit 1
 fi
 
+orig_remote_repo=$remote_repo
 for b in $branches ; do
     srcdir=$srchome/$b
-    if [[ "$remote_repo" =~ ^/ ]] ; then
-        remote_repo=$remote_repo/$b
+    if [[ "$orig_remote_repo" =~ ^/ ]] ; then
+        remote_repo=$orig_remote_repo/$b
     fi
     `dirname $0`/update_git_trees.sh $remote_repo $srchome $b
     cd $srcdir
