@@ -99,6 +99,7 @@ for v in $vardir ; do
     for c in $coredumps ; do
         echo "--- Stack from coredump $c"
         echo ""
+        file $c
         binary=`file $c | sed -e "s/.*execfn: '\(.*\)', platform.*/\\1/"`
         if ! gdb --batch --eval-command="thread apply all bt" $binary $c | perl -e '$result=1; while (<>) { if (/\<signal handler called\>/) { $result= 0; last } }; if ($result == 0) { print; while(<>) { last if /^\s*$/; print } }; exit $result' ; then
             echo "Failed to find the signal"
