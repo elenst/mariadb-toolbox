@@ -18,6 +18,7 @@ EOF
 
 vardir=''
 test_log=''
+script_location=`dirname $0`
 
 for arg in $* ; do
     case "$arg" in
@@ -55,6 +56,9 @@ for t in $test_log ; do
     grep -A 1 'Final command line' $t | sed -e 's/^.*\] perl /perl /'
     echo ""
     grep -E '^#.*\[ERROR\]|^#.*\[FATAL ERROR\]|DATABASE_CORRUPTION|runall.*exited with exit status|runall.*will exit with exit status' $t
+    echo ""
+    echo "Query result summary:"
+    perl $script_location/rqg_statuses_summary.pl $t
     echo "---------------------------------------------------------"
 done
 
@@ -91,6 +95,7 @@ for v in $vardir ; do
     done
 
     coredumps=`find $v \( -name core -o -name core.* \)`
+    set -x
     for c in $coredumps ; do
         echo "--- Stack from coredump $c"
         echo ""
