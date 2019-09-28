@@ -71,7 +71,7 @@ for v in $vardir ; do
     for l in $error_logs ; do
         echo "--- Error log $l"
         echo ""
-        grep -Ei '^Version: |assertion|signal |\[FATAL\]|ERROR|pure virtual method|overflow|overrun|0x|^Status: ' $l
+        grep -Ei '^Version: |assertion|signal |\[FATAL\]|ERROR|pure virtual method|safe_mutex:|overflow|overrun|0x|^Status: ' $l
         echo "---------------------------------------------------------"
         echo ""
     done
@@ -95,7 +95,6 @@ for v in $vardir ; do
     done
 
     coredumps=`find $v \( -name core -o -name core.* \)`
-    set -x
     for c in $coredumps ; do
         echo "--- Stack from coredump $c"
         echo ""
