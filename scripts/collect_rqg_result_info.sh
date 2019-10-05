@@ -89,7 +89,7 @@ for v in $vardir ; do
     for b in $backup_logs ; do
         echo "--- Backup log $b"
         echo ""
-        grep -Ei 'assertion|signal |\[FATAL\]|ERROR|pure virtual method|overflow|overrun|0x' $b
+        grep -Ei 'assertion|signal |\[FATAL\]|ERROR|pure virtual method|overflow|overrun|failed|0x' $b
         echo "---------------------------------------------------------"
         echo ""
     done
