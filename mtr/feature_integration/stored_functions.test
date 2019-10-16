@@ -1,0 +1,12 @@
+--delimiter $
+create function f(a int) returns int
+begin
+  declare b int default a;
+  return b;
+end $
+--delimiter ;
+
+select f(1);
+
+# Cleanup
+drop function f;
