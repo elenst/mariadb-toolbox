@@ -1,0 +1,24 @@
+CREATE TABLE marks(stud_id INT, grade_count INT);
+INSERT INTO marks VALUES (1,6), (2,4), (3,7), (4,5), (5,8);
+SELECT * FROM marks;
+
+--delimiter $
+CREATE AGGREGATE FUNCTION IF NOT EXISTS aggregate_count(x INT) RETURNS INT
+BEGIN
+ DECLARE count_students INT DEFAULT 0;
+ DECLARE CONTINUE HANDLER FOR NOT FOUND
+ RETURN count_students;
+      LOOP
+          FETCH GROUP NEXT ROW;
+          IF x  THEN
+            SET count_students = count_students+1;
+          END IF;
+      END LOOP;
+END $
+--delimiter ;
+
+SELECT aggregate_count(stud_id) FROM marks;
+
+# Cleanup
+DROP FUNCTION aggregate_count;
+DROP TABLE marks;
