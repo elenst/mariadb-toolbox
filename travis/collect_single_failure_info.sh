@@ -56,7 +56,8 @@ function load_failure
   date
   ls -l ${LOGDIR}/${ARCHDIR}*.tar.gz
 
-  for f in logs datadirs coredumps ; do
+#  for f in logs datadirs coredumps ; do
+  for f in logs ; do
 
     if [ -e ${LOGDIR}/${ARCHDIR}_${f}.tar.gz ] ; then
 
