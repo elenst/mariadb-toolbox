@@ -87,6 +87,7 @@ for b in $branches ; do
                     ;;
                 deb)  cmake_options="-DCMAKE_BUILD_TYPE=Debug" ;;
                 asan) cmake_options="-DCMAKE_BUILD_TYPE=Debug -DWITH_ASAN=YES -DMYSQL_MAINTAINER_MODE=OFF" ;;
+                valgrind) cmake_options="-DPLUGIN_TOKUDB=NO -DCMAKE_BUILD_TYPE=Debug -DWITH_VALGRIND=YES" ;;
                 *) echo "ERROR: Unknown build type: $t" && exit 1 ;;
             esac
             if [[ $b =~ 10.[34]-enterprise ]] ; then
