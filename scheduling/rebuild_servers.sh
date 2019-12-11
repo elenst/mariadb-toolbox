@@ -18,7 +18,7 @@ Usage:
        --srchome=<common location of per-branch sources>
        --remote-repo=<location of the repo to clone/pull from>
        --branches=<comma-separated list of branches to build>
-       --build-types=<comma-separated list of builds to build. Available variants: rel, deb, asan>
+       --build-types=<comma-separated list of builds to build. Available variants: rel, deb, asan, valgrind>
        --help (print this help and exit)
 EOF
 }
@@ -60,6 +60,8 @@ if [ -z "$build_types" ] ; then
     echo "ERROR: No build types defined"
     exit 1
 fi
+
+res=0
 
 orig_remote_repo=$remote_repo
 for b in $branches ; do
@@ -104,14 +106,19 @@ for b in $branches ; do
                         ln -s $bindir $symlink
                     else
                         echo "ERROR: install failed, see the output above"
+                        res=1
                     fi
                 else
                     echo "ERROR: Build failed, see the output above"
+                    res=1
                 fi
             else
                 echo "ERROR: Cmake failed, see the output above"
+                res=1
             fi
         fi
         echo
     done
 done
+
+exit $res
