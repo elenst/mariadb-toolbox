@@ -83,7 +83,7 @@ if [ -e $logdir/stdout_${branch}_${revno}_${test_type} ] ; then
   fi
 fi
 
-cd $bldhome/$branch-$test_type/mysql-test
+cd $bldhome/$branch-$build_type/mysql-test
 perl ./mysql-test-run.pl $mtr_options --force --max-test-fail=10 --verbose-restart --parallel=8 --vardir=$logdir/var_${branch}_${revno}_${test_type}
 res=$?
 
