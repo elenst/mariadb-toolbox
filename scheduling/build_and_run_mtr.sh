@@ -72,11 +72,12 @@ fi
 
 cd $srchome/$branch
 revno=`git log -1 --abbrev=8 --pretty="%h"`
+test_id=${branch}_${revno}_${test_type}
 
-if [ -e $logdir/stdout_${branch}_${revno}_${test_type} ] ; then
-  if grep 'Completed:' $logdir/stdout_${branch}_${revno}_${test_type} ; then
+if [ -e $logdir/stdout_${test_id} ] ; then
+  if grep 'Completed:' $logdir/stdout_${test_id} ; then
     echo "Tests on branch $branch revision $revno already ran"
-    if grep 'tests were successful' $logdir/stdout_${branch}_${revno}_${test_type} ; then
+    if grep 'tests were successful' $logdir/stdout_${test_id} ; then
         exit 0
     else
         exit 1
@@ -88,5 +89,15 @@ cd $bldhome/$branch-$build_type/mysql-test
 perl ./mysql-test-run.pl $mtr_options --force --max-test-fail=10 --verbose-restart --parallel=8 --vardir=$logdir/var_${branch}_${revno}_${test_type}
 res=$?
 
-cp $logdir/var_${branch}_${revno}_${test_type}/log/stdout.log $logdir/stdout_${branch}_${revno}_${test_type}
+cp $logdir/var_${test_id}/log/stdout.log $logdir/stdout_${test_id}
+
+ci=Local-`hostname`
+if [ $res -eq 0 ] ; then
+  test_result=OK
+else
+  test_result=FAIL
+fi
+
+$bldhome/$branch-$build_type/bin/mysql --host=$DB_HOST --port=$DB_PORT -u$DB_USER -p$DBP -e "INSERT INTO regression.result (ci, test_id, match_type, test_result, url, server_branch, test_info) VALUES ('$ci','$test_id', 'no_match', '$test_result', NULL, '$branch', 'mtr-$test_type')";
+
 exit $res
