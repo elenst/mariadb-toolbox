@@ -55,7 +55,8 @@ case $test_type in
     valgrind)
         build_type=valgrind
         # MDEV-11673 - valgrind errors on binlog_encryption tests
-        mtr_options="--valgrind --skip-test=binlog_encryption"
+        # MDEV-11686 - valgrind errors on encryption tests
+        mtr_options="--valgrind --skip-test='binlog_encryption|encryption'"
     ;;
     big)
         build_type=deb
