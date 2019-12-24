@@ -20,7 +20,7 @@ Usage:
        --srchome=<common location of per-branch sources>
        --remote-repo=<location of the repo to clone/pull from>
        --branch=<branch to build and run tests on>
-       --test-types=<Types of MTR test runs. Available variants: valgrind, big>
+       --test-types=<Types of MTR test runs. Available variants: valgrind, big, sp, view, cursor>
        --logdir=<common location for MTR logs>
        --help (print this help and exit)
 EOF
@@ -62,6 +62,10 @@ case $test_type in
         build_type=deb
         mtr_options="--big --big"
     ;;
+    sp|view|cursor)
+        build_type=deb
+        mtr_options="--${test_type}-protocol"
+    ;;
 esac
 
 `dirname $0`/rebuild_servers.sh --srchome=$srchome --bldhome=$bldhome --remote-repo=$remote_repo --branches=$branch --builds=$build_type
@@ -87,7 +91,7 @@ if [ -e $logdir/stdout_${test_id} ] ; then
 fi
 
 cd $bldhome/$branch-$build_type/mysql-test
-perl ./mysql-test-run.pl $mtr_options --force --max-test-fail=10 --verbose-restart --parallel=8 --vardir=$logdir/var_${branch}_${revno}_${test_type}
+perl ./mysql-test-run.pl $mtr_options --force --max-test-fail=10 --verbose-restart --parallel=48 --vardir=$logdir/var_${branch}_${revno}_${test_type}
 res=$?
 
 #cp $logdir/var_${test_id}/log/stdout.log $logdir/stdout_${test_id}
