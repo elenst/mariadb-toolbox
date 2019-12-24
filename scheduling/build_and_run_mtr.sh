@@ -105,13 +105,15 @@ if [ $test_result == "FAIL" ] ; then
     # or
     # "test_name" "" "no_match" for unrecognized failures
     perl `dirname $0`/../scripts/extract_failures_from_mtr_stdout.pl $logdir/var_${test_id}/log/stdout.log > $logdir/failures_${test_id}
-    if [ -s failures_${test_id} ] ; then
+    if [ -s $logdir/failures_${test_id} ] ; then
         sed -i -e "s/^/\"$ci\" \"$test_result\" \"$branch\" \"$revno\" \"mtr-$test_type\" /" $logdir/failures_${test_id}
+        echo "Loading failures in the database"
+        cat $logdir/failures_${test_id}
+        $bldhome/$branch-$build_type/bin/mysql --host=$DB_HOST --port=$DB_PORT -u$DB_USER -p$DBP -e "LOAD DATA LOCAL INFILE '$logdir/failures_${test_id}' INTO TABLE regression.result FIELDS TERMINATED BY ' ' ENCLOSED BY '\"' (ci, test_result, server_branch, server_rev, test_info, test_id, jira, notes, match_type)"
+
     fi
 fi
 
 #$bldhome/$branch-$build_type/bin/mysql --host=$DB_HOST --port=$DB_PORT -u$DB_USER -p$DBP -e "INSERT INTO regression.result (ci, test_id, match_type, test_result, url, server_branch, test_info) VALUES ('$ci','$test_id', 'no_match', '$test_result', NULL, '$branch', 'mtr-$test_type')"
-
-$bldhome/$branch-$build_type/bin/mysql --host=$DB_HOST --port=$DB_PORT -u$DB_USER -p$DBP -e "LOAD DATA LOCAL INFILE '$logdir/failures_${test_id}' INTO TABLE regression.result FIELDS TERMINATED BY ' ' ENCLOSED BY '\"' (ci, test_result, server_branch, server_rev, test_info, test_id, jira, notes, match_type)"
 
 exit $res
