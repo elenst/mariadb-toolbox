@@ -3,6 +3,8 @@ target=$2
 shift
 shift
 
+curdir=`pwd`
+
 case "$target" in
 *mysql-5\.[789]*|mysql-8\.0*)
   mysql_boost="-DDOWNLOAD_BOOST=1 -DWITH_BOOST=/data/releases/boost"
@@ -16,21 +18,20 @@ esac
 mkdir -p /data/bld/$target
 rm -rf /dev/shm/tmp_build
 mkdir /dev/shm/tmp_build
-cd /dev/shm/tmp_build
 
 cmd="cmake /data/src/$source -DCMAKE_INSTALL_PREFIX=/data/bld/$target -DPLUGIN_TOKUDB=NO $* $mysql_boost && make -j12 && make install"
-cd /data/src/$source
-git log -1 --abbrev=8 --pretty="%h%n%n%an%n%cd (%ad)%n%s" | sed -e "s/^/# /" > /data/bld/$target/last_build
-echo "# " >> /data/bld/$target/last_build
-cd -
-echo $cmd >> /data/bld/$target/last_build
+
+cd /dev/shm/tmp_build
 echo "Building /data/src/$source and installing into /data/bld/$target"
 echo "Running: $cmd"
 sh -c "$cmd 2>&1 | tee /dev/shm/tmp_build/build.log"
 
 if [ "$?" == "0" ] ; then
     rm -rf /dev/shm/tmp_build
+    cd /data/src/$source
+    git log -1 --abbrev=8 --pretty="%h%n%n%an%n%cd (%ad)%n%s" | sed -e "s/^/# /" > /data/bld/$target/last_build
+    echo "# " >> /data/bld/$target/last_build
+    echo $cmd >> /data/bld/$target/last_build
 fi
 
-cd -
-
+cd $curdir
