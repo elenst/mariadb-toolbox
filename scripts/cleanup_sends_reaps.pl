@@ -136,8 +136,16 @@ do
 
     elsif ( $ln =~ /^\s*\-\-disconnect\s*(\w+)/ )
     {
+        if ( $pending_query )
+        {
+            print "$pending_query";
+            $pending_query = '';
+        }
         # if there was a --send for this connection, say --reap before disconnecting
-        if ( $con_sends{$1} and $cur_con ) {
+        if ( $con_sends{$1} ) {
+            unless ($cur_con and $cur_con eq $1) {
+                print "--connection $1\n";
+            }
             print "--reap\n";
         }
         # Now print --disconnect and forget the connection
