@@ -236,6 +236,11 @@ sub rqg_trials {
     system("cd $rqg_home; perl $rqg_home/runall-trials.pl --mtr-build-thread=$mtr_thread --vardir=$vardir --output=\"$output\" @options --threads=$rqg_threads > ${vardir}.out 2>&1");
     my $res= $?>>8;
     system("grep -E 'will exit with exit status|exited with exit status' ${vardir}.out");
+
+    # Counter-intuitively, 0 is returned when trials did NOT reproduce the issue,
+    # and 1 is returned when the issue was reproduced.
+    # It will be changed some time in future
+
     print "RQG trials return result: $res\n";
     return $res;
 }
@@ -312,7 +317,7 @@ sub run_rqg_cmd_simplification {
         print "Transformation validators to be taken into account: @transformation_validators\n";
         for (my $i=0; $i<=$#transformers; $i++) {
             print "Trying to remove transformer $transformers[$i]\n";
-            my @new_transformers= (@kept_transformers, @transformers[$i+1,$#transformers]);
+            my @new_transformers= ($i < $#transformers ? (@kept_transformers, @transformers[$i+1..$#transformers]) : (@kept_transformers));
             my @transformation_options= ();
             if (scalar @new_transformers) {
                 push @transformation_options, '--transformers='.(join ',', @new_transformers);
@@ -347,11 +352,11 @@ sub run_rqg_cmd_simplification {
         my @new_options= (@preserved_options, @options[$i+1,$#options]);
         $run_cnt++;
         if (rqg_trials("$workdir/rqg_cmd_simplification_${run_cnt}", @new_options)) {
-            print "ERROR: Run for RQG command line simplification failed, option $options[$i] will be preserved\n";
-            push @preserved_options, $options[$i];
-        } else {
             print "Option $options[$i] can be removed\n";
             register_repro_stage("RQG cmd success: $run_cnt");
+        } else {
+            print "ERROR: Run for RQG command line simplification failed, option $options[$i] will be preserved\n";
+            push @preserved_options, $options[$i];
         }
     }
 
