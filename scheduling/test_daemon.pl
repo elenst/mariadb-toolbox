@@ -43,7 +43,7 @@ say("Last executed line: $lastline");
 ### SERVER_BRANCH=<branch under test>
 # If set, they'll be used for writing to the database
 
-my ($test_alias, $server_branch);
+my ($test_alias, $server_branch, $server_revno);
 my ($backlog_test_alias, $backlog_server_branch);
 
 my $backlog_test_count= 0;
@@ -208,6 +208,11 @@ sub run_test {
     $cmd =~ s/--vardir([\S]*)=[\S]+/--vardir${1}=$logdir\/${prefix}_vardir${1}/g;
     $cmd =~ s/--mtr-build-thread=\S+//g;
     $cmd =~ s/(--basedir\d*)=([\/\S]+)/$1=`realpath $2`/g;
+    if (`realpath $2` =~ /-([0-9a-f]{8})/) {
+        $server_revno= $1;
+    } else {
+        $server_revno= 'N/A';
+    }
 
     my %used_mtr_build_threads= reverse %worker_build_threads;
     my $mtr_build_thread= $base_mtr_build_thread;
@@ -231,7 +236,7 @@ sub run_test {
         my $exitcode= $?>>8;
 
         git_pull($ENV{RQG_HOME});
-        system("SERVER_BRANCH=$server_branch TEST_ALIAS=$test_alias TEST_ID=$prefix LOGDIR=$logdir PREFIX=$prefix $path/postmortem.sh > $logdir/${prefix}_postmortem 2>&1");
+        system("SERVER_BRANCH=$server_branch SERVER_REVNO=$server_revno TEST_ALIAS=$test_alias TEST_ID=$prefix LOGDIR=$logdir PREFIX=$prefix $path/postmortem.sh > $logdir/${prefix}_postmortem 2>&1");
         exit $exitcode;
     } else {
         say("ERROR: Could not fork for the test job!");
