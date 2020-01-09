@@ -301,8 +301,8 @@ sub run_rqg_cmd_simplification {
             my @vals= split /,/, $1;
             foreach my $v (@vals) {
                 if ($v eq 'Deadlock') {
-                    push @preserved_ptions, "--reporters=$v";
-                else {
+                    push @preserved_options, "--reporters=$v";
+                } else {
                     push @options, "--reporters=$v";
                 }
             }
