@@ -176,7 +176,8 @@ if ($skip_mtr) {
 } else {
     print "General log not provided, running RQG trials first\n";
     register_repro_stage('RQG: trials');
-    unless (rqg_trials($workdir.'/rqg_trials', @rqg_options)) {
+    my $res= rqg_trials($workdir.'/rqg_trials');
+    if ($res != 0) {
         print "RQG trials failed to reproduce, giving up\n";
         register_repro_stage("FAILED (RQG trials)");
         exit 1;
@@ -225,23 +226,15 @@ exit 0;
 
 sub rqg_trials {
     my $vardir= shift;
-    my @options= @_;
-
     unless (defined $rqg_home) {
         print "ERROR: RQG home is not defined, cannot run the test\n";
         register_repro_stage("Failed: RQG_HOME not defined");
         exit 1;
     }
-    print "\nRunning RQG test: perl $rqg_home/runall-trials.pl --mtr-build-thread=$mtr_thread --vardir=$vardir --output=\"$output\" @options --threads=$rqg_threads > ${vardir}.out\n";
-    system("cd $rqg_home; perl $rqg_home/runall-trials.pl --mtr-build-thread=$mtr_thread --vardir=$vardir --output=\"$output\" @options --threads=$rqg_threads > ${vardir}.out 2>&1");
+    print "\nRunning RQG test: perl $rqg_home/runall-trials.pl --mtr-build-thread=$mtr_thread --vardir=$vardir --output=\"$output\" @rqg_options --threads=$rqg_threads > $workdir/rqg_trials.out\n";
+    system("cd $rqg_home; perl $rqg_home/runall-trials.pl --mtr-build-thread=$mtr_thread --vardir=$vardir --output=\"$output\" @rqg_options --threads=$rqg_threads > $workdir/rqg_trials.out 2>&1");
     my $res= $?>>8;
-    system("grep -E 'will exit with exit status|exited with exit status' ${vardir}.out");
-
-    # Counter-intuitively, 0 is returned when trials did NOT reproduce the issue,
-    # and 1 is returned when the issue was reproduced.
-    # It will be changed some time in future
-
-    print "RQG trials return result: $res\n";
+    system("grep -E 'will exit with exit status|exited with exit status' $workdir/rqg_trials.out");
     return $res;
 }
 
@@ -252,134 +245,18 @@ sub rqg_simplification {
         register_repro_stage("Failed: RQG_HOME not defined");
         exit 1;
     }
-
-    my $options= run_rqg_cmd_simplification($wdir);
-
-    run_rqg_grammar_simplification("$wdir/grammar", @$options);
-}
-
-sub run_rqg_cmd_simplification {
-    my $wdir= shift;
-
-    my $run_cnt= 0;
-
-    print "\nRunning RQG command line simplification, initial run: @rqg_options \n";
-    register_repro_stage('RQG cmd simplification');
-    unless (rqg_trials("$workdir/rqg_cmd_simplification_0", @rqg_options)) {
-        print "\nERROR: Initial run for RQG command line simplification failed to reproduce the problem\n";
-        register_repro_stage("FAILED (RQG initial cmd simplification)");
-        return undef;
-    }
-
-    # First extract and collect separately some options which we might need to handle separately
-    my @preserved_options= ();
-    my @transformation_validators= ();
-    my @transformers= ();
-    my @options= ();
-
-    for (my $i=0; $i<=$#rqg_options; $i++)
-    {
-        my $opt= $rqg_options[$i];
-        # Some options will be kept as is
-        if ($opt =~ /^--workdir=/) {
-            next;
-        } elsif ($opt =~ /^--(basedir\d+|vardir\d+|duration|queries|exit[-_]status|trials|grammar1?)=/) {
-            push @preserved_options, $opt;
-        } elsif ($opt =~ /--transformers=(.*)/) {
-            my @vals= split /,/, $1;
-            @transformers= (@transformers, @vals);
-        } elsif ($opt =~ /--validators=(.*)/) {
-            my @vals= split /,/, $1;
-            foreach my $v (@vals) {
-                if ($v =~ /Transformer/) {
-                    push @transformation_validators, $v;
-                } else {
-                    push @options, "--validators=$v";
-                }
-            }
-        } elsif ($opt =~ /--reporters=(.*)/) {
-            my @vals= split /,/, $1;
-            foreach my $v (@vals) {
-                if ($v eq 'Deadlock') {
-                    push @preserved_options, "--reporters=$v";
-                } else {
-                    push @options, "--reporters=$v";
-                }
-            }
-        } else {
-            push @options, $opt;
-        }
-    }
-
-    my @kept_transformers= ();
-    if (scalar @transformers) {
-        print "Transformers to be simplified: @transformers\n";
-        print "Transformation validators to be taken into account: @transformation_validators\n";
-        for (my $i=0; $i<=$#transformers; $i++) {
-            print "Trying to remove transformer $transformers[$i]\n";
-            my @new_transformers= ($i < $#transformers ? (@kept_transformers, @transformers[$i+1..$#transformers]) : (@kept_transformers));
-            my @transformation_options= ();
-            if (scalar @new_transformers) {
-                push @transformation_options, '--transformers='.(join ',', @new_transformers);
-                push @transformation_options, '--validators='.(join ',', @transformation_validators);
-            }
-            $run_cnt++;
-            if (rqg_trials("$workdir/rqg_cmd_simplification_${run_cnt}", @preserved_options, @options, @transformation_options)) {
-                print "Transformer $transformers[$i] can be removed\n";
-                register_repro_stage("RQG cmd success: $run_cnt");
-            } else {
-                print "ERROR: Run for RQG command line simplification failed, transformer $transformers[$i] will be preserved\n";
-                push @kept_transformers, $transformers[$i];
-            }
-        }
-    }
-
-    if (scalar @kept_transformers) {
-        foreach my $v (@transformation_validators) {
-            push @preserved_options, '--validators='.$v;
-        }
-        foreach my $t (@kept_transformers) {
-            push @preserved_options, '--transformers='.$t;
-        }
-    }
-
-    print "Options to be preserved unconditionally: \@preserved_options\n";
-    print "Options to be simplified: \@options\n";
-
-    for (my $i=0; $i<=$#options; $i++)
-    {
-        print "Trying to remove option $options[$i]\n";
-        my @new_options= (@preserved_options, @options[$i+1,$#options]);
-        $run_cnt++;
-        if (rqg_trials("$workdir/rqg_cmd_simplification_${run_cnt}", @new_options)) {
-            print "Option $options[$i] can be removed\n";
-            register_repro_stage("RQG cmd success: $run_cnt");
-        } else {
-            print "ERROR: Run for RQG command line simplification failed, option $options[$i] will be preserved\n";
-            push @preserved_options, $options[$i];
-        }
-    }
-
-    return \@preserved_options;
-}
-
-sub run_rqg_grammar_simplification {
-    my $wdir= shift;
-    my @options= @_;
-
     my $pid= fork();
-    my $outfile=  'rqg_grammar_simplification.out';
 
     if ($pid) {
-        print "\nRunning RQG grammar simplification: perl $rqg_home/util/simplify-rqg-test.pl --mtr-thread=$mtr_thread --workdir=$wdir --output=\"$output\" @options --threads=$rqg_threads > $workdir/$outfile\n";
-        my $stage= 'RQG grammar simplification';
+        print "\nRunning RQG simplification: perl $rqg_home/util/simplify-rqg-test.pl --mtr-thread=$mtr_thread --workdir=$wdir --output=\"$output\" @rqg_options --threads=$rqg_threads > $workdir/rqg_simplification.out\n";
+        my $stage= 'RQG simplification';
         register_repro_stage($stage);
         my $prev_stage= $stage;
         do {
             sleep 60;
-            my $last_success=`grep SUCCESS $workdir/$outfile | tail -n 1`;
+            my $last_success=`grep SUCCESS $workdir/rqg_simplification.out | tail -n 1`;
             if ($last_success =~ /\/(\d+)\.yy\s+\#/) {
-                $stage= "RQG grammar success: $1";
+                $stage= "RQG success: $1";
                 if ($stage ne $prev_stage) {
                     register_repro_stage($stage);
                     $prev_stage= $stage;
@@ -389,7 +266,7 @@ sub run_rqg_grammar_simplification {
         } until ($? > -1);
         return $?;
     } elsif (defined $pid) {
-        system("cd $rqg_home; perl $rqg_home/util/simplify-rqg-test.pl --mtr-thread=$mtr_thread --workdir=$wdir --output=\"$output\" @rqg_options --threads=$rqg_threads > $workdir/$outfile 2>&1");
+        system("cd $rqg_home; perl $rqg_home/util/simplify-rqg-test.pl --mtr-thread=$mtr_thread --workdir=$wdir --output=\"$output\" @rqg_options --threads=$rqg_threads > $workdir/rqg_simplification.out 2>&1");
         exit $?>>8;
     } else {
       print "ERROR: Could not fork for running the test\n";
