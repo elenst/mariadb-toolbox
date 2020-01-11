@@ -256,11 +256,13 @@ sub rqg_simplification {
             sleep 60;
             my $last_success=`grep SUCCESS $workdir/rqg_simplification.out | tail -n 1`;
             if ($last_success =~ /\/(\d+)\.yy\s+\#/) {
-                $stage= "RQG success: $1";
-                if ($stage ne $prev_stage) {
-                    register_repro_stage($stage);
-                    $prev_stage= $stage;
-                }
+                $stage= "RQG grammar success: $1";
+            } elsif ($last_success =~ /with cmd (\d+)/) {
+                $stage= "RQG cmd success: $1";
+            }
+            if ($stage ne $prev_stage) {
+                register_repro_stage($stage);
+                $prev_stage= $stage;
             }
             waitpid($pid, WNOHANG);
         } until ($? > -1);
