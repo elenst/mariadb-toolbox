@@ -42,6 +42,11 @@ my %signatures= (
         '-TIME',
         '+TIME',
     ],
+    'MDEV-21490' => [
+        'binlog.binlog_invalid_read_in_rotate',
+        'Conditional jump or move depends on uninitialised value',
+        'sql_ex_info::init'
+    ],
 );
 
 unless ($ARGV[0]) {
