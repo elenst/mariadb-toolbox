@@ -43,9 +43,19 @@ my %signatures= (
         '+TIME',
     ],
     'MDEV-21490' => [
-        'binlog.binlog_invalid_read_in_rotate',
+        'binlog.*',
         'Conditional jump or move depends on uninitialised value',
-        'sql_ex_info::init'
+        'sql_ex_info::init',
+    ],
+    'MDEV-15284' => [
+        'innodb_gis.rtree_concurrent_srch ',
+        'select count',
+        'mysqltest: Result content mismatch',
+    ],
+    'MDEV-21495' => [
+        '.*',
+        'Conditional jump or move depends on uninitialised value',
+        'sel_arg_range_seq_next',
     ],
 );
 
