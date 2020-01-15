@@ -79,7 +79,7 @@ cd $srchome/$branch
 revno=`git log -1 --abbrev=8 --pretty="%h"`
 test_id=${branch}_${revno}_${test_type}
 
-if [ -e $logdir/stdout_${test_id} ] ; then
+if [ -e $logdir/failures_${test_id} ] ; then
   if grep 'Completed:' $logdir/stdout_${test_id} ; then
     echo "Tests on branch $branch revision $revno already ran"
     if grep 'tests were successful' $logdir/stdout_${test_id} ; then
