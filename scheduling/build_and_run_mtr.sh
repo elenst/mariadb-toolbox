@@ -80,6 +80,7 @@ revno=`git log -1 --abbrev=8 --pretty="%h"`
 test_id=${branch}_${revno}_${test_type}
 
 if [ -e $logdir/var_${test_id}/log/stdout.log ] ; then
+  echo "File $logdir/var_${test_id}/log/stdout.log already exists"
   if grep 'Completed:' $logdir/var_${test_id}/log/stdout.log ; then
     echo "Tests on branch $branch revision $revno already ran"
     if grep 'tests were successful' $logdir/var_${test_id}/log/stdout.log ; then
