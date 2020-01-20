@@ -48,7 +48,7 @@ my %signatures= (
         'sql_ex_info::init',
     ],
     'MDEV-15284' => [
-        'innodb_gis.rtree_concurrent_srch ',
+        'innodb_gis.rtree_concurrent_srch',
         'select count',
         'mysqltest: Result content mismatch',
     ],
