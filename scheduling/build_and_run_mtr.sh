@@ -81,13 +81,15 @@ test_id=${branch}_${revno}_${test_type}
 
 if [ -e $logdir/var_${test_id}/log/stdout.log ] ; then
   echo "File $logdir/var_${test_id}/log/stdout.log already exists"
-  if grep 'Completed:' $logdir/var_${test_id}/log/stdout.log ; then
+  if grep -E 'Completed:|Too many failed:' $logdir/var_${test_id}/log/stdout.log ; then
     echo "Tests on branch $branch revision $revno already ran"
     if grep 'tests were successful' $logdir/var_${test_id}/log/stdout.log ; then
         echo "The previous run succeeded, it won't hurt to try again"
     else
         exit 1
     fi
+  else
+    echo "stdout file seems to be incomplete, re-running the tests"
   fi
 fi
 
