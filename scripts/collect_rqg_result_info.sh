@@ -57,6 +57,8 @@ for t in $test_log ; do
     echo ""
     grep -E '^#.*\[ERROR\]|^#.*\[FATAL ERROR\]|DATABASE_CORRUPTION|runall.*exited with exit status|runall.*will exit with exit status' $t
     echo ""
+    grep -A 2 "TRANSFORM ISSUE" $t
+    echo ""
     echo "Query result summary:"
     perl $script_location/rqg_statuses_summary.pl $t
     echo "---------------------------------------------------------"
