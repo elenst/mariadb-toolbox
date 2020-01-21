@@ -57,6 +57,15 @@ my %signatures= (
         'Conditional jump or move depends on uninitialised value',
         'sel_arg_range_seq_next',
     ],
+    'MDEV-21541' => [
+        'main.sum_distinct-big',
+        'm_buffer_end == __null',
+        'Merge_chunk::set_buffer_end',
+    ],
+    'MDEV-21542' => [
+        'main.order_by_pack_big',
+        'Result content mismatch',
+    ],
 );
 
 unless ($ARGV[0]) {
