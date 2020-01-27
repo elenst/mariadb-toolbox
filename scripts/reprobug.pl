@@ -207,6 +207,7 @@ if ($skip_rqg) {
 
 if ($skip_mtr) {
     print "MTR simplification is skipped by configuration\n";
+    register_repro_stage("SUCCEEDED (on RQG)");
 } elsif (-e "$workdir/rqg_simplification/vardir/mysql.log") {
     $result= mtr_simplification($workdir.'/rqg_simplification/vardir/mysql.log', 'from simplified RQG');
     if ($result == 0) {
