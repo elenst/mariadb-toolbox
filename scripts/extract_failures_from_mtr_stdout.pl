@@ -66,6 +66,10 @@ my %signatures= (
         'main.order_by_pack_big',
         'Result content mismatch',
     ],
+    'MDEV-21403' => [
+        'mariabackup.mdev-14447',
+        'recv_sys.mlog_checkpoint_lsn <= recv_sys.recovered_lsn',
+    ],
 );
 
 unless ($ARGV[0]) {
