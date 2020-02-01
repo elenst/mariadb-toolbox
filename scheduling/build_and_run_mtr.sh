@@ -60,7 +60,7 @@ case $test_type in
     ;;
     big)
         build_type=deb
-        mtr_options="--big --big"
+        mtr_options="--big --big --testcase-timeout=2700"
     ;;
     sp|view|cursor)
         build_type=deb
