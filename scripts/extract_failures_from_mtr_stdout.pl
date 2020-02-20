@@ -70,6 +70,11 @@ my %signatures= (
         'mariabackup.mdev-14447',
         'recv_sys.mlog_checkpoint_lsn <= recv_sys.recovered_lsn',
     ],
+    'MDEV-21788' => [
+        'mariabackup.xb_rocksdb_datadir.*',
+        'blocks are definitely lost in loss record',
+        'TLS wrapper function for rocksdb::perf_context',
+    ],
 );
 
 unless ($ARGV[0]) {
