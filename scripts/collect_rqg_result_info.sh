@@ -73,7 +73,7 @@ for v in $vardir ; do
     for l in $error_logs ; do
         echo "--- Error log $l"
         echo ""
-        grep -Ei '^Version: |assertion|signal |\[FATAL\]|ERROR|pure virtual method|safe_mutex:|overflow|overrun|0x|^Status: |Forcing close of thread' $l
+        grep -Ei '^Version: |assertion|signal |\[FATAL\]|ERROR|pure virtual method|safe_mutex:|overflow|overrun|0x|^Status: |Forcing close of thread|InnoDB: A long semaphore wait' $l
         echo "---------------------------------------------------------"
         echo ""
     done
