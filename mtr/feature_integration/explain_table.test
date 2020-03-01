@@ -1,0 +1,10 @@
+# As of 2020-02-21
+#
+# https://mariadb.com/kb/en/explain/
+#
+# EXPLAIN tbl_name
+#
+
+--source tables.inc
+
+EXPLAIN t1;

@@ -1,0 +1,47 @@
+# As of 2020-02-21
+#
+# https://mariadb.com/kb/en/show-explain/
+#
+# SHOW EXPLAIN FOR <thread_id>;
+
+--source tables.inc
+
+--connnect(con1,localhost,root,,)
+--let $conid= `SELECT CONNECTION_ID()`
+
+--send SELECT SLEEP(1) FROM t1;
+
+--connection default
+--eval SHOW EXPLAIN FOR $conid
+
+--connection con1
+--reap
+--send UPDATE t1 SET a = SLEEP(1)
+
+--connection default
+--eval SHOW EXPLAIN FOR $conid
+
+--connection con1
+--reap
+--send DELETE FROM t1 WHERE a = SLEEP(1)
+
+--connection default
+--eval SHOW EXPLAIN FOR $conid
+
+--connection con1
+--reap
+--send INSERT INTO t1 SET a = SLEEP(1)
+
+--connection default
+--eval SHOW EXPLAIN FOR $conid
+
+--connection con1
+--reap
+--send REPLACE INTO t1 SET a = SLEEP(1)
+
+--connection default
+--eval SHOW EXPLAIN FOR $conid
+
+--connection con1
+--reap
+--disconnect con1

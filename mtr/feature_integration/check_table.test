@@ -1,0 +1,19 @@
+# As of 2020-02-21
+#
+# https://mariadb.com/kb/en/check-table/
+# 
+# CHECK TABLE tbl_name [, tbl_name] ... [option] ...
+#
+# option = {FOR UPGRADE | QUICK | FAST | MEDIUM | EXTENDED | CHANGED}
+
+--source tables.inc
+
+CHECK TABLE t1;
+CHECK TABLE t1, t2;
+CHECK TABLE t1 FOR UPGRADE;
+CHECK TABLE t1 QUICK;
+CHECK TABLE t1 FAST;
+CHECK TABLE t1 MEDIUM;
+CHECK TABLE t1 EXTENDED;
+CHECK TABLE t1 CHANGED;
+

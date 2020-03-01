@@ -1,0 +1,12 @@
+# As of 2020-02-21
+#
+# https://mariadb.com/kb/en/checksum-table/
+# 
+# CHECKSUM TABLE tbl_name [, tbl_name] ... [ QUICK | EXTENDED ]
+
+--source tables.inc
+
+CHECKSUM TABLE t1;
+CHECKSUM TABLE t1, t2;
+CHECKSUM TABLE t1 QUICK;
+CHECK TABLE t1 EXTENDED;

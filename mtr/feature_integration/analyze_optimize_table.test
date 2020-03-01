@@ -1,0 +1,31 @@
+# As of 2020-02-21
+#
+# https://mariadb.com/kb/en/analyze-table/
+# 
+# ANALYZE [NO_WRITE_TO_BINLOG | LOCAL] TABLE tbl_name [,tbl_name ...] 
+#  [PERSISTENT FOR [ALL|COLUMNS ([col_name [,col_name ...]])] 
+#    [INDEXES ([index_name [,index_name ...]])]]
+#
+# https://mariadb.com/kb/en/optimize-table/
+#
+# OPTIMIZE [NO_WRITE_TO_BINLOG | LOCAL] TABLE
+#    #tbl_name [, tbl_name] ...
+#    [WAIT n | NOWAIT]
+
+--source tables.inc
+
+ANALYZE TABLE t1;
+ANALYZE TABLE t1, t2;
+ANALYZE LOCAL TABLE t1;
+ANALYZE NO_WRITE_TO_BINLOG TABLE t1;
+ANALYZE TABLE t1 PERSISTENT FOR ALL;
+ANALYZE TABLE t1 PERSISTENT FOR COLUMNS ();
+ANALYZE TABLE t1 PERSISTENT FOR COLUMNS () INDEXES ();
+ANALYZE TABLE t1 PERSISTENT FOR COLUMNS (a) INDEXES (b);
+
+OPTIMIZE TABLE t1;
+OPTIMIZE TABLE t1, t2;
+OPTIMIZE LOCAL TABLE t1;
+OPTIMIZE NO_WRITE_TO_BINLOG t1;
+OPTIMIZE TABLE t1 WAIT 3;
+OPTIMIZE TABLE t1 NOWAIT;

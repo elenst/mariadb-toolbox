@@ -1,0 +1,85 @@
+# As of 2020-03-01
+#
+# https://mariadb.com/kb/en/get-diagnostics/
+# 
+#
+# GET [CURRENT] DIAGNOSTICS
+# {
+#     statement_property
+#     [, statement_property] ... 
+#   | CONDITION condition_number
+#     condition_property
+#     [, condition_property] ...
+# }
+#
+# statement_property:
+#     variable = statement_property_name
+# 
+# condition_property:
+#     variable  = condition_property_name
+#
+# statement_property_name:
+#     NUMBER
+#   | ROW_COUNT
+#
+# condition_property_name:
+#     CLASS_ORIGIN
+#   | SUBCLASS_ORIGIN
+#   | RETURNED_SQLSTATE
+#   | MESSAGE_TEXT
+#   | MYSQL_ERRNO
+#   | CONSTRAINT_CATALOG
+#   | CONSTRAINT_SCHEMA
+#   | CONSTRAINT_NAME
+#   | CATALOG_NAME
+#   | SCHEMA_NAME
+#   | TABLE_NAME
+#   | COLUMN_NAME
+#   | CURSOR_NAME
+
+--source tables.inc
+
+SET @a= NULL, @b= NULL;
+
+GET DIAGNOSTICS @a= NUMBER, @b= ROW_COUNT;
+SELECT @a, @b;
+GET CURRENT DIAGNOSTICS @a= NUMBER, @b= ROW_COUNT;
+SELECT @a, @b;
+
+SET @a= NULL, @b= NULL, @c= NULL, @d= NULL, @e= NULL, @f= NULL, @g= NULL, @h= NULL, @i= NULL, @j= NULL, @k= NULL, @l= NULL, @m= NULL;
+
+GET DIAGNOSTICS CONDITION 1
+  @a= CLASS_ORIGIN,
+  @b= SUBCLASS_ORIGIN,
+  @c= RETURNED_SQLSTATE,
+  @d= MESSAGE_TEXT,
+  @e= MYSQL_ERRNO,
+  @f= CONSTRAINT_CATALOG,
+  @g= CONSTRAINT_SCHEMA,
+  @h= CONSTRAINT_NAME,
+  @i= CATALOG_NAME,
+  @j= SCHEMA_NAME,
+  @k= TABLE_NAME,
+  @l= COLUMN_NAME,
+  @m= CURSOR_NAME
+;
+SELECT @a, @b, @c, @d, @e, @f, @g, @h, @i, @j, @k, @l, @m;
+
+SET @a= NULL, @b= NULL, @c= NULL, @d= NULL, @e= NULL, @f= NULL, @g= NULL, @h= NULL, @i= NULL, @j= NULL, @k= NULL, @l= NULL, @m= NULL;
+
+GET LOCAL DIAGNOSTICS CONDITION 1
+  @a= CLASS_ORIGIN,
+  @b= SUBCLASS_ORIGIN,
+  @c= RETURNED_SQLSTATE,
+  @d= MESSAGE_TEXT,
+  @e= MYSQL_ERRNO,
+  @f= CONSTRAINT_CATALOG,
+  @g= CONSTRAINT_SCHEMA,
+  @h= CONSTRAINT_NAME,
+  @i= CATALOG_NAME,
+  @j= SCHEMA_NAME,
+  @k= TABLE_NAME,
+  @l= COLUMN_NAME,
+  @m= CURSOR_NAME
+;
+SELECT @a, @b, @c, @d, @e, @f, @g, @h, @i, @j, @k, @l, @m;
