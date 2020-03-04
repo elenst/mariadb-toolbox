@@ -26,6 +26,16 @@ OLD=$1
 cd $HOME/server
 if [ -n "$OLD" ] ; then
   case $OLD in
+    mysql-5.5)
+      ver=5.5.62
+      echo "MySQL version $ver (last MySQL 5.5)"
+      fname=mysql-5.5.62-linux-glibc2.12-x86_64
+      if [ ! -e ${fname}.tar.gz ] ; then
+        if ! wget -nv https://downloads.mysql.com/archives/get/p/23/file/${fname}.tar.gz ; then
+          soft_exit 1
+        fi
+      fi
+    ;;
     mysql-*)
       ver=`echo $OLD | sed -e 's/mysql-//'`
       if [[ $ver =~ ^[0-9]\.[0-9]\.[0-9] ]] ; then
