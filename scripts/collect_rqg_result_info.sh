@@ -73,7 +73,10 @@ for v in $vardir ; do
     for l in $error_logs ; do
         echo "--- Error log $l"
         echo ""
-        grep -Ei '^Version: |assertion|signal |\[FATAL\]|ERROR|pure virtual method|safe_mutex:|overflow|overrun|0x|^Status: |Forcing close of thread|InnoDB: A long semaphore wait' $l
+        echo "Throttled errors:"
+        echo "Invalid roles_mapping table entry user: " `grep -c "Invalid roles_mapping table entry user"` $l
+        echo ""
+        grep -Ei '^Version: |assertion|signal |\[FATAL\]|ERROR|pure virtual method|safe_mutex:|overflow|overrun|0x|^Status: |Forcing close of thread|InnoDB: A long semaphore wait' $l | grep -v "Invalid roles_mapping table entry user: "
         echo "---------------------------------------------------------"
         echo ""
     done
