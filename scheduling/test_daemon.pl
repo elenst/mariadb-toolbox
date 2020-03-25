@@ -221,6 +221,10 @@ sub run_test {
     };
 
     $cmd .= " --mtr-build-thread=$mtr_build_thread";
+    # If wsrep is enabled (or assumed), use a unique port in wsrep_node_address
+    if ($cmd =~ /wsrep[-_]cluster[-_]address/) {
+        $cmd .= ' --wsrep-node-address=127.0.0.1:'.(4567+$mtr_build_thread);
+    }
     $cmd .= " > $logdir/${prefix}_trial.log 2>&1";
 
     my $worker_pid= fork();
