@@ -356,7 +356,7 @@ sub test_hacks
   if ( $$log_record_ref =~ s/^\s*(kill(?:\s+query)?)\s+(\d+)/eval $1 \$con${2}_id/is ) {
     return 0;
   }
-  if ( $$log_record_ref =~ s/^\s*(show\s+explain\s+for)\s+(\d+)/eval $1 \$con${2}_id/is ) {
+  if ( $$log_record_ref =~ s/^\s*(show.+explain\s+for)\s+(\d+)/eval $1 \$con${2}_id/is ) {
     return 0;
   }
 }
