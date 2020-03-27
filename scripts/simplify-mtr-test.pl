@@ -1,3 +1,18 @@
+# Copyright (c) 2014, 2020, Elena Stepanova and MariaDB
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 2 of the License.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1335  USA
+
 use POSIX ":sys_wait_h";
 use Getopt::Long;
 use Cwd 'abs_path';
@@ -410,7 +425,7 @@ sub run_test
       # Leave 15 seconds for killing
       print "Trial timeout: $timeout sec, testcase timeout: $testcase_timeout min\n";
 
-      system( "perl mysql-test-run.pl @options --suite=$suitename $test_basename --testcase-timeout=$testcase_timeout > $testcase.output/$testcase.out.last 2>&1" );
+      system( "perl mysql-test-run.pl --nocheck-testcases --nowarnings --force-restart @options --suite=$suitename $test_basename --testcase-timeout=$testcase_timeout > $testcase.output/$testcase.out.last 2>&1" );
       exit $? >> 8;
     } else {
       print "ERROR: Could not fork for running the test\n";
