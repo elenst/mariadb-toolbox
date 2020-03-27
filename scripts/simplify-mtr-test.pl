@@ -274,7 +274,7 @@ foreach my $mode (@modes)
         my @preserved_part = ();
         foreach my $l ( @chunk )
         {
-          if ( $l =~ /\#\s+PRESERVE/i or $l =~ /^\s*(?:if|while|{|}|--let|--dec|--inc|--eval|--enable_abort_on_error|--disable_abort_on_error|--sync_slave_with_master|--exec|--cat_file|--error|--source\s+include\/master-slave\.inc|--source\s+include\/have_binlog_format.*\.inc)/ )
+          if ( $l =~ /\#\s+PRESERVE/i or $l =~ /^\s*(?:if|while|{|}|--let|--dec|--inc|--eval|--enable_abort_on_error|--disable_abort_on_error|--sync_slave_with_master|--exec|--cat_file|--error|--source\s+include\/master-slave\.inc|--source\s+include\/have_binlog_format.*\.inc|--source include\/restart_mysqld\.inc)/ )
           {
             push @preserved_part, $l;
           }
