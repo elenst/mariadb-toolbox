@@ -75,6 +75,15 @@ my %signatures= (
         'blocks are definitely lost in loss record',
         'TLS wrapper function for rocksdb::perf_context',
     ],
+    'MDEV-22146' => [
+        'federated.federated_server',
+        'ALTER SERVER',
+        'mysql_ha_flush_tables',
+    ],
+    'MDEV-22147' => [
+        'main.mysqldump',
+        'Input filename too long',
+    ],
 );
 
 unless ($ARGV[0]) {

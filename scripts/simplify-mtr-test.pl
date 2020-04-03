@@ -24,7 +24,7 @@ use List::Util qw(min max);
 use strict;
 
 my $opt_mode = 'all';
-my $output;
+my @output;
 my $suitedir = 't';
 my $suitename;
 my @options = '';
@@ -96,7 +96,7 @@ if ($^O eq 'MSWin32' or $^O eq 'MSWin64') {
 GetOptions (
   "testcase=s"  => \$testcase,
   "mode=s"      => \$opt_mode,
-  "output=s"    => \$output,
+  "output=s@"    => \@output,
   "suitedir=s"  => \$suitedir,
   "suite=s"     => \$suitename,
   "options=s@"   => \@options,
@@ -163,9 +163,8 @@ unless ($suitename) {
   }
 }
 
-if ($output) {
-  $output= qr/$output/s;
-  print "\nPattern to search: $output\n";
+if (scalar @output) {
+  print "\nPatterns to search (all should be present): @output\n";
 }
 
 my $test_basename= ($rpl ? 'new_rpl' : 'new_test');
@@ -454,8 +453,13 @@ sub run_test
     $max_trial_duration= $trial_duration if $trial_duration > $max_trial_duration;
 
     # Refined diagnostics
-    if ($output) {
-      $result= ( $out =~ /$output/ );
+    if (scalar @output) {
+      $result= 1;
+      foreach my $output (@output) {
+        $output= qr/$output/s;
+        $result= ( $out =~ /$output/ );
+        last unless $result;
+      }
       if ($result) {
         print "REPRODUCED (no: $reproducible_counter) - output matched the pattern\n";
       } elsif ($test_result) {
