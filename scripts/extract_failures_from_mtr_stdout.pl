@@ -48,7 +48,7 @@ my %signatures= (
         'sql_ex_info::init',
     ],
     'MDEV-15284' => [
-        'innodb_gis.rtree_concurrent_srch',
+        'innodb_gis.rtree_.*',
         'select count',
         'mysqltest: Result content mismatch',
     ],
@@ -71,7 +71,7 @@ my %signatures= (
         'recv_sys.mlog_checkpoint_lsn <= recv_sys.recovered_lsn',
     ],
     'MDEV-21788' => [
-        'mariabackup.xb_rocksdb_datadir.*',
+        'mariabackup.*',
         'blocks are definitely lost in loss record',
         'TLS wrapper function for rocksdb::perf_context',
     ],
