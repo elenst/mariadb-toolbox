@@ -94,7 +94,7 @@ if [ -e $logdir/var_${test_id}/log/stdout.log ] ; then
 fi
 
 cd $bldhome/$branch-$build_type/mysql-test
-perl ./mysql-test-run.pl $mtr_options --force --max-test-fail=10 --verbose-restart --parallel=48 --vardir=$logdir/var_${branch}_${revno}_${test_type}
+perl ./mysql-test-run.pl $mtr_options --force --max-test-fail=0 --verbose-restart --parallel=48 --vardir=$logdir/var_${branch}_${revno}_${test_type}
 res=$?
 
 #cp $logdir/var_${test_id}/log/stdout.log $logdir/stdout_${test_id}
