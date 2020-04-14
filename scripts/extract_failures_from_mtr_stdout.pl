@@ -75,6 +75,12 @@ my %signatures= (
         'blocks are definitely lost in loss record',
         'TLS wrapper function for rocksdb::perf_context',
     ],
+    'MDEV-22071' => [
+        '.*',
+        'Conditional jump or move depends on uninitialised value',
+        'Binary_string::c_ptr',
+        'Field_geom::store',
+    ],
     'MDEV-22146' => [
         'federated.federated_server',
         'ALTER SERVER',
@@ -83,6 +89,16 @@ my %signatures= (
     'MDEV-22147' => [
         'main.mysqldump',
         'Input filename too long',
+    ],
+    'MDEV-22244' => [
+        '.*',
+        'Conditional jump or move depends on uninitialised value',
+        'Field::error_generated_column_function_is_not_allowed',
+    ],
+    'MDEV-22245' => [
+        'type_inet.type_inet6',
+        'Conditional jump or move depends on uninitialised value',
+        'Field::error_generated_column_function_is_not_allowed',
     ],
 );
 
