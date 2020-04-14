@@ -98,7 +98,8 @@ my %signatures= (
     'MDEV-22245' => [
         'type_inet.type_inet6',
         'Conditional jump or move depends on uninitialised value',
-        'Field::error_generated_column_function_is_not_allowed',
+        'sortlength',
+        'create_sort_index',
     ],
 );
 
