@@ -5,6 +5,12 @@ use strict;
 # The argument is stdout.log
 
 my %signatures= (
+    'MDEV-18925' => [
+        '.*',
+        'Invalid read of size',
+        'Item_exists_subselect::is_top_level_item',
+        'Item_in_optimizer::eval_not_null_tables',
+    ],
     'MDEV-21288' => [
         'innodb.full_crc32_import',
         "Variable 'innodb_compression_algorithm' can't be set to the value of",
@@ -100,6 +106,29 @@ my %signatures= (
         'Conditional jump or move depends on uninitialised value',
         'sortlength',
         'create_sort_index',
+    ],
+    'MDEV-22251' => [
+        '.*',
+        'Conditional jump or move depends on uninitialised value',
+        'get_key_scans_params',
+        'get_best_disjunct_quick',
+    ],
+    'MDEV-22252' => [
+        'sys_vars.session_track_system_variables_basic',
+        'Conditional jump or move depends on uninitialised value',
+        'Session_sysvars_tracker::vars_list::construct_var_list',
+    ],
+    'MDEV-22253' => [
+        '.*',
+        'Conditional jump or move depends on uninitialised value',
+        'best_access_path',
+        'best_extension_by_limited_search',
+    ],
+    'MDEV-22254' => [
+        'main.invisible_field_.*',
+        'points to uninitialised byte',
+        'inline_mysql_file_write',
+        'writefrm',
     ],
 );
 
