@@ -5,6 +5,12 @@ use strict;
 # The argument is stdout.log
 
 my %signatures= (
+    'MDEV-18925' => [
+        '.*',
+        'Invalid read of size',
+        'Item_exists_subselect::is_top_level_item',
+        'Item_in_optimizer::eval_not_null_tables',
+    ],
     'MDEV-21288' => [
         'innodb.full_crc32_import',
         "Variable 'innodb_compression_algorithm' can't be set to the value of",
@@ -48,7 +54,7 @@ my %signatures= (
         'sql_ex_info::init',
     ],
     'MDEV-15284' => [
-        'innodb_gis.rtree_concurrent_srch',
+        'innodb_gis.rtree_.*',
         'select count',
         'mysqltest: Result content mismatch',
     ],
@@ -71,9 +77,15 @@ my %signatures= (
         'recv_sys.mlog_checkpoint_lsn <= recv_sys.recovered_lsn',
     ],
     'MDEV-21788' => [
-        'mariabackup.xb_rocksdb_datadir.*',
+        'mariabackup.*',
         'blocks are definitely lost in loss record',
         'TLS wrapper function for rocksdb::perf_context',
+    ],
+    'MDEV-22071' => [
+        '.*',
+        'Conditional jump or move depends on uninitialised value',
+        'Binary_string::c_ptr',
+        'Field_geom::store',
     ],
     'MDEV-22146' => [
         'federated.federated_server',
@@ -83,6 +95,40 @@ my %signatures= (
     'MDEV-22147' => [
         'main.mysqldump',
         'Input filename too long',
+    ],
+    'MDEV-22244' => [
+        '.*',
+        'Conditional jump or move depends on uninitialised value',
+        'Field::error_generated_column_function_is_not_allowed',
+    ],
+    'MDEV-22245' => [
+        'type_inet.type_inet6',
+        'Conditional jump or move depends on uninitialised value',
+        'sortlength',
+        'create_sort_index',
+    ],
+    'MDEV-22251' => [
+        '.*',
+        'Conditional jump or move depends on uninitialised value',
+        'get_key_scans_params',
+        'get_best_disjunct_quick',
+    ],
+    'MDEV-22252' => [
+        'sys_vars.session_track_system_variables_basic',
+        'Conditional jump or move depends on uninitialised value',
+        'Session_sysvars_tracker::vars_list::construct_var_list',
+    ],
+    'MDEV-22253' => [
+        '.*',
+        'Conditional jump or move depends on uninitialised value',
+        'best_access_path',
+        'best_extension_by_limited_search',
+    ],
+    'MDEV-22254' => [
+        'main.invisible_field_.*',
+        'points to uninitialised byte',
+        'inline_mysql_file_write',
+        'writefrm',
     ],
 );
 
