@@ -21,6 +21,7 @@ path() {
 
 defaults="--no-defaults"
 valgrind=""
+rr=""
 result=0
 
 for arg do
@@ -58,6 +59,18 @@ for arg do
       echo "ERROR: valgrind was requested but not found!"
       echo "--------------------------------------------"
       result=1
+    fi
+  elif [[ "$arg" =~ '--rr' ]]
+  then
+    rr=`which rr`
+    if [ -z "$rr" ]
+    then
+      echo "--------------------------------------"
+      echo "ERROR: rr was requested but not found!"
+      echo "--------------------------------------"
+      result=1
+    else
+      rr="$rr record"
     fi
   else
     opts="$opts $arg"
