@@ -29,8 +29,14 @@ then
 	exit 1
 fi
 
+rr_or_valgrind=""
+if [ -n "$rr" ] ; then
+  rr_or_valgrind=$rr
+else
+  rr_or_valgrind=$valgrind
+fi
 
-cmd="$valgrind $mysqld_binary $group_suffix $defaults --basedir=$basedir --datadir=$datadir --log-error=$datadir/log.err --loose-lc-messages-dir=$langdir --loose-language=$engdir --port=$port --socket=$tmpdir/mysql.sock --tmpdir=$tmpdir --loose-core-file $opts"
+cmd="$rr_or_valgrind $mysqld_binary $group_suffix $defaults --basedir=$basedir --datadir=$datadir --log-error=$datadir/log.err --loose-lc-messages-dir=$langdir --loose-language=$engdir --port=$port --socket=$tmpdir/mysql.sock --tmpdir=$tmpdir --loose-core-file $opts"
 
 echo Server command line:
 echo $cmd
