@@ -165,62 +165,62 @@ push @rqg_options, '--trials='.$rqg_trials;
 
 my $result= 1;
 
+if (not $skip_mtr and not (defined $server_log and -e $server_log))
+{
+    print "General log for MTR simplification not provided, running RQG trials first\n";
+    register_repro_stage('RQG: trials');
+    $result= rqg_trials($workdir.'/rqg_trials');
+    if ($result != 0) {
+        print "RQG trials failed to reproduce, giving up\n";
+        register_repro_stage("FAILED (RQG trials)");
+        exit $result;
+    } elsif (-e "$workdir/rqg_trials/mysql.log") {
+        $server_log= "$workdir/rqg_trials/mysql.log";
+    } else {
+        print "RQG trials did not produce any log, nothing to use for MTR\n";
+        $skip_mtr= 1;
+    }
+}
+
 if ($skip_mtr) {
-    print "MTR simplification is skipped by configuration\n";
-} elsif (defined $server_log and -e $server_log) {
+    print "MTR simplification is skipped by configuration or previous checks\n";
+} else {
     $result= mtr_simplification($server_log, 'initial');
     if ($result == 0) {
         register_repro_stage("SUCCEEDED (on MTR)");
-        exit 0;
-    }
-} else {
-    print "General log not provided, running RQG trials first\n";
-    register_repro_stage('RQG: trials');
-    my $res= rqg_trials($workdir.'/rqg_trials');
-    if ($res != 0) {
-        print "RQG trials failed to reproduce, giving up\n";
-        register_repro_stage("FAILED (RQG trials)");
-        exit 1;
-    }
-    if (-e "$workdir/rqg_trials/mysql.log") {
-        $result= mtr_simplification($workdir.'/rqg_trials/mysql.log', 'from initial RQG');
-        if ($result == 0) {
-            register_repro_stage("SUCCEEDED (on MTR)");
-            exit 0;
-        }
-    } else {
-        print "RQG trials did not produce any log, nothing to use for MTR\n";
+        exit $result;
     }
 }
 
 if ($skip_rqg) {
     print "RQG simplification is skipped by configuration\n";
+    exit $result;
 } else {
     print "MTR simplification of the original log failed or was skipped, trying RQG simplification\n";
-    my $rqg_result= rqg_simplification($workdir.'/rqg_simplification');
-    if ($rqg_result != 0) {
+    $result= rqg_simplification($workdir.'/rqg_simplification');
+    if ($result != 0) {
         print "RQG simplification failed, giving up\n";
         register_repro_stage("FAILED (RQG simplification)");
-        exit 1;
+        exit $result;
     }
 }
 
 if ($skip_mtr) {
-    print "MTR simplification is skipped by configuration\n";
-    register_repro_stage("SUCCEEDED (on RQG)");
+    print "MTR simplification is skipped by configuration or previous checks\n";
 } elsif (-e "$workdir/rqg_simplification/vardir/mysql.log") {
     $result= mtr_simplification($workdir.'/rqg_simplification/vardir/mysql.log', 'from simplified RQG');
     if ($result == 0) {
         register_repro_stage("SUCCEEDED (on MTR)");
+        exit $result;
     } else {
         print "MTR simplifcication failed, staying with simplified RQG grammar\n";
-        register_repro_stage("SUCCEEDED (on RQG)");
     }
 } else {
     print "RQG simplification did not produce any log, nothing to use for MTR\n";
-    register_repro_stage("SUCCEEDED (on RQG)");
 }
-exit 0;
+
+register_repro_stage("SUCCEEDED (on RQG)");
+exit $result;
 
 
 ########################################################################
