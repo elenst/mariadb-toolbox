@@ -189,6 +189,8 @@ if ($skip_mtr) {
     if ($result == 0) {
         register_repro_stage("SUCCEEDED (on MTR)");
         exit $result;
+    } else {
+        register_repro_stage("FAILED (on MTR)");
     }
 }
 
