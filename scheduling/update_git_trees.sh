@@ -23,6 +23,8 @@ for b in $branches ; do
         git clean -dfx
         git submodule foreach --recursive git clean -xdf
         git checkout $b
+        git submodule init
+        git submodule update
         local_rev=`git log -1 --abbrev=8 --pretty="%h"`
         echo "For branch $b: local revision $local_rev, remote revision $remote_rev"
         if [ "$local_rev" != "$remote_rev" ] ; then
