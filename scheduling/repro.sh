@@ -17,6 +17,7 @@ Usage:
        --archdir=<common location for archives>
        --logdir=<common location for logs>
        --output=<search pattern>
+       --preserve=<pattern to preserve>
        --scriptdir=<script location>
        --basedir=<basedir>
        --test-id=<test ID>
@@ -32,6 +33,7 @@ for arg in "$@" ; do
         --archive-dir=*|--archdir=*|--archives=*) archdir=`parse_arg "$arg"` ;;
         --log-dir=*|--logdir=*) logdir=`parse_arg "$arg"` ;;
         --output=*) output=`parse_arg "$arg"` ;;
+        --preserve=*) preserve=`parse_arg "$arg"` ;;
         --script-dir=*|--scriptdir=*) scriptdir=`parse_arg "$arg"` ;;
         --basedir=*) basedir=`parse_arg "$arg"` ;;
         --test-id=*|--testid=*) test_id=`parse_arg "$arg"` ;;
@@ -80,8 +82,8 @@ fi
 
 rqg_cmd=`grep -A 1 "Final command line" ${test_id}_postmortem | tail -n 1 | sed -e 's/.* perl //'`
 
-echo "Final options: --output=\"$output\"  $rqg_cmd $options"
-perl $scriptdir/reprobug.pl --output="$output" $rqg_cmd $options $pass_through
+echo "Final options: --output=\"$output\" --preserve-query=\"$preserve\" $rqg_cmd $options"
+perl $scriptdir/reprobug.pl --output="$output" --preserve-query="$preserve" $rqg_cmd $options $pass_through
 res=$?
 
 rm -rf $testdir

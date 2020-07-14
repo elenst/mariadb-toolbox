@@ -3,6 +3,7 @@
 # Reproduce and hopefully get a test case for a bug initially hit by RQG
 # Script-specific options are:
 # - --output=<string> -- the pattern to search for, mandatory
+# - --preserve-query=<string> -- the pattern to preserve
 # - --cnf=<path to cnf file>, optional
 # - --logdir=<path to the logdir>, optional, defaults to /dev/shm/
 # - --mtr-thread=<number>, optional, defaults to 400 (note the difference from mtr-build-thread)
@@ -33,7 +34,7 @@ Getopt::Long::Configure("pass_through");
 
 use strict;
 
-my ($basedir, $cnf_file, $logdir, $mtr_thread, $mtr_timeout, $mtr_trials, $output, $rqg_home, $rqg_trials, $server_log, $test_id);
+my ($basedir, $cnf_file, $logdir, $mtr_thread, $mtr_timeout, $mtr_trials, $output, $preserve_query, $rqg_home, $rqg_trials, $server_log, $test_id);
 my $scriptdir = dirname(abs_path($0));
 my $host=`hostname`;
 my $id= time();
@@ -57,6 +58,7 @@ my $opt_result = GetOptions(
     'mtr-trials|mtr_trials=i' => \$mtr_trials,
     'logdir|log-dir|log_dir=s' => \$logdir,
     'output=s' => \$output,
+    'preserve-query|preserve_query=s' => \$preserve_query,
     'rqg-home|rqg_home=s' => \$rqg_home,
     'rqg-trials|rqg_trials=i' => \$rqg_trials,
     'server-log|server_log=s' => \$server_log,
@@ -295,10 +297,10 @@ sub mtr_simplification {
     print "Log file size: ".(-s $log)." ($log)\n";
     print "Test file size: ".(-s "$suitedir/${testname}.test")." ($suitedir/${testname}.test)\n\n";
     print "Running simplification with short timeouts\n";
-    my $res= run_mtr_simplification("cd $basedir/mysql-test; perl $scriptdir/simplify-mtr-test.pl --trials=$mtr_trials --options=\"$cnf_options @mtr_options @mtr_timeouts\" --output=\"$output\"", $suitedir, $testname, "MTR: $stage: short");
+    my $res= run_mtr_simplification("cd $basedir/mysql-test; perl $scriptdir/simplify-mtr-test.pl --trials=$mtr_trials --options=\"$cnf_options @mtr_options @mtr_timeouts\" --output=\"$output\" --preserve-query=\"$preserve_query\"", $suitedir, $testname, "MTR: $stage: short");
     if ($res != 0) {
         print "\nRunning simplification without short timeouts\n";
-        $res= run_mtr_simplification("cd $basedir/mysql-test; perl $scriptdir/simplify-mtr-test.pl --trials=$mtr_trials --options=\"$cnf_options @mtr_options\" --output=\"$output\"", $suitedir, $testname, "MTR: $stage: long");
+        $res= run_mtr_simplification("cd $basedir/mysql-test; perl $scriptdir/simplify-mtr-test.pl --trials=$mtr_trials --options=\"$cnf_options @mtr_options\" --output=\"$output\" --preserve-query=\"$preserve_query\"", $suitedir, $testname, "MTR: $stage: long");
     }
     return $res;
 }
@@ -350,6 +352,7 @@ sub run_mtr_simplification
         if (open(TESTCASE,">$logdir/$testname.test.$cnt"))
         {
             print TESTCASE "# Search pattern: $output\n";
+            print TESTCASE "# Pattern to preserve: $preserve_query\n";
             print TESTCASE "# Basedir: $basedir\n";
             print TESTCASE '# Command line:'.$cmd."\n\n";
             close(TESTCASE);
