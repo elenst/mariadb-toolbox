@@ -15,7 +15,7 @@
 
 use POSIX ":sys_wait_h";
 use Getopt::Long;
-use Cwd 'abs_path';
+use Cwd qw(abs_path cwd);
 use File::Basename;
 use File::Copy "copy";
 use File::Path qw(make_path remove_tree);
@@ -27,7 +27,7 @@ my $opt_mode = 'all';
 my @output;
 my $suitedir = 't';
 my $suitename;
-my @options = '';
+my @options;
 my $testcase;
 my $path = dirname(abs_path($0));
 my $opt_preserve_connections;
@@ -79,10 +79,15 @@ my $testcase_timeout;
 # It is useful when it is run in a time-limited environment.
 my $simplification_timeout= 0;
 
-my @preserve_connections;
 my %preserve_connections;
+my $preserve_pattern;
 
 my @modes;
+
+my $max_trial_duration= 0;
+my $reproducible_counter = 0;
+my $not_reproducible_counter = 0;
+my $endtime= 0;
 
 $|= 1;
 
@@ -93,6 +98,10 @@ if ($^O eq 'MSWin32' or $^O eq 'MSWin64') {
   $errfunc->Call($initial_mode | 2);
 }
 
+####################
+# Option processing
+####################
+
 GetOptions (
   "testcase=s"  => \$testcase,
   "mode=s"      => \$opt_mode,
@@ -102,6 +111,7 @@ GetOptions (
   "options=s@"   => \@options,
   "rpl=s"       => \$rpl,
   "preserve-connections|preserve_connections=s" => \$opt_preserve_connections,
+  "preserve-query|preserve_query=s" => \$preserve_pattern,
   "max-chunk-size|max_chunk_size=i" => \$max_chunk,
   "trials=i"    => \$trials,
   "initial-trials|initial_trials=i"    => \$initial_trials,
@@ -109,45 +119,18 @@ GetOptions (
   "simplification-timeout|simplification_timeout=i"   => \$simplification_timeout,
 );
 
-my $endtime= ($simplification_timeout ? time() + $simplification_timeout : 0);
-
-my $max_trial_duration= 0;
-$initial_trials = $trials * 3 unless defined $initial_trials;
-
 if (!$testcase) {
   print "ERROR: testcase is not defined\n";
   exit 1;
 }
 
 if (lc($opt_mode) eq 'all') {
-  @modes= ('conn','stmt','line','sql');
-} elsif ($opt_mode =~ /^(stmt|line|conn|sql)/i) {
+  @modes= ('conn','stmt','line','syntax','options','cleanup');
+} elsif ($opt_mode =~ /^(stmt|line|conn|syntax|options|cleanup)/i) {
   @modes= lc($1);
 } else {
-  print "ERROR: Unknown simplification mode: $opt_mode. Only 'stmt', 'line', 'conn', 'sql', 'all' are allowed\n";
+  print "ERROR: Unknown simplification mode: $opt_mode. Only 'stmt', 'line', 'conn', 'syntax', 'options', 'cleanup', 'all' are allowed\n";
   exit 1;
-}
-
-if ($opt_preserve_connections) {
-  @preserve_connections = split /,/, $opt_preserve_connections;
-  foreach ( @preserve_connections ) { $preserve_connections{$_} = 1 };
-}
-
-if ("@options" =~ /--vardir=(\S+)/) {
-    $vardir=$1;
-}
-
-if ("@options" =~ /.*--testcase-timeout=(\d+)/) {
-    $testcase_timeout = $1;
-}
-
-if (defined $timeout) {
-    $max_timeout= $timeout;
-    $min_timeout= $timeout;
-} elsif ($testcase_timeout) {
-    $max_timeout= $timeout= max($testcase_timeout * 60 + 60,$min_timeout);
-} else {
-    $timeout= $max_timeout;
 }
 
 unless ($suitename) {
@@ -163,6 +146,45 @@ unless ($suitename) {
   }
 }
 
+if ($initial_trials) {
+  print "WARNING: --initial-trials option is deprecated and not used\n";
+}
+
+if ($simplification_timeout) {
+  $endtime= time() + $simplification_timeout;
+}
+
+if ($opt_preserve_connections) {
+  my @pc = split /,/, $opt_preserve_connections;
+  foreach ( @pc ) { $preserve_connections{$_} = 1 };
+}
+
+if ("@options" =~ /--vardir=(\S+)/) {
+    $vardir=$1;
+}
+
+if ("@options" =~ /.*--testcase-timeout=(\d+)/) {
+    $testcase_timeout = $1;
+}
+
+my @opts= ();
+foreach my $o (@options) {
+  my @o= split / /, $o;
+  push @opts, @o;
+}
+@options= @opts;
+
+$preserve_pattern= ($preserve_pattern ? "$preserve_pattern|\#\s+PRESERVE" : "\#\s+PRESERVE");
+
+if (defined $timeout) {
+    $max_timeout= $timeout;
+    $min_timeout= $timeout;
+} elsif ($testcase_timeout) {
+    $max_timeout= $timeout= my_max($testcase_timeout * 60 + 60,$min_timeout);
+} else {
+    $timeout= $max_timeout;
+}
+
 if (scalar @output) {
   print "\nPatterns to search (all should be present): @output\n";
 }
@@ -173,30 +195,46 @@ if ($ENV{MTR_VERSION} eq "1" and ($suitename eq 't' or $suitename eq 'main') and
   system("touch r/$test_basename.result");
 }
 
-copy("$suitedir/$testcase.test","$suitedir/$test_basename.test") || die "Could not copy $suitedir/$testcase.test to $suitedir/$test_basename.test";
+####################
+# Files
+####################
 
-my $reproducible_counter = 0;
-my $not_reproducible_counter = 0;
+print "Initial test case: $suitedir/$testcase.test\n";
+print "Basedir: ".dirname(abs_path(cwd()))."\n";
+print "Vardir: $vardir\n";
+
+copy("$suitedir/$testcase.test","$suitedir/$test_basename.test") || die "Could not copy $suitedir/$testcase.test to $suitedir/$test_basename.test";
 
 remove_tree("$testcase.output");
 make_path("$testcase.output");
 
+####################
+# Initial trials
+####################
+
 my ($test, $big_connections, $small_connections) = read_testfile("$suitedir/$test_basename.test",$modes[0]);
 
-print "\nRunning initial test\n\n";
+print "\n\n====== Initial test ========\n\n";
 
-my $trials_save= $trials;
-# The intial test run is most important, we'll try it more before giving up
-$trials= $initial_trials;
-
-unless (run_test($test))
+print "First round, quick: zero timeouts and minimal sleep time\n\n";
+my @options_save= @options;
+push @options, '--sleep=1', '--mysqld=--lock-wait-timeout=0', '--mysqld=--loose-innodb-lock-wait-timeout=0';
+if (run_test($test))
 {
-  print "The initial test didn't fail!\n\n";
-  exit 1;
+  print "Quick run succeeded, keeping minimal timeouts\n";
+} else {
+  @options= @options_save;
+  print "Second round, full timing\n\n";
+  unless (run_test($test)) {
+    print "The initial test didn't fail!\n\n";
+    exit 1;
+  }
 }
-$trials= $trials_save;
-
 my @last_failed_test= @$test;
+
+####################
+# Simplification
+####################
 
 foreach my $mode (@modes)
 {
@@ -208,7 +246,14 @@ foreach my $mode (@modes)
 
     print "\nTotal number of big connections: " . scalar(@$big_connections) . ", small connections: " . scalar(@$small_connections) . "\n\n";
 
-    check_connections_one_by_one(@$big_connections);
+    while (check_connections_one_by_one(@$big_connections)) {
+      write_testfile(\@last_failed_test);
+      ($test, $big_connections, $small_connections) = read_testfile("$suitedir/$test_basename.test",$mode);
+      my @test= @$test;
+      if (scalar(@test) <= 1) {
+        exit;
+      }
+    }
 
     if (scalar @$small_connections) {
       print "Trying to get rid of all small connections at once: @$small_connections\n";
@@ -217,7 +262,7 @@ foreach my $mode (@modes)
       my @new_test = ();
       my $skip= 0;
       foreach my $t (@last_failed_test) {
-        if ( $t =~ /^\s*\-\-(?:connect\s*\(\s*|disconnect\s+|connection|source\s+)([^\s\,]+)/s )
+        if ( $t =~ /^\s*\-\-(?:connect\s*\(\s*|disconnect\s+|connection)([^\s\,]+)/s )
         {
           $skip = ( exists $cons{$1} );
           #print STDERR "COnnection $1 - in hash? $connections{$1}; ignore? $ignore\n";
@@ -227,11 +272,12 @@ foreach my $mode (@modes)
       if (run_test(\@new_test)) {
         print "Small connections are not needed\n\n";
         @last_failed_test= @new_test;
-      } elsif (scalar(@$small_connections) == 1) {
-        print "There is only one small connection, and it's needed\n\n";
+#      } elsif (scalar(@$small_connections) == 1) {
+#        print "There is only one small connection, and it's needed\n\n";
       } else {
-        print "Some of small connections are needed, have to check them one by one\n\n";
-        check_connections_one_by_one(@$small_connections);
+        print "Some of small connections are needed, preserving them for now\n\n";
+#        print "Some of small connections are needed, have to check them one by one\n\n";
+#        check_connections_one_by_one(@$small_connections);
       }
     }
   }
@@ -248,65 +294,70 @@ foreach my $mode (@modes)
       exit;
     }
 
-    # We are setting initial chunk size to 1/10th of the test size
+    # We are setting initial chunk size to 1/3rd of the test size
     # If a limitation on chunk size was provided as an option,
     # it is applied on top of it
-    my $max_chunk_size= $max_chunk || int(scalar(@test)/10);
-    my $chunk_size= max(1, min($max_chunk_size,int(scalar(@test)/10)));
+    my $max_chunk_size= $max_chunk || int(scalar(@test)/3);
+    my $chunk_size= my_max(1, my_min($max_chunk_size,int(scalar(@test)/3)));
 
     my @needed_part = @test;
 
     while ( $chunk_size > 0 )
     {
       print "\n\nNew chunk size: $chunk_size\n";
-      @test = @needed_part;
-      @needed_part = ();
+      my $progress_made;
+      do {
+        @test = @needed_part;
+        @needed_part = ();
+        my $next_unchecked = 0;
+        $progress_made= 0;
 
-      my $next_unchecked = 0;
-
-      while ( $next_unchecked <= $#test )
-      {
-        my $end_of_chunk = min($next_unchecked+$chunk_size-1,$#test);
-
-        my @chunk = @test[$next_unchecked..$end_of_chunk];
-        print "\nNext chunk to remove ($next_unchecked .. $end_of_chunk), out of $#test \n";
-        my @preserved_part = ();
-        foreach my $l ( @chunk )
+        while ( $next_unchecked <= $#test )
         {
-          if ( $l =~ /\#\s+PRESERVE/i or $l =~ /^\s*(?:if|while|{|}|--let|--dec|--inc|--eval|--enable_abort_on_error|--disable_abort_on_error|--sync_slave_with_master|--exec|--cat_file|--error|--source\s+include\/master-slave\.inc|--source\s+include\/have_binlog_format.*\.inc|--source include\/restart_mysqld\.inc)/ )
-          {
-            push @preserved_part, $l;
-          }
-        }
-        if ( scalar( @preserved_part ) < scalar( @chunk ) )
-        {
-          print "Creating new test as a combination of needed part (".scalar(@needed_part)." lines), preserved part (".scalar(@preserved_part)." lines), and test from ".($end_of_chunk+1)." to $#test\n";
-          my @new_test = ( @needed_part, @preserved_part, @test[$end_of_chunk+1..$#test] );
+          my @chunk= ();
+          my @preserved_part = ();
+          my $end_of_chunk;
 
-          if ( run_test( \@new_test ) )
-          {
-            @last_failed_test= @new_test;
-            print "Chunk $next_unchecked .. $end_of_chunk is not needed\n";
-            if ( @preserved_part )
+          for (my $i=$next_unchecked; $i <= $#test; $i++) {
+            my $l= $test[$i];
+            $end_of_chunk= $i;
+            if ( $l =~ /$preserve_pattern/ or ($mode eq 'stmt' and $l =~ /^\s*(?:if|while|{|}|--.*)/ ))
             {
-              print "Preserving " . scalar( @preserved_part ) . " lines in the chunk\n";
-              push @needed_part, @preserved_part;
+              push @preserved_part, $l;
             }
+            push @chunk, $l;
+            last if scalar(@chunk)-scalar(@preserved_part) >= $chunk_size;
           }
-          else {
-            print "Saving chunk  $next_unchecked .. $end_of_chunk\n";
-            push @needed_part, @chunk;
-          }
+            my @new_test = ( @needed_part, @preserved_part, @test[$end_of_chunk+1..$#test] );
+
+            if (scalar(@chunk) <= scalar(@preserved_part)) {
+              print "Whole chunk [$next_unchecked .. $end_of_chunk] $mode(s) is preserved\n";
+              push @needed_part, @chunk;
+            }
+            else {
+              print "\nNext range: [$next_unchecked .. $end_of_chunk] $mode(s) out of ".scalar(@test).(scalar(@preserved_part) ? ', '.scalar(@preserved_part)." $mode(s) preserved" : "")."\n";
+              if ( run_test( \@new_test ) )
+              {
+                $progress_made= 1;
+                @last_failed_test= @new_test;
+                print "Chunk $next_unchecked .. $end_of_chunk is not needed".(scalar(@preserved_part) ? ", but preserving ".scalar(@preserved_part)." $mode(s)" : "")."\n";
+                push @needed_part, @preserved_part;
+              }
+              else {
+                print "Saving chunk $next_unchecked .. $end_of_chunk\n";
+                push @needed_part, @chunk;
+              }
+            }
+          $next_unchecked = $end_of_chunk+1;
         }
-        else {
-          push @needed_part, @preserved_part;
+        if ($progress_made) {
+          print "\n\nProgress has been made with chunk size $chunk_size, repeating the cycle\n";
         }
-        $next_unchecked = $end_of_chunk+1;
-      }
+      } while ($progress_made);
       $chunk_size = int( $chunk_size/2 );
     }
   }
-  elsif ($mode eq 'sql') {
+  elsif ($mode eq 'syntax') {
     # Re-read the test in the new mode
     write_testfile(\@last_failed_test);
     # We don't need connections (second returned value) anymore, and we need statements, not lines
@@ -317,40 +368,41 @@ foreach my $mode (@modes)
       exit;
     }
 
-    # Clauses we are currently able to process:
-    # - LIMIT n : try to remove
-    # - OFFSET n : try to remove
-    # - LOW_PRIORITY : try to remove
-    # - QUICK - try to remove
-    # - ORDER BY <list of fields> : try to remove
-    # - SELECT <list of fields> : try to replace with SELECT *
-
-    my %patterns= (
-      qr/LIMIT\s+\d+/ => '',
-      qr/OFFSET\s+\d+/ => '',
-      qr/\sLOW_PRIORITY/ => '',
-      qr/\sQUICK/ => '',
-      qr/ORDER\s+BY\s+[\w\`,]+/ => '',
-      qr/LEFT\s+JOIN/ => 'JOIN',
-      qr/RIGHT\s+JOIN/ => 'JOIN',
-      qr/NATURAL\s+JOIN/ => 'JOIN',
-      qr/SELECT\s+[\w\`,\.]?\s+FROM/ => 'SELECT * FROM',
-      qr/PARTITION\s+BY\s+.*?\s+PARTITIONS\s+\d+/ => '',
-      qr/\/\*[^\!].*?\*\// => '',
-      qr/OR\s+REPLACE/ => '',
-      qr/ROW_FORMAT\s*=?\s*\w+/ => '',
-      qr/INVISIBLE/ => '',
-      qr/COMPRESSED/ => '',
-      qr/\`/ => '',
+    my @patterns= (
+      [ qr/LIMIT\s+\d+/, '' ],
+      [ qr/OFFSET\s+\d+/, '' ],
+      [ qr/\sLOW_PRIORITY/, '' ],
+      [ qr/\sQUICK/, '' ],
+      [ qr/ORDER\s+BY\s+[\w\`,]+/, '' ],
+      [ qr/LEFT\s+JOIN/, 'JOIN' ],
+      [ qr/RIGHT\s+JOIN/, 'JOIN' ],
+      [ qr/NATURAL\s+JOIN/, 'JOIN' ],
+      [ qr/SELECT\s+[\w\`,\.]?\s+FROM/, 'SELECT * FROM' ],
+      [ qr/PARTITION\s+BY\s+.*?\s+PARTITIONS\s+\d+/, '' ],
+      [ qr/\/\*[^\!].*?\*\//, '' ],
+      [ qr/OR\s+REPLACE/, '' ],
+      [ qr/ROW_FORMAT\s*=?\s*\w+/, '' ],
+      [ qr/INVISIBLE/, '' ],
+      [ qr/COMPRESSED/, '' ],
+      [ qr/ENGINE\s*=\s*\w+/, '' ],
+      [ qr/\`/, '' ],
+      [ qr/^\s*--let\s.*/, '' ],
+      [ qr/^\s*--disable_.*/, '' ],
+      [ qr/^\s*--(?:send|reap)/, '' ],
+      [ qr/^\s*--source\s.*/, '' ],
+      [ qr/^\s*--delimiter\s.*/, '' ],
+      [ qr/,rqg,/, ',root,' ],
+      [ qr/^\s*(?:CREATE\s+USER\s+rqg|GRANT\s*TO\s+rqg).*/, '' ],
+      [ qr/^\s*--(?:connect|disconnect).*/, '' ],
     );
 
-    foreach my $p (keys %patterns) {
-      print "\n\nNew replacement: $p => $patterns{$p}\n";
+    foreach my $p (@patterns) {
+      print "\n\nNew replacement: $p->[0] => $p->[1]\n";
 
       my $count= 0;
       my @new_test= ();
       foreach my $s (@test) {
-        if (my $n = ($s =~ s/$p/$patterns{$p}/isg)) {
+        if (my $n = ($s =~ s/$p->[0]/$p->[1]/isg)) {
           $count+= $n;
         }
         push @new_test, $s;
@@ -360,11 +412,13 @@ foreach my $mode (@modes)
         print "Found $count occurrences of the pattern\n";
         if ( run_test( \@new_test ) )
         {
+          @last_failed_test= @new_test;
           @test= @new_test;
-          print "Clause $p has been replaced with $patterns{$p}\n";
+          print "Clause $p->[0] has been replaced with $p->[1]\n";
         }
         else {
-          print "Keeping clause $p\n";
+          print "Keeping clause $p->[0]\n";
+          @test= @last_failed_test;
         }
       }
       else {
@@ -372,12 +426,118 @@ foreach my $mode (@modes)
       }
     }
   }
+  elsif ($mode eq 'options') {
+
+    my @test= @last_failed_test;
+    if (scalar(@test) <= 1) {
+      exit;
+    }
+
+    # Option groups, those that are easier to remove together
+
+    my @option_groups= (qr/(?:encrypt|key_management)/,qr/innodb[-_]/);
+
+    foreach my $og (@option_groups)
+    {
+      my @opts= ();
+      my @opts_to_remove= ();
+
+      foreach my $o (@options) {
+        if ($o =~ /$og/) {
+          push @opts_to_remove, $o;
+        } else {
+          push @opts, $o;
+        }
+      }
+
+      if (scalar(@opts_to_remove)) {
+        print "\nTrying to remove options @opts_to_remove\n";
+        my @options_save= @options;
+        @options= @opts;
+        if ( run_test( \@test ) )
+        {
+          print "Options @opts_to_remove can be removed\n";
+        }
+        else {
+          print "Keeping options @opts_to_remove\n";
+          @options= @options_save;
+        }
+      }
+    }
+
+    # Individual options
+
+    my @opts= @options;
+    my @opts_to_preserve= ();
+    foreach my $i (0..$#opts) {
+      if ($opts[$i] =~ /--(?:mem|vardir)/) {
+        push @opts_to_preserve, $opts[$i];
+        next;
+      }
+      @options= (@opts_to_preserve, @opts[$i+1..$#opts]);
+      print "\nTrying to remove option $opts[$i]\n";
+      if ( run_test( \@test ) )
+      {
+        print "Option $opts[$i] can be removed\n";
+      }
+      else {
+        print "Keeping option $opts[$i]\n";
+        push @opts_to_preserve, $opts[$i];
+      }
+    }
+  }
+  elsif ($mode eq 'cleanup') {
+
+    my @test= @last_failed_test;
+    my @new_test= ();
+    my $count= 0;
+    foreach my $s (@test) {
+      if ($s =~ /^\s*$|^\s*--\s*disable_abort_on_error/s) {
+        $count++;
+        next;
+      }
+      unless ($s =~ /delimiter/) {
+        if (my $n = ($s =~ s/(?:\s+([;\)]))/$1/isg)) {
+          $count+= $n;
+        }
+        if (my $n = ($s =~ s/(?:\(\s+)/\(/isg)) {
+          $count+= $n;
+        }
+      }
+      if (my $n = ($s =~ s/^\s+//isg)) { $count+= $n }
+      while (my $n = ($s =~ s/  / /isg)) { $count+= $n }
+
+      push @new_test, $s;
+    }
+
+    if ($count) {
+      print "\n$count replacement(s) have been made\n\n";
+      if ( run_test( \@new_test ) )
+      {
+        @last_failed_test= @new_test;
+        @test= @new_test;
+        print "Cleanup was successful\n";
+      }
+      else {
+        print "Leaving the test dirty\n";
+      }
+    }
+    else {
+      print "Haven't made any replacements\n";
+    }
+  }
 }
 
-print "\nLast reproducible testcase: $suitedir/$testcase.test.reproducible.".($reproducible_counter-1)."\n\n";
+print "\nLast reproducible testcase: $suitedir/$testcase.test.reproducible.".($reproducible_counter-1)."\n";
+print "Basedir: ".dirname(abs_path(cwd()))."\n";
+print "Vardir: $vardir\n";
+print "Remaining options: @options\n\n";
 
 # THE END
 
+##############
+# Subroutines
+##############
 
 # Returns 1 if the test fails as expected,
 # and 0 otherwise
@@ -399,7 +559,7 @@ sub run_test
   while ($i <= $trials) {
     my $start = time();
     print sprintf("Trial $i out if $trials started %02d-%02d %02d:%02d:%02d\n",(localtime($start))[4]+1,(localtime($start))[3],(localtime($start))[2],(localtime($start))[1],(localtime($start))[0]);
-    $testcase_timeout= min(max(int(($timeout-15)/60),1),300);
+    $testcase_timeout= my_min(my_max(int(($timeout-15)/60),1),300);
 
     my $test_result= undef;
     my $pid= fork();
@@ -421,7 +581,6 @@ sub run_test
       }
     }
     elsif (defined $pid) {
-      # Leave 15 seconds for killing
       print "Trial timeout: $timeout sec, testcase timeout: $testcase_timeout min\n";
 
       system( "perl mysql-test-run.pl --nocheck-testcases --nowarnings --force-restart @options --suite=$suitename $test_basename --testcase-timeout=$testcase_timeout > $testcase.output/$testcase.out.last 2>&1" );
@@ -451,6 +610,7 @@ sub run_test
 
     my $trial_duration= time() - $start;
     $max_trial_duration= $trial_duration if $trial_duration > $max_trial_duration;
+    print "Trial $i duration: $trial_duration\n";
 
     # Refined diagnostics
     if (scalar @output) {
@@ -461,31 +621,28 @@ sub run_test
         last unless $result;
       }
       if ($result) {
-        print "REPRODUCED (no: $reproducible_counter) - output matched the pattern\n";
-      } elsif ($test_result) {
-        print "Could not reproduce - trial $i failed, but output didn't match the pattern\n";
+        print "--------------------------\n";
+        print "---- REPRODUCED (no: $reproducible_counter)\n";
+        print "--------------------------\n";
       } else {
-        print "Could not reproduce - trial $i passed, and output didn't match the pattern\n";
+        print "Could not reproduce - trial $i ".($test_result ? "failed, but" : "passed, and")." output didn't match the pattern\n";
       }
     }
     elsif ($test_result) {
       $result= $test_result;
-      print "Reproduced (no: $reproducible_counter) - test failed, and there was no pattern to match\n";
+      print "--------------------------\n";
+      print "---- REPRODUCED (no: $reproducible_counter) - test failed, and there was no pattern to match\n";
+      print "--------------------------\n";
     }
     else {
       print "Could not reproduce - test passed, and there was no pattern to match\n";
     }
 
-    print "Trial $i time: $trial_duration\n\n";
-
     my $outfile;
     if ($result) {
         $outfile= "$testcase.output/$testcase.out.reproducible.$reproducible_counter";
         my $old_timeout= $timeout;
-        $timeout= max(min($timeout, $trial_duration*2),$min_timeout);
-        if ($timeout != $old_timeout) {
-            print "Timeout is now set to $timeout sec\n";
-        }
+        $timeout= my_max(my_min($timeout, $trial_duration*2),$min_timeout);
     } else {
         $outfile= "$testcase.output/$testcase.out.not_reproducible.$not_reproducible_counter";
         if ($trial_duration > $testcase_timeout * 60 and $testcase_timeout >= 30 and $i < $trials - 1) {
@@ -507,6 +664,7 @@ sub run_test
   }
 
   ($result ? $reproducible_counter++ : $not_reproducible_counter++);
+  print "Last reproducible testcase so far: $suitedir/$testcase.test.reproducible.".($reproducible_counter-1)."\n";
   return $result;
 }
 
@@ -535,7 +693,7 @@ sub read_testfile
   my ($testfile, $mode)= @_;
   my %connections= ();
   my @test= ();
-  my $current_con= '';
+  my $current_con= 'default';
   open( TEST, $testfile ) or die "could not open $testfile for reading: $!";
   while (<TEST>)
   {
@@ -589,6 +747,9 @@ sub read_testfile
       }
       push @test, $cmd;
       $connections{$current_con}++;
+      if ($cmd =~ /$preserve_pattern/) {
+        $preserve_connections{$current_con}= 1;
+      }
     }
   }
   close( TEST );
@@ -620,30 +781,46 @@ sub check_connections_one_by_one {
   my $skip= 0;
   my $counter= 0;
 
+  my $progress_made= 0;
+
   foreach my $c (@_)
   {
-    print "Checking connection $c (" . (++$counter) . " out of " . scalar(@_) . ")\n";
-
+    ++$counter;
     if ($preserve_connections{$c}) {
-      print "\nPreserving connection $c\n";
+      print "Connection $c is on the preserve list, keeping it\n\n";
       next;
     }
 
     my @new_test = ();
+    my $current_con= 'default';
     foreach my $t (@last_failed_test) {
       if ( $t =~ /^\s*\-\-(?:connect\s*\(\s*|disconnect\s+|connection\s+)([^\s\,]+)/s )
       {
-        $skip = ( $1 eq $c );
-        #print STDERR "COnnection $1 - in hash? $connections{$1}; ignore? $ignore\n";
+        $current_con= $1;
       }
-      push @new_test, $t unless $skip;
+      push @new_test, $t unless ($current_con eq $c);
     }
+    print "Trying to remove connection $c ($counter out of " . scalar(@_) . ")\n";
     if (run_test(\@new_test)) {
       print "Connection $c is not needed\n\n";
       @last_failed_test= @new_test;
+      $progress_made= 1;
     } else {
       print "Saving connection $c\n\n";
     }
   }
+  return $progress_made;
+}
 
+# On some reason, I sometimes get wrong results with the built-in 'min' function
+# when it's executed like this: min($a,$#b), but not when $#b is assigned to a variable.
+# my_min subroutine is meant to work around this.
+# I don't know if it can happen with my_max, so adding it just to be safe
+sub my_min {
+  my @args= @_;
+  return min(@args);
+}
+sub my_max {
+  my @args= @_;
+  return max(@args);
 }
