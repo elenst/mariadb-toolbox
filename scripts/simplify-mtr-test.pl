@@ -174,8 +174,6 @@ foreach my $o (@options) {
 }
 @options= @opts;
 
-$preserve_pattern= ($preserve_pattern ? "$preserve_pattern|\#\s+PRESERVE" : "\#\s+PRESERVE");
-
 if (defined $timeout) {
     $max_timeout= $timeout;
     $min_timeout= $timeout;
@@ -188,6 +186,8 @@ if (defined $timeout) {
 if (scalar @output) {
   print "\nPatterns to search (all should be present): @output\n";
 }
+$preserve_pattern= ($preserve_pattern ? "$preserve_pattern|\#\s+PRESERVE" : "\#\s+PRESERVE");
+print "Patterns to preserve: $preserve_pattern\n";
 
 my $test_basename= ($rpl ? 'new_rpl' : 'new_test');
 
@@ -214,9 +214,9 @@ make_path("$testcase.output");
 
 my ($test, $big_connections, $small_connections) = read_testfile("$suitedir/$test_basename.test",$modes[0]);
 
-print "\n\n====== Initial test ========\n\n";
+print "\n\n====== Initial test ========\n";
 
-print "First round, quick: zero timeouts and minimal sleep time\n\n";
+print "\nFirst round, quick: zero timeouts and minimal sleep time\n\n";
 my @options_save= @options;
 push @options, '--sleep=1', '--mysqld=--lock-wait-timeout=0', '--mysqld=--loose-innodb-lock-wait-timeout=0';
 if (run_test($test))
@@ -224,7 +224,7 @@ if (run_test($test))
   print "Quick run succeeded, keeping minimal timeouts\n";
 } else {
   @options= @options_save;
-  print "Second round, full timing\n\n";
+  print "\nSecond round, full timing\n\n";
   unless (run_test($test)) {
     print "The initial test didn't fail!\n\n";
     exit 1;
@@ -664,7 +664,7 @@ sub run_test
   }
 
   ($result ? $reproducible_counter++ : $not_reproducible_counter++);
-  print "Last reproducible testcase so far: $suitedir/$testcase.test.reproducible.".($reproducible_counter-1)."\n";
+  print "Last reproducible testcase so far: ".($reproducible_counter ? "$suitedir/$testcase.test.reproducible.".($reproducible_counter-1) : "<none>")."\n";
   return $result;
 }
 
