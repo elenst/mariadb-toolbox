@@ -146,8 +146,8 @@ unless ($suitename) {
   }
 }
 
-if ($initial_trials) {
-  print "WARNING: --initial-trials option is deprecated and not used\n";
+if (not defined $initial_trials) {
+  $initial_trials= $trials;
 }
 
 if ($simplification_timeout) {
@@ -214,6 +214,9 @@ make_path("$testcase.output");
 
 my ($test, $big_connections, $small_connections) = read_testfile("$suitedir/$test_basename.test",$modes[0]);
 
+my $trials_save= $trials;
+$trials= $initial_trials;
+
 print "\n\n====== Initial test ========\n";
 
 print "\nFirst round, quick: zero timeouts and minimal sleep time\n\n";
@@ -231,6 +234,7 @@ if (run_test($test))
   }
 }
 my @last_failed_test= @$test;
+$ trials= $trials_save;
 
 ####################
 # Simplification
