@@ -343,6 +343,7 @@ foreach my $c ( keys %test_connections ) {
     print "--reap\n";
   }
 }
+print "--sleep 6\n";
 print "--exit\n";
 
 ########### SUBROUTINES ############
