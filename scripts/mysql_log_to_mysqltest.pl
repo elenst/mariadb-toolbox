@@ -25,6 +25,7 @@ GetOptions (
   );
 
 my %interesting_connections= map { $_ => 1 } split /,/, $opt_threads;
+my $interesting_tables_pattern= ($opt_tables ? qr/($opt_tables)/ : undef);
 
 my @files= @ARGV;
 
@@ -52,14 +53,12 @@ my $max_used_connection_id= 0;
 # TODO: how to handle KILL <con num>?
 # TODO: MYSQLTEST_VARDIR
 
-if ( $opt_tables )
+if ( $interesting_tables_pattern )
 {
   # We are interested only in connections which have something to do with
   # the listed tables. So, we'll look through the log first, find
   # the list of connections, and then will process only those we chose
 
-  $opt_tables =~ s/,/\|/g;
-  my $pattern= qr/($opt_tables)/;
   my $cur_con;
 
   while (<>)
@@ -68,7 +67,7 @@ if ( $opt_tables )
       $cur_con= $1;
     }
     $interesting_connections{$cur_con}= 2
-    if /$pattern/ and ($opt_threads eq '' or defined $interesting_connections{$cur_con});
+    if /$interesting_tables_pattern/ and ($opt_threads eq '' or defined $interesting_connections{$cur_con});
   }
   foreach ( keys %interesting_connections ) {
     delete $interesting_connections{$_} unless $interesting_connections{$_} == 2
@@ -373,6 +372,12 @@ sub time_to_sec
 sub print_current_record
 {
   my $new_log_con= shift;
+
+  # If tables of interest are defined and the command doesn't seem
+  # to match the pattern, ignore it
+  unless ($cur_log_record =~ /$interesting_tables_pattern/s) {
+    return;
+  }
 
   # If the query was 'shutdown', don't print it, but prepare
   # for restart_mysqld.inc
