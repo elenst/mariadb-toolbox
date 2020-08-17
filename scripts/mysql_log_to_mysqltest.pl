@@ -375,7 +375,7 @@ sub print_current_record
 
   # If tables of interest are defined and the command doesn't seem
   # to match the pattern, ignore it
-  unless ($cur_log_record =~ /$interesting_tables_pattern/s) {
+  if ($interesting_tables_pattern and $cur_log_record !~ /$interesting_tables_pattern/s) {
     return;
   }
 
