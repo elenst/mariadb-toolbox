@@ -18,7 +18,7 @@ Usage:
        --srchome=<common location of per-branch sources>
        --remote-repo=<location of the repo to clone/pull from>
        --branches=<comma-separated list of branches to build>
-       --build-types=<comma-separated list of builds to build. Available variants: rel, deb, asan, valgrind>
+       --build-types=<comma-separated list of builds to build. Available variants: rel, deb, asan, rel-asan, valgrind>
        --help (print this help and exit)
 EOF
 }
@@ -89,6 +89,7 @@ for b in $branches ; do
                     ;;
                 deb)  cmake_options="-DCMAKE_BUILD_TYPE=Debug" ;;
                 asan) cmake_options="-DCMAKE_BUILD_TYPE=Debug -DWITH_ASAN=YES -DMYSQL_MAINTAINER_MODE=OFF" ;;
+                rel-asan) cmake_options="-DWITH_ASAN=YES -DMYSQL_MAINTAINER_MODE=OFF" ;;
                 valgrind) cmake_options="-DPLUGIN_TOKUDB=NO -DCMAKE_BUILD_TYPE=Debug -DWITH_VALGRIND=YES" ;;
                 *) echo "ERROR: Unknown build type: $t" && exit 1 ;;
             esac
