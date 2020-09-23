@@ -29,11 +29,6 @@ done
 
 `dirname $0`/../scripts/collect_rqg_result_info.sh $vardirs --test-log=$LOGDIR/${PREFIX}trial.log > $LOGDIR/${PREFIX}result_info 2>&1
 
-SERVER_BRANCH=$SERVER_BRANCH TEST_ALIAS=$TEST_ALIAS TEST_RESULT=$TEST_RESULT TEST_ID=$TEST_ID LOCAL_CI=$LOCAL_CI perl $RQG_HOME/util/check_for_known_bugs.pl $SIGNATURES $LOGDIR/${PREFIX}result_info > $LOGDIR/${PREFIX}matches 2>&1
-
-cat $LOGDIR/${PREFIX}matches
-cat $LOGDIR/${PREFIX}result_info
-
 i=0
 for c in `find $LOGDIR/${PREFIX}vardir* -name core*` ; do
     binary=`file $c | sed -e "s/.*execfn: '\(.*\)', platform.*/\\1/"`
@@ -45,6 +40,19 @@ for c in `find $LOGDIR/${PREFIX}vardir* -name core*` ; do
     fi
     gdb --batch --eval-command="thread apply all bt full" $binary $c > $LOGDIR/${PREFIX}threads.$core_pid 2>&1
 done
+
+# For deadlock we may also have to inspect all threads' stack trace for signs of known bugs
+#if [ "$TEST_RESULT" == "SERVER_DEADLOCKED" ] ; then
+#  SERVER_BRANCH=$SERVER_BRANCH TEST_ALIAS=$TEST_ALIAS TEST_RESULT=$TEST_RESULT TEST_ID=$TEST_ID LOCAL_CI=$LOCAL_CI perl $RQG_HOME/util/check_for_known_bugs.pl $SIGNATURES --last=$LOGDIR/${PREFIX}threads.$core_pid $LOGDIR/${PREFIX}result_info > $LOGDIR/${PREFIX}matches 2>&1
+#else
+  SERVER_BRANCH=$SERVER_BRANCH TEST_ALIAS=$TEST_ALIAS TEST_RESULT=$TEST_RESULT TEST_ID=$TEST_ID LOCAL_CI=$LOCAL_CI perl $RQG_HOME/util/check_for_known_bugs.pl $SIGNATURES $LOGDIR/${PREFIX}result_info > $LOGDIR/${PREFIX}matches 2>&1
+#fi
+
+cat $LOGDIR/${PREFIX}matches
+cat $LOGDIR/${PREFIX}result_info
+if [ "$TEST_RESULT" == "SERVER_DEADLOCKED" ] ; then
+  grep -E '^#|^Thread|^$' $LOGDIR/${PREFIX}threads.$core_pid
+fi
 
 cd $LOGDIR
 if [ "$TEST_RESULT" != "OK" ] ; then
