@@ -247,7 +247,8 @@ while(<>)
       # Log record 'Connect' translates into --connect
       # and also changes current connection in the test
 
-      my ( $user, $host, $db )= ( $_ =~ /^\s*([^\@]+)\@(\S+)\s+(?:as.*?\s+)?on\s*(\S*)/ );
+      
+      my ( $user, $host, $db )= ( $_ =~ /^\s*([^\@]+)\@(\S+)\s(?:as.*?\s)?on\s?(\S*)/ );
       $db= '' unless defined $db;
       my $conname= 'con' . $new_log_con;
       my $password= ( defined $user_passwords{$user.'@'.$host} ? $user_passwords{$user.'@'.$host} : '' );
@@ -282,7 +283,7 @@ while(<>)
       # Log record 'Change' translates into --change_user
       # and also changes current connection in the test
 
-      my ( $user, $host, $db )= ( $_ =~ /^\s*user\s+(\w+)\@(\S+)\s+(?:as.*?\s+)?on\s*(\w*)/ );
+      my ( $user, $host, $db )= ( $_ =~ /^\s*user\s+(\w+)\@(\S+)\s(?:as.*?\s)?on\s?(\S*)/ );
       $db= '' unless defined $db;
       my $conname= 'con' . $new_log_con;
       print '--connection '.$conname.'_'.$server_restarts."\n";
