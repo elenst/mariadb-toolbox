@@ -353,6 +353,7 @@ sub test_hacks
 
   # Some frequently occurring syntax error in incoming statements
   if ( $$log_record_ref =~ s/(IMMEDIATE|FROM) ' \//$1 '' \//g ) {};
+  if ( $$log_record_ref =~ s/(IMMEDIATE|FROM) '\s*$/$1 ''/g ) {};
   if ( $$log_record_ref =~ s/^\s*(kill(?:\s+query)?)\s+(\d+)/eval $1 \$con${2}_id/is ) {};
   if ( $$log_record_ref =~ s/^\s*(show.+explain\s+for)\s+(\d+)/eval $1 \$con${2}_id/is ) {};
   # Temporarily disabled due to MDEV-23376
