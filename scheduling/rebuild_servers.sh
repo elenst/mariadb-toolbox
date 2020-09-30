@@ -88,8 +88,8 @@ for b in $branches ; do
                     fi
                     ;;
                 deb)  cmake_options="-DCMAKE_BUILD_TYPE=Debug" ;;
-                asan) cmake_options="-DCMAKE_BUILD_TYPE=Debug -DWITH_ASAN=YES -DMYSQL_MAINTAINER_MODE=OFF" ;;
-                rel-asan) cmake_options="-DWITH_ASAN=YES -DMYSQL_MAINTAINER_MODE=OFF" ;;
+                asan) cmake_options="-DCMAKE_BUILD_TYPE=Debug -DWITH_ASAN=YES -DMYSQL_MAINTAINER_MODE=OFF -DCMAKE_C_FLAGS='-fno-omit-frame-pointer' -DCMAKE_CXX_FLAGS='-fno-omit-frame-pointer'" ;;
+                rel-asan) cmake_options="-DWITH_ASAN=YES -DMYSQL_MAINTAINER_MODE=OFF -DCMAKE_C_FLAGS='-fno-omit-frame-pointer' -DCMAKE_CXX_FLAGS='-fno-omit-frame-pointer'" ;;
                 valgrind) cmake_options="-DPLUGIN_TOKUDB=NO -DCMAKE_BUILD_TYPE=Debug -DWITH_VALGRIND=YES" ;;
                 *) echo "ERROR: Unknown build type: $t" && exit 1 ;;
             esac
