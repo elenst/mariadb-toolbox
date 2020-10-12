@@ -142,6 +142,10 @@ while(<>)
     next;
   }
 
+  # 10.4+ writes a warning into the general log, e.g.
+  # 6 Connect  Server is running in --secure-auth mode, but 'uu2'@'localhost' has a password in the old format; please change the password to the new format
+  # We'll just skip it, there will be a real connect record later
+  next if /has a password in the old format; please change the password to the new format/;
 
   my $new_log_con;
   my $new_log_timestamp;
