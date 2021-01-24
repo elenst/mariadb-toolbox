@@ -85,6 +85,9 @@ unless ($enable_result_log) {
   print "--disable_result_log\n";
 }
 print "--disable_abort_on_error\n";
+print "DROP DATABASE IF EXISTS test;\n";
+print "CREATE DATABASE test;\n";
+print "USE test;\n";
 print "SET GLOBAL event_scheduler= OFF;\n";
 print "CREATE USER rqg\@localhost;\n";
 print "GRANT ALL ON *.* TO rqg\@localhost;\n";
