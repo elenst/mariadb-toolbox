@@ -580,6 +580,7 @@ sub run_test
       unless (defined $test_result) {
         print "The trial timed out\n";
         kill '-KILL', $pid;
+        waitpid($pid, undef);
         $test_result= 1;
         $result= 0;
       }
