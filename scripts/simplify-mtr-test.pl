@@ -172,7 +172,10 @@ foreach my $o (@options) {
   my @o= split / /, $o;
   push @opts, @o;
 }
+
 @options= @opts;
+
+push @options, '--mysqld=--loose-simple-password-check=off';
 
 if (defined $timeout) {
     $max_timeout= $timeout;
@@ -186,7 +189,7 @@ if (defined $timeout) {
 if (scalar @output) {
   print "\nPatterns to search (all should be present): @output\n";
 }
-$preserve_pattern= ($preserve_pattern ? "$preserve_pattern|\#\s+PRESERVE" : "\#\s+PRESERVE");
+$preserve_pattern= ($preserve_pattern ? "$preserve_pattern|\#\s+PRESERVE|mariabackup" : "\#\s+PRESERVE|mariabackup");
 print "Patterns to preserve: $preserve_pattern\n";
 
 my $test_basename= ($rpl ? 'new_rpl' : 'new_test');
