@@ -167,15 +167,42 @@ if ("@options" =~ /.*--testcase-timeout=(\d+)/) {
     $testcase_timeout = $1;
 }
 
+# Parse options and make adjustments
+
+my $max_prepared_stmt_count;
+
 my @opts= ();
 foreach my $o (@options) {
   my @o= split / /, $o;
+
+  # max-prepared-stmt-count=0 doesn't allow server to re-bootstrap if needed.
+  # We can't override it completely, because it can have significant effect
+  # on test execution; so, we'll change it on the command line,
+  # but will add as a global dynamic variable instead
+  foreach my $i (0..$#o) {
+    if ($o[$i] =~ /^--mysqld=--max[-_]prepared[-_]stmt[-_]count=(\d+)/) {
+      $max_prepared_stmt_count=$1;
+      delete $o[$i];
+    }
+  }
   push @opts, @o;
 }
 
+# If the eventual value of the option is greater than zero,
+# we can use it on the command line and be done with it.
+# Otherwise, if it's exactly zero, it will have to be handled later.
+if ($max_prepared_stmt_count) {
+  push @opts, "--mysqld=--max-prepared-stmt-count=$max_prepared_stmt_count";
+  undef $max_prepared_stmt_count;
+}
+
+# password check is unlikely to have any value (for now, at least),
+# so we'll disable it
+push @opts, '--mysqld=--loose-simple-password-check=off';
+
+
 @options= @opts;
 
-push @options, '--mysqld=--loose-simple-password-check=off';
 
 if (defined $timeout) {
     $max_timeout= $timeout;
@@ -206,7 +233,13 @@ print "Initial test case: $suitedir/$testcase.test\n";
 print "Basedir: ".dirname(abs_path(cwd()))."\n";
 print "Vardir: $vardir\n";
 
-copy("$suitedir/$testcase.test","$suitedir/$test_basename.test") || die "Could not copy $suitedir/$testcase.test to $suitedir/$test_basename.test";
+if (defined $max_prepared_stmt_count and $max_prepared_stmt_count == 0) {
+  system("echo \"SET GLOBAL max_prepared_stmt_count=0;\" > $suitedir/$test_basename.test");
+  die "Could not create $suitedir/$test_basename.test: $!" if $?;
+}
+system("cat $suitedir/$testcase.test >> $suitedir/$test_basename.test");
+die "Could not cat $suitedir/$testcase.test into $suitedir/$test_basename.test" if $?;
+#copy("$suitedir/$testcase.test","$suitedir/$test_basename.test") || die "Could not copy $suitedir/$testcase.test to $suitedir/$test_basename.test";
 
 remove_tree("$testcase.output");
 make_path("$testcase.output");
