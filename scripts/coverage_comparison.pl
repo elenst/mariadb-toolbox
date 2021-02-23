@@ -102,12 +102,16 @@ while (<LCOV>) {
 }
 close (LCOV);
 
-#print "-----------------------------------------------------\n";
-#print "---Lines covered by the second run, but not first:---\n";
-#print "-----------------------------------------------------\n";
-#foreach my $l (sort keys %lines_hit2) {
-#    print "$l\n" if ($lines_missed1{$l});
-#}
+print "-----------------------------------------------------\n";
+print "---Lines covered by the second run, but not first:---\n";
+print "-----------------------------------------------------\n";
+my $c1= 0;
+foreach my $l (sort keys %lines_hit2) {
+  if ($lines_missed1{$l}) {
+    $c1++;
+    print "$l\n"
+  }
+}
 
 #print "-----------------------------------------------------\n";
 #print "---Branches covered by the second run, but not first:\n";
@@ -126,8 +130,12 @@ close (LCOV);
 print "-----------------------------------------------------\n";
 print "---Lines covered by the first run, but not second:---\n";
 print "-----------------------------------------------------\n";
+my $c2= 0;
 foreach my $l (sort keys %lines_hit1) {
-    print "$l\n" if ($lines_missed2{$l});
+  if ($lines_missed2{$l}) {
+    print "$l\n";
+    $c2++;
+  }
 }
 
 #print "-----------------------------------------------------\n";
@@ -144,3 +152,5 @@ foreach my $l (sort keys %lines_hit1) {
 #    print "$f\n" if ($funcs_missed2{$f});
 #}
 
+print "\nTotal in second, but not in first: $c1\n";
+print "Total in first, but not in second: $c2\n\n";

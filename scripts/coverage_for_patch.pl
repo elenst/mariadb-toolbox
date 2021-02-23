@@ -4,6 +4,7 @@
 
 # Collects gcov data from the basedir into the info file,
 # takes bzr diff with the previous revision (or with the revision given as the 2nd argument)
+# or a separately prepared diff,
 # and checks the coverage for the changes
 
 use Getopt::Long;
@@ -67,6 +68,8 @@ if ( $diffile and not -e "$diffile" )
 	print STDERR "ERROR: $diffile does not exist\n";
 	exit 1;
 }
+
+@infofiles= glob "@infofiles";
 foreach my $if ( @infofiles )
 {
 	unless ( -e "$if" ) {
@@ -93,8 +96,6 @@ unless ( @infofiles )
 	}
 	push @infofiles, $infofile;
 }
-
-
 
 # Hash key is a file name
 # Hash value is an array of code lines (unchanged or new)
@@ -254,7 +255,7 @@ foreach my $f ( sort keys %fragments )
 		}
 	}
 	if ( @zero_c ) {
-		push @zero_counts, ( "\n$f:", @zero_c );
+		push @zero_counts, ( "\n===File $f:", @zero_c );
 	}
 	if ( @zero_b ) {
 		push @zero_branches, ( "\n$f:", @zero_b );
