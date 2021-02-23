@@ -6,4 +6,7 @@ do
 	link=`basename $lib`
 	ln -s $path lib/plugin/$link
 done
-
+if [ ! -e bin/mariabackup ] ; then
+  mkdir -p bin
+  ln -s `pwd`/extra/mariabackup/mariabackup bin/mariabackup
+fi
