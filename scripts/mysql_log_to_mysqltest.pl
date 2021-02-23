@@ -10,6 +10,7 @@ my $opt_timestamps= 0;
 my $opt_convert_to_ei= 0;
 my $opt_convert_to_ps= 0;
 my $opt_sigkill= 0;
+my $opt_data_location= '';
 my $enable_result_log= 0;
 
 GetOptions (
@@ -22,6 +23,7 @@ GetOptions (
   "convert-to-ps|convert_to_ps" => \$opt_convert_to_ps,
   "enable_result_log|enable-result-log" => \$enable_result_log,
   "sigkill!"         => \$opt_sigkill,
+  "data-location|data_location=s" => \$opt_data_location,
   );
 
 my %interesting_connections= map { $_ => 1 } split /,/, $opt_threads;
@@ -43,6 +45,7 @@ my $cur_log_con= 0;
 my $cur_log_record= '';
 my $timestamp= 0;
 my $server_restarts= 0;
+my $orig_data_location= '';
 
 # Maximum connection ID used in the current server run.
 # The value is changed to 0 when the server is restarted.
@@ -128,6 +131,10 @@ while(<>)
   # it's either always SIGTERM (e.g. Restart scenario) or always SIGKILL (CrashRestart).
   # We'll use command-line option sigkill to choose. It defaults to 0,
   # which means graceful restart.
+
+  if ($opt_data_location and not $orig_data_location and /\'([^\']+)\'\s+AS\s+DATA_LOCATION/) {
+    $orig_data_location= $1;
+  } elsif ($orig_data_location and $opt_data_location and s/$orig_data_location/$opt_data_location/g) {};
 
   if ( /Version:\s+.*\.\s+started with:\s*$/ ) {
     my $l=<>;
