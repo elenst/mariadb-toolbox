@@ -170,6 +170,7 @@ if ("@options" =~ /.*--testcase-timeout=(\d+)/) {
 # Parse options and make adjustments
 
 my $max_prepared_stmt_count;
+my $enforce_storage_engine;
 
 my @opts= ();
 foreach my $o (@options) {
@@ -181,7 +182,11 @@ foreach my $o (@options) {
   # but will add as a global dynamic variable instead
   foreach my $i (0..$#o) {
     if ($o[$i] =~ /^--mysqld=--max[-_]prepared[-_]stmt[-_]count=(\d+)/) {
-      $max_prepared_stmt_count=$1;
+      $max_prepared_stmt_count= $1;
+      delete $o[$i];
+  # enforce-storage-engine does not allow server to re-bootstrap if needed
+    } elsif ($o[$i] =~ /^--mysqld=--enforce[-_]storage[-_]engine=(\w+)/) {
+      $enforce_storage_engine= $1;
       delete $o[$i];
     }
   }
@@ -233,9 +238,14 @@ print "Initial test case: $suitedir/$testcase.test\n";
 print "Basedir: ".dirname(abs_path(cwd()))."\n";
 print "Vardir: $vardir\n";
 
+unlink("$suitedir/$test_basename.test");
 if (defined $max_prepared_stmt_count and $max_prepared_stmt_count == 0) {
-  system("echo \"SET GLOBAL max_prepared_stmt_count=0;\" > $suitedir/$test_basename.test");
-  die "Could not create $suitedir/$test_basename.test: $!" if $?;
+  system("echo \"SET GLOBAL max_prepared_stmt_count=0;\" >> $suitedir/$test_basename.test");
+  die "Could not write into $suitedir/$test_basename.test: $!" if $?;
+}
+if (defined $enforce_storage_engine) {
+  system("echo \"SET GLOBAL enforce_storage_engine=$enforce_storage_engine;\" >> $suitedir/$test_basename.test");
+  die "Could not write into $suitedir/$test_basename.test: $!" if $?;
 }
 system("cat $suitedir/$testcase.test >> $suitedir/$test_basename.test");
 die "Could not cat $suitedir/$testcase.test into $suitedir/$test_basename.test" if $?;
