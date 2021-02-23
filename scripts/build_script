@@ -19,7 +19,7 @@ mkdir -p /data/bld/$target
 rm -rf /dev/shm/tmp_build
 mkdir /dev/shm/tmp_build
 
-cmd="cmake /data/src/$source -DCMAKE_INSTALL_PREFIX=/data/bld/$target -DPLUGIN_TOKUDB=NO $* $mysql_boost && make -j12 && make install"
+cmd="cmake /data/src/$source -DCMAKE_INSTALL_PREFIX=/data/bld/$target -DPLUGIN_TOKUDB=NO -DPLUGIN_COLUMNSTORE=NO -DPLUGIN_XPAND=NO $* $mysql_boost && make -j12 && make install"
 
 cd /dev/shm/tmp_build
 echo "Building /data/src/$source and installing into /data/bld/$target"
