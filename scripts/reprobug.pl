@@ -293,7 +293,7 @@ sub mtr_simplification {
         chomp $cnf_options;
         $cnf_options =~ s/--mysqld=--loose-(innodb[-_]page[-_]size|checksum[-_]algorithm|undo[-_]tablespaces|log[-_]group[-_]home[-_]dir|data[-_]home[-_]dir|data[-_]file[-_]path)/--mysqld=--$1/g;
     }
-    system("rm -rf $suitedir; mkdir $suitedir; perl $scriptdir/mysql_log_to_mysqltest.pl $log | sed  -e \"s/\(IMMEDIATE\|FROM\) ' \\//\1 '' \\//g\" | sed  -e \"s/\(IMMEDIATE\|FROM\) '\$/\1 ''/g\" > $suitedir/${testname}.test");
+    system("rm -rf $suitedir; mkdir $suitedir; perl $scriptdir/mysql_log_to_mysqltest.pl --data-location=$rqg_home/data/blobs $log | sed  -e \"s/\(IMMEDIATE\|FROM\) ' \\//\1 '' \\//g\" | sed  -e \"s/\(IMMEDIATE\|FROM\) '\$/\1 ''/g\" > $suitedir/${testname}.test");
     print "Log file size: ".(-s $log)." ($log)\n";
     print "Test file size: ".(-s "$suitedir/${testname}.test")." ($suitedir/${testname}.test)\n\n";
     print "Running simplification with short timeouts\n";
