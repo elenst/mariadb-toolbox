@@ -52,6 +52,7 @@ sleep 15
 for t in $test_log ; do
     echo ""
     echo "----- Test log $t -----"
+    grep 'RQG git revision' $t
     echo ""
     grep -E -A 1 'Final command line|Final options' $t | sed -e 's/^.*\] perl /perl /'
     echo ""
