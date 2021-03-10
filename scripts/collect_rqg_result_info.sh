@@ -40,7 +40,7 @@ done
 #   errorfilter output;
 # - if there are any *.cnf files in the vardir(s), then
 #   the contents of each cnf file;
-# - Final command line from each test output;
+# - Final command line and server options from each test output;
 # - assertion|signal|\[FATAL\]|pure virtual method called records
 #   from each mysql.err* and mbackup_* logs;
 # - stack traces from each mysql.err* and mbackup_* logs;
@@ -53,7 +53,7 @@ for t in $test_log ; do
     echo ""
     echo "----- Test log $t -----"
     echo ""
-    grep -A 1 'Final command line' $t | sed -e 's/^.*\] perl /perl /'
+    grep -E -A 1 'Final command line|Final options' $t | sed -e 's/^.*\] perl /perl /'
     echo ""
     grep -E '^#.*\[ERROR\]|^#.*\[FATAL ERROR\]|DATABASE_CORRUPTION|runall.*exited with exit status|runall.*will exit with exit status|MemoryUsage monitor|FeatureUsage detected|Deadlock reporter detected stalled query' $t
     echo ""
