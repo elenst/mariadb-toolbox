@@ -88,9 +88,12 @@ unless ($enable_result_log) {
   print "--disable_result_log\n";
 }
 print "--disable_abort_on_error\n";
-print "DROP DATABASE IF EXISTS test;\n";
-print "CREATE DATABASE test;\n";
 print "USE test;\n";
+print '--let $charset= `SELECT @@character_set_server`'."\n";
+print '--let $collation= `SELECT @@collation_server`'."\n";
+print '--eval alter database test charset $charset collate $collation'."\n";
+print '--let $convert_query= `select group_concat(concat("ALTER TABLE ",table_name," CONVERT TO CHARACTER SET ",@@character_set_server," COLLATE ",@@collation_server) SEPARATOR "; ") FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = DATABASE()`'."\n";
+print '--eval $convert_query'."\n";
 print "SET GLOBAL event_scheduler= OFF;\n";
 print "CREATE USER rqg\@localhost;\n";
 print "GRANT ALL ON *.* TO rqg\@localhost;\n";
@@ -269,6 +272,7 @@ while(<>)
       print '--connect ('.$conname.'_'.$server_restarts.",$host,$user,$password,$db)\n";
       print "--enable_reconnect\n";
       print "SET TIMESTAMP= $timestamp /* 1 */;\n" if $opt_timestamps;
+      print "SET NAMES utf8;\n";
       print "--let \$${conname}_id= `SELECT CONNECTION_ID() AS ${conname}`\n";
       $test_connections{$new_log_con}= 0;
       $cur_test_con= $new_log_con;
