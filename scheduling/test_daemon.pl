@@ -175,11 +175,12 @@ sub collect_finished_workers {
             say("Worker with pid $p (mtr_build_thread $worker_build_threads{$p}) has finished execution of queue line $worker_queue_lines{$p}");
             delete $worker_build_threads{$p};
             delete $worker_queue_lines{$p};
+            say("Killing everything related to the finished test $id");
+            system("kill -9 `ps -ef | grep $id | awk '{print \$2}' | xargs`");
         } elsif ($worker_start_times{$p} + $test_timeout < time()) {
             say("Worker with pid $p ($id) has been running too long, it will be terminated");
+            system("kill -9 `ps -ef | grep $id | awk '{print \$2}' | xargs`");
         }
-        say("Killing everything related to the finished test $id");
-        system("kill -9 `ps -ef | grep $id | awk '{print \$2}' | xargs`");
     }
     say($status);
 }
