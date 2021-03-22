@@ -170,12 +170,12 @@ sub collect_finished_workers {
         waitpid($p, WNOHANG);
         my $res= $?;
         $status .= " [$p $worker_build_threads{$p} $res]";
+        my $id= $worker_full_ids{$p};
         if ($res > -1) { # process exited
             say("Worker with pid $p (mtr_build_thread $worker_build_threads{$p}) has finished execution of queue line $worker_queue_lines{$p}");
             delete $worker_build_threads{$p};
             delete $worker_queue_lines{$p};
         } elsif ($worker_start_times{$p} + $test_timeout < time()) {
-            my $id= $worker_full_ids{$p};
             say("Worker with pid $p ($id) has been running too long, it will be terminated");
         }
         # Kill everything related to the finished $id, just in case
