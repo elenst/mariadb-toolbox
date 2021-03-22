@@ -176,9 +176,10 @@ sub collect_finished_workers {
             delete $worker_queue_lines{$p};
         } elsif ($worker_start_times{$p} + $test_timeout < time()) {
             my $id= $worker_full_ids{$p};
-            say("Worker with pid $p ($id) has been running too long, trying to terminate");
-            system("kill `ps -ef | grep $id | awk '{print \$2}' | xargs`");
+            say("Worker with pid $p ($id) has been running too long, it will be terminated");
         }
+        # Kill everything related to the finished $id, just in case
+        system("kill -9 `ps -ef | grep $id | awk '{print \$2}' | xargs`");
     }
     say($status);
 }
