@@ -74,7 +74,8 @@ for b in $branches ; do
     revno=`git log -1 --abbrev=8 --pretty="%h"`
     for t in $build_types ; do
         bindir=$bldhome/$b-$revno-$t
-        symlink=$bldhome/$b-$t
+        symlink1=$bldhome/$b-$t
+        symlink2=$bldhome/$b
         if [ -e $bindir ] ; then
             echo "$t build for branch $b revision $revno already exists"
         else
@@ -103,8 +104,10 @@ for b in $branches ; do
                 if make -j16 ; then
                     rm -rf $bindir
                     if make install ; then
-                        rm -f $symlink
-                        ln -s $bindir $symlink
+                        rm -f $symlink1 $symlink2
+                        ln -s $bindir $symlink1
+                        # The last successful build type will be a "primary" build
+                        ln -s $bindir $symlink2
                     else
                         echo "ERROR: install failed, see the output above"
                         res=1
