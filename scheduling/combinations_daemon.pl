@@ -254,6 +254,13 @@ sub run_test {
 
   my $worker_pid= fork();
   if ($worker_pid) {
+
+      sub signal_handler {
+          say("$$: Caught a signal $!");
+      }
+      $SIG{INT}  = \&signal_handler;
+      $SIG{TERM} = \&signal_handler;
+
       $worker_build_threads{$worker_pid}= $mtr_build_thread;
       $worker_full_ids{$worker_pid}= $test_id;
       $worker_start_times{$worker_pid}= time();
