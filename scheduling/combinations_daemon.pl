@@ -223,7 +223,8 @@ sub run_test {
     $server_revno= $1;
   }
 
-  my $test_alias= basename("$ENV{RQG_HOME}/$config");
+#  my $test_alias= basename("$ENV{RQG_HOME}/$config");
+  my $test_alias= 'combo';
 
   while (scalar(keys %worker_build_threads)) {
       collect_finished_workers();
@@ -260,6 +261,18 @@ sub run_test {
       }
       $SIG{INT}  = \&signal_handler;
       $SIG{TERM} = \&signal_handler;
+      $SIG{ALRM} = \&signal_handler;
+      $SIG{SEGV} = \&signal_handler;
+      $SIG{ABRT} = \&signal_handler;
+      $SIG{USR1} = \&signal_handler;
+      $SIG{USR2} = \&signal_handler;
+      $SIG{CHLD} = \&signal_handler;
+      $SIG{CONT} = \&signal_handler;
+      $SIG{FPE} = \&signal_handler;
+      $SIG{ILL} = \&signal_handler;
+      $SIG{PIPE} = \&signal_handler;
+      $SIG{STOP} = \&signal_handler;
+      $SIG{TRAP} = \&signal_handler;
 
       $worker_build_threads{$worker_pid}= $mtr_build_thread;
       $worker_full_ids{$worker_pid}= $test_id;
