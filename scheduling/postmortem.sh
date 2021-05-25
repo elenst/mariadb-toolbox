@@ -64,5 +64,5 @@ if [ "$TEST_RESULT" != "OK" ] ; then
     fi
     tar zcf archive/${PREFIX}repro.tar.gz `find ${PREFIX}vardir* -name mysql.log` `find ${PREFIX}vardir* -name my.cnf` ${PREFIX}postmortem
 fi
-rm -rf ${PREFIX}vardir* $LOGDIR/${PREFIX}matches $LOGDIR/${PREFIX}result_info
+rm -rf $LOGDIR/${PREFIX} $LOGDIR/${PREFIX}vardir* $LOGDIR/${PREFIX}matches $LOGDIR/${PREFIX}result_info
 mv $LOGDIR/${PREFIX}* $LOGDIR/archive/ > /dev/null 2>&1
