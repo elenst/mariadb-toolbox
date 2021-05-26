@@ -287,6 +287,7 @@ sub run_test {
 
       git_pull($ENV{RQG_HOME});
       system("SERVER_BRANCH=$branch_to_run SERVER_REVNO=$server_revno TEST_ALIAS=$test_alias TEST_ID=$test_id LOGDIR=$logdir $scripts_location/postmortem.sh > $logdir/${test_id}_postmortem 2>&1");
+      system("rm -rf $logdir/${test_id}");
       exit $exitcode;
   } else {
       say("ERROR: Could not fork for the test job!");
