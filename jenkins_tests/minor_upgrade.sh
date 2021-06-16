@@ -123,8 +123,7 @@ collect_dependencies()
     done > ./ldd.$1
     for p in ${PKGS} ; do
       echo "$p:"
-      # GLIBCXX_3.4.14 is a workaround for a Columnstore change in June release set
-      rpm -q -R $p | awk '{print $1}' | grep -v 'GLIBCXX_3.4.14'
+      rpm -q -R $p | awk '{print $1}'
       echo ""
     done > ./reqs.$1
   fi
@@ -159,6 +158,8 @@ EOF
   sudo ${repo_update_command}
 }
 
+capabilities_query="select 'Stat' t, variable_name name, variable_value val from information_schema.global_status where variable_name like '%have%' union select 'Vars' t, variable_name name, variable_value val from information_schema.global_variables where variable_name like '%have%' order by t, name"
+
 ##############
 # Main
 ##############
@@ -187,6 +188,7 @@ fi
 sudo systemctl restart mariadb
 
 echo 'SELECT VERSION()' | sudo ${client_command} | tee /tmp/version.old
+sudo ${client_command} -e ${capabilities_query} | tee ./capabilities.old
 collect_dependencies "old"
 
 # Installing the new server
@@ -205,24 +207,39 @@ fi
 sudo systemctl restart mariadb || journalctl -xe | tail -n 100 && systemctl status mariadb.service 
 
 echo 'SELECT VERSION()' | sudo ${client_command} | tee /tmp/version.new
+sudo ${client_command} -e ${capabilities_query} | tee ./capabilities.new
 collect_dependencies "new"
 
 # If we are still here, nothing has failed yet
 res=0
+set +x
+echo "Comparing old and new server version number..."
 if diff /tmp/version.old /tmp/version.new ; then
-  echo "ERROR: Server version has not changed after upgrade" >> ./errors
+  echo "ERROR: Server version has not changed after upgrade" | tee -a ./errors
   res=1
+else
+  echo "OK"
 fi
+echo "Comparing old and new ldd output for installed binaries"
 if diff -U1000 ./ldd.old ./ldd.new | grep -E '^[-+]\s|^ =' ; then
-  # Inner if is a workaround for an intentional change in June release set for libpthread; remove after the release
-  if diff -U1000 ./ldd.old ./ldd.new | grep -v libpthread | grep -E '^[-+]\s' ; then
-    echo "ERROR: found changes in ldd output on installed binaries" >> ./errors
-    res=1
-  fi
-fi
-if ! diff -U150 ./reqs.old ./reqs.new ; then
-  echo "ERROR: found changes in package requirements" >> ./errors
+  echo "ERROR: found changes in ldd output on installed binaries" | tee -a ./errors
   res=1
+else
+  echo "OK"
+fi
+echo "Comparing old and new package requirements"
+if ! diff -U150 ./reqs.old ./reqs.new ; then
+  echo "ERROR: found changes in package requirements" | tee -a ./errors
+  res=1
+else
+  echo "OK"
+fi
+echo "Comparing old and new server capabilities ('%have%' variables)"
+if ! diff ./capabilities.old ./capabilities.new ; then
+  echo "ERROR: found changes in server capabilities" | tee -a ./errors
+  res=1
+else
+  echo "OK"
 fi
 
 if [ "$res" != "0" ] ; then
