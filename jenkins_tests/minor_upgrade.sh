@@ -88,7 +88,7 @@ esac
 ##############
 
 # TODO: Find out if it's really needed, it shouldn't even be installed on the build machine
-if [[ ${label} =~ debian-9 ]] ; then sudo ${install_command} -t stretch-backports rocksdb-tools; fi
+#if [[ ${label} =~ debian-9 ]] ; then sudo ${install_command} -t stretch-backports rocksdb-tools; fi
 # TODO: Remove when MENT-1229 is fixed
 if [[ ${label} =~ rhel-8 ]] && [[ ${VERSION} =~ 10.2 ]] ; then sudo dnf -y erase mariadb-connector-c ; fi
 
