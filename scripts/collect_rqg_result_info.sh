@@ -56,7 +56,7 @@ for t in $test_log ; do
     echo ""
     grep -E -A 1 'Final command line|Final options' $t | sed -e 's/^.*\] perl /perl /'
     echo ""
-    grep -E '^#.*\[ERROR\]|^#.*\[FATAL ERROR\]|DATABASE_CORRUPTION|runall.*exited with exit status|runall.*will exit with exit status|MemoryUsage monitor|FeatureUsage detected|Deadlock reporter detected stalled query|RQG git revision' $t
+    grep -E '^#.*\[ERROR\]|^#.*\[FATAL ERROR\]|DATABASE_CORRUPTION|runall.*exited with exit status|runall.*will exit with exit status|MemoryUsage monitor|FeatureUsage detected' $t
     echo ""
     echo ""
     if grep "TRANSFORM ISSUE" $t > /dev/null ; then
@@ -86,7 +86,7 @@ for v in $vardir ; do
         echo "Invalid roles_mapping table entry user : " `grep -c "Invalid roles_mapping table entry user" $l`
         echo "Can't open and lock privilege tables : " `grep -c "Can't open and lock privilege tables" $l`
         echo ""
-        grep -Ei '^Version: |assertion|signal |\[FATAL\]|ERROR|pure virtual method|safe_mutex:|overflow|overrun|0x|^Status: |Forcing close of thread|Warning: Memory not freed|Warning.*Thread.*did not exit|InnoDB: A long semaphore wait|WSREP: Server paused at|free\(\): invalid size|InnoDB: Table .* contains .* user defined columns in InnoDB, but .* columns in MariaDB' $l | grep -v "Invalid roles_mapping table entry user" | grep -v "Can't open and lock privilege tables"
+        grep -Ei '^Version: |assertion|signal |\[FATAL\]|ERROR|pure virtual method|safe_mutex:|overflow|overrun|0x|^Status: |Forcing close of thread|Warning: Memory not freed|Warning.*Thread.*did not exit|InnoDB: A long semaphore wait|WSREP: Server paused at|free\(\): invalid size|InnoDB: Table .* contains .* user defined columns in InnoDB, but .* columns in MariaDB|InnoDB: Using a partial-field key prefix in search' $l | grep -v "Invalid roles_mapping table entry user" | grep -v "Can't open and lock privilege tables"
         echo "---------------------------------------------------------"
         echo ""
     done
