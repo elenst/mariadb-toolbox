@@ -188,7 +188,7 @@ fi
 sudo systemctl restart mariadb
 
 echo 'SELECT VERSION()' | sudo ${client_command} | tee /tmp/version.old
-sudo ${client_command} -e ${capabilities_query} | tee ./capabilities.old
+sudo ${client_command} -e "${capabilities_query}" | tee ./capabilities.old
 collect_dependencies "old"
 
 # Installing the new server
@@ -207,7 +207,7 @@ fi
 sudo systemctl restart mariadb || journalctl -xe | tail -n 100 && systemctl status mariadb.service 
 
 echo 'SELECT VERSION()' | sudo ${client_command} | tee /tmp/version.new
-sudo ${client_command} -e ${capabilities_query} | tee ./capabilities.new
+sudo ${client_command} -e "${capabilities_query}" | tee ./capabilities.new
 collect_dependencies "new"
 
 # If we are still here, nothing has failed yet
