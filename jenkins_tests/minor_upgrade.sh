@@ -89,6 +89,8 @@ esac
 
 # TODO: Find out if it's really needed, it shouldn't even be installed on the build machine
 #if [[ ${label} =~ debian-9 ]] ; then sudo ${install_command} -t stretch-backports rocksdb-tools; fi
+# TODO: Remove when MENT-1229 is fixed
+if [[ ${label} =~ rhel-8 ]] && [[ ${VERSION} =~ 10.2 ]] ; then sudo dnf -y erase mariadb-connector-c ; fi
 
 #########################
 # Functions and commands
@@ -174,7 +176,15 @@ chmod +x mariadb_es_repo_setup
 sudo ./mariadb_es_repo_setup --token="${ESTOKEN}" --apply --mariadb-server-version="${VERSION}" --skip-maxscale
 retry "sudo ${repo_update_command}"
 
+# Workaround for MDEV-25930
+if [ "${PKG_TYPE}" == "RPM" ] ; then
+  set +e
+fi
 sudo ${install_command} ${PKGS}
+# Workaround for MDEV-25930
+if [ "${PKG_TYPE}" == "RPM" ] ; then
+  set -e
+fi
 sudo systemctl restart mariadb
 
 echo 'SELECT VERSION()' | sudo ${client_command} | tee /tmp/version.old
@@ -185,7 +195,15 @@ collect_dependencies "old"
 
 configure_test_repo
 
+# Workaround for MDEV-25930
+if [ "${PKG_TYPE}" == "RPM" ] ; then
+  set +e
+fi
 sudo ${upgrade_command} ${PKGS}
+# Workaround for MDEV-25930
+if [ "${PKG_TYPE}" == "RPM" ] ; then
+  set -e
+fi
 sudo systemctl restart mariadb || journalctl -xe | tail -n 100 && systemctl status mariadb.service 
 
 echo 'SELECT VERSION()' | sudo ${client_command} | tee /tmp/version.new
