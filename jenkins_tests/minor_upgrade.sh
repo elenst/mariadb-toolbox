@@ -164,14 +164,22 @@ capabilities_query="select 'Stat' t, variable_name name, variable_value val from
 # Main
 ##############
 
+# All failures before at the preliminary phase (preparation, installation of
+# a previous version, etc.) should not be considered real test failures.
+# The trap will set exit code to 3, which will be later interpreted as unstable.
+
+trap 'echo "Preliminary phase failed, test is aborted" && exit 3' EXIT
+
+# TODO:
+# This should be converted to an error when we find out which packages
+# can legitimately be there, and which indicate that the image is dirty
+
 ${package_list_command} | grep -Ei 'mariadb|mysql|galera' || true
 
 # Installing the old server
 
 retry "wget https://dlm.mariadb.com/enterprise-release-helpers/mariadb_es_repo_setup"
 chmod +x mariadb_es_repo_setup
-
-#retry "sudo ${install_command} debconf-utils"
 
 sudo ./mariadb_es_repo_setup --token="${ESTOKEN}" --apply --mariadb-server-version="${VERSION}" --skip-maxscale
 retry "sudo ${repo_update_command}"
@@ -191,9 +199,14 @@ echo 'SELECT VERSION()' | sudo ${client_command} | tee /tmp/version.old
 sudo ${client_command} -e "${capabilities_query}" | tee ./capabilities.old
 collect_dependencies "old"
 
-# Installing the new server
+# Preparing to installation of the new server
 
 configure_test_repo
+
+# Now it's time to clear the trap, as the actual test begins here
+trap
+
+# Installing the new server
 
 # Workaround for MDEV-25930
 if [ "${PKG_TYPE}" == "RPM" ] ; then
@@ -244,7 +257,7 @@ fi
 
 if [ "$res" != "0" ] ; then
   cat ./errors
+  # Setting exit code to 3 will make the result unstable instead of failed.
+  # TODO: it's temporary for debugging purposes, remove when done
+  exit 3
 fi
-
-#exit $res
-exit 0
