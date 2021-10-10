@@ -11,7 +11,7 @@ set -eux
 export CC=clang-$CLANG CXX=clang++-$CLANG
 sudo apt-get install -y clang-$CLANG libc++-$CLANG-dev libc++abi-$CLANG-dev automake
 sudo apt-get install -y libunwind8-dev
-apt-get source llvm-toolchain-$CLANG libgnutls28-dev libnettle8 libidn2 libgmp10
+apt-get source llvm-toolchain-$CLANG libgnutls28-dev libnettle7 libidn2 libgmp10
 
 cd llvm-toolchain-$CLANG-$CLANG.*/
 mkdir libc++msan
