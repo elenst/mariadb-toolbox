@@ -1,34 +1,34 @@
 multi_source.info_logs : MDEV-26637
-perfschema.hostcache_ipv6_ssl : libmariadb / gnutls
+# perfschema.hostcache_ipv6_ssl : libmariadb / gnutls
 # binlog.read_only : analyze Operation failed
 main.mysqlcheck : MDEV-26637
 # binlog.read_only_statement : analyze Operation failed
 # binlog.read_only : analyze Operation failed
-main.userstat : libmariadb / gnutls
+# main.userstat : libmariadb / gnutls
 # innodb.insert_into_empty : int10_to_str
 main.mysql_client_test : error: 19712
-main.mysql_upgrade_ssl : libmariadb / gnutls
+# main.mysql_upgrade_ssl : libmariadb / gnutls
 main.show_check : MDEV-26637
 main.mysql_client_test_comp : error: 19712
-main.ssl_7937 : libmariadb / gnutls
+# main.ssl_7937 : libmariadb / gnutls
 plugins.multiauth : libmariadb / ma_send
-main.ssl_8k_key : libmariadb / gnutls
-main.ssl_timeout-9836 : libmariadb / gnutls
-main.ssl_cipher : libmariadb / gnutls
+# main.ssl_8k_key : libmariadb / gnutls
+# main.ssl_timeout-9836 : libmariadb / gnutls
+# main.ssl_cipher : libmariadb / gnutls
 perfschema.hostcache_ipv4_auth_ed25519 : libmariadb / pvio_socket_write
 user_variables.basic : MDEV-26637
-main.tls_version1 : libmariadb / gnutls
-main.tls_version : libmariadb / gnutls
+# main.tls_version1 : libmariadb / gnutls
+# main.tls_version : libmariadb / gnutls
 # innodb.gap_locks : int10_to_str
-main.ssl : libmariadb / gnutls
-main.ssl_ca : libmariadb / gnutls
-main.ssl_compress : libmariadb / gnutls
-main.ssl_connect : libmariadb / gnutls
-main.ssl_timeout : libmariadb / gnutls
-perfschema.connection_type_notwin : libmariadb / gnutls
+# main.ssl : libmariadb / gnutls
+# main.ssl_ca : libmariadb / gnutls
+# main.ssl_compress : libmariadb / gnutls
+# main.ssl_connect : libmariadb / gnutls
+# main.ssl_timeout : libmariadb / gnutls
+# perfschema.connection_type_notwin : libmariadb / gnutls
 main.metadata : MDEV-26637
-main.flush_ssl : libmariadb / gnutls
-perfschema.hostcache_ipv4_ssl : libmariadb / gnutls
+# main.flush_ssl : libmariadb / gnutls
+# perfschema.hostcache_ipv4_ssl : libmariadb / gnutls
 roles.set_default_role_clear : MDEV-26637
 roles.set_default_role_invalid : MDEV-26637
 roles.set_default_role_new_connection : MDEV-26637
@@ -43,6 +43,6 @@ plugins.auth_ed25519 : libmariadb / ma_send
 plugins.cracklib_password_check : FascistLookUser
 plugins.two_password_validations : FascistLookUser
 roles.definer : MDEV-26637
-main.mysqladmin : libmariadb / gnutls
+# main.mysqladmin : libmariadb / gnutls
 roles.recursive_dbug : MDEV-26637
-main.openssl_1 : libmariadb / gnutls
+# main.openssl_1 : libmariadb / gnutls
