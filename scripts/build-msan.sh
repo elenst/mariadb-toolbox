@@ -9,9 +9,9 @@ set -eux
 : ${PARALLEL=$(nproc)}
 
 export CC=clang-$CLANG CXX=clang++-$CLANG
-sudo apt install clang-$CLANG libc++-$CLANG-dev libc++abi-$CLANG-dev automake
-sudo apt install libunwind8-dev
-apt source llvm-toolchain-$CLANG libgnutls28-dev libnettle8 libidn2 libgmp10
+sudo apt-get install -y clang-$CLANG libc++-$CLANG-dev libc++abi-$CLANG-dev automake
+sudo apt-get install -y libunwind8-dev
+apt-get source llvm-toolchain-$CLANG libgnutls28-dev libnettle8 libidn2 libgmp10
 
 cd llvm-toolchain-$CLANG-$CLANG.*/
 mkdir libc++msan
