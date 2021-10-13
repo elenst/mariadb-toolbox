@@ -4,6 +4,7 @@ innodb.innodb-page_compression_lz4 : buf_page_is_corrupted
 innodb.innodb-page_compression_lzma : buf_page_is_corrupted
 plugins.cracklib_password_check : FascistLookUser (MSAN)
 plugins.two_password_validations : FascistLookUser (MSAN)
+main.view : MDEV-24281 (Item::delete_self)
 #
 #
 # multi_source.info_logs : MDEV-26637 (MSAN)
