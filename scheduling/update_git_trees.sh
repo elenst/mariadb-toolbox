@@ -36,8 +36,8 @@ for b in $branches ; do
                 git clone $remote_repo --branch $b $b
             else
                 echo "Fast-forward was successful"
-                git submodule update
             fi
+            git submodule update --init --recursive
         else
             echo "Revisions are identical, no need to update"
         fi
