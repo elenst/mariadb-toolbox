@@ -153,10 +153,13 @@ while (1) {
   # choose one which has the lowest number and run it
   # (additionally collect recent builds for the possible 2nd tier)
   foreach my $b (keys %branch_combinations) {
+    say("For branch $b branch age is now $branch_age{br} and branch test number is $branch_tests{$b}");
     push @fresh_branches, $b if $branch_age{$b} < $build_retirement_age;
     if ($branch_tests{$b} < $min_test_limit) {
       if (not defined $branch_to_run or $branch_tests{$b} < $branch_tests{$branch_to_run}) {
         $branch_to_run= $b;
+        say("Branch $branch_to_run has been selected at tier 1");
+        last;
       }
     }
   }
@@ -164,12 +167,14 @@ while (1) {
   # If no such build was found, use a random build out of those which have not reached retirement age
   if (not $branch_to_run and scalar(@fresh_branches)) {
     $branch_to_run= $fresh_branches[int(rand(scalar(@fresh_branches)))];
+    say("Branch $branch_to_run has been selected at tier 2");
   }
   # Tier 3:
   # If no such build was found, use a random build
   if (not $branch_to_run) {
     my @branches= keys %branch_combinations;
     $branch_to_run= $branches[int(rand(scalar(@branches)))];
+    say("Branch $branch_to_run has been selected at tier 3");
   }
 
   unless ($branch_to_run) {
