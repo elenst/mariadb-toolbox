@@ -272,7 +272,7 @@ while(<>)
       print '--connect ('.$conname.'_'.$server_restarts.",$host,$user,$password,$db)\n";
       print "--enable_reconnect\n";
       print "SET TIMESTAMP= $timestamp /* 1 */;\n" if $opt_timestamps;
-      print "SET NAMES utf8;\n";
+      print 'execute immediate concat("set names ",if(@@character_set_server in ("ucs2","utf16","utf32"),"utf8",@@character_set_server));'."\n";
       print "--let \$${conname}_id= `SELECT CONNECTION_ID() AS ${conname}`\n";
       $test_connections{$new_log_con}= 0;
       $cur_test_con= $new_log_con;
