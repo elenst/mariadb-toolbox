@@ -153,7 +153,7 @@ while (1) {
   # choose one which has the lowest number and run it
   # (additionally collect recent builds for the possible 2nd tier)
   foreach my $b (keys %branch_combinations) {
-    say("For branch $b branch age is now $branch_age{br} and branch test number is $branch_tests{$b}");
+    say("For branch $b branch age is now $branch_age{$b} and branch test number is $branch_tests{$b}");
     push @fresh_branches, $b if $branch_age{$b} < $build_retirement_age;
     if ($branch_tests{$b} < $min_test_limit) {
       if (not defined $branch_to_run or $branch_tests{$b} < $branch_tests{$branch_to_run}) {
@@ -257,6 +257,7 @@ sub run_test {
   system("rm -rf $workdir");
 
   my $cmd= $combinations_cmd." --basedir=$build_to_run --config=$config --mtr-build-thread=$mtr_build_thread --workdir=$workdir > /dev/null 2>&1";
+  $tests_per_build{$build_to_run}= (defined $tests_per_build{$build_to_run} ? $tests_per_build{$build_to_run} + 1 : 1);
 
   my $worker_pid= fork();
   if ($worker_pid) {
