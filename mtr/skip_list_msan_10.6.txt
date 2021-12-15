@@ -1,0 +1,32 @@
+plugins.cracklib_password_check : FascistLookUser (MSAN)
+plugins.two_password_validations : FascistLookUser (MSAN)
+#
+# perfschema.hostcache_ipv6_ssl : libmariadb / gnutls
+# binlog.read_only : analyze Operation failed
+# binlog.read_only_statement : analyze Operation failed
+# binlog.read_only : analyze Operation failed
+# main.userstat : libmariadb / gnutls
+# innodb.insert_into_empty : int10_to_str
+# main.mysql_client_test : error: 19712
+# main.mysql_upgrade_ssl : libmariadb / gnutls
+# main.mysql_client_test_comp : error: 19712
+# main.ssl_7937 : libmariadb / gnutls
+# plugins.multiauth : libmariadb / ma_send
+# main.ssl_8k_key : libmariadb / gnutls
+# main.ssl_timeout-9836 : libmariadb / gnutls
+# main.ssl_cipher : libmariadb / gnutls
+# perfschema.hostcache_ipv4_auth_ed25519 : libmariadb / pvio_socket_write
+# main.tls_version1 : libmariadb / gnutls
+# main.tls_version : libmariadb / gnutls
+# innodb.gap_locks : int10_to_str
+# main.ssl : libmariadb / gnutls
+# main.ssl_ca : libmariadb / gnutls
+# main.ssl_compress : libmariadb / gnutls
+# main.ssl_connect : libmariadb / gnutls
+# main.ssl_timeout : libmariadb / gnutls
+# perfschema.connection_type_notwin : libmariadb / gnutls
+# main.flush_ssl : libmariadb / gnutls
+# perfschema.hostcache_ipv4_ssl : libmariadb / gnutls
+# plugins.auth_ed25519 : libmariadb / ma_send
+# main.mysqladmin : libmariadb / gnutls
+# main.openssl_1 : libmariadb / gnutls

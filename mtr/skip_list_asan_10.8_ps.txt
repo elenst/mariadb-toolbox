@@ -1,0 +1,4 @@
+main.having_cond_pushdown : MDEV-17869 / Item_change_list::rollback_item_tree_changes
+main.opt_tvc : MDEV-17869 / Item_change_list::rollback_item_tree_changes
+main.view : MDEV-24281 / Item::delete_self
+
