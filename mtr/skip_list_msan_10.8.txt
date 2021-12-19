@@ -9,6 +9,8 @@ mariabackup.incremental_compressed : buf_page_is_corrupted
 mariabackup.compression_providers_loaded : buf_page_is_corrupted
 mariabackup.compression_providers_unloaded : buf_page_is_corrupted
 plugins.compression : buf_page_is_corrupted
+main.ctype_utf8mb4_uca_allkeys400 : MDEV-27307
+main.ctype_utf8mb4_uca_allkeys520 : MDEV-27307
 #
 #
 # multi_source.info_logs : MDEV-26637 (MSAN)
