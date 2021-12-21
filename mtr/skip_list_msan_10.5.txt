@@ -1,9 +1,15 @@
 plugins.cracklib_password_check : FascistLookUser (MSAN)
 plugins.two_password_validations : FascistLookUser (MSAN)
+plugins.server_audit2_client : MENT-1388 (ASAN, wrong result etc.)
 innodb.full_crc32_import : MDEV-26757 : buf_page_is_corrupted
 innodb.innodb-page_compression_snappy : MDEV-26757 - buf_page_is_corrupted
 innodb.innodb-page_compression_lz4 : MDEV-26757 - buf_page_is_corrupted
 innodb.innodb-page_compression_lzma : MDEV-26757 - buf_page_is_corrupted
+main.sp-no-valgrind : Wrong result
+main.truncate_notembedded : ER_OPTION_PREVENTS_STATEMENT
+sys_vars.version : use-of-uninitialized-value in unpack_fields
+main.mysqldump-compat-102 : use-of-uninitialized-value in unpack_fields
+main.view : MDEV-24281 (Item::delete_self)
 #
 # perfschema.hostcache_ipv6_ssl : libmariadb / gnutls
 # binlog.read_only : analyze Operation failed
