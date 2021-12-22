@@ -4,6 +4,9 @@ innodb.full_crc32_import : MDEV-26757 : buf_page_is_corrupted
 innodb.innodb-page_compression_snappy : MDEV-26757 - buf_page_is_corrupted
 innodb.innodb-page_compression_lz4 : MDEV-26757 - buf_page_is_corrupted
 innodb.innodb-page_compression_lzma : MDEV-26757 - buf_page_is_corrupted
+main.view : MDEV-24281 (Item::delete_self)
+main.sp-no-valgrind : Wrong result
+main.truncate_notembedded : ER_OPTION_PREVENTS_STATEMENT
 #
 # perfschema.hostcache_ipv6_ssl : libmariadb / gnutls
 # binlog.read_only : analyze Operation failed
