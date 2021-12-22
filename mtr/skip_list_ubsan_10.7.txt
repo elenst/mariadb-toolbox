@@ -1,0 +1,1 @@
+binlog.binlog_truncate_active_log : MDEV-26919 - undefined value
