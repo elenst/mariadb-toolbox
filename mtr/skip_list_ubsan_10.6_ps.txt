@@ -1,0 +1,17 @@
+binlog.binlog_truncate_active_log : MDEV-26919 - undefined value
+main.json_normalize : MDEV-27415 - out of bounds
+main.json_equals : MDEV-27415 - out of bounds
+rpl.rpl_xa : MDEV-27355
+rpl.rpl_xa_gtid_pos_auto_engine : MDEV-27355
+rpl.rpl_xa_survive_disconnect_lsu_off : MDEV-27355
+rpl.rpl_parallel_optimistic_xa_lsu_off : MDEV-27355
+rpl.rpl_xa_gap_lock : MDEV-27355
+rpl.rpl_temporary_errors : MDEV-27355
+rpl.rpl_parallel_xa_same_xid : MDEV-27355
+rpl.rpl_parallel_optimistic_xa : MDEV-27355
+rpl.rpl_xa_survive_disconnect : MDEV-27355
+rpl.rpl_xa_survive_disconnect_mixed_engines : MDEV-27355
+binlog.binlog_empty_xa_prepared : MDEV-27355
+binlog.binlog_xa_prepared_disconnect : MDEV-27355
+binlog.binlog_xa_checkpoint : MDEV-27355
+main.xa_binlog : MDEV-27355
