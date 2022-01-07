@@ -294,6 +294,12 @@ sub build {
 sub run_test {
   print "\nBuild succeeded, running the test...\n  $test_cmd\n\n";
   my $out = readpipe("$test_cmd");
+  if (open(BISECT_LOG,">>$cwd/bisect.log")) {
+    print BISECT_LOG $out;
+    close(BISECT_LOG);
+  } else {
+    print "ERROR: couldn't open bisect.log for writing: $!\n";
+  }
   # If result isn't 1 (FAIL) or 0 (PASS), something is very wrong,
   # for example, the test does not exist. No point to continume
   my $res= ($? >> 8);
