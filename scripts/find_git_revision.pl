@@ -48,7 +48,7 @@ GetOptions (
 	"cmd=s"			=> \$test_cmd,
 	"failure-output=s" => \$failure_output,
 	"failure_output=s" => \$failure_output,
-	"output=s"		=> \$failure_output,
+	"output:s"		=> \$failure_output,
   "cmake_options|cmake-options=s" => \$cmake_options,
   "asan|with_asan|with-asan" => \$asan
 );
