@@ -1,0 +1,2 @@
+main.mysqldump : MDEV-23097 (heap-use-after-free in mysqlimport / strdup)
+gcol.virtual_index_drop : MDEV-27451 (LeakSanitizer)
