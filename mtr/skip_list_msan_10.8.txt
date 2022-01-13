@@ -1,14 +1,14 @@
-innodb.full_crc32_import : buf_page_is_corrupted
-innodb.innodb-page_compression_snappy : buf_page_is_corrupted
-innodb.innodb-page_compression_lz4 : buf_page_is_corrupted
-innodb.innodb-page_compression_lzma : buf_page_is_corrupted
+innodb.full_crc32_import : MDEV-26757 - buf_page_is_corrupted
+innodb.innodb-page_compression_snappy : MDEV-26757 - buf_page_is_corrupted
+innodb.innodb-page_compression_lz4 : MDEV-26757 - buf_page_is_corrupted
+innodb.innodb-page_compression_lzma : MDEV-26757 - buf_page_is_corrupted
 plugins.cracklib_password_check : FascistLookUser (MSAN)
 plugins.two_password_validations : FascistLookUser (MSAN)
 main.view : MDEV-24281 (Item::delete_self)
-mariabackup.incremental_compressed : buf_page_is_corrupted
-mariabackup.compression_providers_loaded : buf_page_is_corrupted
-mariabackup.compression_providers_unloaded : buf_page_is_corrupted
-plugins.compression : buf_page_is_corrupted
+mariabackup.incremental_compressed : MDEV-26757 - buf_page_is_corrupted
+mariabackup.compression_providers_loaded : MDEV-26757 - buf_page_is_corrupted
+mariabackup.compression_providers_unloaded : MDEV-26757 - buf_page_is_corrupted
+plugins.compression : MDEV-26757 - buf_page_is_corrupted
 main.ctype_utf8mb4_uca_allkeys400 : MDEV-27307
 main.ctype_utf8mb4_uca_allkeys520 : MDEV-27307
 #
