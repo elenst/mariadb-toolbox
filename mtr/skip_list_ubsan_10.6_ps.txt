@@ -15,4 +15,3 @@ binlog.binlog_empty_xa_prepared : MDEV-27355
 binlog.binlog_xa_prepared_disconnect : MDEV-27355
 binlog.binlog_xa_checkpoint : MDEV-27355
 main.xa_binlog : MDEV-27355
-plugins.server_audit2 : MENT-1222 - Memory not freed
