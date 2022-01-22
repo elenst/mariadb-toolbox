@@ -8,7 +8,7 @@
 
 PREFIX=$TEST_ID"_"
 
-resline=`grep 'runall.* will exit with exit status' $LOGDIR/${PREFIX}trial.log || grep 'GenTest exited with exit status' $LOGDIR/${PREFIX}trial.log || grep 'GenTest will exit with exit status' $LOGDIR/${PREFIX}trial.log`;
+resline=`grep -a 'runall.* will exit with exit status' $LOGDIR/${PREFIX}trial.log || grep -a 'GenTest exited with exit status' $LOGDIR/${PREFIX}trial.log || grep -a 'GenTest will exit with exit status' $LOGDIR/${PREFIX}trial.log`;
 
 TEST_RESULT=`echo $resline | sed -e 's/.*exit status STATUS_\([A-Z_]*\).*/\\1/g'`
 
@@ -51,7 +51,7 @@ done
 cat $LOGDIR/${PREFIX}matches
 cat $LOGDIR/${PREFIX}result_info
 if [ "$TEST_RESULT" == "SERVER_DEADLOCKED" ] ; then
-  grep -E '^#|^Thread|^$' $LOGDIR/${PREFIX}threads.$core_pid
+  grep -a -E '^#|^Thread|^$' $LOGDIR/${PREFIX}threads.$core_pid
 fi
 
 cd $LOGDIR
