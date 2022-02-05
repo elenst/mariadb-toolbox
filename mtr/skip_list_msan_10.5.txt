@@ -9,7 +9,8 @@ main.sp-no-valgrind : Wrong result
 main.truncate_notembedded : ER_OPTION_PREVENTS_STATEMENT
 sys_vars.version : use-of-uninitialized-value in unpack_fields
 main.mysqldump-compat-102 : use-of-uninitialized-value in unpack_fields
-main.view : MDEV-24281 (Item::delete_self)
+main.view : MDEV-24281 - Item::delete_self
+main.alter_table : MDEV-27752 - ER_OPTION_PREVENTS_STATEMENT
 #
 # perfschema.hostcache_ipv6_ssl : libmariadb / gnutls
 # binlog.read_only : analyze Operation failed
