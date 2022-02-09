@@ -1,0 +1,8 @@
+rpl.rpl_relay_max_extension : MDEV-27721 - Not portable to FreeBSD, disabled, waiting for rebase
+innodb_fts.innodb-fts-ddl : MDEV-27722 - Different error message on FreeBSD
+innodb.instant_alter : MDEV-27723 - rdiff doesn't apply on FreeBSD
+plugins.multiauth : MDEV-27724 - Different error message on FreeBSD
+mroonga/storage.column_datetime_freebsd_before_unix_epoch : MDEV-27725 - Datetime error on FreeBSD
+main.repair_symlink-5543 : MDEV-27726 - Wrong error code on FreeBSD
+perfschema.socket_connect : MDEV-27727 - Connection line missing on FreeBSD
+perfschema.socket_summary_by_event_name_func : MDEV-27727 - Connection line missing on FreeBSD
