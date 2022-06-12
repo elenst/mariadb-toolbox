@@ -267,7 +267,7 @@ print "\n\n====== Initial test ========\n";
 
 print "\nFirst round, quick: zero timeouts and minimal sleep time\n\n";
 my @options_save= @options;
-push @options, '--sleep=1', '--mysqld=--lock-wait-timeout=0', '--mysqld=--loose-innodb-lock-wait-timeout=0';
+push @options, '--sleep=1', '--mysqld=--lock-wait-timeout=0', '--mysqld=--loose-innodb-lock-wait-timeout=0', "--mysqld=--secure-file-priv=''";
 if (run_test($test))
 {
   print "Quick run succeeded, keeping minimal timeouts\n";
