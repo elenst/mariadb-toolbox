@@ -16,6 +16,8 @@ Usage:
 EOF
 }
 
+set -x
+
 vardir=''
 test_log=''
 script_location=`dirname $0`
