@@ -106,7 +106,7 @@ for v in $vardir ; do
     for b in $backup_logs ; do
         echo "--- Backup log $b"
         echo ""
-        grep -Ei 'assertion|signal |\[FATAL\]|ERROR|pure virtual method|overflow|overrun|failed|0x' | grep -v 'Copying .*statements_with_errors_or_warnings.frm' $b
+        grep -Ei 'assertion|signal |\[FATAL\]|ERROR|pure virtual method|overflow|overrun|failed|0x' $b | grep -v 'Copying .*statements_with_errors_or_warnings.frm'
         echo "---------------------------------------------------------"
         echo ""
     done
