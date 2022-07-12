@@ -1,3 +1,18 @@
+# Copyright (c) 2022, Elena Stepanova and MariaDB
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 2 of the License.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1335  USA
+
 use Time::Local;
 use Getopt::Long;
 use strict;
@@ -46,6 +61,7 @@ my $cur_log_record= '';
 my $timestamp= 0;
 my $server_restarts= 0;
 my $orig_data_location= '';
+my %service_connections= (); # Spider connections and such, to be ignored
 
 # Maximum connection ID used in the current server run.
 # The value is changed to 0 when the server is restarted.
@@ -195,7 +211,7 @@ while(<>)
     # set the flag, but proceed parsing, in case the connection does something
     # important on the system level (like server shutdown)
 
-    $ignore= (scalar(keys %interesting_connections) and not $interesting_connections{$new_log_con});
+    $ignore= (scalar(keys %interesting_connections) and not $interesting_connections{$new_log_con}) || $service_connections{$new_log_con};
 
     if ( $new_log_timestamp )
     {
@@ -269,6 +285,11 @@ while(<>)
       $db= '' unless defined $db;
       my $conname= 'con' . $new_log_con;
       my $password= ( defined $user_passwords{$user.'@'.$host} ? $user_passwords{$user.'@'.$host} : '' );
+      if ($user eq 'spider_user') {
+        $service_connections{$new_log_con}= 1;
+        $ignore= 1;
+        next;
+      }
       print '--connect ('.$conname.'_'.$server_restarts.",$host,$user,$password,$db)\n";
       print "--enable_reconnect\n";
       print "SET TIMESTAMP= $timestamp /* 1 */;\n" if $opt_timestamps;
