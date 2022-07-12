@@ -285,7 +285,7 @@ while(<>)
       $db= '' unless defined $db;
       my $conname= 'con' . $new_log_con;
       my $password= ( defined $user_passwords{$user.'@'.$host} ? $user_passwords{$user.'@'.$host} : '' );
-      if ($user eq 'spider_user') {
+      if ($user eq 'spider_user' or $user -eq 'fed_user') {
         $service_connections{$new_log_con}= 1;
         $ignore= 1;
         next;
