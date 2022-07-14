@@ -11,7 +11,7 @@ for v in $vardirs ; do
   echo "Log: $log"
   grep -a 'runall-new.pl will exit with exit status' $log | sed -e 's/^.*runall-new.pl will exit with exit status/Result:/'
 #  set -x
-  perl $rqg/util/check_for_known_bugs.pl --signatures=$rqg/data/bug_signatures $v/mysql.err $log
+  perl $rqg/util/check_for_known_bugs.pl --signatures=$rqg/data/bug_signatures* $v/mysql.err $log $v/boot.log
 #  set +x
   echo "###################################"
 done
