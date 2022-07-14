@@ -234,7 +234,7 @@ foreach my $f ( sort keys %fragments )
 		print sprintf("%7s : %13s : ", $ln, $counts{"$f:$ln"} ) . ${$fragments{$f}}[$ln] . "\n";
 		if (${$fragments{$f}}[$ln] =~ /^\+/) {
 			$total_lines++;
-			if ( $counts{"$f:$ln"} eq '0' ) {
+			if ( $counts{"$f:$ln"} ne '' and $counts{"$f:$ln"} le '0' ) {
 				push @zero_c, sprintf("%7s : ", $ln ) . ${$fragments{$f}}[$ln];
 				$zero_lines++;
 			}
@@ -245,7 +245,7 @@ foreach my $f ( sort keys %fragments )
 				print sprintf( "%7s b%2d: %-7s   ::\n", ':', $b, ${$branches{"$f:$ln"}}[$b] );	
 				if ( ${$fragments{$f}}[$ln] =~ /^\+/ ) {
 					$total_branches++;
-					if ( ${$branches{"$f:$ln"}}[$b] eq '0' ) 
+					if ( ${$branches{"$f:$ln"}}[$b] ne '' and ${$branches{"$f:$ln"}}[$b] le '0' )
 					{
 						push @zero_b, sprintf("b%2d: %7s : ", $b, $ln ) . ${$fragments{$f}}[$ln];
 						$zero_branches++;
