@@ -1,7 +1,21 @@
-source=$1
-target=$2
-shift
-shift
+tmp_build_location=/dev/shm/tmp_build
+
+if [ -z "$1" ]
+then
+    echo "But what to build?"
+    exit
+else
+    source=$1
+    shift
+fi
+
+if [ -z "$1" ]
+then
+    target=$source
+else
+    target=$1
+    shift
+fi
 
 curdir=`pwd`
 
@@ -14,24 +28,33 @@ case "$target" in
   ;;
 esac
 
+c_compiler=gcc
+cpp_compiler=g++
 
 mkdir -p /data/bld/$target
-rm -rf /dev/shm/tmp_build
-mkdir /dev/shm/tmp_build
+rm -rf ${tmp_build_location}
+mkdir ${tmp_build_location}
 
-cmd="cmake /data/src/$source -DCMAKE_INSTALL_PREFIX=/data/bld/$target -DPLUGIN_TOKUDB=NO -DPLUGIN_COLUMNSTORE=NO -DPLUGIN_XPAND=NO $* $mysql_boost && make -j12 && make install"
-
-cd /dev/shm/tmp_build
+cmd="cmake /data/src/$source -DCMAKE_INSTALL_PREFIX=/data/bld/$target -DPLUGIN_TOKUDB=NO -DPLUGIN_COLUMNSTORE=NO -DPLUGIN_XPAND=NO -DPLUGIN_OQGRAPH=NO -DPLUGIN_MROONGA=NO $* $mysql_boost && make -j6 && make install"
+set -x
+cd ${tmp_build_location}
 echo "Building /data/src/$source and installing into /data/bld/$target"
 echo "Running: $cmd"
-sh -c "$cmd 2>&1 | tee /dev/shm/tmp_build/build.log"
 
-if [ "$?" == "0" ] ; then
-    rm -rf /dev/shm/tmp_build
+set -o pipefail
+
+sh -c "$cmd 2>&1 | tee ${tmp_build_location}/build.log"
+res=$?
+
+if [ "$res" == "0" ] ; then
+    rm -rf ${tmp_build_location}
     cd /data/src/$source
     git log -1 --abbrev=8 --pretty="%h%n%n%an%n%cd (%ad)%n%s" | sed -e "s/^/# /" > /data/bld/$target/last_build
     echo "# " >> /data/bld/$target/last_build
+    date
     echo $cmd >> /data/bld/$target/last_build
+    date
 fi
 
 cd $curdir
+exit $res
