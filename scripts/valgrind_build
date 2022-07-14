@@ -1,0 +1,2 @@
+/usr/local/bin/build_script $* -DCMAKE_BUILD_TYPE=Debug -DWITH_VALGRIND=YES
+

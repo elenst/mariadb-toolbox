@@ -1,0 +1,2 @@
+/usr/local/bin/build_script $* -DWITH_ASAN=YES -DMYSQL_MAINTAINER_MODE=OFF -DCMAKE_C_FLAGS=-fno-omit-frame-pointer -DCMAKE_CXX_FLAGS=-fno-omit-frame-pointer
+

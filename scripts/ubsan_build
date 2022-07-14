@@ -1,0 +1,2 @@
+/usr/local/bin/build_script $* -DCMAKE_BUILD_TYPE=Debug -DWITH_UBSAN=YES -DPLUGIN_SPIDER=NO -DMYSQL_MAINTAINER_MODE=WARN -DWITH_SAFEMALLOC=OFF -DWITH_ZLIB=bundled -DWITH_SSL=bundled -DWITH_PCRE=bundled \"-DCMAKE_C_FLAGS=-Og -march=native -mtune=native\" \"-DCMAKE_CXX_FLAGS=-Og -march=native -mtune=native\" -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++
+
