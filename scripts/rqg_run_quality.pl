@@ -20,22 +20,32 @@ while (<>) {
     print "$ARGV:\n";
     my $total= 0;
     foreach my $s (sort keys %trial_queries_per_status) {
-      print sprintf("%32s - %d\n",$s, $trial_queries_per_status{$s});
+      print sprintf("%12s - %s\n", format_number($trial_queries_per_status{$s}), $s);
       $all_queries_per_status{$s} = ($all_queries_per_status{$s} ? $all_queries_per_status{$s} + $trial_queries_per_status{$s} : $trial_queries_per_status{$s});
       $total+= $trial_queries_per_status{$s};
     }
-    print sprintf("%32s - %d\n","Total", $total);
+    print sprintf("%12s - %s\n", format_number($total), "Total");
     %trial_queries_per_status= ();
   }
-  next unless /Statuses:.*(STATUS.*)/;
+  next unless /Statuses:.*?(STATUS.*)/;
   my $statuses= $1;
-  my %status_counts= ($statuses =~ /(STATUS_.*):\s+(\d+)/g);
+  my %status_counts= ($statuses =~ /(STATUS_.*?):\s+(\d+)/g);
   foreach my $s (keys %status_counts) {
     $trial_queries_per_status{$s} = ($trial_queries_per_status{$s} ? $trial_queries_per_status{$s} + $status_counts{$s} : $status_counts{$s});
   }
 }
 
-print "Total:\n";
+print "--------------------\nTotal:\n";
+my $total= 0;
 foreach my $s (sort keys %all_queries_per_status) {
-  print sprintf("%32s - %d\n",$s, $all_queries_per_status{$s});
+  print sprintf("%12s - %s\n", format_number($all_queries_per_status{$s}), $s);
+  $total+= $all_queries_per_status{$s};
 }
+print sprintf("%12s - %s\n", format_number($total), "Grand total");
+
+sub format_number {
+  my $val= shift;
+  while ($val =~ s/(.*)(\d)(\d\d\d)/${1}${2},${3}/) {};
+  return $val;
+}
+print "--------------------\n";
