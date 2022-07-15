@@ -5,8 +5,6 @@
 
 use strict;
 
-use constant BAD_RUN_PCT_THRESHOLD => 30;
-
 my @names = ();
 foreach (@ARGV) {
   my @expansion = glob($_);
@@ -17,7 +15,8 @@ foreach (@ARGV) {
 my %all_queries_per_status= ();
 my %trial_queries_per_status= ();
 
-my @bad_runs= ();
+# Percent to trial name(s)
+my %pct_runs= ();
 
 my $total_ok= 0;
 while (<>) {
@@ -30,11 +29,9 @@ while (<>) {
       $total+= $trial_queries_per_status{$s};
     }
     $total_ok+= $trial_queries_per_status{STATUS_OK};
-    my $ratio= ($total ? 100*$trial_queries_per_status{STATUS_OK}/$total : 0);
-    print sprintf("%12s - %s (%.2f%% OK)\n", format_number($total), "Total", $ratio);
-    if ($ratio < BAD_RUN_PCT_THRESHOLD) {
-      push @bad_runs, sprintf("$ARGV: %.2f%%", $ratio);
-    }
+    my $ratio= sprintf("%2f",($total ? 100*$trial_queries_per_status{STATUS_OK}/$total : 0));
+    print sprintf("%12s - %s (%5s%% OK)\n", format_number($total), "Total", $ratio);
+    $pct_runs{$ratio}= (exists $pct_runs{$ratio} ? "$pct_runs{$ratio} $ARGV" : "$ARGV");
     %trial_queries_per_status= ();
   }
   next unless /Statuses:.*?(STATUS.*)/;
@@ -59,8 +56,9 @@ sub format_number {
   return $val;
 }
 print "--------------------\n";
-print "Bad runs (less than ".BAD_RUN_PCT_THRESHOLD."% OK):\n";
-foreach (@bad_runs) {
-  print "$_\n";
+print "Worst runs:\n";
+my @pct= (sort { $a <=> $b } keys %pct_runs)[0..9];
+foreach (@pct) {
+  print "$_: $pct_runs{$_}\n";
 }
 print "--------------------\n";
