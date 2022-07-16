@@ -57,7 +57,8 @@ sub format_number {
 }
 print "--------------------\n";
 print "Worst runs:\n";
-my @pct= (sort { $a <=> $b } keys %pct_runs)[0..9];
+my $number_of_worst_runs= (scalar keys %pct_runs > 9 ? 9 : (scalar keys %pct_runs) - 1);
+my @pct= (sort { $a <=> $b } keys %pct_runs)[0..${number_of_worst_runs}];
 foreach (@pct) {
   print "$_: $pct_runs{$_}\n";
 }
