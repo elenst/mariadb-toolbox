@@ -54,19 +54,19 @@ sleep 15
 for t in $test_log ; do
     echo ""
     echo "----- Test log $t -----"
-    grep 'RQG git revision' $t
+    grep -a 'RQG git revision' $t
     echo ""
-    grep -E -A 1 'Final command line|Final options' $t | sed -e 's/^.*\] perl /perl /'
+    grep -aE -A 1 'Final command line|Final options' $t | sed -e 's/^.*\] perl /perl /'
     echo ""
-    grep -E '^#.*\[ERROR\]|^#.*\[FATAL ERROR\]|DATABASE_CORRUPTION|ALARM|ENVIROMENT|CRITICAL|runall.*exited with exit status|runall.*will exit with exit status|MemoryUsage monitor|FeatureUsage detected|^mysqldump|^mariadb-dump' $t
+    grep -aE '^#.*\[ERROR\]|^#.*\[FATAL ERROR\]|DATABASE_CORRUPTION|ALARM|ENVIROMENT|CRITICAL|runall.*exited with exit status|runall.*will exit with exit status|MemoryUsage monitor|FeatureUsage detected|^mysqldump|^mariadb-dump' $t
     echo ""
     echo ""
-    if grep "TRANSFORM ISSUE" $t > /dev/null ; then
+    if grep -a "TRANSFORM ISSUE" $t > /dev/null ; then
       echo "TRANSFORMATION ISSUES:"
       # Transformation failed
-      grep -A 1 'TRANSFORM ISSUE' $t | grep 'Transform GenTest' | sed -e 's/.*\(Transform GenTest.*\)/\1/g' | sort | uniq -c
+      grep -a -A 1 'TRANSFORM ISSUE' $t | grep -a 'Transform GenTest' | sed -e 's/.*\(Transform GenTest.*\)/\1/g' | sort | uniq -c
       # Mismatch with the original query
-      grep -A 1 'TRANSFORM ISSUE' $t | grep 'Original query' | sed -e 's/.*\(failed transformation with.*\)/\1/g' | sort | uniq -c
+      grep -a -A 1 'TRANSFORM ISSUE' $t | grep -a 'Original query' | sed -e 's/.*\(failed transformation with.*\)/\1/g' | sort | uniq -c
       echo "END OF TRANSFORMATION ISSUES"
     fi
     echo ""
@@ -85,11 +85,11 @@ for v in $vardir ; do
         echo "--- Error log $l"
         echo ""
         echo "Throttled errors:"
-        echo "Invalid roles_mapping table entry user : " `grep -c "Invalid roles_mapping table entry user" $l`
-        echo "Can't open and lock privilege tables : " `grep -c "Can't open and lock privilege tables" $l`
+        echo "Invalid roles_mapping table entry user : " `grep -a -c "Invalid roles_mapping table entry user" $l`
+        echo "Can't open and lock privilege tables : " `grep -a -c "Can't open and lock privilege tables" $l`
         echo ""
-        grep -Ei '^Version: |assertion|signal |\[FATAL\]|ERROR|pure virtual method|safe_mutex:|overflow|overrun|0x|^Status: |Forcing close of thread|Warning: Memory not freed|Warning.*Thread.*did not exit|InnoDB: A long semaphore wait|WSREP: Server paused at|free\(\): invalid size|InnoDB: Table .* contains .* user defined columns in InnoDB, but .* columns in MariaDB|InnoDB: Using a partial-field key prefix in search|Normal shutdown|Shutdown complete|InnoDB: Starting shutdown|InnoDB: Shutdown completed' $l | \
-        grep -Ev "Can't open and lock privilege tables|Invalid roles_mapping table entry user|Deadlock found when trying to get lock; try restarting transaction|Lock wait timeout exceeded; try restarting transaction|Aborted connection|has or is referenced in foreign key constraints which are not compatible|Foreign Key referenced table .* not found for foreign table|Cannot add field .* because after adding it, the row size is .* which is greater than maximum allowed size"
+        grep -Eai '^Version: |assertion|signal |\[FATAL\]|ERROR|pure virtual method|safe_mutex:|overflow|overrun|0x|^Status: |Forcing close of thread|Warning: Memory not freed|Warning.*Thread.*did not exit|InnoDB: A long semaphore wait|WSREP: Server paused at|free\(\): invalid size|InnoDB: Table .* contains .* user defined columns in InnoDB, but .* columns in MariaDB|InnoDB: Using a partial-field key prefix in search|Normal shutdown|Shutdown complete|InnoDB: Starting shutdown|InnoDB: Shutdown completed' $l | \
+        grep -Eav "Can't open and lock privilege tables|Invalid roles_mapping table entry user|Deadlock found when trying to get lock; try restarting transaction|Lock wait timeout exceeded; try restarting transaction|Aborted connection|has or is referenced in foreign key constraints which are not compatible|Foreign Key referenced table .* not found for foreign table|Cannot add field .* because after adding it, the row size is .* which is greater than maximum allowed size"
         echo "---------------------------------------------------------"
         echo ""
     done
@@ -98,7 +98,7 @@ for v in $vardir ; do
     for b in $boot_logs ; do
         echo "--- Boot log $b"
         echo ""
-        grep -Ei 'assertion|signal |\[FATAL\]|ERROR|pure virtual method|overflow|overrun|0x' $b
+        grep -Eai 'assertion|signal |\[FATAL\]|ERROR|pure virtual method|overflow|overrun|0x' $b
         echo "---------------------------------------------------------"
         echo ""
     done
@@ -107,7 +107,7 @@ for v in $vardir ; do
     for b in $backup_logs ; do
         echo "--- Backup log $b"
         echo ""
-        grep -Ei 'assertion|signal |\[FATAL\]|ERROR|pure virtual method|overflow|overrun|failed|0x' $b | grep -v 'Copying .*statements_with_errors_or_warnings.frm'
+        grep -Eai 'assertion|signal |\[FATAL\]|ERROR|pure virtual method|overflow|overrun|failed|0x' $b | grep -va 'Copying .*statements_with_errors_or_warnings.frm'
         echo "---------------------------------------------------------"
         echo ""
     done
