@@ -88,7 +88,8 @@ for v in $vardir ; do
         echo "Invalid roles_mapping table entry user : " `grep -c "Invalid roles_mapping table entry user" $l`
         echo "Can't open and lock privilege tables : " `grep -c "Can't open and lock privilege tables" $l`
         echo ""
-        grep -Ei '^Version: |assertion|signal |\[FATAL\]|ERROR|pure virtual method|safe_mutex:|overflow|overrun|0x|^Status: |Forcing close of thread|Warning: Memory not freed|Warning.*Thread.*did not exit|InnoDB: A long semaphore wait|WSREP: Server paused at|free\(\): invalid size|InnoDB: Table .* contains .* user defined columns in InnoDB, but .* columns in MariaDB|InnoDB: Using a partial-field key prefix in search' $l | grep -v "Invalid roles_mapping table entry user" | grep -v "Can't open and lock privilege tables"
+        grep -Ei '^Version: |assertion|signal |\[FATAL\]|ERROR|pure virtual method|safe_mutex:|overflow|overrun|0x|^Status: |Forcing close of thread|Warning: Memory not freed|Warning.*Thread.*did not exit|InnoDB: A long semaphore wait|WSREP: Server paused at|free\(\): invalid size|InnoDB: Table .* contains .* user defined columns in InnoDB, but .* columns in MariaDB|InnoDB: Using a partial-field key prefix in search|Normal shutdown' $l | \
+        grep -Ev "Can't open and lock privilege tables|Invalid roles_mapping table entry user|Deadlock found when trying to get lock; try restarting transaction|Lock wait timeout exceeded; try restarting transaction|Aborted connection"
         echo "---------------------------------------------------------"
         echo ""
     done
