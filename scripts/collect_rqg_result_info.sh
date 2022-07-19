@@ -58,7 +58,7 @@ for t in $test_log ; do
     echo ""
     grep -E -A 1 'Final command line|Final options' $t | sed -e 's/^.*\] perl /perl /'
     echo ""
-    grep -E '^#.*\[ERROR\]|^#.*\[FATAL ERROR\]|DATABASE_CORRUPTION|ALARM|ENVIROMENT|runall.*exited with exit status|runall.*will exit with exit status|MemoryUsage monitor|FeatureUsage detected' $t
+    grep -E '^#.*\[ERROR\]|^#.*\[FATAL ERROR\]|DATABASE_CORRUPTION|ALARM|ENVIROMENT|CRITICAL|runall.*exited with exit status|runall.*will exit with exit status|MemoryUsage monitor|FeatureUsage detected' $t
     echo ""
     echo ""
     if grep "TRANSFORM ISSUE" $t > /dev/null ; then
@@ -89,7 +89,7 @@ for v in $vardir ; do
         echo "Can't open and lock privilege tables : " `grep -c "Can't open and lock privilege tables" $l`
         echo ""
         grep -Ei '^Version: |assertion|signal |\[FATAL\]|ERROR|pure virtual method|safe_mutex:|overflow|overrun|0x|^Status: |Forcing close of thread|Warning: Memory not freed|Warning.*Thread.*did not exit|InnoDB: A long semaphore wait|WSREP: Server paused at|free\(\): invalid size|InnoDB: Table .* contains .* user defined columns in InnoDB, but .* columns in MariaDB|InnoDB: Using a partial-field key prefix in search|Normal shutdown|Shutdown complete|InnoDB: Starting shutdown|InnoDB: Shutdown completed' $l | \
-        grep -Ev "Can't open and lock privilege tables|Invalid roles_mapping table entry user|Deadlock found when trying to get lock; try restarting transaction|Lock wait timeout exceeded; try restarting transaction|Aborted connection|has or is referenced in foreign key constraints which are not compatible|Foreign Key referenced table .* not found for foreign table"
+        grep -Ev "Can't open and lock privilege tables|Invalid roles_mapping table entry user|Deadlock found when trying to get lock; try restarting transaction|Lock wait timeout exceeded; try restarting transaction|Aborted connection|has or is referenced in foreign key constraints which are not compatible|Foreign Key referenced table .* not found for foreign table|Cannot add field .* because after adding it, the row size is .* which is greater than maximum allowed size"
         echo "---------------------------------------------------------"
         echo ""
     done
