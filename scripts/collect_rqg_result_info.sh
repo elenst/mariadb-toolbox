@@ -58,7 +58,7 @@ for t in $test_log ; do
     echo ""
     grep -aE -A 1 'Final command line|Final options' $t | sed -e 's/^.*\] perl /perl /'
     echo ""
-    grep -aE '^#.*\[ERROR\]|^#.*\[FATAL ERROR\]|DATABASE_CORRUPTION|ALARM|ENVIRONMENT|CRITICAL|runall.*exited with exit status|runall.*will exit with exit status|MemoryUsage monitor|FeatureUsage detected|^mysqldump|^mariadb-dump' $t
+    grep -aE '^#.*\[ERROR\]|^#.*\[FATAL ERROR\]|DATABASE_CORRUPTION|ALARM|ENVIRONMENT|CRITICAL|REPLICATION_FAILURE|runall.*exited with exit status|runall.*will exit with exit status|MemoryUsage monitor|FeatureUsage detected|^mysqldump|^mariadb-dump' $t
     echo ""
     echo ""
     if grep -a "TRANSFORM ISSUE" $t > /dev/null ; then
