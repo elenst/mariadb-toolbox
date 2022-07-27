@@ -313,8 +313,11 @@ while(<>)
         print "--reap\n";
         print "SET TIMESTAMP= $timestamp /* 2 */;\n" if $opt_timestamps;
       }
-      print "--disconnect ".$conname.'_'.$server_restarts."\n";
+      if (!$service_connections{$new_log_con}) {
+        print "--disconnect ".$conname.'_'.$server_restarts."\n";
+      }
       delete $test_connections{$new_log_con};
+      delete $service_connections{$new_log_con};
       $cur_test_con= 0;
     }
     elsif ( $new_log_record_type eq 'Change' )
