@@ -476,6 +476,15 @@ sub print_current_record
             $test_connections{$cur_log_con}= 1;
           }
 
+          # Remove non-printable (except for tab and new-line)
+          $cur_log_record=~ s/[\x00-\x08\x0B-\x1F]/x/g;
+          # Try to fix broken strings without an ending quote and/or bracket and such)
+          $cur_log_record=~ s/SELECT\s+\'([^']*)*$/SELECT \'$1\'/g;
+          $cur_log_record=~ s/\(\'([^')]*)$/\(\'$1\'\)/g;
+          $cur_log_record=~ s/\(([^)]*)$/\($1\)/g;
+          $cur_log_record=~ s/(IMMEDIATE|FROM) ' \//$1 '' \//g;
+          $cur_log_record=~ s/(IMMEDIATE\|FROM) '$/$1 ''/g;
+
           if ($opt_convert_to_ei) {
             my $converted= $cur_log_record;
             $converted =~ s/[^\\]\"/\\\"/g;
