@@ -55,7 +55,7 @@ GetOptions (
   "--verbose"  => \$verbose,
 );
 
-my $nCPU=`grep -c processor /proc/cpuinfo`
+my $nCPU=`grep -c processor /proc/cpuinfo`;
 chomp $nCPU;
 
 my @commits_to_bisect= ();
