@@ -36,6 +36,7 @@ my $test_cmd;
 my $failure_output = '';
 my $cmake_options = '';
 my $asan;
+my $verbose= 0;
 
 GetOptions (    
 	"testcase=s"	=> \$testcase,
@@ -50,8 +51,12 @@ GetOptions (
 	"failure_output=s" => \$failure_output,
 	"output:s"		=> \$failure_output,
   "cmake_options|cmake-options=s" => \$cmake_options,
-  "asan|with_asan|with-asan" => \$asan
+  "asan|with_asan|with-asan" => \$asan,
+  "--verbose"  => \$verbose,
 );
+
+my $nCPU=`grep -c processor /proc/cpuinfo`
+chomp $nCPU;
 
 my @commits_to_bisect= ();
 my $build_options= '-DCMAKE_BUILD_TYPE=Debug -DMYSQL_MAINTAINER_MODE=OFF -DCMAKE_C_FLAGS=-fno-omit-frame-pointer -DCMAKE_CXX_FLAGS=-fno-omit-frame-pointer -DCMAKE_CXX_FLAGS="-std=gnu++98" -DWITH_SSL=bundled -DPLUGIN_TOKUDB=NO -DPLUGIN_COLUMNSTORE=NO -DPLUGIN_XPAND=NO -DPLUGIN_ROCKSDB=NO -DPLUGIN_SPHINX=NO -DPLUGIN_SPIDER=NO -DPLUGIN_MROONGA=NO -DPLUGIN_FEDERATEDX=NO -DPLUGIN_CONNECT=NO -DPLUGIN_FEDERATED=NO -DWITH_MARIABACKUP=OFF '.$cmake_options.($asan ? ' -DWITH_ASAN=YES' : '');
@@ -274,7 +279,7 @@ sub checkout {
 }
 
 sub build {
-  my $cmd = "cd $cwd && pwd && make -j13 >> bisect.log 2>&1";
+  my $cmd = "cd $cwd && pwd && make -j$nCPU >> bisect.log 2>&1";
   print "Git checkout -f succeeded, building...\n   $cmd\n";
   system($cmd);
   if ($? > 0) {
@@ -286,7 +291,7 @@ sub build {
       print "cmake failed, no more attempts to build\n";
       return $? >> 8;
     }
-    system("make -j13 >> bisect.log 2>&1");
+    system("make -j$nCPU >> bisect.log 2>&1");
   }
   return $? >> 8;
 }
@@ -314,6 +319,9 @@ sub run_test {
             print "Output is:\n", $out, "\n";
             print "and pattern is: $failure_output\n";
     $res = PASS;
+  }
+  elsif ($verbose) {
+    print "VERBOSE MODE ON. Whole test output:\n-----------------------------\n$out\n-----------------------------\n\n";
   }
   return $res;
 }
