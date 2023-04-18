@@ -35,7 +35,9 @@ mkdir -p /data/bld/$target
 rm -rf ${tmp_build_location}
 mkdir ${tmp_build_location}
 
-cmd="cmake /data/src/$source -DCMAKE_INSTALL_PREFIX=/data/bld/$target -DPLUGIN_TOKUDB=NO -DPLUGIN_COLUMNSTORE=NO -DPLUGIN_XPAND=NO -DPLUGIN_OQGRAPH=NO -DPLUGIN_MROONGA=NO $* $mysql_boost && make -j6 && make install"
+if [ -z "$nCPU" ]; then cpus=$(grep -c processor /proc/cpuinfo); else cpus=$nCPU ; fi
+
+cmd="cmake /data/src/$source -DCMAKE_INSTALL_PREFIX=/data/bld/$target -DPLUGIN_TOKUDB=NO -DPLUGIN_COLUMNSTORE=NO -DPLUGIN_XPAND=NO $* $mysql_boost && make -j${cpus} && make install"
 set -x
 cd ${tmp_build_location}
 echo "Building /data/src/$source and installing into /data/bld/$target"

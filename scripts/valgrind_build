@@ -1,2 +1,2 @@
-/usr/local/bin/build_script $* -DCMAKE_BUILD_TYPE=Debug -DWITH_VALGRIND=YES
+/usr/local/bin/build_script $* -DCMAKE_BUILD_TYPE=Debug -DWITH_VALGRIND=YES -DWITH_URING=no -DCMAKE_DISABLE_FIND_PACKAGE_URING=1
 

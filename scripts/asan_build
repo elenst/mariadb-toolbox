@@ -2,5 +2,6 @@ src=$1
 dest=$2
 shift
 shift
-/usr/local/bin/build_script $src $dest -DCMAKE_BUILD_TYPE=Debug -DWITH_ASAN=YES -DMYSQL_MAINTAINER_MODE=OFF -DCMAKE_C_FLAGS=-fno-omit-frame-pointer -DCMAKE_CXX_FLAGS=-fno-omit-frame-pointer -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ $*
+#  -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+/usr/local/bin/build_script $src $dest -DCMAKE_BUILD_TYPE=Debug -DWITH_ASAN=YES -DMYSQL_MAINTAINER_MODE=OFF -DCMAKE_C_FLAGS=-fno-omit-frame-pointer -DCMAKE_CXX_FLAGS=-fno-omit-frame-pointer -DWITH_SAFEMALLOC=OFF $*
 
