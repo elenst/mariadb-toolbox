@@ -1,3 +1,5 @@
+#!/usr/bin/perl
+
 # Copyright (c) 2014, 2020, Elena Stepanova and MariaDB
 #
 # This program is free software; you can redistribute it and/or modify
@@ -34,6 +36,7 @@ my $opt_preserve_connections;
 my $rpl= undef;
 my $max_chunk= 0;
 my $vardir='var';
+my $with_minio= 0;
 $|= 1;
 
 # $trials is the number of attempts for every intermediate test case.
@@ -117,6 +120,7 @@ GetOptions (
   "initial-trials|initial_trials=i"    => \$initial_trials,
   "test-timeout|test_timeout=i"   => \$timeout,
   "simplification-timeout|simplification_timeout=i"   => \$simplification_timeout,
+  "minio!"      => \$with_minio,
 );
 
 if (!$testcase) {
@@ -165,6 +169,10 @@ if ("@options" =~ /--vardir=(\S+)/) {
 
 if ("@options" =~ /.*--testcase-timeout=(\d+)/) {
     $testcase_timeout = $1;
+}
+
+if ("@options" =~ /s3/) {
+  $with_minio= 1;
 }
 
 # Parse options and make adjustments
@@ -485,7 +493,7 @@ foreach my $mode (@modes)
 
     # Option groups, those that are easier to remove together
 
-    my @option_groups= (qr/(?:encrypt|key_management)/,qr/innodb[-_]/);
+    my @option_groups= (qr/(?:encrypt|key[-_]management|hashicorp)/,qr/innodb[-_]/,qr/performance[-_]schema/,qr/s3/);
 
     foreach my $og (@option_groups)
     {
@@ -593,6 +601,9 @@ print "Remaining options: @options\n\n";
 # and 0 otherwise
 sub run_test
 {
+  if ($with_minio) {
+    system("mc alias set local http://127.0.0.1:9000 minio minioadmin && ( mc rb --force local/rqg || true ) && mc mb local/rqg");
+  }
   my $testref = shift;
   
   if ($endtime and ( time() + $max_trial_duration > $endtime )) {

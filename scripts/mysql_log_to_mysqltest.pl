@@ -1,3 +1,5 @@
+#!/usr/bin/perl
+
 # Copyright (c) 2022, Elena Stepanova and MariaDB
 #
 # This program is free software; you can redistribute it and/or modify
@@ -285,7 +287,7 @@ while(<>)
       $db= '' unless defined $db;
       my $conname= 'con' . $new_log_con;
       my $password= ( defined $user_passwords{$user.'@'.$host} ? $user_passwords{$user.'@'.$host} : '' );
-      if ($user eq 'spider_user' or $user eq 'fed_user') {
+      if ($user eq 'spider_user' or $user eq 'fed_user' or $user eq 'remote_user') {
         $service_connections{$new_log_con}= 1;
         $ignore= 1;
         next;
