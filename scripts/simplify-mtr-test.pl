@@ -164,7 +164,11 @@ if ($opt_preserve_connections) {
   foreach ( @pc ) { $preserve_connections{$_} = 1 };
 }
 
-if (not defined $vardir && "@options" =~ /--vardir=(\S+)/) {
+if (defined $vardir) {
+  print "HERE: $vardir\n";
+}
+
+if ((not defined $vardir) && ("@options" =~ /--vardir=(\S+)/)) {
   $vardir=$1;
 }
 
