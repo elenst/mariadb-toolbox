@@ -35,7 +35,7 @@ my $path = dirname(abs_path($0));
 my $opt_preserve_connections;
 my $rpl= undef;
 my $max_chunk= 0;
-my $vardir='var';
+my $vardir;
 my $with_minio= 0;
 $|= 1;
 
@@ -121,6 +121,7 @@ GetOptions (
   "test-timeout|test_timeout=i"   => \$timeout,
   "simplification-timeout|simplification_timeout=i"   => \$simplification_timeout,
   "minio!"      => \$with_minio,
+  "vardir=s"    => \$vardir,
 );
 
 if (!$testcase) {
@@ -163,8 +164,17 @@ if ($opt_preserve_connections) {
   foreach ( @pc ) { $preserve_connections{$_} = 1 };
 }
 
-if ("@options" =~ /--vardir=(\S+)/) {
-    $vardir=$1;
+if (not defined $vardir && "@options" =~ /--vardir=(\S+)/) {
+  $vardir=$1;
+}
+
+if (defined $vardir) {
+  foreach my $i (0..$#options) {
+    delete $options[$i] if ($options[$i] =~ /^--vardir/ or $options[$i] eq '--mem');
+  }
+  push @options, "--vardir=$vardir";
+} else {
+  $vardir='var';
 }
 
 if ("@options" =~ /.*--testcase-timeout=(\d+)/) {
