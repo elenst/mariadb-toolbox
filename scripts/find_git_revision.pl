@@ -301,17 +301,17 @@ sub build {
   my $cmd = "cd $cwd && pwd && make -j$nCPU >> bisect.log 2>&1";
   print "Git checkout -f succeeded, building...\n   $cmd\n";
   system($cmd);
-  if ($? > 0) {
-    print "\nWARNING: Build failed, trying to do a clean build\n";
-    system("git clean -ddffxx -e mysql-test -e bisect.log >> bisect.log 2>&1");
-    system("git submodule foreach --recursive git clean -ddffxx >> bisect.log 2>&1");
-    system("cmake . $build_options >> bisect.log 2>&1");
-    if ($?) {
-      print "cmake failed, no more attempts to build\n";
-      return $? >> 8;
-    }
-    system("make -j$nCPU >> bisect.log 2>&1");
-  }
+#  if ($? > 0) {
+#    print "\nWARNING: Build failed, trying to do a clean build\n";
+#    system("git clean -ddffxx -e mysql-test -e bisect.log >> bisect.log 2>&1");
+#    system("git submodule foreach --recursive git clean -ddffxx >> bisect.log 2>&1");
+#    system("cmake . $build_options >> bisect.log 2>&1");
+#    if ($?) {
+#      print "cmake failed, no more attempts to build\n";
+#      return $? >> 8;
+#    }
+#    system("make -j$nCPU >> bisect.log 2>&1");
+#  }
   return $? >> 8;
 }
 
