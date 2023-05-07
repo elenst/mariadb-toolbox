@@ -486,6 +486,12 @@ sub print_current_record
           $cur_log_record=~ s/\(([^)]*)$/\($1\)/g;
           $cur_log_record=~ s/(IMMEDIATE|FROM) ' \//$1 '' \//g;
           $cur_log_record=~ s/(IMMEDIATE\|FROM) '$/$1 ''/g;
+          # Mask MTR "special" words, if a query starts from a word
+          # like 'if' or 'while', MTR thinks it a flow control expression.
+          # But if it's preceeded by a comment, it does not
+          if ($cur_log_record =~ /^\s*(?:IF|WHILE)/) {
+            $cur_record= '/* */ '.$cur_log_record;
+          }
 
           if ($opt_convert_to_ei) {
             my $converted= $cur_log_record;
