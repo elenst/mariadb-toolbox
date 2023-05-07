@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Copyright (c) 2014, 2020, Elena Stepanova and MariaDB
+# Copyright (c) 2014, 2023, Elena Stepanova and MariaDB
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,19 +22,21 @@ use File::Basename;
 use File::Copy "copy";
 use File::Path qw(make_path remove_tree);
 use List::Util qw(min max);
+use Digest::MD5 qw(md5_hex);
 
 use strict;
 
+my $basedir= dirname(abs_path(cwd()));
+my $mtrdir;
 my $opt_mode = 'all';
 my @output;
-my $suitedir = 't';
-my $suitename;
 my @options;
-my $testcase;
-my $path = dirname(abs_path($0));
+my $original_test; # Full path
+my $toolpath = dirname(abs_path($0));
 my $opt_preserve_connections;
 my $rpl= undef;
 my $max_chunk= 0;
+my $workdir;
 my $vardir;
 my $with_minio= 0;
 $|= 1;
@@ -106,27 +108,51 @@ if ($^O eq 'MSWin32' or $^O eq 'MSWin64') {
 ####################
 
 GetOptions (
-  "testcase=s"  => \$testcase,
+  "basedir=s"   => \$basedir,
+  "initial-trials|initial_trials=i"    => \$initial_trials,
+  "max-chunk-size|max_chunk_size=i" => \$max_chunk,
+  "minio!"      => \$with_minio,
   "mode=s"      => \$opt_mode,
   "output=s@"    => \@output,
-  "suitedir=s"  => \$suitedir,
-  "suite=s"     => \$suitename,
   "options=s@"   => \@options,
-  "rpl=s"       => \$rpl,
   "preserve-connections|preserve_connections=s" => \$opt_preserve_connections,
-  "preserve-query|preserve_query=s" => \$preserve_pattern,
-  "max-chunk-size|max_chunk_size=i" => \$max_chunk,
-  "trials=i"    => \$trials,
-  "initial-trials|initial_trials=i"    => \$initial_trials,
-  "test-timeout|test_timeout=i"   => \$timeout,
+  "preserve-query|preserve_query|query=s" => \$preserve_pattern,
+  "rpl=s"       => \$rpl,
   "simplification-timeout|simplification_timeout=i"   => \$simplification_timeout,
-  "minio!"      => \$with_minio,
+  "test-timeout|test_timeout=i"   => \$timeout,
+  "testcase|test|testfile=s"  => \$original_test, # Mandatory
+  "trials=i"    => \$trials,
   "vardir=s"    => \$vardir,
+  "workdir=s"   => \$workdir, # Mandatory
 );
 
-if (!$testcase) {
+if (!$original_test) {
   print "ERROR: testcase is not defined\n";
   exit 1;
+}
+
+unless (-e $original_test) {
+  print "ERROR: test file $original_test does not exist\n";
+  exit 1;
+}
+
+unless (defined $workdir) {
+  print "ERROR: workdir must be defined (Attention! Everything will be removed from there!)\n";
+  exit 1;
+}
+
+unless (-d $basedir) {
+  print "ERROR: Could not find basedir $basedir\n";
+  exit 1;
+}
+
+if (-d "$basedir/mysql-test") {
+  $mtrdir= "$basedir/mysql-test";
+} elsif (-d "$basedir/mariadb-test") {
+  $mtrdir= "$basedir/mariadb-test";
+} else {
+  print "ERROR: Could not find MTR in $basedir\n";
+  exit 1
 }
 
 if (lc($opt_mode) eq 'all') {
@@ -136,19 +162,6 @@ if (lc($opt_mode) eq 'all') {
 } else {
   print "ERROR: Unknown simplification mode: $opt_mode. Only 'stmt', 'line', 'conn', 'syntax', 'options', 'cleanup', 'all' are allowed\n";
   exit 1;
-}
-
-unless ($suitename) {
-  if ($suitedir eq 't') {
-    $suitename = 'main'
-  }
-  elsif ($suitedir =~ /.*[\/\\](.*)/) {
-    $suitename = $1;
-  }
-  else {
-    print "ERROR: Could not retrieve suite name\n";
-    exit 1;
-  }
 }
 
 if (not defined $initial_trials) {
@@ -164,12 +177,14 @@ if ($opt_preserve_connections) {
   foreach ( @pc ) { $preserve_connections{$_} = 1 };
 }
 
-if (defined $vardir) {
-  print "HERE: $vardir\n";
-}
-
-if ((not defined $vardir) && ("@options" =~ /--vardir=(\S+)/)) {
-  $vardir=$1;
+if (not defined $vardir) {
+  if ("@options" =~ /--vardir=(\S+)/) {
+    $vardir=$1;
+  } elsif ("@options" =~ /(?:--mem |--mem$)/) {
+    $vardir= undef;
+  } else {
+    $vardir= "$workdir/var";
+  }
 }
 
 if (defined $vardir) {
@@ -177,8 +192,6 @@ if (defined $vardir) {
     delete $options[$i] if ($options[$i] =~ /^--vardir/ or $options[$i] eq '--mem');
   }
   push @options, "--vardir=$vardir";
-} else {
-  $vardir='var';
 }
 
 if ("@options" =~ /.*--testcase-timeout=(\d+)/) {
@@ -189,7 +202,7 @@ if ("@options" =~ /s3/) {
   $with_minio= 1;
 }
 
-# Parse options and make adjustments
+# Parse mysqld options and make adjustments
 
 my $max_prepared_stmt_count;
 my $enforce_storage_engine;
@@ -227,9 +240,7 @@ if ($max_prepared_stmt_count) {
 # so we'll disable it
 push @opts, '--mysqld=--loose-simple-password-check=off';
 
-
 @options= @opts;
-
 
 if (defined $timeout) {
     $max_timeout= $timeout;
@@ -246,41 +257,45 @@ if (scalar @output) {
 $preserve_pattern= ($preserve_pattern ? "$preserve_pattern|\#\s+PRESERVE|mariabackup" : "\#\s+PRESERVE|mariabackup");
 print "Patterns to preserve: $preserve_pattern\n";
 
-my $test_basename= ($rpl ? 'new_rpl' : 'new_test');
-
-if ($ENV{MTR_VERSION} eq "1" and ($suitename eq 't' or $suitename eq 'main') and not -e "r/$test_basename.result") {
-  system("touch r/$test_basename.result");
-}
-
 ####################
 # Files
 ####################
 
-print "Initial test case: $suitedir/$testcase.test\n";
-print "Basedir: ".dirname(abs_path(cwd()))."\n";
-print "Vardir: $vardir\n";
+remove_tree($workdir);
+my $suitedir= "$workdir/bug";
+my $testname= 'last';
+my $workfile= "$suitedir/$testname.test";
+my $outputdir= "$workdir/simplification_output";
+my $suitename= md5_hex($workdir);
 
-unlink("$suitedir/$test_basename.test");
+make_path($suitedir);
+make_path($outputdir);
+
+unlink("$mtrdir/suite/$suitename");
+system("ln -s $suitedir $mtrdir/suite/$suitename");
+
+print "Original test case: $original_test\n";
+print "Basedir: $basedir\n";
+print "Workdir: $workdir\n";
+print "Vardir: $vardir\n";
+print "Generated suite name: $suitename\n";
+
+open(WF,">$workfile") || die "Could not open $workfile for writing: $!\n";
 if (defined $max_prepared_stmt_count and $max_prepared_stmt_count == 0) {
-  system("echo \"SET GLOBAL max_prepared_stmt_count=0;\" >> $suitedir/$test_basename.test");
-  die "Could not write into $suitedir/$test_basename.test: $!" if $?;
+  print WF "SET GLOBAL max_prepared_stmt_count=0\n";
 }
 if (defined $enforce_storage_engine) {
-  system("echo \"SET GLOBAL enforce_storage_engine=$enforce_storage_engine;\" >> $suitedir/$test_basename.test");
-  die "Could not write into $suitedir/$test_basename.test: $!" if $?;
+  print WF "SET GLOBAL enforce_storage_engine=$enforce_storage_engine\n";
 }
-system("cat $suitedir/$testcase.test >> $suitedir/$test_basename.test");
-die "Could not cat $suitedir/$testcase.test into $suitedir/$test_basename.test" if $?;
-#copy("$suitedir/$testcase.test","$suitedir/$test_basename.test") || die "Could not copy $suitedir/$testcase.test to $suitedir/$test_basename.test";
-
-remove_tree("$testcase.output");
-make_path("$testcase.output");
+close(WF);
+system("cat $original_test >> $workfile");
+die "Could not cat $original_test into $workfile" if $?;
 
 ####################
 # Initial trials
 ####################
 
-my ($test, $big_connections, $small_connections) = read_testfile("$suitedir/$test_basename.test",$modes[0]);
+my ($test, $big_connections, $small_connections) = read_testfile($workfile,$modes[0]);
 
 my $trials_save= $trials;
 $trials= $initial_trials;
@@ -289,7 +304,7 @@ print "\n\n====== Initial test ========\n";
 
 print "\nFirst round, quick: zero timeouts and minimal sleep time\n\n";
 my @options_save= @options;
-push @options, '--sleep=1', '--mysqld=--lock-wait-timeout=0', '--mysqld=--loose-innodb-lock-wait-timeout=0', "--mysqld=--secure-file-priv=''";
+push @options, '--sleep=1', '--mysqld=--lock-wait-timeout=0', '--mysqld=--loose-innodb-lock-wait-timeout=0';
 if (run_test($test))
 {
   print "Quick run succeeded, keeping minimal timeouts\n";
@@ -302,7 +317,7 @@ if (run_test($test))
   }
 }
 my @last_failed_test= @$test;
-$ trials= $trials_save;
+$trials= $trials_save;
 
 ####################
 # Simplification
@@ -320,7 +335,7 @@ foreach my $mode (@modes)
 
     while (check_connections_one_by_one(@$big_connections)) {
       write_testfile(\@last_failed_test);
-      ($test, $big_connections, $small_connections) = read_testfile("$suitedir/$test_basename.test",$mode);
+      ($test, $big_connections, $small_connections) = read_testfile($workfile,$mode);
       my @test= @$test;
       if (scalar(@test) <= 1) {
         exit;
@@ -359,7 +374,7 @@ foreach my $mode (@modes)
     # Re-read the test in the new mode
     write_testfile(\@last_failed_test);
     # We don't need connections (second returned value) anymore
-    ($test, undef)= read_testfile("$suitedir/$test_basename.test",$mode);
+    ($test, undef)= read_testfile($workfile,$mode);
 
     my @test= @$test;
     if (scalar(@test) <= 1) {
@@ -433,7 +448,7 @@ foreach my $mode (@modes)
     # Re-read the test in the new mode
     write_testfile(\@last_failed_test);
     # We don't need connections (second returned value) anymore, and we need statements, not lines
-    ($test, undef)= read_testfile("$suitedir/$test_basename.test",'stmt');
+    ($test, undef)= read_testfile($workfile,'stmt');
 
     my @test= @$test;
     if (scalar(@test) <= 1) {
@@ -600,10 +615,25 @@ foreach my $mode (@modes)
   }
 }
 
-print "\nLast reproducible testcase: $suitedir/$testcase.test.reproducible.".($reproducible_counter-1)."\n";
-print "Basedir: ".dirname(abs_path(cwd()))."\n";
+print "Basedir: $basedir\n";
 print "Vardir: $vardir\n";
 print "Remaining options: @options\n\n";
+
+if (open(FINAL, "> $suitedir/simplified.test")) {
+  my @opts;
+  foreach my $o (@options) {
+    push @opts, $o unless $o =~ /--(?:vardir|mem)=/;
+  }
+  print FINAL "# Remaining options: @opts\n";
+  print FINAL "# Basedir: ".dirname(abs_path(cwd()))."\n";
+  print FINAL "# Search pattern(s): @output\n\n";
+  close(FINAL);
+  system("cat ${workfile}.reproducible.".($reproducible_counter-1)." >> $suitedir/simplified.test");
+  print "\nLast reproducible testcase: $suitedir/simplified.test\n";
+} else {
+  print "ERROR: Could not open $suitedir/simplified.test for writing\n";
+  print "\nLast reproducible testcase: $workfile.reproducible.".($reproducible_counter-1)."\n";
+}
 
 # THE END
 
@@ -659,14 +689,14 @@ sub run_test
     elsif (defined $pid) {
       print "Trial timeout: $timeout sec, testcase timeout: $testcase_timeout min\n";
 
-      system( "perl mysql-test-run.pl --nocheck-testcases --nowarnings --force-restart @options --suite=$suitename $test_basename --testcase-timeout=$testcase_timeout > $testcase.output/$testcase.out.last 2>&1" );
+      system( "perl mysql-test-run.pl --nocheck-testcases --nowarnings --force-restart @options --suite=$suitename $testname --testcase-timeout=$testcase_timeout > $outputdir/out.last 2>&1" );
       exit $? >> 8;
     } else {
       print "ERROR: Could not fork for running the test\n";
       exit 1;
     }
 
-    my $out= readpipe("cat $testcase.output/$testcase.out.last");
+    my $out= readpipe("cat $outputdir/out.last");
     my $errlog = ( $ENV{MTR_VERSION} eq "1" ? "$vardir/log/master.err" : "$vardir/log/mysqld.1.err");
 
     my $separ= $/;
@@ -716,11 +746,11 @@ sub run_test
 
     my $outfile;
     if ($result) {
-        $outfile= "$testcase.output/$testcase.out.reproducible.$reproducible_counter";
+        $outfile= "$outputdir/out.reproducible.$reproducible_counter";
         my $old_timeout= $timeout;
         $timeout= my_max(my_min($timeout, $trial_duration*2),$min_timeout);
     } else {
-        $outfile= "$testcase.output/$testcase.out.not_reproducible.$not_reproducible_counter";
+        $outfile= "$outputdir/out.not_reproducible.$not_reproducible_counter";
         if ($trial_duration > $testcase_timeout * 60 and $testcase_timeout >= 30 and $i < $trials - 1) {
             print "\nTest run took longer than testcase timeout $testcase_timeout min, trying only one more more\n\n";
             $trials= $i + 1;
@@ -734,20 +764,20 @@ sub run_test
 
     if ($result)
     {
-      copy("$suitedir/$test_basename.test", "$suitedir/$testcase.test.reproducible.$reproducible_counter") || die "Could not copy $suitedir/$test_basename.test to $suitedir/$testcase.test.reproducible.$reproducible_counter: $!";
+      copy($workfile, "$suitedir/$testname.test.reproducible.$reproducible_counter") || die "Could not copy $workfile to $suitedir/$testname.test.reproducible.$reproducible_counter: $!";
       last;
     }
   }
 
   ($result ? $reproducible_counter++ : $not_reproducible_counter++);
-  print "Last reproducible testcase so far: ".($reproducible_counter ? "$suitedir/$testcase.test.reproducible.".($reproducible_counter-1) : "<none>")."\n";
+  print "Last reproducible testcase so far: ".($reproducible_counter ? "$suitedir/$testname.test.reproducible.".($reproducible_counter-1) : "<none>")."\n";
   return $result;
 }
 
 sub write_testfile
 {
   my $testref= shift;
-  open( TEST, ">$suitedir/$test_basename.tmp" ) or die "Could not open $suitedir/$test_basename.tmp for writing: $!";
+  open( TEST, ">$suitedir/$testname.tmp" ) or die "Could not open $suitedir/$testname.tmp for writing: $!";
   print TEST "--disable_abort_on_error\n";
   if ($rpl) {
     print TEST "--source include/master-slave.inc\n";
@@ -758,7 +788,7 @@ sub write_testfile
     print TEST "\n--connection master\n--sync_slave_with_master\n";
   }
   close( TEST );
-  system("perl $path/cleanup_sends_reaps.pl $suitedir/$test_basename.tmp > $suitedir/$test_basename.test");
+  system("perl $toolpath/cleanup_sends_reaps.pl $suitedir/$testname.tmp > $workfile");
   # In some cases cleanup makes the test stop failing (on whatever reason).
   # Then I comment the line above and uncomment the line below
   #system("cp $suitedir/$test_basename.tmp $suitedir/$test_basename.test");
