@@ -397,12 +397,23 @@ sub test_hacks
   my $log_record_ref= shift;
 
   # Some frequently occurring syntax error in incoming statements
-  if ( $$log_record_ref =~ s/(IMMEDIATE|FROM) ' \//$1 '' \//g ) {};
-  if ( $$log_record_ref =~ s/(IMMEDIATE|FROM) '\s*$/$1 ''/g ) {};
+  if ( $$log_record_ref =~ s/(IMMEDIATE|FROM) '[^']*$/$1 '' \//g ) {};
   if ( $$log_record_ref =~ s/^\s*(kill(?:\s+query)?)\s+(\d+)/eval $1 \$con${2}_id/is ) {};
   if ( $$log_record_ref =~ s/^\s*(show.+explain\s+for)\s+(\d+)/eval $1 \$con${2}_id/is ) {};
   # Temporarily disabled due to MDEV-23376
   if ( $$log_record_ref =~ s/(show.*)binlog\s+events/$1 \/\* BINLOG EVENTS replaced \*\/ BINARY LOGS/igs ) {};
+  # Remove non-printable (except for tab and new-line)
+  $$log_record_ref=~ s/[\x00-\x08\x0B-\x1F]/x/g;
+  # Try to fix broken strings without an ending quote and/or bracket and such)
+  $$log_record_ref=~ s/(SELECT|IMMEDIATE|FROM)\s+\'([^']*)*$/$1 \'$2\'/g;
+  $$log_record_ref=~ s/\(\'([^')]*)$/\(\'$1\'\)/g;
+  $$log_record_ref=~ s/\(([^)]*)$/\($1\)/g;
+  # Mask MTR "special" words, if a query starts from a word
+  # like 'if' or 'while', MTR thinks it a flow control expression.
+  # But if it's preceeded by a comment, it does not
+  if ($$log_record_ref =~ /^\s*(?:IF|WHILE)/) {
+    $$log_record_ref= '/* */ '.$$log_record_ref;
+  }
 }
 
 sub time_to_sec
@@ -476,21 +487,6 @@ sub print_current_record
             # Whenever log connection changes, we will do --send
             $need_send= "--send\n";
             $test_connections{$cur_log_con}= 1;
-          }
-
-          # Remove non-printable (except for tab and new-line)
-          $cur_log_record=~ s/[\x00-\x08\x0B-\x1F]/x/g;
-          # Try to fix broken strings without an ending quote and/or bracket and such)
-          $cur_log_record=~ s/SELECT\s+\'([^']*)*$/SELECT \'$1\'/g;
-          $cur_log_record=~ s/\(\'([^')]*)$/\(\'$1\'\)/g;
-          $cur_log_record=~ s/\(([^)]*)$/\($1\)/g;
-          $cur_log_record=~ s/(IMMEDIATE|FROM) ' \//$1 '' \//g;
-          $cur_log_record=~ s/(IMMEDIATE\|FROM) '$/$1 ''/g;
-          # Mask MTR "special" words, if a query starts from a word
-          # like 'if' or 'while', MTR thinks it a flow control expression.
-          # But if it's preceeded by a comment, it does not
-          if ($cur_log_record =~ /^\s*(?:IF|WHILE)/) {
-            $cur_log_record= '/* */ '.$cur_log_record;
           }
 
           if ($opt_convert_to_ei) {
