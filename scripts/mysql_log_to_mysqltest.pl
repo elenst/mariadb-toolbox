@@ -397,7 +397,9 @@ sub test_hacks
   my $log_record_ref= shift;
 
   # Some frequently occurring syntax error in incoming statements
-  if ( $$log_record_ref =~ s/(IMMEDIATE|FROM) '[^']*$/$1 '' \//g ) {};
+  print("HERE: before substitutions:\n$$log_record_ref\n");
+  if ( $$log_record_ref =~ s/(EXECUTE.*?IMMEDIATE|PREPARE.*?FROM) '[^']*$/$1 '' \//g ) {};
+  print("after: before substitutions:\n$$log_record_ref\n");
   if ( $$log_record_ref =~ s/^\s*(kill(?:\s+query)?)\s+(\d+)/eval $1 \$con${2}_id/is ) {};
   if ( $$log_record_ref =~ s/^\s*(show.+explain\s+for)\s+(\d+)/eval $1 \$con${2}_id/is ) {};
   # Temporarily disabled due to MDEV-23376
@@ -405,7 +407,7 @@ sub test_hacks
   # Remove non-printable (except for tab and new-line)
   $$log_record_ref=~ s/[\x00-\x08\x0B-\x1F]/x/g;
   # Try to fix broken strings without an ending quote and/or bracket and such)
-  $$log_record_ref=~ s/(SELECT|IMMEDIATE|FROM)\s+\'([^']*)*$/$1 \'$2\'/g;
+  $$log_record_ref=~ s/(SELECT|EXECUTE.*?IMMEDIATE|PREPARE.*?FROM)\s+\'([^']*)*$/$1 \'$2\'/g;
   $$log_record_ref=~ s/\(\'([^')]*)$/\(\'$1\'\)/g;
   $$log_record_ref=~ s/\(([^)]*)$/\($1\)/g;
   # Mask MTR "special" words, if a query starts from a word
