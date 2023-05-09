@@ -397,9 +397,7 @@ sub test_hacks
   my $log_record_ref= shift;
 
   # Some frequently occurring syntax error in incoming statements
-  print("HERE: before substitutions:\n$$log_record_ref\n");
   if ( $$log_record_ref =~ s/(EXECUTE.*?IMMEDIATE|PREPARE.*?FROM) '[^']*$/$1 '' \//g ) {};
-  print("after: before substitutions:\n$$log_record_ref\n");
   if ( $$log_record_ref =~ s/^\s*(kill(?:\s+query)?)\s+(\d+)/eval $1 \$con${2}_id/is ) {};
   if ( $$log_record_ref =~ s/^\s*(show.+explain\s+for)\s+(\d+)/eval $1 \$con${2}_id/is ) {};
   # Temporarily disabled due to MDEV-23376
