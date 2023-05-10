@@ -414,6 +414,9 @@ sub test_hacks
   if ($$log_record_ref =~ /^\s*(?:IF|WHILE)/) {
     $$log_record_ref= '/* */ '.$$log_record_ref;
   }
+  # Special 'replication' user is created with password to satisfy password check
+  # requirements, but it's not needed here
+  $$log_record_ref =~ s/CREATE USER IF NOT EXISTS replication.*$/CREATE USER IF NOT EXISTS replication/;
 }
 
 sub time_to_sec
