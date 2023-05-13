@@ -37,7 +37,6 @@ my $opt_preserve_connections;
 my $rpl= undef;
 my $max_chunk= 0;
 my $workdir;
-my $vardir;
 my $with_minio= 0;
 $|= 1;
 
@@ -122,7 +121,6 @@ GetOptions (
   "test-timeout|test_timeout=i"   => \$timeout,
   "testcase|test|testfile=s"  => \$original_test, # Mandatory
   "trials=i"    => \$trials,
-  "vardir=s"    => \$vardir,
   "workdir=s"   => \$workdir, # Mandatory
 );
 
@@ -177,22 +175,12 @@ if ($opt_preserve_connections) {
   foreach ( @pc ) { $preserve_connections{$_} = 1 };
 }
 
-if (not defined $vardir) {
-  if ("@options" =~ /--vardir=(\S+)/) {
-    $vardir=$1;
-  } elsif ("@options" =~ /(?:--mem |--mem$)/) {
-    $vardir= undef;
-  } else {
-    $vardir= "$workdir/var";
-  }
+foreach my $i (0..$#options) {
+  $options[$i] =~ s/--vardir=\S+//;
+  $options[$i] =~ s/--mem$//;
+  $options[$i] =~ s/--mem\s//;
 }
-
-if (defined $vardir) {
-  foreach my $i (0..$#options) {
-    delete $options[$i] if ($options[$i] =~ /^--vardir/ or $options[$i] eq '--mem');
-  }
-  push @options, "--vardir=$vardir";
-}
+push @options, "--vardir=$workdir/var";
 
 if ("@options" =~ /.*--testcase-timeout=(\d+)/) {
     $testcase_timeout = $1;
@@ -277,7 +265,7 @@ system("ln -s $suitedir $mtrdir/suite/$suitename");
 print "Original test case: $original_test\n";
 print "Basedir: $basedir\n";
 print "Workdir: $workdir\n";
-print "Vardir: $vardir\n";
+print "Vardir: $workdir/var\n";
 print "Generated suite name: $suitename\n";
 
 open(WF,">$workfile") || die "Could not open $workfile for writing: $!\n";
@@ -557,7 +545,7 @@ foreach my $mode (@modes)
     my @opts= @options;
     my @opts_to_preserve= ();
     foreach my $i (0..$#opts) {
-      if ($opts[$i] =~ /--(?:mem|vardir)/) {
+      if ($opts[$i] =~ /--vardir/) {
         push @opts_to_preserve, $opts[$i];
         next;
       }
@@ -616,13 +604,13 @@ foreach my $mode (@modes)
 }
 
 print "Basedir: $basedir\n";
-print "Vardir: $vardir\n";
+print "Vardir: $workdir/var\n";
 print "Remaining options: @options\n\n";
 
 if (open(FINAL, "> $suitedir/simplified.test")) {
   my @opts;
   foreach my $o (@options) {
-    push @opts, $o unless $o =~ /--(?:vardir|mem)=/;
+    push @opts, $o unless $o =~ /--vardir/;
   }
   print FINAL "# Remaining options: @opts\n";
   print FINAL "# Basedir: ".dirname(abs_path(cwd()))."\n";
@@ -697,7 +685,7 @@ sub run_test
     }
 
     my $out= readpipe("cat $outputdir/out.last");
-    my $errlog = ( $ENV{MTR_VERSION} eq "1" ? "$vardir/log/master.err" : "$vardir/log/mysqld.1.err");
+    my $errlog = "$workdir/var/log/mysqld.1.err";
 
     my $separ= $/;
     $/= undef;
@@ -707,8 +695,8 @@ sub run_test
     } else {
         print "ERROR: Cannot open $errlog: $!\n";
     }
-    if (-e "$vardir/log/mysqld.2.err") {
-      open(ERRLOG, "$vardir/log/mysqld.2.err") || print "Cannot open $vardir/log/mysqld.2.err\n" && exit 0;
+    if (-e "$workdir/var/log/mysqld.2.err") {
+      open(ERRLOG, "$workdir/var/log/mysqld.2.err") || print "Cannot open $workdir/var/log/mysqld.2.err\n" && exit 0;
       $out.= <ERRLOG>;
       close(ERRLOG);
     }
