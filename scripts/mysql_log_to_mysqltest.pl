@@ -411,7 +411,7 @@ sub test_hacks
   # Mask MTR "special" words, if a query starts from a word
   # like 'if' or 'while', MTR thinks it a flow control expression.
   # But if it's preceeded by a comment, it does not
-  if ($$log_record_ref =~ /^\s*(?:IF|WHILE)/) {
+  if ($$log_record_ref =~ /^\s*(?:IF|WHILE|END)/) {
     $$log_record_ref= '/* */ '.$$log_record_ref;
   }
   # Special 'replication' user is created with password to satisfy password check
