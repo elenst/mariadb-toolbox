@@ -39,6 +39,8 @@ my $max_chunk= 0;
 my $workdir;
 my $with_minio= 0;
 $|= 1;
+my $standard_preserve_patterns= '\#\s+PRESERVE|mariabackup|master-slave\.inc|sync_slave_with_master';
+
 
 # $trials is the number of attempts for every intermediate test case.
 # It cannot be done via MTR --repeat, because we need it not just fail
@@ -242,7 +244,7 @@ if (defined $timeout) {
 if (scalar @output) {
   print "\nPatterns to search (all should be present): @output\n";
 }
-$preserve_pattern= ($preserve_pattern ? "$preserve_pattern|\#\s+PRESERVE|mariabackup" : "\#\s+PRESERVE|mariabackup");
+$preserve_pattern= ($preserve_pattern ? $preserve_pattern.'|'.$standard_preserve_patterns : $standard_preserve_patterns);
 print "Patterns to preserve: $preserve_pattern\n";
 
 ####################
