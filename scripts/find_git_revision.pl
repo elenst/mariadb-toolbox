@@ -288,7 +288,7 @@ sub run_step {
 
 sub checkout {
   my $commit= shift;
-  my $cmd = "cd $cwd && pwd && git checkout -f $commit && git submodule update >> bisect.log 2>&1";
+  my $cmd = "cd $cwd && pwd && git checkout -f $commit && git submodule update && sed -i -e 's/END()/ENDIF()/g' libmariadb/cmake/ConnectorName.cmake >> bisect.log 2>&1";
   print "Running\n   $cmd\n";
   system($cmd);
   if ($? > 0) {
