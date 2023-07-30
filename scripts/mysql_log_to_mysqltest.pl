@@ -28,6 +28,7 @@ my $opt_convert_to_ei= 0;
 my $opt_convert_to_ps= 0;
 my $opt_sigkill= 0;
 my $opt_data_location= '';
+my $opt_rpl= 0;
 my $enable_result_log= 0;
 
 GetOptions (
@@ -41,6 +42,7 @@ GetOptions (
   "enable_result_log|enable-result-log" => \$enable_result_log,
   "sigkill!"         => \$opt_sigkill,
   "data-location|data_location=s" => \$opt_data_location,
+  "rpl!" => \$opt_rpl,
   );
 
 my %interesting_connections= map { $_ => 1 } split /,/, $opt_threads;
@@ -104,6 +106,9 @@ print "--source include/have_innodb.inc\n";
 print "--enable_connect_log\n";
 unless ($enable_result_log) {
   print "--disable_result_log\n";
+}
+if ($opt_rpl) {
+  print "--source include/master-slave.inc\n";
 }
 print "--disable_abort_on_error\n";
 print "USE test;\n";
@@ -237,6 +242,8 @@ while(<>)
       # Further options:
       # - If log_rotation_happened is true, but the next record is NOT Connect, it's a strong indication
       #   (for now) that there was no restart, only FLUSH LOGS. Then we'll just unset the flag and forget about it.
+      #   Update: Another case is that the next record is Spider initialization
+      #   create table if not exists mysql.spider etc., it happens without Connect record.
       # - If the next record is Connect, it is a weak indication that the restart might have happened.
       #   Then we will check which connection number tries to connect. If it is greater than everything
       #   that was previously used in the current server session, then it's a good enough indication
@@ -249,7 +256,7 @@ while(<>)
       #   = otherwise we will set it to 0, which should mean sigkill.
 
     if ($log_rotation_happened) {
-      if ($new_log_record_type eq 'Connect') {
+      if ($new_log_record_type eq 'Connect' or /create table if not exists mysql\.spider/) {
         if ($new_log_con > $max_used_connection_id) {
           # The server session continues, so log rotation must be due to FLUSH LOGS
         }
@@ -387,7 +394,11 @@ foreach my $c ( keys %test_connections ) {
     print "--reap\n";
   }
 }
-print "--sleep 6\n";
+if ($opt_rpl) {
+  print "--sync_slave_with_master\n";
+} else {
+  print "--sleep 6\n";
+}
 print "--exit\n";
 
 ########### SUBROUTINES ############
