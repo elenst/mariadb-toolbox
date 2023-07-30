@@ -4,6 +4,8 @@
 #
 # No branch/function counts, only line
 
+use Getopt::Long;
+
 use strict;
 
 # Hash of arrays
@@ -20,6 +22,24 @@ my $max_name_length= 0;
 my $fname;
 my $skip_patterns= qr/\/unittest|mysql-test\//;
 my $warnings='';
+
+my ($include_components, %include_components);
+my ($exclude_components, %exclude_components);
+
+GetOptions(
+  #
+  # Server-related options
+  'exclude-components=s' => \$exclude_components,
+  'include-components=s' => \$include_components,
+);
+
+if ($exclude_components) {
+  map { $exclude_components{$_}= 1 } (split ',', $exclude_components);
+}
+
+if ($include_components) {
+  map { $include_components{$_}= 1 } (split ',', $include_components);
+}
 
 my ($instrumented, $hit, $total_hits)= (0,0,0);
 while (<>) {
@@ -60,6 +80,27 @@ print $separator;
 foreach my $f (sort keys %stats_per_file) {
   $fname= $f;
   $fname=~ s/$sourcedir//;
+
+  my $component= 'Other';
+  if ($fname =~ /^\//) {
+    $component= 'External';
+  } elsif ($fname =~ /^(storage\/innodb\/fts\/|fts0)/) {
+    $component= 'storage/innobase/fts';
+  } elsif ($fname =~ /^(?:pars0|lexyy)/) {
+    $component= 'storage/innobase';
+  } elsif ($fname =~ /^grn_/) {
+    $component= 'storage/mroonga';
+  } elsif ($fname =~ /^(?:extra\/[\.\w]+$|extra\/\w\/)/) {
+    $component= 'extra';
+  } elsif ($fname =~ /^(client|extra\/[\.\w]+|include|libmariadb|libmysqld|mysys|mysys_ssl|dbug|plugin\/\w+|scripts|sql-common|sql|storage\/\w+|strings|tests|tpool|vio|wsrep-lib)\//) {
+    $component= $1;
+  } else {
+    $warnings .= "WARNING: Could not recognize component for $fname\n";
+  }
+
+  next if exists $exclude_components{$component};
+  next if scalar(keys %include_components) and not exists $include_components{$component};
+
   ($instrumented, $hit, $total_hits) = @{$stats_per_file{$f}};
   # Don't count external libraries in summary and don't list them per-file.
   # They will be included into 'External' component though
@@ -68,14 +109,6 @@ foreach my $f (sort keys %stats_per_file) {
     $total_hit+= $hit;
     $grand_total_hits+= $total_hits;
     print sprintf("| %${max_name_length}s | %10s | %10s | %7s | %16s |\n","$fname ",$instrumented,$hit,sprintf("%.2f%",100*($instrumented ? $hit/$instrumented : 0)),$total_hits);
-  }
-  my $component= 'Other';
-  if ($fname =~ /^\//) {
-    $component= 'External';
-  } elsif ($fname =~ /^(client|extra\/\w+|include|libmariadb|libmysqld|mysys|mysys_ssl|dbug|plugin\/\w+|sql-common|sql|storage\/\w+|strings|tests|tpool|vio|wsrep-lib)\//) {
-    $component= $1;
-  } else {
-    $warnings .= "WARNING: Could not recognize component for $fname\n";
   }
   if (not defined $stats_per_component{$component}) {
     @{$stats_per_component{$component}}= (0,0,0);
