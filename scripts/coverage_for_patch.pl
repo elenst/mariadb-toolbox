@@ -123,7 +123,7 @@ while ( my $line = <PATCH> )
 	{
 		$current_file = $1;
     # No need to process MTR stuff
-		if ($current_file =~ /^mysql-test/ or $current_file =~ /^(?:storage|plugin)\/\w+\/mysql-test/) {
+		if ($current_file =~ /^mysql-test/ or $current_file =~ /^(?:storage|plugin)\/\w+\/mysql-test/ or $current_file =~/^tests\//) {
       debug( "File: $current_file is ignored\n" );
       $current_file= undef;
       next;
