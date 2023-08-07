@@ -118,7 +118,7 @@ GetOptions (
   "options=s@"   => \@options,
   "preserve-connections|preserve_connections=s" => \$opt_preserve_connections,
   "preserve-query|preserve_query|query=s" => \$preserve_pattern,
-  "rpl=s"       => \$rpl,
+  "rpl:s"       => \$rpl,
   "simplification-timeout|simplification_timeout=i"   => \$simplification_timeout,
   "test-timeout|test_timeout=i"   => \$timeout,
   "testcase|test|testfile=s"  => \$original_test, # Mandatory
@@ -228,7 +228,7 @@ if ($max_prepared_stmt_count) {
 
 # password check is unlikely to have any value (for now, at least),
 # so we'll disable it
-push @opts, '--mysqld=--loose-simple-password-check=off';
+push @opts, '--mysqld=--loose-simple-password-check=off --mysqld=--loose-cracklib-password-check=off';
 
 @options= @opts;
 
@@ -512,7 +512,7 @@ foreach my $mode (@modes)
 
     # Option groups, those that are easier to remove together
 
-    my @option_groups= (qr/(?:encrypt|key[-_]management|hashicorp)/,qr/innodb[-_]/,qr/performance[-_]schema/,qr/s3/);
+    my @option_groups= (qr/(?:encrypt|key[-_]management|hashicorp)/,qr/innodb[-_]/,qr/performance[-_]schema/,qr/s3/,qr/replicat|slave/,qr/binlog/);
 
     foreach my $og (@option_groups)
     {
@@ -769,12 +769,17 @@ sub write_testfile
   my $testref= shift;
   open( TEST, ">$suitedir/$testname.tmp" ) or die "Could not open $suitedir/$testname.tmp for writing: $!";
   print TEST "--disable_abort_on_error\n";
-  if ($rpl) {
+  if (defined $rpl) {
     print TEST "--source include/master-slave.inc\n";
-    print TEST "--source include/have_binlog_format_".$rpl.".inc\n";
+    if ($rpl) {
+      print TEST "--source include/have_binlog_format_".$rpl.".inc\n";
+    }
   }
-  print TEST @$testref;
-  if ($rpl) {
+  foreach my $l (@$testref) {
+    next if (defined $rpl) and ($l =~ /include\/master-slave\.inc|include\/have_binlog_format|sync.*_with_master|disable_abort_on_error/);
+    print TEST $l;
+  }
+  if (defined $rpl) {
     print TEST "\n--connection master\n--sync_slave_with_master\n";
   }
   close( TEST );
@@ -789,15 +794,10 @@ sub read_testfile
   my ($testfile, $mode)= @_;
   my %connections= ();
   my @test= ();
-  my $current_con= 'default';
+  my $current_con= (defined $rpl ? 'master' : 'default');
   open( TEST, $testfile ) or die "could not open $testfile for reading: $!";
   while (<TEST>)
   {
-#    if ( /include\/master-slave\.inc/s or /sync*_with_master/s )
-#    {
-#      # If replication is needed, it will be added separately
-#      next;
-#    }
     if ( /^\s*--/s )
     {
       # SQL comments or MTR commands
@@ -888,7 +888,7 @@ sub check_connections_one_by_one {
     }
 
     my @new_test = ();
-    my $current_con= 'default';
+    my $current_con= (defined $rpl ? 'master' : 'default');
     foreach my $t (@last_failed_test) {
       if ( $t =~ /^\s*\-\-(?:connect\s*\(\s*|disconnect\s+|connection\s+)([^\s\,]+)/s )
       {
