@@ -454,7 +454,7 @@ sub print_current_record
   # for restart_mysqld.inc
   if ( $cur_log_record )
   {
-    if ( $cur_log_record =~ /^\s*shutdown\s*$/i ) {
+    if ( $cur_log_record =~ /^\s*(?:\/\*.*?\*\/\s*)?shutdown\s*$/i ) {
       $normal_shutdown= 1;
       $cur_log_record= '';
       $cur_log_con= 0;
