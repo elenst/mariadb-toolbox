@@ -87,10 +87,18 @@ for v in $vardir ; do
         echo "Throttled errors:"
         echo "Invalid roles_mapping table entry user : " `grep -a -c "Invalid roles_mapping table entry user" $l`
         echo "Can't open and lock privilege tables : " `grep -a -c "Can't open and lock privilege tables" $l`
-        echo "WSREP: Ignoring error" `grep -a -c "WSREP: Ignoring error" $l`
-        echo ""
-        grep -Eai '^Version: |assertion|signal |\[FATAL\]|ERROR|pure virtual method|safe_mutex:|overflow|overrun|0x|^Status: |Forcing close of thread|Warning: Memory not freed|Warning.*Thread.*did not exit|InnoDB: A long semaphore wait|WSREP: Server paused at|free\(\): invalid size|InnoDB: Table .* contains .* user defined columns in InnoDB, but .* columns in MariaDB|InnoDB: Using a partial-field key prefix in search|Normal shutdown|Shutdown complete|InnoDB: Starting shutdown|InnoDB: Shutdown completed|debugger aborting' $l | \
-        grep -Eav "Can't open and lock privilege tables|Invalid roles_mapping table entry user|Deadlock found when trying to get lock; try restarting transaction|Lock wait timeout exceeded; try restarting transaction|Aborted connection|has or is referenced in foreign key constraints which are not compatible|Foreign Key referenced table .* not found for foreign table|Cannot add field .* because after adding it, the row size is .* which is greater than maximum allowed size|\[ERROR\] Event Scheduler: \[.*\@localhost\]\.*\[.*\] |WSREP: Ignoring error"
+        wsrep_err_count=`grep -a -c "WSREP: Ignoring error" $l`
+        if [ "$wsrep_err_count" != "0" ] ; then
+          # Throttle also Slave SQL errors if WSREP is ignoring them
+          echo "WSREP: Ignoring error : $wsrep_err_count"
+          echo "Slave SQL: Error : " `grep -a -c "Slave SQL: Error" $l`
+          echo ""
+          grep -Eai '^Version: |assertion|signal |\[FATAL\]|ERROR|pure virtual method|safe_mutex:|overflow|overrun|0x|^Status: |Forcing close of thread|Warning: Memory not freed|Warning.*Thread.*did not exit|InnoDB: A long semaphore wait|WSREP: Server paused at|free\(\): invalid size|InnoDB: Table .* contains .* user defined columns in InnoDB, but .* columns in MariaDB|InnoDB: Using a partial-field key prefix in search|Normal shutdown|Shutdown complete|InnoDB: Starting shutdown|InnoDB: Shutdown completed|debugger aborting' $l | \
+          grep -Eav "Can't open and lock privilege tables|Invalid roles_mapping table entry user|Deadlock found when trying to get lock; try restarting transaction|Lock wait timeout exceeded; try restarting transaction|Aborted connection|has or is referenced in foreign key constraints which are not compatible|Foreign Key referenced table .* not found for foreign table|Cannot add field .* because after adding it, the row size is .* which is greater than maximum allowed size|\[ERROR\] Event Scheduler: \[.*\@localhost\]\.*\[.*\] |WSREP: Ignoring error|Slave SQL: Error|^Version: 0$"
+        else
+          grep -Eai '^Version: |assertion|signal |\[FATAL\]|ERROR|pure virtual method|safe_mutex:|overflow|overrun|0x|^Status: |Forcing close of thread|Warning: Memory not freed|Warning.*Thread.*did not exit|InnoDB: A long semaphore wait|WSREP: Server paused at|free\(\): invalid size|InnoDB: Table .* contains .* user defined columns in InnoDB, but .* columns in MariaDB|InnoDB: Using a partial-field key prefix in search|Normal shutdown|Shutdown complete|InnoDB: Starting shutdown|InnoDB: Shutdown completed|debugger aborting' $l | \
+          grep -Eav "Can't open and lock privilege tables|Invalid roles_mapping table entry user|Deadlock found when trying to get lock; try restarting transaction|Lock wait timeout exceeded; try restarting transaction|Aborted connection|has or is referenced in foreign key constraints which are not compatible|Foreign Key referenced table .* not found for foreign table|Cannot add field .* because after adding it, the row size is .* which is greater than maximum allowed size|\[ERROR\] Event Scheduler: \[.*\@localhost\]\.*\[.*\] "
+        fi
         echo "---------------------------------------------------------"
         echo ""
     done
