@@ -58,7 +58,7 @@ for t in $test_log ; do
     echo ""
     grep -aE -A 1 'Final command line|Final options' $t | sed -e 's/^.*\] perl /perl /'
     echo ""
-    grep -aE '^#.*\[ERROR\]|^#.*\[FATAL ERROR\]|DATABASE_CORRUPTION|STATUS_OUT_OF_MEMORY|ALARM|ENVIRONMENT|CRITICAL|REPLICATION_FAILURE|runall.*exited with exit status|runall.*will exit with exit status|Test run ends with exit status|MemoryUsage monitor|FeatureUsage detected|^mysqldump|^mariadb-dump|undefined value as an ARRAY reference' $t | grep -vE "Executor::MariaDB::execute: Failed to reconnect after getting|Discarding query"
+    grep -aE '^#.*\[ERROR\]|^#.*\[FATAL ERROR\]|DATABASE_CORRUPTION|STATUS_OUT_OF_MEMORY|ALARM|ENVIRONMENT|CRITICAL|REPLICATION_FAILURE|runall.*exited with exit status|runall.*will exit with exit status|Test run ends with exit status|MemoryUsage monitor|FeatureUsage detected|^mysqldump|^mariadb-dump|undefined value as an ARRAY reference|^ERROR' $t | grep -vE "Executor::MariaDB::execute: Failed to reconnect after getting|Discarding query"
     echo ""
     echo ""
     if grep -a "TRANSFORM ISSUE" $t > /dev/null ; then
