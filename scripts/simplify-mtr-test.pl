@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Copyright (c) 2014, 2023, Elena Stepanova and MariaDB
+# Copyright (c) 2014, 2024, Elena Stepanova and MariaDB
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@ my $rpl= undef;
 my $max_chunk= 0;
 my $workdir;
 my $with_minio= 0;
+my $no_defaults= 0; # If set to 1, MTR options are adjusted to match the server (MTR defaults overridden)
 $|= 1;
 my $standard_preserve_patterns= '\#\s+PRESERVE|mariabackup|master-slave\.inc|sync_slave_with_master';
 
@@ -114,6 +115,7 @@ GetOptions (
   "max-chunk-size|max_chunk_size=i" => \$max_chunk,
   "minio!"      => \$with_minio,
   "mode=s"      => \$opt_mode,
+  "no-defaults|no-defaults!" => \$no_defaults,
   "output=s@"    => \@output,
   "options=s@"   => \@options,
   "preserve-connections|preserve_connections=s" => \$opt_preserve_connections,
@@ -198,6 +200,21 @@ my $max_prepared_stmt_count;
 my $enforce_storage_engine;
 
 my @opts= ();
+
+if ($no_defaults) {
+  unless (-e "main/mtr_options_adjustment.test") {
+    open(ADJ, ">main/mtr_options_adjustment.test") || die "Couldn't write into options adjustment test: $!";
+    while (my $line= <DATA>) {
+      print ADJ $line;
+    }
+    close DATA;
+  }
+  system("perl ./mtr main.mtr_options_adjustment --vardir=$workdir/var --nocheck-testcases --nowarnings");
+  my $opts=`cat mtr_options.adjusted`;
+  chomp $opts;
+  @opts= split / /, $opts;
+}
+
 foreach my $o (@options) {
   my @o= split / /, $o;
 
@@ -920,3 +937,31 @@ sub my_max {
   my @args= @_;
   return max(@args);
 }
+
+__DATA__
+
+let $params= `select group_concat(concat('--mysqld=--',lower(variable_name),'=',IF(default_value<=>'','',CONCAT('"',default_value,'"'))) order by 1 separator ' ') from information_schema.system_variables where global_value_origin='CONFIG' and variable_name not in (
+  'basedir',
+  'bind_address',
+  'character_sets_dir',
+  'core_file',
+  'datadir',
+  'general_log',
+  'general_log_file',
+  'lc_messages_dir',
+  'log_error',
+  'pid_file',
+  'plugin_dir',
+  'port',
+  'server_id',
+  'slow_query_log',
+  'slow_query_log_file',
+  'socket',
+  'ssl_ca',
+  'ssl_cert',
+  'ssl_key',
+  'tmpdir'
+)`;
+--echo $params
+
+--exec echo $params > mtr_options.adjusted
