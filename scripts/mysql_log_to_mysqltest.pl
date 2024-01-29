@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Copyright (c) 2022, Elena Stepanova and MariaDB
+# Copyright (c) 2022, 2024, Elena Stepanova and MariaDB
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -103,12 +103,12 @@ if ( $interesting_tables_pattern )
 }
 
 print "--source include/have_innodb.inc\n";
+if ($opt_rpl) {
+  print "--source include/master-slave.inc\n";
+}
 print "--enable_connect_log\n";
 unless ($enable_result_log) {
   print "--disable_result_log\n";
-}
-if ($opt_rpl) {
-  print "--source include/master-slave.inc\n";
 }
 print "--disable_abort_on_error\n";
 print "USE test;\n";
@@ -428,6 +428,9 @@ sub test_hacks
   # Special 'replication' user is created with password to satisfy password check
   # requirements, but it's not needed here
   $$log_record_ref =~ s/CREATE USER IF NOT EXISTS replication.*$/CREATE USER IF NOT EXISTS replication/;
+  # https://jira.mariadb.org/browse/CONC-525 - LOAD DATA LOCAL INFILE is a hack,
+  # but /* comment */ LOCAL DATA .. does not work
+  $$log_record_ref =~ s/^(\s*)(\/\*.*?\*\/\s*)LOAD(\s+)/${1}LOAD${3}${2}/;
 }
 
 sub time_to_sec
@@ -525,9 +528,15 @@ sub print_current_record
           }
         }
     }
-    if ( $cur_log_record =~ /set\s+password\s+for\s+\'?(\w+)\'?\@\'?(\w+)\'?\s*=\s*password\s*\(\s*\'(\w+)\'\s*\)/ )
+    if ( $cur_log_record =~ /set\s+password\s+for\s+\'?(\w+)\'?\@\'?(\w+)\'?\s*=\s*password\s*\(\s*\'(\w+)\'\s*\)/i )
     {
       $user_passwords{$1.'@'.$2}= $3;
+    }
+    if ( $cur_log_record =~ /create\s+user(?:\s*\/\*.*?\*\/\s*)\s+(\S+)\s+identified\s+by\s+'(.*?)'/i )
+    {
+      my ($user, $pass)= ($1, $2);
+      unless ($user =~ /\@/) { $user = $user.'@localhost' };
+      $user_passwords{$user}= $pass;
     }
 
     $cur_log_record= '';
