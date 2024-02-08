@@ -38,9 +38,11 @@ my $rpl= undef;
 my $max_chunk= 0;
 my $workdir;
 my $with_minio= 0;
-my $no_defaults= 0; # If set to 1, MTR options are adjusted to match the server (MTR defaults overridden)
+# If we know that the failure is reproducible with MTR defaults,
+# the following option can be set to 1, it will speed up the process
+my $mtr_defaults= 0;
 $|= 1;
-my $standard_preserve_patterns= '\#\s+PRESERVE|mariabackup|master-slave\.inc|sync_slave_with_master';
+my $standard_preserve_patterns= '\#\s+PRESERVE|mariabackup|master-slave\.inc|sync_slave_with_master|have_binlog_format_';
 
 
 # $trials is the number of attempts for every intermediate test case.
@@ -115,7 +117,7 @@ GetOptions (
   "max-chunk-size|max_chunk_size=i" => \$max_chunk,
   "minio!"      => \$with_minio,
   "mode=s"      => \$opt_mode,
-  "no-defaults|no-defaults!" => \$no_defaults,
+  "mtr-defaults|mtr_defaults!" => \$mtr_defaults,
   "output=s@"    => \@output,
   "options=s@"   => \@options,
   "preserve-connections|preserve_connections=s" => \$opt_preserve_connections,
@@ -199,21 +201,15 @@ if ("@options" =~ /s3/) {
 my $max_prepared_stmt_count;
 my $enforce_storage_engine;
 
-my @opts= ();
+my $mtr_counter_options= '';
 
-if ($no_defaults) {
-  unless (-e "main/mtr_options_adjustment.test") {
-    open(ADJ, ">main/mtr_options_adjustment.test") || die "Couldn't write into options adjustment test: $!";
-    while (my $line= <DATA>) {
-      print ADJ $line;
-    }
-    close DATA;
-  }
-  system("perl ./mtr main.mtr_options_adjustment --vardir=$workdir/var --nocheck-testcases --nowarnings");
-  my $opts=`cat mtr_options.adjusted`;
-  chomp $opts;
-  @opts= split / /, $opts;
+unless ($mtr_defaults) {
+  $mtr_counter_options= `perl $toolpath/revert_mtr_options.pl --basedir=\`pwd\`/..`;
+  chomp $mtr_counter_options;
+  print "MTR option adjustments: $mtr_counter_options\n";
 }
+
+my @opts= split / /, $mtr_counter_options;
 
 foreach my $o (@options) {
   my @o= split / /, $o;

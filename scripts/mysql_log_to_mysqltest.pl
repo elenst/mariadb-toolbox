@@ -104,19 +104,9 @@ if ( $interesting_tables_pattern )
 
 #print "--source include/have_innodb.inc\n";
 
-print "--exec sed -i 's/\\[mysqld\\]/\\[mysqldx\\]/' \$MYSQLTEST_VARDIR/my.cnf\n";
-print "--exec sed -i 's/\\[server\\]/\\[serverx\\]/' \$MYSQLTEST_VARDIR/my.cnf\n";
-print "--exec sed -i '/loose-enable-performance-schema/d' \$MYSQLTEST_VARDIR/my.cnf\n";
-print "--exec sed -i '/general-log=1/d' \$MYSQLTEST_VARDIR/my.cnf\n";
-print "--exec sed -i '/slow-query-log=1/d' \$MYSQLTEST_VARDIR/my.cnf\n";
-print "--exec sed -i '/bind-address=127\.0\.0\.1/d' \$MYSQLTEST_VARDIR/my.cnf\n";
-print "--source include/restart_mysqld.inc\n";
-
-
 if ($opt_rpl) {
   print "--source include/master-slave.inc\n";
 }
-print "--enable_connect_log\n";
 unless ($enable_result_log) {
   print "--disable_result_log\n";
 }
