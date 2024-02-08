@@ -67,7 +67,7 @@ if (open (DEFAULTS, "$mysqld_binary --verbose --help 2>/dev/null | ")) {
 
 unless (-e "$mtr_dir/var/my.cnf") {
 #  print "Running main.1st to generate my.cnf\n";
-  system("cd $mtr_dir; perl mysql-test-run.pl --mem main.1st");
+  system("cd $mtr_dir; perl mysql-test-run.pl --mem main.1st > /dev/null 2>&1");
 }
 
 my $server_section= 0;
