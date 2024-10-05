@@ -240,8 +240,9 @@ if ($max_prepared_stmt_count) {
 }
 
 # password check is unlikely to have any value (for now, at least),
-# so we'll disable it
-push @opts, '--mysqld=--loose-simple-password-check=off --mysqld=--loose-cracklib-password-check=off';
+# so we'll disable it.
+# and aria_block_size shouldn't be anything other than default, it doesn't work in MTR
+push @opts, '--mysqld=--loose-simple-password-check=off --mysqld=--loose-cracklib-password-check=off --mysqld=--loose-aria-block-size=8192';
 
 @options= @opts;
 
