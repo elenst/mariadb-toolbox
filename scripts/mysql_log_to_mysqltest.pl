@@ -30,6 +30,7 @@ my $opt_sigkill= 0;
 my $opt_data_location= '';
 my $opt_rpl= 0;
 my $enable_result_log= 0;
+my @includes= ();
 
 GetOptions (
   "tables=s"         => \$opt_tables,
@@ -43,6 +44,7 @@ GetOptions (
   "sigkill!"         => \$opt_sigkill,
   "data-location|data_location=s" => \$opt_data_location,
   "rpl!" => \$opt_rpl,
+  "extra|include=s@" => \@includes,
   );
 
 my %interesting_connections= map { $_ => 1 } split /,/, $opt_threads;
@@ -110,6 +112,9 @@ if ($opt_rpl) {
 unless ($enable_result_log) {
   print "--disable_result_log\n";
 }
+foreach (@includes) {
+  print "--source $_\n";
+}
 print "--disable_abort_on_error\n";
 print "USE test;\n";
 print '--let $charset= `SELECT @@character_set_server`'."\n";
@@ -118,6 +123,7 @@ print '--eval alter database test charset $charset collate $collation'."\n";
 print '--let $convert_query= `select group_concat(concat("ALTER TABLE ",table_name," CONVERT TO CHARACTER SET ",@@character_set_server," COLLATE ",@@collation_server) SEPARATOR "; ") FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = DATABASE()`'."\n";
 print '--eval $convert_query'."\n";
 print "SET GLOBAL event_scheduler= OFF;\n";
+print "SET transaction_read_only= OFF;\n";
 print "CREATE USER rqg\@localhost;\n";
 print "GRANT ALL ON *.* TO rqg\@localhost;\n";
 
@@ -235,7 +241,7 @@ while(<>)
     }
 
     # We ignore Prepare, Execute, Statistics and Binlog lines
-    next LOGLINE if ( $new_log_record_type =~ /(?:Execute|Binlog|Field|Statistics|Close|Reset)/ );
+    next LOGLINE if ( $new_log_record_type =~ /(?:Execute|Binlog|Field|Statistics|Close|Reset|Prepare)/ );
 
       # Now we finally process the preserved information about log rotation and possible shutdowns,
       # if there were any, which is indicated by $log_rotation_happened.
