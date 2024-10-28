@@ -65,10 +65,7 @@ if (open (DEFAULTS, "$mysqld_binary --verbose --help 2>/dev/null | ")) {
   exit 1;
 }
 
-unless (-e "$mtr_dir/var/my.cnf") {
-#  print "Running main.1st to generate my.cnf\n";
-  system("cd $mtr_dir; perl mysql-test-run.pl --mem main.1st > /dev/null 2>&1");
-}
+system("cd $mtr_dir; perl mysql-test-run.pl --mem main.1st > /dev/null 2>&1");
 
 my $server_section= 0;
 
@@ -92,12 +89,14 @@ while (<CNF>) {
   if ($opt =~ s/^loose-//) {
     $loose= 1;
   }
-  next if ($opt =~ /dir$/) or $opt eq 'user' or $opt eq 'port' or $opt eq 'socket' or $opt eq 'pid-file' or $opt eq 'log-error' or $opt eq 'bind-address' or ($opt =~ /^ssl-/);
+  next if ($opt =~ /dir$/) or $opt eq 'user' or $opt eq 'port' or $opt eq 'socket' or $opt eq 'pid-file' or $opt eq 'log-error' or $opt eq 'log-basename' or $opt eq 'bind-address' or $opt eq 'server-id' or ($opt =~ /^ssl-/);
   if ($opt =~ s/^skip-plugin/plugin/) {
     next if ($opt =~ /feedback/);
     push @options, '--mysqld=--'.($loose ? 'loose-' : '') . $opt;
   } elsif ( $opt eq 'enable-performance-schema') {
     push @options, '--mysqld=--'.($loose ? 'loose-' : '') . 'disable-performance-schema';
+  } elsif ( $opt eq 'performance-schema-instrument' and not $defaults{$opt}) {
+    push @options, '--mysqld=--'.($loose ? 'loose-' : '') . 'performance-schema-instrument=%=OFF';
   }
   elsif ($defaults{$opt} ne $val) {
     push @options, '--mysqld=--'.($loose ? 'loose-' : '') . $opt . '=' . $defaults{$opt};
