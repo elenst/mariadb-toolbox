@@ -80,7 +80,7 @@ for v in $vardir ; do
     echo "----- Vardir $v -----"
     echo ""
 
-    error_logs=`find $v -name mysql.err*`
+    error_logs=`find $v -name "mysql.err*"`
     for l in $error_logs ; do
         echo "--- Error log $l"
         echo ""
@@ -103,7 +103,7 @@ for v in $vardir ; do
         echo ""
     done
 
-    boot_logs=`find $v -name boot.log*`
+    boot_logs=`find $v -name "boot.log*"`
     for b in $boot_logs ; do
         echo "--- Boot log $b"
         echo ""
@@ -112,7 +112,7 @@ for v in $vardir ; do
         echo ""
     done
 
-    backup_logs=`find $v -name mbackup_*.log`
+    backup_logs=`find $v -name "mbackup_*.log"`
     for b in $backup_logs ; do
         echo "--- Backup log $b"
         echo ""
@@ -121,7 +121,7 @@ for v in $vardir ; do
         echo ""
     done
 
-    coredumps=`find $v \( -name core -o -name core.* \)`
+    coredumps=`find $v \( -name "core" -o -name "core.*" \)`
     for c in $coredumps ; do
         echo "--- Stack from coredump $c"
         echo ""
