@@ -42,7 +42,7 @@ my $with_minio= 0;
 # the following option can be set to 1, it will speed up the process
 my $mtr_defaults= 0;
 $|= 1;
-my $standard_preserve_patterns= '\#\s+PRESERVE|mariabackup|master-slave\.inc|sync_slave_with_master|have_binlog_format_';
+my $standard_preserve_patterns= '\#\s+PRESERVE|mariabackup|master-slave\.inc|sync_slave_with_master|have_binlog_format_|^--exec|^--cat|^--list';
 
 
 # $trials is the number of attempts for every intermediate test case.
@@ -239,6 +239,13 @@ if ($max_prepared_stmt_count) {
   undef $max_prepared_stmt_count;
 }
 
+# To work around problems with MTR connection limit. Hopefully the build
+# has also the hack in mysql-test/lib/My/SafeProcess/safe_process.cc
+#-    setlimit(RLIMIT_NOFILE, 1024, 1024);
+#+    setlimit(RLIMIT_NOFILE, 65536, 65536);
+
+push @opts, ('--max-connections=512','--mysqld=--max-connections=1024','--mysqld=--open-files-limit=65535');
+
 # password check is unlikely to have any value (for now, at least),
 # so we'll disable it.
 # and aria_block_size shouldn't be anything other than default, it doesn't work in MTR
@@ -268,7 +275,8 @@ print "Patterns to preserve: $preserve_pattern\n";
 remove_tree($workdir);
 my $suitedir= "$workdir/bug";
 my $testname= 'last';
-my $workfile= "$suitedir/$testname.test";
+my $workfile_basename= "$suitedir/$testname";
+my $workfile= $workfile_basename.".test";
 my $outputdir= "$workdir/simplification_output";
 my $suitename= md5_hex($workdir);
 
@@ -289,11 +297,23 @@ if (defined $max_prepared_stmt_count and $max_prepared_stmt_count == 0) {
   print WF "SET GLOBAL max_prepared_stmt_count=0\n";
 }
 if (defined $enforce_storage_engine) {
-  print WF "SET GLOBAL enforce_storage_engine=$enforce_storage_engine\n";
+#  print WF "SET GLOBAL enforce_storage_engine=$enforce_storage_engine\n";
+  print WF "--let \$restart_parameters= --enforce-storage-engine=$enforce_storage_engine\n";
+  print WF "--source include/restart_mysqld.inc\n";
 }
 close(WF);
 system("cat $original_test >> $workfile");
 die "Could not cat $original_test into $workfile" if $?;
+
+my $original_basename= $original_test;
+$original_basename =~ s/\.test$//;
+
+my @aux= glob($original_basename.'.*');
+foreach (@aux) {
+  if (/\.(cnf|combinations|inc)$/) {
+    system("cp $_ ${workfile_basename}.$1");
+  }
+}
 
 ####################
 # Initial trials
