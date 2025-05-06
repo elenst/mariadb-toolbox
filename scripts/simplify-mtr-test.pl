@@ -226,7 +226,8 @@ foreach my $o (@options) {
     } elsif ($o[$i] =~ /^--mysqld=--enforce[-_]storage[-_]engine=(\w+)/) {
       $enforce_storage_engine= $1;
       delete $o[$i];
-    }
+  # UNGREEDY regex mode breaks MTR
+    } elsif ($o[$i] =~ s/,?UNGREEDY//) {}
   }
   push @opts, @o;
 }
