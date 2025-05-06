@@ -74,6 +74,13 @@ GetOptions (
   "--verbose"  => \$verbose,
 );
 
+sub say {
+  my ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst) = localtime();
+  foreach (@_) {
+    print sprintf("%04d-%02d-%02d %02d:%02d:%02d %s\n", $year+1900, $mon+1 ,$mday ,$hour, $min, $sec, $_);
+  }
+}
+
 my $nCPU=`grep -c processor /proc/cpuinfo`;
 chomp $nCPU;
 
@@ -81,17 +88,17 @@ my @commits_to_bisect= ();
 my $build_options= '-DCMAKE_BUILD_TYPE=Debug -DMYSQL_MAINTAINER_MODE=OFF -DCMAKE_C_FLAGS=-fno-omit-frame-pointer -DCMAKE_CXX_FLAGS=-fno-omit-frame-pointer -DCMAKE_CXX_FLAGS="-std=gnu++98" -DWITH_SSL=bundled -DPLUGIN_TOKUDB=NO -DPLUGIN_COLUMNSTORE=NO -DPLUGIN_XPAND=NO -DPLUGIN_ROCKSDB=NO -DPLUGIN_SPHINX=NO -DPLUGIN_SPIDER=NO -DPLUGIN_MROONGA=NO -DPLUGIN_FEDERATEDX=NO -DPLUGIN_CONNECT=NO -DPLUGIN_FEDERATED=NO -DWITH_MARIABACKUP=OFF '.$cmake_options.($asan ? ' -DWITH_ASAN=YES' : '');
 
 unless (-e 'VERSION') {
-	print "\nERROR: wrong starting point, cd to <basedir>\n\n";
+	say "ERROR: wrong starting point, cd to <basedir>";
 	exit(1);
 }
 my $cwd = cwd();
 
 if (defined $testcase and defined $test_cmd) {
-	print "ERROR: cannot define both testcase and test_cmd\n";
+	say "ERROR: cannot define both testcase and test_cmd";
 	exit(1);
 }
 elsif (not defined $testcase and not defined $test_cmd) {
-	print "ERROR: must define either testcase or test_cmd\n";
+	say "ERROR: must define either testcase or test_cmd";
 	exit(1);
 }
 if (defined $testcase) {
@@ -105,7 +112,7 @@ if (defined $testcase) {
 #}
 
 #unless ($direction == BACKWARDS or $direction == FORWARD) {
-#	print "ERROR: unknown direction. Valid values: -1, backwards, 1, forward\n";
+#	say "ERROR: unknown direction. Valid values: -1, backwards, 1, forward";
 #	exit(1);
 #}
 
@@ -116,13 +123,13 @@ if ($goal =~ /^(b|g)/i) {
 }
 
 unless ($goal == FIXING_REVISION or $goal == GUILTY_REVISION) {
-	print "ERROR: unknown goal. Valid values: 1, guilty, breaking, 0, fixing\n";
+	say "ERROR: unknown goal. Valid values: 1, guilty, breaking, 0, fixing";
 	exit(1);
 }
 
 $first = get_commit($first);
 unless ( $first and $first ne '-1' ) {
-  print "ERROR: starting revision is specified incorrectly\n";
+  say "ERROR: starting revision is specified incorrectly";
   exit(1);
 }
 
@@ -138,7 +145,7 @@ if ($last) {
     $next= $1;
   }
   close(COMMITS);
-  print "\nNumber of commits to bisect: ".scalar(@commits_to_bisect)."\n\n";
+  say "\nNumber of commits to bisect: ".scalar(@commits_to_bisect)."\n";
 }
 
 my $goal_text = ($goal == FIXING_REVISION ? 'fixing' : 'guilty');
@@ -149,7 +156,7 @@ my $commit = $first;
 my $pos_from_start = 0;
 my $prev_commit = $commit;
 
-system("cd $cwd && date > bisect.log 2>&1");
+system("cd $cwd && date > bisect.say 2>&1");
 
 first_run($commit);
 
@@ -160,12 +167,14 @@ sub bisect {
   # We already know that the first commit meets the goal,
   # now we need to check that the last commit returns a different result,
   # otherwise there is nothing to look for
-  print "Checking that the last commit $commits_to_bisect[$#commits_to_bisect] differs from the first one\n\n";
+  say "Checking that the last commit $commits_to_bisect[$#commits_to_bisect] differs from the first one\n";
   $res= run_step($commits_to_bisect[$#commits_to_bisect]);
   if (not defined $res) {
-    die "FATAL ERROR: Could not build the last revision $last\n\n";
+    say "FATAL ERROR: Could not build the last revision $last\n";
+    exit 1;
   } elsif ($res == $goal) {
-    die "FATAL ERROR: The last revision $commits_to_bisect[$#commits_to_bisect] also $result_text{$res},\nso there is nothing to look for.\n\n";
+    say "FATAL ERROR: The last revision $commits_to_bisect[$#commits_to_bisect] also $result_text{$res},\nso there is nothing to look for.\n";
+    exit 1;
   }
   my @remaining_revisions= @commits_to_bisect;
   # $first element should always be the commit which meets the $goal,
@@ -174,11 +183,11 @@ sub bisect {
   $first_rev= shift @remaining_revisions;
   $last_rev= pop @remaining_revisions;
   while (scalar(@remaining_revisions)) {
-    print "Remaining revisions to bisect: ".scalar(@remaining_revisions)."\n\n";
+    say "Remaining revisions to bisect: ".scalar(@remaining_revisions)."\n";
     my $new_ind= int(scalar(@remaining_revisions)/2);
     $res= run_step($remaining_revisions[$new_ind]);
     if (not defined $res) {
-      print "Build of commit $remaining_revisions[$new_ind] failed, we are excluding the revision from further search\n\n";
+      say "Build of commit $remaining_revisions[$new_ind] failed, we are excluding the revision from further search\n";
       @remaining_revisions= (@remaining_revisions[0..$new_ind-1], @remaining_revisions[$new_ind+1..$#remaining_revisions]);
     } elsif ($res == $goal) {
       $first_rev= $remaining_revisions[$new_ind];
@@ -195,23 +204,23 @@ sub bisect {
 sub traverse {
   my ($res, $prev_res);
 
-  print "\n\n     We will go $direction_text starting from revision $commit with the initial step $step \
-       to find the $goal_text revision for testcase $testcase with options '$options'\n\n";
+  say "\n\n     We will go $direction_text starting from revision $commit with the initial step $step \
+       to find the $goal_text revision for testcase $testcase with options '$options'\n";
 
   STEP:
   while ($step) {
-    print "\n\n================== Step is now $step ==================\n\n";
+    say "\n\n================== Step is now $step ==================\n";
 
   REVISION:
     while ($commit) {
-      print "\n\n****************** Trying revision $commit (~$pos_from_start from starting point) ***********************\n\n";
+      say "\n\n****************** Trying revision $commit (~$pos_from_start from starting point) ***********************\n";
       unless (checkout($commit)) {
-        print "Finishing...\n";
+        say "Finishing...";
         last REVISION;
       }
 
       if (build()) {
-        print "\nWARNING: Build failed, skipping the revision...\n\n";
+        say "\nWARNING: Build failed, skipping the revision...\n";
         $commit = get_commit($commit,1);
         $pos_from_start += 1;
       }
@@ -239,14 +248,14 @@ sub traverse {
     report_result($prev_commit, $commit);
   } 
   else {
-    print "\nAll checked revisions $result_text{$res}\n\n";
+    say "\nAll checked revisions $result_text{$res}\n";
   }
 }
 
 sub report_result {
   my ($first_rev, $last_rev)= @_;
-  print "\nThe earliest checked revision which produces the current result ($result_text{$goal}): $first_rev. \n";
-  print "\nThe latest checked revision where the result differs: $last_rev. \n\n";
+  say "\nThe earliest checked revision which produces the current result ($result_text{$goal}): $first_rev.";
+  say "\nThe latest checked revision where the result differs: $last_rev.\n";
   system("git show $first_rev $last_rev | grep -A6 '^commit'");
 }
 
@@ -260,13 +269,14 @@ sub report_result {
 # FIXING + first fail => doesn't make sense
 sub first_run {
   my $commit= shift;
-  print "Checking that the first commit $commit meets the goal ($result_text{$goal})\n\n";
+  say "Checking that the first commit $commit meets the goal ($result_text{$goal})\n";
   my $res= run_step($commit);
   die "FATAL ERROR: Could not build the first revision\n\n" unless defined $res;
   if ($goal != $res) {
-    die "The first test run (on commit $commit) $result_text{$res}, \n"
+    say "The first test run (on commit $commit) $result_text{$res}, \n"
     . "while we want $goal_text revision going $direction_text. \n"
-    . "There is nothing to look for.\n\n";
+    . "There is nothing to look for.\n";
+    exit 1;
   }
 }
 
@@ -276,20 +286,20 @@ sub run_step {
   checkout($commit);
 
   if (build() != PASS) {
-    print "\nWARNING: Build failed\n\n";
+    say "\nWARNING: Build failed\n";
     return undef;
   }
   else {
     $res= run_test();
-    print "\n\n****************** Test $result_text{$res} on commit $commit ***********************\n\n";
+    say "\n\n****************** Test $result_text{$res} on commit $commit ***********************\n";
   }
   return $res;
 }
 
 sub checkout {
   my $commit= shift;
-  my $cmd = "cd $cwd && pwd && git checkout -f $commit && git submodule update && sed -i -e 's/END()/ENDIF()/g' libmariadb/cmake/ConnectorName.cmake >> bisect.log 2>&1";
-  print "Running\n   $cmd\n";
+  my $cmd = "cd $cwd/libmariadb/libmariadb && git reset --hard HEAD && cd $cwd && pwd && git checkout -f $commit && git submodule update && sed -i -e 's/END()/ENDIF()/g' libmariadb/cmake/ConnectorName.cmake >> bisect.say 2>&1";
+  say "Running\n   $cmd";
   system($cmd);
   if ($? > 0) {
     die "FATAL ERROR: Could not checkout commit $commit\n\n";
@@ -298,31 +308,31 @@ sub checkout {
 }
 
 sub build {
-  my $cmd = "cd $cwd && pwd && make -j$nCPU >> bisect.log 2>&1";
-  print "Git checkout -f succeeded, building...\n   $cmd\n";
+  my $cmd = "cd $cwd && pwd && make -j$nCPU >> bisect.say 2>&1";
+  say "Git checkout -f succeeded, building...\n   $cmd";
   system($cmd);
 #  if ($? > 0) {
-#    print "\nWARNING: Build failed, trying to do a clean build\n";
-#    system("git clean -ddffxx -e mysql-test -e bisect.log >> bisect.log 2>&1");
-#    system("git submodule foreach --recursive git clean -ddffxx >> bisect.log 2>&1");
-#    system("cmake . $build_options >> bisect.log 2>&1");
+#    say "\nWARNING: Build failed, trying to do a clean build";
+#    system("git clean -ddffxx -e mysql-test -e bisect.say >> bisect.say 2>&1");
+#    system("git submodule foreach --recursive git clean -ddffxx >> bisect.say 2>&1");
+#    system("cmake . $build_options >> bisect.say 2>&1");
 #    if ($?) {
-#      print "cmake failed, no more attempts to build\n";
+#      say "cmake failed, no more attempts to build";
 #      return $? >> 8;
 #    }
-#    system("make -j$nCPU >> bisect.log 2>&1");
+#    system("make -j$nCPU >> bisect.say 2>&1");
 #  }
   return $? >> 8;
 }
 
 sub run_test {
-  print "\nBuild succeeded, running the test...\n  $test_cmd\n\n";
+  say "\nBuild succeeded, running the test...\n  $test_cmd\n";
   my $out = readpipe("$test_cmd");
   if (open(BISECT_LOG,">>$cwd/bisect.log")) {
     print BISECT_LOG $out;
     close(BISECT_LOG);
   } else {
-    print "ERROR: couldn't open bisect.log for writing: $!\n";
+    say "ERROR: couldn't open bisect.say for writing: $!";
   }
   # If result isn't 1 (FAIL) or 0 (PASS), something is very wrong,
   # for example, the test does not exist. No point to continume
@@ -331,16 +341,16 @@ sub run_test {
     die "FATAL ERROR: Test run finished with an unexpected result: $res\n\n";
   }
   if ( $failure_output && $out =~ /$failure_output/ ) {
-    print "\nTest output matches the pattern\n";
+    say "\nTest output matches the pattern";
   }
   elsif ($failure_output) {
-    print "\nTest output does not match the pattern:\n";
-            print "Output is:\n", $out, "\n";
-            print "and pattern is: $failure_output\n";
+    say "\nTest output does not match the pattern:";
+            say "Output is:\n", $out;
+            say "and pattern is: $failure_output";
     $res = PASS;
   }
   elsif ($verbose) {
-    print "VERBOSE MODE ON. Whole test output:\n-----------------------------\n$out\n-----------------------------\n\n";
+    say "VERBOSE MODE ON. Whole test output:\n-----------------------------\n$out\n-----------------------------\n";
   }
   return $res;
 }
@@ -358,5 +368,6 @@ sub get_commit {
 }
 
 sub debug {
-	print @_ if $debug;
+	say @_ if $debug;
 }
+
