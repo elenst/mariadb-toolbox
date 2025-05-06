@@ -113,6 +113,7 @@ unless ($enable_result_log) {
   print "--disable_result_log\n";
 }
 foreach (@includes) {
+  next if /\.end$/;
   print "--source $_\n";
 }
 print "--disable_abort_on_error\n";
@@ -404,6 +405,11 @@ if ($opt_rpl) {
   print "--sync_slave_with_master\n";
 } else {
   print "--sleep 6\n";
+}
+
+foreach (@includes) {
+  next unless /\.end$/;
+  print "--source $_\n";
 }
 print "--exit\n";
 
