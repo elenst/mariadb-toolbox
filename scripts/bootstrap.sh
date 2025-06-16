@@ -15,8 +15,11 @@ then
 else
     dir_param="--srcdir=$basedir"
 fi
+if [ -e $basedir/lib/plugin ] ; then
+  plugin_dir="--plugin-dir=$basedir/lib/plugin"
+fi
 
-cmd="$mysql_install_db $defaults $dir_param --datadir=$datadir $opts"
+cmd="$mysql_install_db $defaults $plugin_dir $dir_param --datadir=$datadir $opts"
 echo Bootstrap command line: 
 echo $cmd
 $cmd
