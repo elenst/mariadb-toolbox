@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Copyright (c) 2022, 2024, Elena Stepanova and MariaDB
+# Copyright (c) 2022, 2025, Elena Stepanova and MariaDB
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,6 +31,8 @@ my $opt_data_location= '';
 my $opt_rpl= 0;
 my $enable_result_log= 0;
 my @includes= ();
+my $opt_trial_log;
+my $opt_output= "";
 
 GetOptions (
   "tables=s"         => \$opt_tables,
@@ -45,6 +47,8 @@ GetOptions (
   "data-location|data_location=s" => \$opt_data_location,
   "rpl!" => \$opt_rpl,
   "extra|include=s@" => \@includes,
+  "trial|trial-log|trial_log=s"          => \$opt_trial_log,
+  "output=s"         => \$opt_output,
   );
 
 my %interesting_connections= map { $_ => 1 } split /,/, $opt_threads;
@@ -105,6 +109,24 @@ if ( $interesting_tables_pattern )
 }
 
 #print "--source include/have_innodb.inc\n";
+
+if ($opt_trial_log) {
+  open(TRIAL,$opt_trial_log) || die "Could not open $opt_trial_log for reading: $!\n";
+  while (<TRIAL>) {
+    if (/Final options for server on port \d+, MTR style:/) {
+      my $options= <TRIAL>;
+      chomp $options;
+      $options =~ s/^(?:.*?)--mysqld/--mysqld/;
+      print "# Server options: $options\n";
+      last;
+    }
+  }
+  close(TRIAL);
+}
+
+if ($opt_output) {
+  print "# Failure output: \"$opt_output\"\n";
+}
 
 if ($opt_rpl) {
   print "--source include/master-slave.inc\n";
