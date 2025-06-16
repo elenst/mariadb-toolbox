@@ -57,9 +57,9 @@ if ( not defined $basedir and not @infofiles )
 	print STDERR "ERROR: Either --basedir or --lcov-info should be provided!\n";
 	exit 1;
 }
-if ( ! defined $basedir and ! defined $diffile )
+if ( ! defined $diffile )
 {
-	print STDERR "ERROR: Either --basedir or --diff-file should be provided!\n";
+	print STDERR "ERROR: --diff-file should be provided!\n";
 	exit 1;
 }
 
@@ -77,14 +77,6 @@ foreach my $if ( @infofiles )
 		exit 1;
 	}
 } 
-
-unless ( $diffile ) 
-{
-	$diffile = "/tmp/test-bzr-diff";
-	$prev_revno ||= -2; # -2 means the previous revision
-	chdir( $basedir );
-	system( "bzr diff --diff-options=\"-U 0\" -r $prev_revno > $diffile" );
-}
 
 unless ( @infofiles )
 {
@@ -123,7 +115,7 @@ while ( my $line = <PATCH> )
 	{
 		$current_file = $1;
     # No need to process MTR stuff
-		if ($current_file =~ /^mysql-test/ or $current_file =~ /^(?:storage|plugin)\/\w+\/mysql-test/ or $current_file =~/^tests\//) {
+		if ($current_file =~ /^mysql-test/ or $current_file =~ /^(?:storage|plugin)\/\w+\/(?:mysql-test|unittest)/ or $current_file =~/^tests\//) {
       debug( "File: $current_file is ignored\n" );
       $current_file= undef;
       next;
@@ -262,18 +254,20 @@ foreach my $f ( sort keys %fragments )
 	}
 }
 print "\n";
+print "Line coverage:   ".($total_lines - $zero_lines)."/$total_lines\n";
+print "Branch coverage: ".($total_branches - $zero_branches)."/$total_branches\n";
 
 if ( @zero_counts ) {
 	print STDERR "\nLines with zero coverage ($zero_lines/$total_lines):\n";
 	foreach ( @zero_counts ) { print STDERR $_, "\n" };
+  print STDERR "\n";
 }
-print STDERR "\n";
 
 if ( @zero_branches ) {
 	print STDERR "\nLines with zero branches ($zero_branches/$total_branches):\n";
 	foreach ( @zero_branches ) { print STDERR $_, "\n" };
+  print STDERR "\n";
 }
-print STDERR "\n";
 
 sub debug {
 	print STDERR @_ if $debug;
