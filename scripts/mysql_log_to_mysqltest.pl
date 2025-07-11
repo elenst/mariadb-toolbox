@@ -285,7 +285,7 @@ while(<>)
       #   = otherwise we will set it to 0, which should mean sigkill.
 
     if ($log_rotation_happened) {
-      if ($new_log_record_type eq 'Connect' or /create table if not exists mysql\.spider/) {
+      if ($new_log_record_type eq 'Connect' or $new_log_con == 0 or /create table if not exists mysql\.spider/) {
         if ($new_log_con > $max_used_connection_id) {
           # The server session continues, so log rotation must be due to FLUSH LOGS
         }
