@@ -1,0 +1,13 @@
+diff --git a/include/my_dbug.h b/include/my_dbug.h
+index 0c0dabef..0383ae34 100644
+--- a/include/my_dbug.h
++++ b/include/my_dbug.h
+@@ -116,7 +116,7 @@ extern int (*dbug_sanity)(void);
+ #define DBUG_LOCK_FILE _db_lock_file_()
+ #define DBUG_UNLOCK_FILE _db_unlock_file_()
+ #define DBUG_ASSERT(A) do { \
+-  if (unlikely(!(A)) && _db_my_assert(__FILE__, __LINE__, #A)) assert(A); \
++  if (unlikely(!(A)) && _db_my_assert(__FILE__, __LINE__, #A)) fprintf(stderr,"[ERROR] Assertion %s failed at %s %i\n",#A, __FILE__, __LINE__); \
+ } while (0)
+ #define DBUG_SLOW_ASSERT(A) DBUG_ASSERT(A)
+ #define DBUG_ASSERT_EXISTS
