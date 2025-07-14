@@ -128,6 +128,17 @@ if ($opt_output) {
   print "# Failure output: \"$opt_output\"\n";
 }
 
+open(VER,$ARGV[0]) || die "Could not open $ARGV[0]: $!\n";
+my $srv= 'Unknown';
+while (<VER>) {
+  if (/^(.*)\. started with:\s*$/) {
+    $srv= $1;
+    last;
+  }
+}
+close(VER);
+print "# Initial server: $srv\n";
+
 if ($opt_rpl) {
   print "--source include/master-slave.inc\n";
 }
@@ -297,8 +308,14 @@ while(<>)
           } else {
             print "--let \$shutdown_timeout= 0\n";
           }
-          print "--connection default\n";
-          print "--source include/restart_mysqld.inc\n";
+          if ($opt_rpl) {
+            print "--connection master\n";
+            print "--let \$rpl_server_number= 1\n";
+            print "--source include/rpl_restart_server.inc\n";
+          } else {
+            print "--connection default\n";
+            print "--source include/restart_mysqld.inc\n";
+          }
           $server_restarts++;
           %test_connections= ();
         }
@@ -417,7 +434,7 @@ while(<>)
 
 print_current_record($cur_log_con);
 
-foreach my $c ( keys %test_connections ) {
+foreach my $c (sort {$a <=> $b} keys %test_connections ) {
   if ( $test_connections{$c} ) {
     print "--connection con", $c, '_'.$server_restarts, "\n";
     print "--reap\n";
