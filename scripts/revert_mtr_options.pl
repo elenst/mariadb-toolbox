@@ -8,9 +8,13 @@ use strict;
 my $basedir;
 my @options;
 my %defaults;
+# By default we will keep general log settings from MTR.
+# To revert them also, run with --noomit-general-log
+my $omit_general_log= 1;
 
 GetOptions (
   "basedir=s"   => \$basedir,
+  "omit-general-log-settings!" => \$omit_general_log,
 );
 
 unless ($basedir) {
@@ -89,7 +93,7 @@ while (<CNF>) {
   if ($opt =~ s/^loose-//) {
     $loose= 1;
   }
-  next if ($opt =~ /dir$/) or $opt eq 'user' or $opt eq 'port' or $opt eq 'socket' or $opt eq 'pid-file' or $opt eq 'log-error' or $opt eq 'log-basename' or $opt eq 'bind-address' or $opt eq 'server-id' or ($opt =~ /^ssl-/);
+  next if (($omit_general_log && $opt =~ /general[-_]log/) or $opt =~ /dir$/) or $opt eq 'user' or $opt eq 'port' or $opt eq 'socket' or $opt eq 'pid-file' or $opt eq 'log-error' or $opt eq 'log-basename' or $opt eq 'bind-address' or $opt eq 'server-id' or ($opt =~ /^ssl-/);
   if ($opt =~ s/^skip-plugin/plugin/) {
     next if ($opt =~ /feedback/);
     push @options, '--mysqld=--'.($loose ? 'loose-' : '') . $opt;
