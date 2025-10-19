@@ -7,6 +7,13 @@ do
 	rm -f lib/plugin/$link
 	ln -s $path lib/plugin/$link
 done
+for lib in `ls libmariadb/libmariadb/*.so libmariadb/libmariadb/*.so.*`
+do
+	path=`pwd`"/"$lib
+	link=`basename $lib`
+	rm -f lib/$link
+	ln -s $path lib/$link
+done
 if [ -e extra/mariabackup/mariabackup ] && [ ! -e bin/mariabackup ] ; then
   mkdir -p bin
   ln -s `pwd`/extra/mariabackup/mariabackup bin/mariabackup
