@@ -2,11 +2,15 @@
 
 set -x
 
+: "${WORKSPACE:=$HOME}"
+
 minio_arch=`uname -m`
 if [ "$minio_arch" == "x86_64" ] ; then
   minio_arch=amd64
 elif [ "$minio_arch" == "aarch64" ] ; then
   minio_arch=arm64
+elif [ "$minio_arch" == "s390x" ] ; then
+  minio_arch=s390x
 else
   echo "ERROR: Architecture $minio_arch is not supported"
   exit 4
