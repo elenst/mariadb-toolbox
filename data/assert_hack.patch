@@ -1,8 +1,8 @@
 diff --git a/include/my_dbug.h b/include/my_dbug.h
-index 0c0dabef..0383ae34 100644
+index 02caadbf..b453c594 100644
 --- a/include/my_dbug.h
 +++ b/include/my_dbug.h
-@@ -116,7 +116,7 @@ extern int (*dbug_sanity)(void);
+@@ -120,7 +120,7 @@ extern int (*dbug_sanity)(void);
  #define DBUG_LOCK_FILE _db_lock_file_()
  #define DBUG_UNLOCK_FILE _db_unlock_file_()
  #define DBUG_ASSERT(A) do { \
