@@ -70,6 +70,10 @@ if (open (DEFAULTS, "$mysqld_binary --verbose --help 2>/dev/null | ")) {
 }
 
 system("cd $mtr_dir; perl mysql-test-run.pl --mem main.1st > /dev/null 2>&1");
+if ($? != 0) {
+  print "ERROR: Could not run main.1st for reverting MTR options\n";
+  exit 1;
+}
 
 my $server_section= 0;
 
