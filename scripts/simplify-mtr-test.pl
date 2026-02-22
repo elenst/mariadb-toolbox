@@ -42,7 +42,7 @@ my $with_minio= 0;
 # the following option can be set to 1, it will speed up the process
 my $mtr_defaults= 0;
 $|= 1;
-my $standard_preserve_patterns= '\#\s+PRESERVE|mariabackup|master-slave\.inc|sync_slave_with_master|have_binlog_format_|^--exec|^--cat|^--list';
+my $standard_preserve_patterns= '\#\s+PRESERVE|mariabackup|master-slave\.inc|sync_slave_with_master|have_binlog_format_|^--exec|^--cat|^--list|^--connection master|have_binlog_format_*\.inc';
 
 
 # $trials is the number of attempts for every intermediate test case.
@@ -82,6 +82,7 @@ my $max_timeout= 21600;
 my $min_timeout= 300;
 my $timeout;
 my $testcase_timeout;
+my $skip_zero_timeouts;
 
 # $simplification_timeout is a limit for the whole simplification job.
 # When the timeout is approached, the job will store whatever best result it had.
@@ -124,6 +125,7 @@ GetOptions (
   "preserve-query|preserve_query|query=s" => \$preserve_pattern,
   "rpl:s"       => \$rpl,
   "simplification-timeout|simplification_timeout=i"   => \$simplification_timeout,
+  "skip_zero_timeouts|skip-zero-timeouts" => \$skip_zero_timeouts,
   "test-timeout|test_timeout=i"   => \$timeout,
   "testcase|test|testfile=s"  => \$original_test, # Mandatory
   "trials=i"    => \$trials,
@@ -214,22 +216,36 @@ my @opts= split / /, $mtr_counter_options;
 foreach my $o (@options) {
   my @o= split / /, $o;
 
-  # max-prepared-stmt-count=0 doesn't allow server to re-bootstrap if needed.
-  # We can't override it completely, because it can have significant effect
-  # on test execution; so, we'll change it on the command line,
-  # but will add as a global dynamic variable instead
   foreach my $i (0..$#o) {
     if ($o[$i] =~ /^--mysqld=--max[-_]prepared[-_]stmt[-_]count=(\d+)/) {
+      # max-prepared-stmt-count=0 doesn't allow server to re-bootstrap if needed.
+      # We can't override it completely, because it can have significant effect
+      # on test execution; so, we'll change it on the command line,
+      # but will add as a global dynamic variable instead
       $max_prepared_stmt_count= $1;
-      delete $o[$i];
-  # enforce-storage-engine does not allow server to re-bootstrap if needed
+      next;
     } elsif ($o[$i] =~ /^--mysqld=--enforce[-_]storage[-_]engine=(\w+)/) {
+      # enforce-storage-engine does not allow server to re-bootstrap if needed.
+      # Same, we'll convert it into a dynamic variable
       $enforce_storage_engine= $1;
-      delete $o[$i];
-  # UNGREEDY regex mode breaks MTR
-    } elsif ($o[$i] =~ s/,?UNGREEDY//) {}
+      next;
+    } elsif ($o[$i] =~ s/,?UNGREEDY//) {
+      # UNGREEDY regex mode breaks MTR, so we'll remove it
+    } elsif ($o[$i] =~ /^--mysqld=--(?:loose[-_])?aria[-_]block[-_]size=/) {
+      # MTR can't work with non-default aria block size, so we'll skip it.
+      # Not sure if it ever causes failures, but we have enough Aria problems
+      # even without it
+      next;
+    } elsif ($o[$i] =~ /^--mysqld=--(?:loose[-_])?(?:simple|cracklib)[-_]password[-_]check/) {
+      # Password check options are unlikely to have any value, and they cause
+      # more problems than they bring benefits. We'll skip them
+      next;
+    } elsif ($o[$i] =~ /^--mysqld=--(?:loose[-_])?server[-_]id=/) {
+      # Server ID is unimportant and only causes issues for e.g. replication scenarios
+      next;
+    }
+    push @opts, $o[$i];
   }
-  push @opts, @o;
 }
 
 # If the eventual value of the option is greater than zero,
@@ -246,11 +262,6 @@ if ($max_prepared_stmt_count) {
 #+    setlimit(RLIMIT_NOFILE, 65536, 65536);
 
 push @opts, ('--max-connections=512','--mysqld=--max-connections=1024','--mysqld=--open-files-limit=65535');
-
-# password check is unlikely to have any value (for now, at least),
-# so we'll disable it.
-# and aria_block_size shouldn't be anything other than default, it doesn't work in MTR
-push @opts, '--mysqld=--loose-simple-password-check=off --mysqld=--loose-cracklib-password-check=off --mysqld=--loose-aria-block-size=8192';
 
 @options= @opts;
 
@@ -327,15 +338,20 @@ $trials= $initial_trials;
 
 print "\n\n====== Initial test ========\n";
 
-print "\nFirst round, quick: zero timeouts and minimal sleep time\n\n";
+my $use_timeouts= 1;
 my @options_save= @options;
-push @options, '--sleep=1', '--mysqld=--lock-wait-timeout=0', '--mysqld=--loose-innodb-lock-wait-timeout=0';
-if (run_test($test))
-{
-  print "Quick run succeeded, keeping minimal timeouts\n";
-} else {
+unless ($skip_zero_timeouts) {
+  print "\nTrying zero timeouts and minimal sleep time\n\n";
+  push @options, '--sleep=1', '--mysqld=--lock-wait-timeout=0', '--mysqld=--loose-innodb-lock-wait-timeout=0';
+  if (run_test($test))
+  {
+    print "Quick run succeeded, keeping minimal timeouts\n";
+    $use_timeouts = 0;
+  }
+}
+if ($use_timeouts) {
   @options= @options_save;
-  print "\nSecond round, full timing\n\n";
+  print "\nTrying full timing\n\n";
   unless (run_test($test)) {
     print "The initial test didn't fail!\n\n";
     exit 1;
@@ -806,6 +822,7 @@ sub write_testfile
   print TEST "--disable_abort_on_error\n";
   if (defined $rpl) {
     print TEST "--source include/master-slave.inc\n";
+    $skip_zero_timeouts = 1;
     if ($rpl) {
       print TEST "--source include/have_binlog_format_".$rpl.".inc\n";
     }
