@@ -441,6 +441,7 @@ foreach my $c (sort {$a <=> $b} keys %test_connections ) {
   }
 }
 if ($opt_rpl) {
+  print "--connection master\n";
   print "--sync_slave_with_master\n";
 } else {
   print "--sleep 6\n";
