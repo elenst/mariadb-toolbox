@@ -208,7 +208,7 @@ my $mtr_counter_options= '';
 unless ($mtr_defaults) {
   $mtr_counter_options= `perl $toolpath/revert_mtr_options.pl --basedir=\`pwd\`/..`;
   chomp $mtr_counter_options;
-  $mtr_counter_options.= ' --init-rpl-role=""';
+  $mtr_counter_options.= ' --skip-init-rpl-role';
   print "MTR option adjustments: $mtr_counter_options\n";
 }
 
