@@ -34,6 +34,7 @@ my $enable_result_log= 0;
 my @includes= ();
 my $opt_trial_log;
 my $opt_output= "";
+my $opt_crash_recovery= undef;
 
 GetOptions (
   "tables=s"         => \$opt_tables,
@@ -44,7 +45,7 @@ GetOptions (
   "convert-to-execute-immediate|convert_to_execute_immediate|convert-to-ei|convert_to_ei" => \$opt_convert_to_ei,
   "convert-to-ps|convert_to_ps" => \$opt_convert_to_ps,
   "enable_result_log|enable-result-log" => \$enable_result_log,
-  "sigkill!"         => \$opt_sigkill,
+  "sigkill|recovery|crash_recovery|crash-recovery" => \$opt_sigkill,
   "data-location|data_location=s" => \$opt_data_location,
   "rpl|old_rpl|old-rpl" => \$opt_rpl,
   "new_rpl|new-rpl" => \$opt_new_rpl,
@@ -55,6 +56,11 @@ GetOptions (
 
 my %interesting_connections= map { $_ => 1 } split /,/, $opt_threads;
 my $interesting_tables_pattern= ($opt_tables ? qr/($opt_tables)/ : undef);
+
+unless (scalar (@ARGV)) {
+  print STDERR "ERROR: no log files provided\n";
+  exit 1;
+}
 
 my @files= @ARGV;
 
