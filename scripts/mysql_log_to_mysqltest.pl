@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Copyright (c) 2022, 2025, Elena Stepanova and MariaDB
+# Copyright (c) 2022, 2026, Elena Stepanova and MariaDB
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ my $opt_convert_to_ei= 0;
 my $opt_convert_to_ps= 0;
 my $opt_sigkill= 0;
 my $opt_data_location= '';
-my $opt_rpl= 0;
+my $opt_rpl= '';
 my $enable_result_log= 0;
 my @includes= ();
 my $opt_trial_log;
@@ -45,7 +45,7 @@ GetOptions (
   "enable_result_log|enable-result-log" => \$enable_result_log,
   "sigkill!"         => \$opt_sigkill,
   "data-location|data_location=s" => \$opt_data_location,
-  "rpl!" => \$opt_rpl,
+  "rpl:s" => \$opt_rpl,
   "extra|include=s@" => \@includes,
   "trial|trial-log|trial_log=s"          => \$opt_trial_log,
   "output=s"         => \$opt_output,
@@ -141,7 +141,11 @@ print "# Initial server: $srv\n";
 
 if ($opt_rpl) {
   print "--source include/master-slave.inc\n";
+  if ($opt_rpl eq 'new') {
+    print "--source include/have_innodb_binlog.inc\n";
+  }
 }
+
 unless ($enable_result_log) {
   print "--disable_result_log\n";
 }
@@ -441,8 +445,11 @@ foreach my $c (sort {$a <=> $b} keys %test_connections ) {
   }
 }
 if ($opt_rpl) {
+  # This should work both for the old and the new (binlog-in-engine) replication
   print "--connection master\n";
-  print "--sync_slave_with_master\n";
+  print "--source include/save_master_gtid.inc\n";
+  print "--connection slave\n";
+  print "--source include/sync_with_master_gtid.inc\n";
 } else {
   print "--sleep 6\n";
 }
