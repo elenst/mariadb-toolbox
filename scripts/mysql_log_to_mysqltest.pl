@@ -30,7 +30,6 @@ my $opt_sigkill= 0;
 my $opt_data_location= '';
 my $opt_rpl= undef;
 my $opt_new_rpl= undef;
-my $rpl_type= 'old';
 my $enable_result_log= 0;
 my @includes= ();
 my $opt_trial_log;
