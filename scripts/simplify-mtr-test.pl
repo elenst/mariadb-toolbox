@@ -42,7 +42,7 @@ my $with_minio= 0;
 # the following option can be set to 1, it will speed up the process
 my $mtr_defaults= 0;
 $|= 1;
-my $standard_preserve_patterns= '\#\s+PRESERVE|mariabackup|master-slave\.inc|sync_slave_with_master|have_binlog_format_|^--exec|^--cat|^--list|^--connection master|have_binlog_format_*\.inc';
+my $standard_preserve_patterns= '\#\s+PRESERVE|mariabackup|master-slave\.inc|sync_slave_with_master|have_binlog_format_|^--exec|^--cat|^--list|^--connection master|have_binlog_format_*\.inc|have_innodb_binlog';
 
 
 # $trials is the number of attempts for every intermediate test case.
@@ -829,7 +829,7 @@ sub write_testfile
     }
   }
   foreach my $l (@$testref) {
-    next if (defined $rpl) and ($l =~ /include\/master-slave\.inc|include\/have_binlog_format|sync.*_with_master|disable_abort_on_error/);
+    next if (defined $rpl) and ($l =~ /include\/master-slave\.inc|include\/have_binlog_format|sync.*_with_master|disable_abort_on_error|have_innodb_binlog/);
     print TEST $l;
   }
   if (defined $rpl) {
