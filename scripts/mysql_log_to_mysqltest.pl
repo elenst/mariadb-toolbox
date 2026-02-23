@@ -28,7 +28,9 @@ my $opt_convert_to_ei= 0;
 my $opt_convert_to_ps= 0;
 my $opt_sigkill= 0;
 my $opt_data_location= '';
-my $opt_rpl= '';
+my $opt_rpl= undef;
+my $opt_new_rpl= undef;
+my $rpl_type= 'old';
 my $enable_result_log= 0;
 my @includes= ();
 my $opt_trial_log;
@@ -45,7 +47,8 @@ GetOptions (
   "enable_result_log|enable-result-log" => \$enable_result_log,
   "sigkill!"         => \$opt_sigkill,
   "data-location|data_location=s" => \$opt_data_location,
-  "rpl:s" => \$opt_rpl,
+  "rpl|old_rpl|old-rpl" => \$opt_rpl,
+  "new_rpl|new-rpl" => \$opt_new_rpl,
   "extra|include=s@" => \@includes,
   "trial|trial-log|trial_log=s"          => \$opt_trial_log,
   "output=s"         => \$opt_output,
@@ -139,9 +142,9 @@ while (<VER>) {
 close(VER);
 print "# Initial server: $srv\n";
 
-if ($opt_rpl) {
+if ($opt_rpl || $opt_new_rpl) {
   print "--source include/master-slave.inc\n";
-  if ($opt_rpl eq 'new') {
+  if ($opt_new_rpl) {
     print "--source include/have_innodb_binlog.inc\n";
   }
 }
@@ -312,7 +315,7 @@ while(<>)
           } else {
             print "--let \$shutdown_timeout= 0\n";
           }
-          if ($opt_rpl) {
+          if ($opt_rpl || $opt_new_rpl) {
             print "--connection master\n";
             print "--let \$rpl_server_number= 1\n";
             print "--source include/rpl_restart_server.inc\n";
@@ -444,7 +447,7 @@ foreach my $c (sort {$a <=> $b} keys %test_connections ) {
     print "--reap\n";
   }
 }
-if ($opt_rpl) {
+if ($opt_rpl || $opt_new_rpl) {
   # This should work both for the old and the new (binlog-in-engine) replication
   print "--connection master\n";
   print "--source include/save_master_gtid.inc\n";
