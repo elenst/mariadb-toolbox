@@ -119,6 +119,10 @@ sub legitimate
 	if ( $query =~ /^\s*$/ ) { return 1 };
 	# Only SELECTs are interesting for matching
 	if ( $query !~ /^\s*SELECT/i ) { debug "Query is not SELECT, not legit\n"; return 0 };
+    if ( $query =~ /INFORMATION_SCHEMA/ ) { debug "Query from I_S, won't bother\n"; return 0 };
+    if ( $query =~ /ANALYZE/ ) { debug "ANALYZE, not comparable\n"; return 0 };
+
+    if ( $query =~ /(?:FETCH.*NEXT|FETCH.*FIRST)/ ) { debug "FETCH, skipping for now, will look separately\n"; return 0 };
 
 	my %field_names;
 	my %field_aliases;
