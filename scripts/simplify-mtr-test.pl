@@ -42,8 +42,7 @@ my $with_minio= 0;
 # the following option can be set to 1, it will speed up the process
 my $mtr_defaults= 0;
 $|= 1;
-my $standard_preserve_patterns= '\#\s+PRESERVE|mariabackup|master-slave\.inc|sync_slave_with_master|have_binlog_format_|^--exec|^--cat|^--list|^--connection master|have_binlog_format_*\.inc|have_innodb_binlog';
-
+my $standard_preserve_patterns= '\#\s+PRESERVE|mariabackup|master-slave\.inc|sync_slave_with_master|have_binlog_format_|^--exec|^--cat|^--list|^--connection master|have_binlog_format_*\.inc|have_innodb_binlog|^(?:if|while|[{}])';
 
 # $trials is the number of attempts for every intermediate test case.
 # It cannot be done via MTR --repeat, because we need it not just fail
