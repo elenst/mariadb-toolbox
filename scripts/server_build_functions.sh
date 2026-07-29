@@ -55,8 +55,14 @@ local_build() {
       -DWITH_MARIABACKUP=OFF -DWITH_UNIT_TESTS=0"
   fi
   if [ "$old_code" == "yes" ] ; then
-    extra_options="$extra_options -DPLUGIN_SPHINX=NO -DPLUGIN_MROONGA=NO \
+    extra_options="$extra_options \
+      -DPLUGIN_TOKUDB=NO -DPLUGIN_SPHINX=NO -DPLUGIN_MROONGA=NO \
       -DPLUGIN_CONNECT=NO -DPLUGIN_FEDERATED=NO -DPLUGIN_OQGRAPH=NO \
+      -DWITH_TOKUDB_STORAGE_ENGINE=NO -DWITHOUT_TOKUDB_STORAGE_ENGINE=YES \
+      -DWITH_CONNECT_STORAGE_ENGINE=NO -DWITHOUT_CONNECT_STORAGE_ENGINE=YES \
+      -DWITH_MROONGA_STORAGE_ENGINE=NO -DWITHOUT_MROONGA_STORAGE_ENGINE=YES \
+      -DWITH_OQGRAPH_STORAGE_ENGINE=NO -DWITHOUT_OQGRAPH_STORAGE_ENGINE=YES \
+      -DWITH_SPHINX_STORAGE_ENGINE=NO -DWITHOUT_SPHINX_STORAGE_ENGINE=YES \
       -DWITH_EMBEDDED_SERVER=NO -DWITH_UNIT_TESTS=0 -DMYSQL_MAINTAINER_MODE=OFF \
       -DCMAKE_CXX_FLAGS=-std=gnu++98 -DMYSQL_MAINTAINER_MODE=OFF \
       -DDISABLE_LIBMYSQLCLIENT_SYMBOL_VERSIONING=TRUE -DWITH_SSL=bundled \
@@ -152,8 +158,8 @@ local_valgrind() {
 
 local_msan() {
   local_build --msan \
-    -DCMAKE_C_FLAGS=\'-O2 -Wno-unused-command-line-argument -fdebug-macro\' \
-    -DCMAKE_CXX_FLAGS=\'-stdlib=libc++ -O2 -Wno-unused-command-line-argument -fdebug-macro\' \
+    -DCMAKE_C_FLAGS=\'-O1 -Wno-unused-command-line-argument -fdebug-macro\' \
+    -DCMAKE_CXX_FLAGS=\'-O1 -Wno-unused-command-line-argument -fdebug-macro\' \
     -DMYSQL_MAINTAINER_MODE=OFF -DWITH_EMBEDDED_SERVER=OFF \
     -DWITH_UNIT_TESTS=OFF -DCMAKE_BUILD_TYPE=Debug \
     -DWITH_INNODB_{BZIP2,LZ4,LZMA,LZO,SNAPPY}=OFF \
