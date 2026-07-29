@@ -298,11 +298,22 @@ sub run_step {
 
 sub checkout {
   my $commit= shift;
-  my $cmd = "cd $cwd/libmariadb/libmariadb && git reset --hard HEAD && cd $cwd && pwd && git checkout -f $commit && git submodule update && sed -i -e 's/END()/ENDIF()/g' libmariadb/cmake/ConnectorName.cmake >> bisect.say 2>&1";
+  my $cmd = "";
+  if (-e "$cwd/libmariadb/libmariadb") {
+    $cmd = "cd $cwd/libmariadb/libmariadb && git reset --hard HEAD >> bisect.say 2>&1";
+    say "Running\n   $cmd";
+    system($cmd);
+  }
+  $cmd = "cd $cwd && pwd && git checkout -f $commit && git submodule update >> bisect.say 2>&1";
   say "Running\n   $cmd";
   system($cmd);
   if ($? > 0) {
     die "FATAL ERROR: Could not checkout commit $commit\n\n";
+  }
+  if (-e "$cwd/libmariadb/libmariadb") {
+    $cmd = "cd $cwd sed -i -e 's/END()/ENDIF()/g' libmariadb/cmake/ConnectorName.cmake >> bisect.say 2>&1";
+    say "Running\n   $cmd";
+    system($cmd);
   }
   return $commit;
 }
