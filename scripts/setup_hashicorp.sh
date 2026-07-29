@@ -4,6 +4,11 @@ set -x
 
 . /etc/os-release
 
+if [ -z "$WORKSPACE" ] ; then
+  WORKSPACE=/tmp/vault-var
+  mkdir -p $WORKSPACE
+fi
+
 export VAULT_ADDR='http://127.0.0.1:8200'
 
 if ! [ -e $WORKSPACE/vault.hcl ] ; then
