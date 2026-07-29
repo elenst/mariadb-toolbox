@@ -18,7 +18,11 @@ my %trial_queries_per_status= ();
 # Percent to trial name(s)
 my %pct_runs= ();
 
+# runs with internal grammar errors
+my @runs_with_grammar_errors= ();
+
 my $total_ok= 0;
+my $grammar_errors= 0;
 while (<>) {
   if (eof) {
     print "$ARGV:\n";
@@ -33,6 +37,14 @@ while (<>) {
     print sprintf("%12s - %s (%5s%% OK)\n", format_number($total), "Total", $ratio);
     $pct_runs{$ratio}= (exists $pct_runs{$ratio} ? "$pct_runs{$ratio} $ARGV" : "$ARGV");
     %trial_queries_per_status= ();
+    print "Internal grammar errors: $grammar_errors\n";
+    if ($grammar_errors) {
+      push @runs_with_grammar_errors, $ARGV;
+    }
+    $grammar_errors= 0;
+  }
+  if (/Internal grammar error/) {
+    $grammar_errors++;
   }
   next unless /Statuses:.*?(STATUS.*)/;
   my $statuses= $1;
@@ -61,5 +73,11 @@ my $number_of_worst_runs= (scalar keys %pct_runs > 9 ? 9 : (scalar keys %pct_run
 my @pct= (sort { $a <=> $b } keys %pct_runs)[0..${number_of_worst_runs}];
 foreach (@pct) {
   print "$_: $pct_runs{$_}\n";
+}
+if (scalar(@runs_with_grammar_errors)) {
+  print "Runs with internal grammar errors:\n";
+  foreach (@runs_with_grammar_errors) {
+    print "\t$_\n";
+  }
 }
 print "--------------------\n";
