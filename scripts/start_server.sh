@@ -10,13 +10,25 @@ then
 	exit 1
 fi
 
-if [ -e $basedir/bin/mysqld ]
+if [ -e $basedir/bin/mariadbd ]
+then
+    mysqld_binary="$basedir/bin/mariadbd"
+    mysqladmin_binary="$basedir/bin/mariadb-admin"
+elif [ -e $basedir/sql/mariadbd ]
+then
+    mysqld_binary="$basedir/sql/mariadbd"
+    mysqladmin_binary="$basedir/client/mariadb-admin"
+elif [ -e $basedir/bin/mysqld ]
 then
     mysqld_binary="$basedir/bin/mysqld"
     mysqladmin_binary="$basedir/bin/mysqladmin"
 else
     mysqld_binary="$basedir/sql/mysqld"
     mysqladmin_binary="$basedir/client/mysqladmin"
+fi
+
+if [ -e $basedir/lib/plugin ] ; then
+  plugin_dir="--plugin-dir=$basedir/lib/plugin"
 fi
 
 echo "Checking that no server is running on the given port ($port)..."
@@ -36,7 +48,7 @@ else
   rr_or_valgrind=$valgrind
 fi
 
-cmd="$rr_or_valgrind $mysqld_binary $group_suffix $defaults --basedir=$basedir --datadir=$datadir --log-error=$datadir/log.err --loose-lc-messages-dir=$langdir --loose-language=$engdir --port=$port --socket=$tmpdir/mysql.sock --tmpdir=$tmpdir --loose-core-file $opts"
+cmd="$rr_or_valgrind $mysqld_binary $group_suffix $defaults $plugin_dir --basedir=$basedir --datadir=$datadir --log-error=$datadir/log.err --loose-lc-messages-dir=$langdir --loose-language=$engdir --port=$port --socket=$tmpdir/mysql.sock --core-file --tmpdir=$tmpdir $opts"
 
 echo Server command line:
 echo $cmd
@@ -47,7 +59,7 @@ for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27
 do
 	echo ...
 	sleep 1
-	$mysqladmin_binary --no-defaults --silent -uroot --protocol=tcp --port=$port ping
+	$mysqladmin_binary --no-defaults --silent --socket=$tmpdir/mysql.sock ping
 	res=$?
 	if [ $res -eq 0 ] 
 	then
