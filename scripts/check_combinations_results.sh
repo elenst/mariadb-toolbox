@@ -1,3 +1,4 @@
+#!/usr/bin/bash
 # First argument is the location of RQG (for the tool and signatures)
 
 vardirs=`ls | grep vardir1 | xargs`
