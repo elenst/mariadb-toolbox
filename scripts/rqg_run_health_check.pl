@@ -54,30 +54,32 @@ while (<>) {
   }
 }
 
-print "--------------------\nTotal:\n";
-my $total= 0;
-foreach my $s (sort keys %all_queries_per_status) {
-  print sprintf("%12s - %s\n", format_number($all_queries_per_status{$s}), $s);
-  $total+= $all_queries_per_status{$s};
-}
-print sprintf("%12s - %s (%.2f%% OK)\n", format_number($total), "Grand total", ($total ? 100*$total_ok/$total : 0));
-
-sub format_number {
-  my $val= shift;
-  while ($val =~ s/(.*)(\d)(\d\d\d)/${1}${2},${3}/) {};
-  return $val;
-}
-print "--------------------\n";
-print "Worst runs:\n";
-my $number_of_worst_runs= (scalar keys %pct_runs > 9 ? 9 : (scalar keys %pct_runs) - 1);
-my @pct= (sort { $a <=> $b } keys %pct_runs)[0..${number_of_worst_runs}];
-foreach (@pct) {
-  print "$_: $pct_runs{$_}\n";
-}
-if (scalar(@runs_with_grammar_errors)) {
-  print "Runs with internal grammar errors:\n";
-  foreach (@runs_with_grammar_errors) {
-    print "\t$_\n";
+if (scalar(@ARGV) > 1) {
+  print "--------------------\nTotal:\n";
+  my $total= 0;
+  foreach my $s (sort keys %all_queries_per_status) {
+    print sprintf("%12s - %s\n", format_number($all_queries_per_status{$s}), $s);
+    $total+= $all_queries_per_status{$s};
   }
+  print sprintf("%12s - %s (%.2f%% OK)\n", format_number($total), "Grand total", ($total ? 100*$total_ok/$total : 0));
+
+  sub format_number {
+    my $val= shift;
+    while ($val =~ s/(.*)(\d)(\d\d\d)/${1}${2},${3}/) {};
+    return $val;
+  }
+  print "--------------------\n";
+  print "Worst runs:\n";
+  my $number_of_worst_runs= (scalar keys %pct_runs > 9 ? 9 : (scalar keys %pct_runs) - 1);
+  my @pct= (sort { $a <=> $b } keys %pct_runs)[0..${number_of_worst_runs}];
+  foreach (@pct) {
+    print "$_: $pct_runs{$_}\n";
+  }
+  if (scalar(@runs_with_grammar_errors)) {
+    print "Runs with internal grammar errors:\n";
+    foreach (@runs_with_grammar_errors) {
+      print "\t$_\n";
+    }
+  }
+  print "--------------------\n";
 }
-print "--------------------\n";
