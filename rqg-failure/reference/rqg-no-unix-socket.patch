@@ -1,0 +1,11 @@
+--- /data/local/MariaDB.pm.bak	2026-08-07 02:46:23.702683383 +0300
++++ /data/local/rqg/lib/DBServer/MariaDB.pm	2026-08-07 02:50:29.231382361 +0300
+@@ -308,6 +308,8 @@
+ 
+ sub socketfile {
+     my ($self) = @_;
++    # SANDBOX PATCH: AF_UNIX sockets are not permitted in this environment.
++    return "" if $ENV{RQG_NO_UNIX_SOCKET};
+     my $socketFileName = $_[0]->vardir."/mysql.sock";
+     if (length($socketFileName) >= 100) {
+   $socketFileName = "/tmp/RQGmysql.".$self->port.".sock";
