@@ -5,6 +5,15 @@ description: Analyse a failed RQG (random query generator) trial and produce a r
 
 # Analysing an RQG trial failure
 
+> **STOP — read this before your first tool call.**
+> The **first tool call you make in this skill must be the `AskUserQuestion` of
+> [Step 0](#step-0--ask-first-investigate-second)**. Not `find`, not `ls`, not
+> `head`, not `tar`, not `git`. Everything below Step 0 assumes the user has
+> already told you which failure to chase and where the tree is; reading it
+> first is how you end up guessing.
+> If you have already run a tool in this skill without asking: stop and ask now,
+> before the next one.
+
 An RQG trial directory typically looks like:
 
 ```
@@ -34,6 +43,13 @@ file plays which role, and carry on. Say which files you settled on.
 
 ## Step 0 — ask first, investigate second
 
+**This step is mandatory and it is a hard gate.** It is not "ask if unsure", not
+"ask unless the answer looks obvious", and not "orient first, then confirm".
+Ask *before your first tool call in this skill* — before `find`, `ls`, `head`,
+`tar`, `grep`, `git`, before opening the trial log at all. You have no
+legitimate reason to touch the trial directory before you know which failure
+you were handed.
+
 **Before doing anything else, ask the user one question** (a single
 `AskUserQuestion`) that covers both of these, so it can be answered in one go:
 
@@ -50,6 +66,29 @@ Phrase it as one question with options covering both, and make clear that a
 free-form answer giving the failure and the path together is welcome.
 
 Do not skip this. Picking the wrong failure wastes the whole investigation.
+
+### Things that are NOT permission to skip Step 0
+
+None of the following lets you start investigating without asking. If any of
+them happens, ask the Step 0 question anyway, as your very next action:
+
+* **"proceed" / "go ahead" / "continue"**, whether typed by the user or arriving
+  after an interrupted tool call. It means *carry on with the skill*, and the
+  next thing the skill says is *ask*. It does not answer "which failure?".
+* **A trial with only one visible failure.** "Only one crash in the log" is your
+  reading of the log, not the user's answer; the user may care about an earlier
+  symptom, a known-bug duplicate, or the reason the trial got that far at all.
+* **A very obvious-looking assertion or backtrace.** The more obvious it looks,
+  the cheaper the question is to ask.
+* **Having already peeked at the log** (e.g. through an earlier turn, or because
+  you jumped the gun). Stop and ask, then continue.
+* **Announcing your pick in prose** ("the failure is unambiguous, it's X").
+  Stating a guess is not the same as asking, and it is exactly the shape of the
+  mistake this step exists to prevent.
+
+The only case where you may proceed without a fresh `AskUserQuestion` is when
+the user has *already*, in this conversation, named the failure **and** told you
+where the source tree is. If they gave one but not the other, ask for the other.
 
 ## Step 1 — orient in the trial log
 
