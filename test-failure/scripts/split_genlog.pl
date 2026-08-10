@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# Split the general log of RQG trial 767-46 into one replayable SQL file per
+# Split the general log into one replayable SQL file per
 # connection, for a given time window of the last server incarnation.
 #
 #   split_genlog.pl <general.log> <outdir> <from HH:MM:SS> <to HH:MM:SS>

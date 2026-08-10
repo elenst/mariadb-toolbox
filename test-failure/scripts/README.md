@@ -1,4 +1,4 @@
-Helper scripts bundled with the `rqg-failure` skill.
+Helper scripts bundled with the `test-failure` skill.
 
 | script | purpose |
 |---|---|

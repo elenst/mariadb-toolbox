@@ -1,32 +1,81 @@
 ---
 name: test-failure
-description: Analyse a failure, produce a minimal reproducer when possible, find a guilty commit when possible. 
-
-
-arguments:
-- failure source (RQG or MTR)
-
-
-
-
-Use when given a directory holding an RQG trial log and its vardir/logs (possibly compressed) — e.g. "analyse the failure in /data/tmp/<trial>", "why did this RQG trial report corruption", "make a test case for this RQG trial". Produces, in order of preference, an MTR test, an RQG grammar + command line, another reproducer, a verbal test description, or a justified explanation of why no reproducer is possible or worthwhile.
+description: Reproduce an RQG or MTR failure, create a minimal reproducer,
+             find the guilty commit when possible. Use when asked to analyze
+             a test failure.
 ---
 
-# Analysing an RQG trial failure
+# Processing a test failure
 
-> **STOP — read this before your first tool call.**
-> The **first tool call you make in this skill must be the `AskUserQuestion` of
-> [Step 0](#step-0--ask-first-investigate-second)**. Not `find`, not `ls`, not
-> `head`, not `tar`, not `git`. Everything below Step 0 assumes the user has
-> already told you which failure to chase and where the tree is; reading it
-> first is how you end up guessing.
-> If you have already run a tool in this skill without asking: stop and ask now,
-> before the next one.
+**STOP — read this before your first tool call.**
+The invocation argument is expected to contain two values. First is the source of
+the failure, either RQG or MTR. The second is a path to a directory containing
+information related to the failure. The contents of the directory will depend
+on the source of the failure, but in any case there will be a signature
+of the failure that needs to be reproduced.
+In this skill you **must stick to the failure described in the signature**.
+For example, if the signature says that the failure is a crash with a certain
+frame(s) in the stack trace, your resulting reproducer must cause a crash containing
+the given frames, not some other crash. There can be different types of failures,
+but the same principle applies: whatever is described specifically needs to be
+kept as is.
+You must **never digress to a different failure**, not even as a parallel
+investigation. If you encounter a different failure worth attention, make a note
+of it in the final analysis, but do not spend any resources whatsoever trying
+to reproduce or otherwise analyze it.
+
+## Step 0 — check arguments, fill the gaps
+
+**This step is mandatory and it is a hard gate.**
+
+The first argument must be "MTR" or "RQG". If it is missing or is something else,
+stop immediately and `AskUserQuestion`:
+
+* **What type of failure am I analysing?** The answer options should be "MTR",
+  "RQG", and "something else, explain".
+
+After the first argument is checked, the second argument must be a path
+to an existing directory. If it was not provided, or does not exist, or is not
+a directory, stop immediately and `AskUserQuestion`:
+
+* **Where is the failure directory?** The answer options should be
+  "I will provide the path", "Stop execution".
+
+For the failure type "RQG" only: If the directory exists but does not contain
+a file named "signature.txt", stop immediately and `AskUserQuestion`:
+
+* **Provide failure signature** The answer options should be "I will provide the path",
+  "I will provide the description", "Guess from the logs".
+
+For the failure type "MTR" only: If the directory exists but does not contain
+a file with the extension .test, stop immediately and `AskUserQuestion`:
+
+* **Provide MTR test** The answer options should be "I will provide the path",
+  "Stop execution".
+
+For the failure type "MTR" only: If the file with the extension .test exists,
+but there is no file signature.txt and the file with the extension .test
+does not have a line containing "Failure output: " or "Search pattern(s)"
+among the first 5 lines of the file, stop immediately and `AskUserQuestion`:
+
+* **Provide failure signature** The answer options should be "I will provide the path",
+  "I will provide the description", "Guess from the logs".
+
+**You must not proceed until the failure type, directory, and signature are clarified**.
+If you have already started running other tools but you don't have this information,
+stop and ask for it now. In case of MTR, the part of the line after "Failure output: "
+counts as a signature, or the part of the line after "Search pattern(s): " counts
+as a regexp of the signature.
+
+## Step 1 — analyze the contents of the failure directory
+
+Depending on the failure type and other circumstances, the contents of the
+directory can be very different.
 
 An RQG trial directory typically looks like:
 
 ```
-/data/tmp/<combination>-<trial>/
+/<provided path>/
 ├── trial<N>.log            # the RQG log (may be .gz / .xz / inside a tarball)
 └── vardir<N>/              # (may be compressed)
     ├── rqg.<sha>.diff      # local RQG modifications, if any
@@ -37,69 +86,33 @@ An RQG trial directory typically looks like:
         ├── mysql.log       # GENERAL QUERY LOG — the single most valuable artifact
         ├── boot.sql, boot.log
         └── metadata/, *-metadata-*   # RQG metadata dumps
+    ...
 ```
 
-Multi-server scenarios (replication, upgrade) have `s1`, `s2`, …
+Multi-server scenarios (replication, upgrade) can have `s1`, `s2`, …
 
 **The layout will not always match this.** File and directory names vary between
-RQG versions, combination setups and how the artifacts were archived: the log may
-be `trial37.log`, `rqg.log`, `*.log.gz` or a member of a tarball; the vardir may
-be `vardir37/`, `vardir/`, `var/` or a tarball; the server subdirectory may be
-`s1/`, `1/` or absent for single-server runs; the general log may be disabled
-altogether. Do not treat a mismatch as a problem or a reason to stop — look
+RQG versions, combination setups and how the artifacts were archived.
+Do not treat a mismatch as a problem or a reason to stop — look
 around (`find <dir> -maxdepth 3`, decompress what is compressed), identify which
 file plays which role, and carry on. Say which files you settled on.
 
-## Step 0 — ask first, investigate second
+In case of an MTR failure directory will likely contain a file <filename>.test,
+server error logs mysqld.N.err, and possibly other logs.
 
-**This step is mandatory and it is a hard gate.** It is not "ask if unsure", not
-"ask unless the answer looks obvious", and not "orient first, then confirm".
-Ask *before your first tool call in this skill* — before `find`, `ls`, `head`,
-`tar`, `grep`, `git`, before opening the trial log at all. You have no
-legitimate reason to touch the trial directory before you know which failure
-you were handed.
+```
+/<provided path>/
+├── <filename>.test         # the MTR test to improve
+└── mysqld.1.err            # server error log
+└── stdout.log              # test output
+  ...
+```
 
-**Before doing anything else, ask the user one question** (a single
-`AskUserQuestion`) that covers both of these, so it can be answered in one go:
+## Step 2 — pre-process RQG logs
 
-* **Which failure am I analysing?** RQG's reported status is often vague — the
-  same `STATUS_DATABASE_CORRUPTION` can come from a reporter finding stray files,
-  from error 1194 being raised on a healthy table, from a `CHECK TABLE` result,
-  or from a consistency reporter. A trial can also contain several independent
-  problems. Offer *"you tell me"* vs *"guess from the trial log"*; if told to
-  guess, state explicitly which one you picked and why before proceeding.
-* **Where is the source tree** (and any matching build)? Optional — see
-  *Getting a source tree and a build* if it is not provided.
+**Skip in case of an MTR failure**
 
-Phrase it as one question with options covering both, and make clear that a
-free-form answer giving the failure and the path together is welcome.
-
-Do not skip this. Picking the wrong failure wastes the whole investigation.
-
-### Things that are NOT permission to skip Step 0
-
-None of the following lets you start investigating without asking. If any of
-them happens, ask the Step 0 question anyway, as your very next action:
-
-* **"proceed" / "go ahead" / "continue"**, whether typed by the user or arriving
-  after an interrupted tool call. It means *carry on with the skill*, and the
-  next thing the skill says is *ask*. It does not answer "which failure?".
-* **A trial with only one visible failure.** "Only one crash in the log" is your
-  reading of the log, not the user's answer; the user may care about an earlier
-  symptom, a known-bug duplicate, or the reason the trial got that far at all.
-* **A very obvious-looking assertion or backtrace.** The more obvious it looks,
-  the cheaper the question is to ask.
-* **Having already peeked at the log** (e.g. through an earlier turn, or because
-  you jumped the gun). Stop and ask, then continue.
-* **Announcing your pick in prose** ("the failure is unambiguous, it's X").
-  Stating a guess is not the same as asking, and it is exactly the shape of the
-  mistake this step exists to prevent.
-
-The only case where you may proceed without a fresh `AskUserQuestion` is when
-the user has *already*, in this conversation, named the failure **and** told you
-where the source tree is. If they gave one but not the other, ask for the other.
-
-## Step 1 — orient in the trial log
+Orient in the trial log:
 
 ```sh
 head -40 <trial>.log                  # RQG revision, full command line, scenario
@@ -119,10 +132,7 @@ Extract and write down:
 * the **build type** of the server that failed (`13.1.0-MariaDB-asan-log` in the
   banner means ASAN — see *Timing* below).
 
-The sibling skills `rqg-trial-filter` and `rqg-trial-failures` summarise a whole
-combinations results file; use them when handed many trials rather than one.
-
-## Step 2 — decide whether the failure is real before chasing it
+Decide whether the failure is real before chasing it:
 
 This is the step most often skipped and most often decisive. Reporters run at
 fixed points; a scenario that aborts early can run end-of-test reporters against
@@ -148,10 +158,10 @@ Checklist:
   restart it was written to follow.
 
 If the reported failure turns out to be a harness artifact, say so plainly, name
-the underlying real failure if there is one (an early abort is usually caused by
-something), and re-target the reproducer at it.
+the underlying real failure if there is one, **stop** and ask for further
+instructions. Do not re-target the investigation.
 
-## Step 3 — mine the artifacts
+Mine the artifacts:
 
 `mysql.log` (the general query log) is usually the key. It records every
 statement of every connection with its connection id, so you can:
@@ -164,28 +174,102 @@ statement of every connection with its connection id, so you can:
 replayable `.sql` file per connection for a time window:
 
 ```sh
-perl scripts/split_genlog.pl <vardir>/s1/mysql.log /data/local/replay 17:03:30 17:04:51
+perl ~/.claude/skills/test-failure/scripts/split_genlog.pl <vardir>/s1/mysql.log /data/local/replay 17:03:30 17:04:51
 ```
 
 Replaying the recorded streams concurrently against a server started on the
-trial's own datadir is a strong reproduction attempt: it is the real statement
-mix rather than an imitation of it.
+trial's own datadir is a possible reproduction attempt: it is the real statement
+mix rather than an imitation of it. However, since it will likely have a broken
+timing, evaluate whether it is suitable for the target failure instead of using it
+blindly.
 
 Other useful sources: `mysql.err`, the datadir itself (file names and mtimes —
 temporary DDL names encode pid/thread/counter, and an mtime equal to the kill
 second tells you the statement was in flight), `*-metadata-*` dumps, binlogs
 (`mariadb-binlog`), and `ddl_recovery.log`.
 
-## Step 4 — reproduce
+## Step 3 — extract information from the MTR test
 
-Preference order for the deliverable:
+**Skip in case of an RQG failure**
+
+The directory will contain a <filename>.test file which will likely have
+the first lines similar to
+
+```
+# Remaining options: --mysqld=--loose-plugin-innodb --mysqld=--loose-plugin-innodb-sys-tablestats
+# Basedir: /data/bld/13.0-debug
+# Search pattern(s): (?^s:TABLE_SHARE::db_type)
+```
+or they may look like
+```
+# Server options: --mysqld=--max-allowed-packet=1G --mysqld=--loose-innodb-ft-min-token-size=10 --mysqld=--secure-file-priv= --mysqld=--loose-debug-assert-on-not-freed-memory=1
+# Failure output: "marked as crashed and should be repaired"
+# Initial server: /data/bld/main-rel//sql/mysqld, Version: 13.1.0-MariaDB-log (MariaDB Server)
+```
+
+If "remaining options" or "server options" are provided, use them to run the
+test case via MTR.
+
+Unless the directory contains a file named "signature.txt", use the part of the
+line after "Failure output: " as a signature, or the part of the line after
+"Search pattern(s): " as a regexp of the signature. If signature.txt is provided,
+ignore the lines.
+
+Only use the "Basedir" or "Initial server" information when you don't have
+any other information about the server branch / revision which was used for
+the test, otherwise ignore.
+
+
+## Step 4 — find or create a suitable build
+
+If a path to a source tree is given inside signature.txt, use it.
+
+Otherwise, if you have the server error log, extract the server revision from it,
+the server writes it upon startup. Otherwise assume that it is a top of the branch
+corresponding to the server version.
+
+If you only need code for reading, you can search for a suitable clone under
+CLAUDE_EXTERNAL_SOURCES (read-only). Alternatively, you can clone/fetch it
+from Github inside CLAUDE_BUILD_DIR and optionally check out the revision from
+the error log.
+
+If you need a build of a certain type, you can build it under CLAUDE_BUILD_DIR.
+You can do any modifications to your own clones and builds under CLAUDE_BUILD_DIR.
+
+Choose the build type deliberately: `Debug` for `--debug-dbug` crash points and
+assertions, `-DWITH_ASAN=ON` to match an `-asan-log` trial's timing. Builds are
+long — start them in the background and keep investigating meanwhile.
+
+### Timing matters more than you expect
+
+If the trial ran an **ASAN** build (`-asan-log` in the version banner) and you
+only have a RelWithDebInfo build, races interleave completely differently and may
+simply not reproduce. Building an ASAN server of the same revision is often a
+better use of time than a fifth stress variant.
+
+
+## Step 5 — reproduce
+
+**IMPORTANT**
+You must **never digress to a different failure** from the signature that
+you were given.
+If you encounter a different failure worth attention, make a note
+of it in the README, but do not spend any resources whatsoever trying
+to reproduce or otherwise analyze it, step back to the original one.
+
+If the failure type is MTR, the deliverable is always an MTR test, derived
+from the one originally provided.
+
+In case of the failure type "RQG", preference order for the deliverable:
 
 1. **MTR test** — best. Write it whenever the failure is deterministic and
    single/few-session, and **run it** — `mariadb-test-run.pl` works in this
-   sandbox provided you pass `--build-thread=<N>` (see *Environment*). Record
-   the actual result, including the `.result` file it produced. Mind the build:
-   crash points in `sql/*.cc` need a `-DCMAKE_BUILD_TYPE=Debug` build; a
-   RelWithDebInfo build has `DBUG_OFF` and no `--debug-dbug`.
+   sandbox provided you pass `--build-thread=<N>` (see *Environment*).
+   Non-deterministic MTR test cases which reproduce the failure within a
+   reasonable number of attempts (--repeat=N) is also acceptable.
+   Do not attempt to record the result file.
+   Mind the build: crash points in `sql/*.cc` need a `-DCMAKE_BUILD_TYPE=Debug`
+   build; a RelWithDebInfo build has `DBUG_OFF` and no `--debug-dbug`.
 2. **RQG grammar + command line** — the right answer for concurrency-driven
    failures. Start from the trial's own grammars, then *narrow*: remove one arm
    or ingredient at a time, run each variant to a fixed query budget, and record
@@ -207,12 +291,39 @@ problem for whoever picks it up next. Prefer an exhaustive cheap matrix
 a handful of hand-picked guesses: it either finds the case or rules out the whole
 class, and either result is worth reporting.
 
-### Timing matters more than you expect
+## Step 6 — simplify and cleanup
 
-If the trial ran an **ASAN** build (`-asan-log` in the version banner) and you
-only have a RelWithDebInfo build, races interleave completely differently and may
-simply not reproduce. Building an ASAN server of the same revision is often a
-better use of time than a fifth stress variant.
+**Skip if the deliverable is not an MTR test**
+
+Remove as many unnecessary elements from the MTR test as possible as long
+as it still reproduces the target failure (never retarget to a different one).
+Also attempt to remove server and MTR options which you were using to reproduce
+the failure. When possible, replace the command-line options with MTR's
+--source include/..., INSTALL SONAME, etc.
+
+Use standard short table names (t1,...), short view names (v1,...) short column
+names (one-letter names or f1,....), etc.
+
+## Step 7 — search for existing JIRA items
+
+If there is an open JIRA issue which reports the exact failure you have
+reproduced, report it in the final README.
+
+## Step 8 — check versions
+
+With deterministic or nearly deterministic reproducers, check which main
+branches are affected (e.g. 10.6, 11.4, etc). The lowest version to check is 10.6,
+and further all currently active LTS versions, the current RC, and the main branch.
+For checking versions, you can use CLAUDE_EXTERNAL_BUILDS/ if there is a suitable
+build, and only build in CLAUDE_BUILD_DIR when necessary.
+
+## Step 9 — find the guilty revision
+
+If you can find out the guilty revision by code inspection, do so. Otherwise,
+in case of deterministic reproducers, use git bisect to find the revision
+which caused the failure. Stick to the original signature, that is, search for
+the revision which caused **the specific failure**, even if the test case
+was failing in a different way before the reivison.
 
 ## Environment
 
@@ -305,6 +416,11 @@ Notes that cost real time if forgotten:
   authenticates as), or start with `--skip-grant-tables` when ACLs are
   irrelevant. Do **not** use `--skip-grant-tables` if the workload's ACL errors
   are part of the failure — RQG grammars that `REVOKE` privileges depend on them.
+* MTR suite names should not contain dashes, so instead of pointing MTR at a
+  directory with a dash as a suite, use symlinks or keep MTR test cases under
+  CLAUDE_CODE_TMPDIR/bug and only copy them to the final delivery folder
+  at the end.
+  
 
 **If AF_UNIX is blocked again** (the check above fails): a seccomp filter makes
 `socket(AF_UNIX, …)` return `EPERM`. Then `mariadbd` must be started with an
@@ -321,44 +437,25 @@ session, via `sandbox.network.allowAllUnixSockets: true` in
 D-Bus session bus, X11). Mention it as an option if MTR verification would
 genuinely change the outcome; do not enable or advocate for it.
 
-### Getting a source tree and a build
-
-* **Use the source tree you were given.** Clone only when you actually need to:
-  no tree was provided, the provided tree is at the wrong revision, or you need
-  to modify sources (e.g. instrument an error site) and must not touch the user's
-  tree. In that case `github.com` is reachable:
-  `git clone https://github.com/MariaDB/server /data/src/<name>`, then check out
-  the revision from the trial log's `source revision <sha>` banner.
-* **Never modify the user's source tree or build** without asking.
-* **No suitable build?** Check `/data/bld/*` for one matching the trial's
-  revision first. If there is none, build one under `/data/bld` (writable, tens
-  of GB free):
-
-  ```sh
-  mkdir -p /data/bld/<name> && cd /data/bld/<name>
-  cmake /data/src/<name> -DCMAKE_BUILD_TYPE=Debug   # or RelWithDebInfo
-  make -j$(nproc)
-  ```
-
-  Choose the build type deliberately: `Debug` for `--debug-dbug` crash points and
-  assertions, `-DWITH_ASAN=ON` to match an `-asan-log` trial's timing. Builds are
-  long — start them in the background and keep investigating meanwhile.
-
 ### Scratch space
 
-Use `/data/claude-work/<trial-id>-<topic>/` for deliverables and `/data/local/`
-for datadirs and vardirs. Not the session scratchpad: its path is long enough
+Use `/data/claude-work/<directory name>/` (where <directory name> is the
+basename of the failure directory you were given to investigate)
+for deliverables and `/data/local/` for datadirs and vardirs.
+Not the session scratchpad: its path is long enough
 that a server's socket path inside it exceeds the 107-character limit. Datadir
 copies run to hundreds of MB each; clean them up when done.
 
 ## Deliverable
 
-Write the result to `/data/claude-work/<trial-id>-<topic>/` with:
+Write the result to `/data/claude-work/<directory name>/` with:
 
-* `README.md` — the verdict in one paragraph up front, then the evidence chain
+* `README.md` — the verdict up front, then the evidence chain
   (log excerpts with timestamps, code pointers as `file:line`), then the
-  reproducer and its hit rate, then negative results and their scale;
-* the reproducer itself (MTR `.test`/`.result`, `.yy` grammar + runner script,
+  reproducer and its hit rate, then negative results and their scale,
+  then all side notes that you collected (e.g. different failures you
+  encountered);
+* the reproducer itself (MTR `.test`, `.yy` grammar + runner script,
   or harness scripts) with everything needed to re-run it;
 * any harness scripts used, so the next person does not have to rebuild them.
 

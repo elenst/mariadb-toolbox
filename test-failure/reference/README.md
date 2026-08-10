@@ -1,4 +1,4 @@
-Reference material for the `rqg-failure` skill.
+Reference material for the `test-failure` skill.
 
 | file | status |
 |---|---|
