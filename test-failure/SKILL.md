@@ -1,6 +1,15 @@
 ---
-name: rqg-failure
-description: Analyse a failed RQG (random query generator) trial and produce a reproducer. Use when given a directory holding an RQG trial log and its vardir/logs (possibly compressed) — e.g. "analyse the failure in /data/tmp/<trial>", "why did this RQG trial report corruption", "make a test case for this RQG trial". Produces, in order of preference, an MTR test, an RQG grammar + command line, another reproducer, a verbal test description, or a justified explanation of why no reproducer is possible or worthwhile.
+name: test-failure
+description: Analyse a failure, produce a minimal reproducer when possible, find a guilty commit when possible. 
+
+
+arguments:
+- failure source (RQG or MTR)
+
+
+
+
+Use when given a directory holding an RQG trial log and its vardir/logs (possibly compressed) — e.g. "analyse the failure in /data/tmp/<trial>", "why did this RQG trial report corruption", "make a test case for this RQG trial". Produces, in order of preference, an MTR test, an RQG grammar + command line, another reproducer, a verbal test description, or a justified explanation of why no reproducer is possible or worthwhile.
 ---
 
 # Analysing an RQG trial failure
