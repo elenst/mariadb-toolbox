@@ -297,12 +297,39 @@ class, and either result is worth reporting.
 
 Remove as many unnecessary elements from the MTR test as possible as long
 as it still reproduces the target failure (never retarget to a different one).
-Also attempt to remove server and MTR options which you were using to reproduce
-the failure. When possible, replace the command-line options with MTR's
---source include/..., INSTALL SONAME, etc.
+It applies to all of
+* statements
+* lines
+* inserted values
+* indices
+* table columns
+* table options and attributes
+* column options and attributes
+* query parts (GROUP BY, ORDER BY, WHERE, etc.)
+* statement parts (for example, different ALTER parts)
+
+Note that some elements are co-dependent, for example if you remove a column
+from a table, you might need to re-write following INSERT statements, etc.
 
 Use standard short table names (t1,...), short view names (v1,...) short column
 names (one-letter names or f1,....), etc.
+
+When possible, replace sequences of statements with a statement which achieves
+the same result. For example, if the test case contains CREATE TABLE followed
+by various ALTER TABLE, it is often possible to replace the whole chain with
+a single CREATE TABLE with the structure which all ALTERs lead to.
+
+Attempt to remove server and MTR options which you were using to reproduce
+the failure. When possible, replace the command-line options with MTR's
+includes, explicit dynamic variable SETs, table elements, etc.
+
+## Examples:
+
+* `--mysqld=--innodb` (`--mysqld=--loose-innodb`) option can usually be replaced
+  with `--source include/have_innodb.inc` call at the beginning of the test case;
+
+* `--mysqld=--default-storage-engine=XXX` can usually be replaced with explicit
+  `ENGINE=XXX` in table creation statements where the engine is not specified;
 
 ## Step 7 — search for existing JIRA items
 
