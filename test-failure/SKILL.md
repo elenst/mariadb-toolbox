@@ -395,7 +395,7 @@ no reason to make a writable copy just to add a grammar:
 ```sh
 cd /data/src/rqg
 perl ./run.pl --basedir=/data/bld/<build> --vardir=/data/local/rqgvar1 \
-  --grammar=/data/claude-work/<topic>/repro/min.yy --threads=4 --duration=300
+  --grammar=/data/claude/<topic>/repro/min.yy --threads=4 --duration=300
 ```
 
 **Hand-started server** — start it with a real `--socket=` and use it:
@@ -466,7 +466,7 @@ genuinely change the outcome; do not enable or advocate for it.
 
 ### Scratch space
 
-Use `/data/claude-work/<directory name>/` (where <directory name> is the
+Use `/data/claude/<directory name>/` (where <directory name> is the
 basename of the failure directory you were given to investigate)
 for deliverables and `/data/local/` for datadirs and vardirs.
 Not the session scratchpad: its path is long enough
@@ -475,7 +475,7 @@ copies run to hundreds of MB each; clean them up when done.
 
 ## Deliverable
 
-Write the result to `/data/claude-work/<directory name>/` with:
+Write the result to `/data/claude/<directory name>/` with:
 
 * `README.md` — the verdict up front, then the evidence chain
   (log excerpts with timestamps, code pointers as `file:line`), then the
